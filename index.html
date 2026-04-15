@@ -3329,8 +3329,14 @@ document.addEventListener('click', function initAudioOnce() {
 
 // === NAVIGATION ===
 let navTimeout = null;
+let previousScreen = 'home';
 function showScreen(id) {
   if (navTimeout) { clearTimeout(navTimeout); navTimeout = null; }
+  // Track previous screen (don't track paywall so goBack works correctly)
+  const activeEl = document.querySelector('.screen.active');
+  if (activeEl && activeEl.id !== 'screen-paywall') {
+    previousScreen = activeEl.id.replace('screen-', '');
+  }
   const screens = document.querySelectorAll('.screen');
   screens.forEach(s => {
     const isTarget = s.id === 'screen-' + id;
@@ -3362,6 +3368,7 @@ function showScreen(id) {
 }
 
 function goHome() { playClick('tap'); renderBookmarks(); showScreen('home'); hideFab(); }
+function goBack() { playClick('tap'); showScreen(previousScreen); }
 function goHistory() { playClick('tap'); renderHistory(); showScreen('history'); }
 function goPrivacy() { playClick('tap'); showScreen('privacy'); }
 
