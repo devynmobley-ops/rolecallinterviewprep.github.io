@@ -82,7 +82,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .accordion.open .accordion-body{max-height:400px}
 .accordion-tip{padding:0 16px 16px 52px;font-size:13px;color:var(--text-secondary);line-height:1.6}
 .accordion-tip strong{color:var(--accent-light);font-weight:600}
-.mock-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:100;display:flex;flex-direction:column;transform:translateY(100%);transition:transform var(--transition);padding-top:calc(var(--safe-top) + 12px);padding-bottom:calc(var(--safe-bottom) + 12px)}
+.mock-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:200;display:flex;flex-direction:column;transform:translateY(100%);transition:transform var(--transition);padding-top:calc(var(--safe-top) + 12px);padding-bottom:calc(var(--safe-bottom) + 12px)}
 .mock-overlay.active{transform:translateY(0)}
 .mock-top{padding:12px 20px;display:flex;align-items:center;gap:12px}
 .mock-close{background:none;border:none;color:var(--text-secondary);font-size:22px;cursor:pointer;min-width:40px;min-height:40px;display:flex;align-items:center;justify-content:center;border-radius:8px}
@@ -290,13 +290,33 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .locked-question .accordion-question{filter:blur(5px);user-select:none;pointer-events:none}
 .accordion-lock{font-size:16px;flex-shrink:0;margin-top:2px}
 .mock-paywall-cta{text-align:center;padding:20px 0}
+/* === TAB BAR === */
+.tab-bar{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;align-items:center;height:60px;padding-bottom:env(safe-area-inset-bottom);background:var(--card);border-top:1px solid rgba(255,255,255,0.06);z-index:100}
+.tab-bar.hidden{display:none}
+.tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 0;background:none;border:none;cursor:pointer;opacity:0.5;transition:opacity 0.2s}
+.tab-btn.active{opacity:1}
+.tab-icon{font-size:20px}
+.tab-label{font-size:10px;font-weight:600;color:var(--text)}
+/* === TAB SCREENS === */
+.screen.tab-screen{padding-bottom:80px}
+.roles-tab-header{padding:12px 20px}
+.roles-tab-title{font-size:20px;font-weight:800;color:var(--text)}
+.more-list{padding:0 16px}
+.more-item{display:flex;align-items:center;gap:14px;padding:16px;background:var(--card);border-radius:14px;margin-bottom:8px;cursor:pointer}
+.more-icon{font-size:20px}
+.more-label{font-size:15px;font-weight:600;color:var(--text)}
+.more-arrow{margin-left:auto;color:var(--text-secondary);font-size:14px}
+.more-section{margin-top:16px}
+.more-section-title{font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;padding:0 20px;margin-bottom:8px}
+.more-footer{text-align:center;padding:24px 20px}
+.more-footer-text{font-size:12px;color:var(--text-secondary);opacity:0.5}
 </style>
 </head>
 <body data-theme="dark">
 <div id="app">
 
 <!-- HOME SCREEN -->
-<div id="screen-home" class="screen active">
+<div id="screen-home" class="screen active tab-screen">
   <div class="logo">
     <h1>RoleCall</h1>
     <p>Prepping you for interviews since 2026</p>
@@ -315,9 +335,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
   </div>
   <div class="section-title" id="bookmarksTitle" style="display:none">Bookmarked Roles</div>
   <div id="bookmarksList" class="bookmarks-list"></div>
-  <div class="section-title">Categories</div>
-  <div class="category-grid" id="categoryGrid"></div>
-  <div class="progress-card" id="progressCard" onclick="goHistory()">
+  <div class="progress-card" id="progressCard">
     <div class="progress-header">
       <h3>Your Progress</h3>
       <span class="progress-badge" id="progressBadge">Start practicing!</span>
@@ -337,39 +355,30 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
       </div>
     </div>
   </div>
-  <div class="mock-card" onclick="openMockPicker()">
-    <div class="mock-icon">&#9889;</div>
-    <h3>Mock Interview</h3>
-    <p>Practice with 10 random questions from any role</p>
-  </div>
-  <div class="suggest-card" onclick="goSuggestions()">
-    <div class="suggest-card-icon">&#128161;</div>
-    <h3>Suggest a Role</h3>
-    <p>Don't see your role? Let us know what to add</p>
-  </div>
   <div id="searchResults" style="display:none">
     <div class="section-title">Search Results</div>
     <div class="role-list" id="searchResultsList"></div>
   </div>
-  <div class="home-footer">
-    <a href="#" onclick="goPrivacy(); return false;">Privacy Policy</a>
-    <span class="footer-version" id="appVersion">v1.0.0</span>
+</div>
+
+<!-- ROLES TAB SCREEN -->
+<div id="screen-roles-tab" class="screen hidden tab-screen">
+  <div class="roles-tab-header">
+    <div class="roles-tab-title">Browse Roles</div>
+  </div>
+  <div id="rolesTabContent">
+    <div class="category-grid" id="categoryGrid"></div>
   </div>
 </div>
 
-<!-- ROLES SCREEN -->
-<div id="screen-roles" class="screen slide-left hidden">
-  <div class="header">
-    <div class="header-row">
-      <button class="back-btn" onclick="goHome()">&#8592;</button>
-      <div>
-        <h1 id="rolesTitle">Category</h1>
-        <div class="subtitle" id="rolesSubtitle"></div>
-      </div>
-    </div>
+<!-- MOCK TAB SCREEN -->
+<div id="screen-mock-tab" class="screen hidden tab-screen">
+  <div class="roles-tab-header">
+    <div class="roles-tab-title">Mock Interview</div>
   </div>
-  <div class="role-list" id="roleList"></div>
+  <div id="mockTabBody"></div>
 </div>
+
 
 <!-- QUESTIONS SCREEN -->
 <div id="screen-questions" class="screen slide-left hidden">
@@ -387,16 +396,10 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
   <div class="fab-mock" onclick="startMockFromQuestions()">&#9889; Mock Interview</div>
 </div>
 
-<!-- SUGGESTIONS SCREEN -->
-<div id="screen-suggestions" class="screen slide-left hidden">
-  <div class="header">
-    <div class="header-row">
-      <button class="back-btn" onclick="goHome()">&#8592;</button>
-      <div>
-        <h1>Suggest a Role</h1>
-        <div class="subtitle">Help us grow our question library</div>
-      </div>
-    </div>
+<!-- SUGGESTIONS TAB SCREEN -->
+<div id="screen-suggest-tab" class="screen hidden tab-screen">
+  <div class="roles-tab-header">
+    <div class="roles-tab-title">Suggest a Role</div>
   </div>
   <div class="suggest-body">
     <div id="suggestForm">
@@ -432,11 +435,11 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
   </div>
 </div>
 
-<!-- HISTORY SCREEN -->
+<!-- HISTORY SCREEN (overlay) -->
 <div id="screen-history" class="screen slide-left hidden">
   <div class="header">
     <div class="header-row">
-      <button class="back-btn" onclick="goHome()">&#8592;</button>
+      <button class="back-btn" onclick="goBack()">&#8592;</button>
       <div>
         <h1>Practice History</h1>
         <div class="subtitle">Your recent mock interview sessions</div>
@@ -450,7 +453,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 <div id="screen-privacy" class="screen slide-left hidden">
   <div class="header">
     <div class="header-row">
-      <button class="back-btn" onclick="goHome()">&#8592;</button>
+      <button class="back-btn" onclick="goBack()">&#8592;</button>
       <div>
         <h1>Privacy Policy</h1>
         <div class="subtitle">Last updated: April 2026</div>
@@ -499,6 +502,46 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     <button class="paywall-subscribe-btn" onclick="subscribe()">Start Free Trial</button>
     <p class="paywall-trial">7-day free trial, cancel anytime</p>
     <p class="paywall-legal">Cancel in Settings anytime. Subscription renews automatically.</p>
+  </div>
+</div>
+
+<!-- MORE TAB SCREEN -->
+<div id="screen-more" class="screen hidden tab-screen">
+  <div class="roles-tab-header">
+    <div class="roles-tab-title">More</div>
+  </div>
+  <div class="more-list">
+    <div class="more-section">
+      <div class="more-section-title">Account</div>
+      <div class="more-item" onclick="showPaywall()">
+        <span class="more-icon">&#11088;</span>
+        <span class="more-label">Subscription</span>
+        <span class="more-arrow">&#8594;</span>
+      </div>
+    </div>
+    <div class="more-section">
+      <div class="more-section-title">Data</div>
+      <div class="more-item" onclick="goHistory()">
+        <span class="more-icon">&#128200;</span>
+        <span class="more-label">Practice History</span>
+        <span class="more-arrow">&#8594;</span>
+      </div>
+    </div>
+    <div class="more-section">
+      <div class="more-section-title">Settings</div>
+      <div id="moreThemePicker"></div>
+    </div>
+    <div class="more-section">
+      <div class="more-section-title">Legal</div>
+      <div class="more-item" onclick="goPrivacy()">
+        <span class="more-icon">&#128274;</span>
+        <span class="more-label">Privacy Policy</span>
+        <span class="more-arrow">&#8594;</span>
+      </div>
+    </div>
+  </div>
+  <div class="more-footer">
+    <span class="more-footer-text" id="appVersionMore">v1.0.0</span>
   </div>
 </div>
 
@@ -3072,6 +3115,7 @@ function init() {
   loadTheme();
   renderThemeOptions();
   renderCategories();
+  renderMockTab();
   setupSearch();
   checkSubscription();
   hideFab();
@@ -3089,6 +3133,8 @@ function init() {
   // Version
   const verEl = document.getElementById('appVersion');
   if (verEl) verEl.textContent = 'v' + APP_VERSION;
+  const verElMore = document.getElementById('appVersionMore');
+  if (verElMore) verElMore.textContent = 'v' + APP_VERSION;
   // Analytics - increment app opens
   trackEvent('app_opens');
 }
@@ -3266,7 +3312,7 @@ function renderBookmarks() {
           toggleBookmark(roleName);
           renderBookmarks();
         });
-        card.addEventListener('click', () => { playClick('tap'); openCategory(catName); setTimeout(() => openRole(roleName, cat.roles[roleName]), 400); });
+        card.addEventListener('click', () => { playClick('tap'); switchTab('roles-tab'); setTimeout(() => openCategory(catName), 200); setTimeout(() => openRole(roleName, cat.roles[roleName]), 500); });
         container.appendChild(card);
       }
     });
@@ -3330,6 +3376,36 @@ document.addEventListener('click', function initAudioOnce() {
 // === NAVIGATION ===
 let navTimeout = null;
 let previousScreen = 'home';
+let currentTab = 'home';
+
+const TAB_SCREENS = ['home', 'roles-tab', 'mock-tab', 'suggest-tab', 'more'];
+
+function switchTab(tab) {
+  playClick('tap');
+  currentTab = tab;
+  // Hide all screens instantly
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active', 'slide-left', 'slide-right');
+    s.classList.add('hidden');
+    s.style.pointerEvents = 'none';
+    s.style.zIndex = '0';
+  });
+  // Show target
+  const target = document.getElementById('screen-' + tab);
+  if (target) {
+    target.classList.remove('hidden');
+    target.classList.add('active');
+    target.scrollTop = 0;
+    target.style.pointerEvents = '';
+    target.style.zIndex = '5';
+  }
+  // Update tab bar
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.tab-btn[data-tab="' + tab + '"]')?.classList.add('active');
+  // Show tab bar
+  document.getElementById('tabBar').classList.remove('hidden');
+}
+
 function showScreen(id) {
   if (navTimeout) { clearTimeout(navTimeout); navTimeout = null; }
   // Track previous screen (don't track paywall so goBack works correctly)
@@ -3349,7 +3425,7 @@ function showScreen(id) {
       s.style.zIndex = '5';
     } else if (isActive) {
       s.classList.remove('active');
-      s.classList.add(id === 'home' ? 'slide-left' : 'slide-right');
+      s.classList.add('slide-right');
       s.style.pointerEvents = 'none';
       s.style.zIndex = '1';
       navTimeout = setTimeout(() => {
@@ -3364,11 +3440,22 @@ function showScreen(id) {
       s.style.zIndex = '0';
     }
   });
+  // Hide tab bar for overlay screens
+  if (TAB_SCREENS.indexOf(id) === -1) {
+    document.getElementById('tabBar').classList.add('hidden');
+  }
   currentScreen = id;
 }
 
-function goHome() { playClick('tap'); renderBookmarks(); showScreen('home'); hideFab(); }
-function goBack() { playClick('tap'); showScreen(previousScreen); }
+function goHome() { playClick('tap'); renderBookmarks(); switchTab('home'); hideFab(); }
+function goBack() {
+  playClick('tap');
+  if (TAB_SCREENS.indexOf(previousScreen) !== -1) {
+    switchTab(previousScreen);
+  } else {
+    showScreen(previousScreen);
+  }
+}
 function goHistory() { playClick('tap'); renderHistory(); showScreen('history'); }
 function goPrivacy() { playClick('tap'); showScreen('privacy'); }
 
@@ -3376,15 +3463,11 @@ function dismissOnboarding() {
   document.getElementById('onboardingOverlay').classList.add('hidden');
   localStorage.setItem('preppro-onboarded', 'true');
 }
-function goSuggestions() { playClick('tap'); renderSuggestCategories(); loadSuggestedRoles(); renderRequestedRoles(); showScreen('suggestions'); }
+function goSuggestions() { playClick('tap'); renderSuggestCategories(); loadSuggestedRoles(); renderRequestedRoles(); switchTab('suggest-tab'); }
 
 function goRoles() {
   hideFab();
-  if (currentCategory) {
-    showScreen('roles');
-  } else {
-    goHome();
-  }
+  switchTab('roles-tab');
 }
 
 // === CATEGORIES ===
@@ -3411,13 +3494,55 @@ function renderCategories() {
   });
 }
 
+function renderMockTab() {
+  const body = document.getElementById('mockTabBody');
+  if (body.children.length > 0) return; // already rendered
+  const picker = document.createElement('div');
+  picker.className = 'picker-list';
+  Object.entries(DATA).forEach(([catName, cat]) => {
+    const section = document.createElement('div');
+    section.className = 'picker-cat';
+    const header = document.createElement('div');
+    header.className = 'picker-cat-header';
+    header.innerHTML = '<span class="picker-cat-arrow">&#9654;</span> ' + cat.icon + ' ' + catName;
+    header.addEventListener('click', () => {
+      playClick('tap');
+      section.classList.toggle('open');
+    });
+    section.appendChild(header);
+    const rolesDiv = document.createElement('div');
+    rolesDiv.className = 'picker-cat-roles';
+    Object.entries(cat.roles).forEach(([roleName, questions]) => {
+      const row = document.createElement('div');
+      row.className = 'picker-role-row';
+      row.innerHTML = '<div class="picker-role-icon">' + cat.icon + '</div><div class="picker-role-name">' + roleName + '</div><div class="picker-role-count">' + questions.length + ' Q</div>';
+      row.addEventListener('click', () => {
+        playClick('select');
+        startMock(roleName, questions);
+      });
+      rolesDiv.appendChild(row);
+    });
+    section.appendChild(rolesDiv);
+    picker.appendChild(section);
+  });
+  body.appendChild(picker);
+}
+
 function openCategory(name, keepFilter) {
   currentCategory = name;
   if (!keepFilter) activeDifficulty = null;
   const cat = DATA[name];
-  document.getElementById('rolesTitle').textContent = name;
-  const list = document.getElementById('roleList');
-  list.innerHTML = '';
+  const content = document.getElementById('rolesTabContent');
+
+  // Build role list with back button
+  content.innerHTML = '';
+  const header = document.createElement('div');
+  header.style.cssText = 'display:flex;align-items:center;gap:12px;padding:0 20px 8px';
+  header.innerHTML = '<button class="back-btn" onclick="closeCategory()" style="font-size:22px;color:var(--accent)">&#8592;</button><div><div style="font-size:20px;font-weight:800;color:var(--text)">' + name + '</div></div>';
+  content.appendChild(header);
+
+  const list = document.createElement('div');
+  list.className = 'role-list';
 
   // Difficulty filter pills
   const filterRow = document.createElement('div');
@@ -3442,7 +3567,7 @@ function openCategory(name, keepFilter) {
     const card = document.createElement('div');
     card.className = 'role-card fade-in';
     const isBookmarked = bookmarks.includes(roleName);
-    card.innerHTML = `<div class="role-icon">${cat.icon}</div><div class="role-info"><div class="role-name">${roleName}</div><div class="role-meta">${questions.length} questions \u2022 ${diff}</div></div><div class="bookmark-btn ${isBookmarked ? 'active' : ''}" data-role="${roleName}">&#9733;</div><div class="role-arrow">\u203A</div>`;
+    card.innerHTML = '<div class="role-icon">' + cat.icon + '</div><div class="role-info"><div class="role-name">' + roleName + '</div><div class="role-meta">' + questions.length + ' questions \u2022 ' + diff + '</div></div><div class="bookmark-btn ' + (isBookmarked ? 'active' : '') + '" data-role="' + roleName + '">&#9733;</div><div class="role-arrow">\u203A</div>';
     card.querySelector('.bookmark-btn').addEventListener('click', (e) => {
       e.stopPropagation();
       toggleBookmark(roleName);
@@ -3451,8 +3576,15 @@ function openCategory(name, keepFilter) {
     card.addEventListener('click', () => { playClick('tap'); openRole(roleName, questions); });
     list.appendChild(card);
   });
-  document.getElementById('rolesSubtitle').textContent = count + ' roles' + (activeDifficulty ? ' (' + activeDifficulty + ')' : '');
-  showScreen('roles');
+  content.appendChild(list);
+}
+
+function closeCategory() {
+  currentCategory = null;
+  activeDifficulty = null;
+  const content = document.getElementById('rolesTabContent');
+  content.innerHTML = '<div class="category-grid" id="categoryGrid"></div>';
+  renderCategories();
 }
 
 // === QUESTIONS ===
@@ -3552,15 +3684,9 @@ function setupSearch() {
 function performSearch(query) {
   const resultsDiv = document.getElementById('searchResults');
   const resultsList = document.getElementById('searchResultsList');
-  const catGrid = document.getElementById('categoryGrid');
 
   if (!query) {
     resultsDiv.style.display = 'none';
-    catGrid.style.display = '';
-    document.querySelector('.section-title').style.display = '';
-    document.querySelector('.mock-card').style.display = '';
-    const pc = document.getElementById('progressCard'); if (pc) pc.style.display = '';
-    const sc = document.querySelector('.suggest-card'); if (sc) sc.style.display = '';
     return;
   }
 
@@ -3579,11 +3705,6 @@ function performSearch(query) {
     });
   });
 
-  catGrid.style.display = 'none';
-  document.querySelector('.mock-card').style.display = 'none';
-  document.querySelectorAll('.section-title')[0].style.display = 'none';
-  const pc = document.getElementById('progressCard'); if (pc) pc.style.display = 'none';
-  const sc = document.querySelector('.suggest-card'); if (sc) sc.style.display = 'none';
   resultsDiv.style.display = '';
   resultsList.innerHTML = '';
 
@@ -3792,6 +3913,7 @@ function startMock(roleName, questions) {
   showMockCard();
   startMockTimer();
   document.getElementById('mockOverlay').classList.add('active');
+  document.getElementById('tabBar').classList.add('hidden');
 }
 
 function showMockCard() {
@@ -3953,6 +4075,7 @@ function endMock() {
 function closeMock() {
   clearInterval(mockTimerInterval);
   document.getElementById('mockOverlay').classList.remove('active');
+  document.getElementById('tabBar').classList.remove('hidden');
 }
 
 function shareResults() {
@@ -4190,5 +4313,30 @@ function renderRequestedRoles() {
 }
 
 init();</script>
+
+<!-- BOTTOM TAB BAR -->
+<div class="tab-bar" id="tabBar">
+  <button class="tab-btn active" data-tab="home" onclick="switchTab('home')">
+    <span class="tab-icon">&#127968;</span>
+    <span class="tab-label">Home</span>
+  </button>
+  <button class="tab-btn" data-tab="roles-tab" onclick="switchTab('roles-tab')">
+    <span class="tab-icon">&#128218;</span>
+    <span class="tab-label">Roles</span>
+  </button>
+  <button class="tab-btn" data-tab="mock-tab" onclick="switchTab('mock-tab')">
+    <span class="tab-icon">&#9889;</span>
+    <span class="tab-label">Mock</span>
+  </button>
+  <button class="tab-btn" data-tab="suggest-tab" onclick="switchTab('suggest-tab')">
+    <span class="tab-icon">&#128161;</span>
+    <span class="tab-label">Suggest</span>
+  </button>
+  <button class="tab-btn" data-tab="more" onclick="switchTab('more')">
+    <span class="tab-icon">&#8942;</span>
+    <span class="tab-label">More</span>
+  </button>
+</div>
+
 </body>
 </html>
