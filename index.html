@@ -686,7 +686,16 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
 <div class="theme-toast" id="themeToast"></div>
 
 <script>
+var currentUser = null;
+var userSubscription = null;
+var firebaseReady = false;
+var PRICE_IDS = {
+  monthly: 'price_1TN3YgGt5uZHcKbBx1254LHr',
+  yearly: 'price_1TN3ZtGt5uZHcKbBhspOo95L',
+};
+
 scriptsLoaded.then(function() {
+firebaseReady = true;
 // === FIREBASE CONFIG ===
 const firebaseConfig = {
   apiKey: "AIzaSyCvV-cHZxs8vVlUGd-rR9hsuV_emdnSGd0",
@@ -701,15 +710,6 @@ const auth = firebase.auth();
 const firebaseFunctions = firebase.functions();
 const stripe = Stripe('pk_test_51TN3TvGt5uZHcKbB83lFj0mkzl7aTTmuLs0fyF8Mvnr8wcA53vjUvEPQicc38UMnuVIX3dFtsbxgOKOBMaP3fREZ00dx8qSFTK');
 
-// Stripe price IDs — replace with your actual price IDs from Stripe Dashboard
-const PRICE_IDS = {
-  monthly: 'price_1TN3YgGt5uZHcKbBx1254LHr',
-  yearly: 'price_1TN3ZtGt5uZHcKbBhspOo95L',
-};
-
-// Auth & subscription state
-let currentUser = null;
-let userSubscription = null;
 
 // === AUTH STATE ===
 auth.onAuthStateChanged(async (user) => {
@@ -3332,7 +3332,7 @@ function checkSubscription() {
   } else {
     isSubscribed = false;
   }
-  updateAuthUI();
+  if (typeof updateAuthUI === 'function') updateAuthUI();
   return isSubscribed;
 }
 
