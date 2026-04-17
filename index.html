@@ -311,13 +311,23 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .more-footer{text-align:center;padding:24px 20px}
 .more-footer-text{font-size:12px;color:var(--text-secondary);opacity:0.5}
 </style>
-<!-- Firebase SDKs (compat) -->
-<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-app-compat.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-auth-compat.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-firestore-compat.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-functions-compat.min.js"></script>
-<!-- Stripe.js -->
-<script src="https://js.stripe.com/v3/"></script>
+<!-- Firebase + Stripe loaded dynamically -->
+<script>
+function loadScript(src) {
+  return new Promise(function(resolve, reject) {
+    var s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-app-compat.min.js')
+  .then(function() { return loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-auth-compat.min.js'); })
+  .then(function() { return loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-firestore-compat.min.js'); })
+  .then(function() { return loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-functions-compat.min.js'); })
+  .then(function() { return loadScript('https://js.stripe.com/v3/'); });
+</script>
 </head>
 <body data-theme="dark">
 <div id="app">
@@ -676,6 +686,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 <div class="theme-toast" id="themeToast"></div>
 
 <script>
+scriptsLoaded.then(function() {
 // === FIREBASE CONFIG ===
 const firebaseConfig = {
   apiKey: "AIzaSyCvV-cHZxs8vVlUGd-rR9hsuV_emdnSGd0",
@@ -856,6 +867,7 @@ function updateAuthUI() {
     if (paywallBtn) paywallBtn.textContent = 'Sign In to Subscribe';
   }
 }
+}); // end scriptsLoaded.then
 
 const CERTS = {
   // === TECH ===
