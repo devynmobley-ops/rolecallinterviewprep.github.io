@@ -311,6 +311,13 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .more-footer{text-align:center;padding:24px 20px}
 .more-footer-text{font-size:12px;color:var(--text-secondary);opacity:0.5}
 </style>
+<!-- Firebase SDKs (compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-functions-compat.js"></script>
+<!-- Stripe.js -->
+<script src="https://js.stripe.com/v3/"></script>
 </head>
 <body data-theme="dark">
 <div id="app">
@@ -499,9 +506,43 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
         <div class="price-amount">$29.99/yr</div>
       </div>
     </div>
-    <button class="paywall-subscribe-btn" onclick="subscribe()">Start Free Trial</button>
+    <button class="paywall-subscribe-btn" onclick="subscribe()" id="paywallBtn">Start Free Trial</button>
     <p class="paywall-trial">7-day free trial, cancel anytime</p>
     <p class="paywall-legal">Cancel in Settings anytime. Subscription renews automatically.</p>
+  </div>
+</div>
+
+<!-- AUTH PROMPT SCREEN -->
+<div id="screen-auth" class="screen slide-left hidden">
+  <div class="header">
+    <div class="header-row">
+      <button class="back-btn" onclick="goBack()">&#8592;</button>
+      <h1>Sign In</h1>
+    </div>
+  </div>
+  <div class="paywall-body" style="padding:20px">
+    <p id="authPromptText" style="color:var(--text-secondary);text-align:center;margin-bottom:24px;font-size:15px">
+      Sign in to continue
+    </p>
+    <button class="paywall-subscribe-btn" onclick="signInWithGoogle()" style="margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:10px">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#fff" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#fff" opacity=".6" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z"/><path fill="#fff" opacity=".6" d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#fff" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 6.29C4.672 4.163 6.656 2.58 9 2.58z"/></svg>
+      Sign in with Google
+    </button>
+    <div style="text-align:center;color:var(--text-secondary);font-size:13px;margin:16px 0;position:relative">
+      <hr style="border:none;border-top:1px solid var(--card-hover);margin:0">
+      <span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--bg);padding:0 12px">or</span>
+    </div>
+    <div style="margin-bottom:12px">
+      <input id="authEmail" type="email" placeholder="Email" autocomplete="email"
+        style="width:100%;padding:12px 16px;border-radius:var(--radius);border:1px solid var(--card-hover);background:var(--card);color:var(--text);font-size:15px;outline:none">
+    </div>
+    <div style="margin-bottom:16px">
+      <input id="authPassword" type="password" placeholder="Password" autocomplete="current-password"
+        style="width:100%;padding:12px 16px;border-radius:var(--radius);border:1px solid var(--card-hover);background:var(--card);color:var(--text);font-size:15px;outline:none">
+    </div>
+    <button class="paywall-subscribe-btn" onclick="handleEmailAuth()" style="background:var(--card);border:1px solid var(--card-hover)">
+      Sign in / Create Account
+    </button>
   </div>
 </div>
 
@@ -513,9 +554,19 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
   <div class="more-list">
     <div class="more-section">
       <div class="more-section-title">Account</div>
-      <div class="more-item" onclick="showPaywall()">
+      <div id="authMoreItem" class="more-item" onclick="handleAccountClick()">
+        <span class="more-icon" id="authMoreIcon">&#128100;</span>
+        <span class="more-label" id="authMoreLabel">Sign In</span>
+        <span class="more-arrow">&#8594;</span>
+      </div>
+      <div id="subscriptionMoreItem" class="more-item" onclick="showPaywall()">
         <span class="more-icon">&#11088;</span>
-        <span class="more-label">Subscription</span>
+        <span class="more-label" id="subMoreLabel">Subscription</span>
+        <span class="more-arrow">&#8594;</span>
+      </div>
+      <div id="manageSubMoreItem" class="more-item" onclick="openCustomerPortal()" style="display:none">
+        <span class="more-icon">&#9881;&#65039;</span>
+        <span class="more-label">Manage Subscription</span>
         <span class="more-arrow">&#8594;</span>
       </div>
     </div>
@@ -625,6 +676,187 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 <div class="theme-toast" id="themeToast"></div>
 
 <script>
+// === FIREBASE CONFIG ===
+const firebaseConfig = {
+  apiKey: "AIzaSyCvV-cHZxs8vVlUGd-rR9hsuV_emdnSGd0",
+  authDomain: "rolecall-interview-prep-a49a3.firebaseapp.com",
+  projectId: "rolecall-interview-prep-a49a3",
+  storageBucket: "rolecall-interview-prep-a49a3.firebasestorage.app",
+  messagingSenderId: "884506529130",
+  appId: "1:884506529130:web:f25e56c2ee4f7ef6506913"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+const firebaseFunctions = firebase.functions();
+const stripe = Stripe('pk_test_51TN3TvGt5uZHcKbB83lFj0mkzl7aTTmuLs0fyF8Mvnr8wcA53vjUvEPQicc38UMnuVIX3dFtsbxgOKOBMaP3fREZ00dx8qSFTK');
+
+// Stripe price IDs — replace with your actual price IDs from Stripe Dashboard
+const PRICE_IDS = {
+  monthly: 'price_1TN3YgGt5uZHcKbBx1254LHr',
+  yearly: 'price_1TN3ZtGt5uZHcKbBhspOo95L',
+};
+
+// Auth & subscription state
+let currentUser = null;
+let userSubscription = null;
+
+// === AUTH STATE ===
+auth.onAuthStateChanged(async (user) => {
+  currentUser = user;
+  updateAuthUI();
+  if (user) {
+    await loadSubscriptionFromFirestore(user.uid);
+    if (localStorage.getItem('rolecall-subscribed') === 'true' && !userSubscription) {
+      await migrateLocalSubscription(user.uid);
+    }
+  } else {
+    userSubscription = null;
+  }
+  checkSubscription();
+});
+
+// === AUTH FUNCTIONS ===
+async function signInWithGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  try {
+    await auth.signInWithPopup(provider);
+    showToast('Signed in successfully!');
+  } catch (err) {
+    if (err.code === 'auth/popup-closed-by-user') return;
+    showToast('Sign-in failed. Please try again.');
+    console.error('Google sign-in error:', err);
+  }
+}
+
+async function signInWithEmail(email, password) {
+  try {
+    await auth.signInWithEmailAndPassword(email, password);
+    showToast('Signed in!');
+  } catch (err) {
+    if (err.code === 'auth/user-not-found') {
+      try {
+        await auth.createUserWithEmailAndPassword(email, password);
+        showToast('Account created!');
+      } catch (createErr) {
+        showToast('Could not create account.');
+        console.error('Email sign-up error:', createErr);
+      }
+    } else {
+      showToast('Sign-in failed. Check your credentials.');
+      console.error('Email sign-in error:', err);
+    }
+  }
+}
+
+async function signOutUser() {
+  await auth.signOut();
+  isSubscribed = false;
+  userSubscription = null;
+  showToast('Signed out.');
+  updateAuthUI();
+  checkSubscription();
+}
+
+function showAuthPrompt(message) {
+  const textEl = document.getElementById('authPromptText');
+  if (textEl) textEl.textContent = message || 'Sign in to continue';
+  showScreen('auth');
+}
+
+function handleEmailAuth() {
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  if (!email || !password) {
+    showToast('Please enter email and password.');
+    return;
+  }
+  signInWithEmail(email, password);
+}
+
+function handleAccountClick() {
+  if (currentUser) {
+    if (confirm('Sign out of ' + (currentUser.email || 'your account') + '?')) {
+      signOutUser();
+    }
+  } else {
+    showAuthPrompt('Sign in to your account');
+  }
+}
+
+// === SUBSCRIPTION (FIRESTORE) ===
+async function loadSubscriptionFromFirestore(uid) {
+  try {
+    const subSnap = await db.collection('customers').doc(uid)
+      .collection('subscriptions')
+      .where('status', 'in', ['active', 'trialing'])
+      .get();
+    if (!subSnap.empty) {
+      const doc = subSnap.docs[0];
+      userSubscription = { id: doc.id, ...doc.data() };
+    } else {
+      userSubscription = null;
+    }
+  } catch (err) {
+    console.error('Error loading subscription:', err);
+    userSubscription = null;
+  }
+}
+
+async function migrateLocalSubscription(uid) {
+  try {
+    await db.collection('customers').doc(uid).set({
+      migratedFromLocalStorage: true,
+      migratedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+    localStorage.removeItem('rolecall-subscribed');
+    userSubscription = { status: 'active', migrated: true };
+    showToast('Your subscription has been linked to your account.');
+  } catch (err) {
+    console.error('Migration error:', err);
+  }
+}
+
+async function openCustomerPortal() {
+  if (!currentUser) return;
+  try {
+    const createPortalSession = firebaseFunctions.httpsCallable('createPortalSession');
+    const result = await createPortalSession();
+    window.location.href = result.data.url;
+  } catch (err) {
+    console.error('Portal error:', err);
+    showToast('Could not open subscription management.');
+  }
+}
+
+function updateAuthUI() {
+  const authLabel = document.getElementById('authMoreLabel');
+  const authIcon = document.getElementById('authMoreIcon');
+  const subLabel = document.getElementById('subMoreLabel');
+  const manageItem = document.getElementById('manageSubMoreItem');
+  const paywallBtn = document.getElementById('paywallBtn');
+
+  if (currentUser) {
+    if (authLabel) authLabel.textContent = currentUser.displayName || currentUser.email || 'Account';
+    if (authIcon) authIcon.textContent = '\u{1F464}';
+
+    if (isSubscribed) {
+      if (subLabel) subLabel.textContent = 'Pro (Active)';
+      if (manageItem) manageItem.style.display = '';
+    } else {
+      if (subLabel) subLabel.textContent = 'Free Tier';
+      if (manageItem) manageItem.style.display = 'none';
+    }
+    if (paywallBtn) paywallBtn.textContent = 'Start Free Trial';
+  } else {
+    if (authLabel) authLabel.textContent = 'Sign In';
+    if (authIcon) authIcon.textContent = '\u{1F511}';
+    if (subLabel) subLabel.textContent = 'Subscription';
+    if (manageItem) manageItem.style.display = 'none';
+    if (paywallBtn) paywallBtn.textContent = 'Sign In to Subscribe';
+  }
+}
+
 const CERTS = {
   // === TECH ===
   "Software Engineer": { degrees: ["BS Computer Science", "BS Software Engineering", "Related technical degree"], certs: ["AWS Certified Developer", "Google Professional Cloud Developer", "CompTIA Linux+"] },
@@ -3082,8 +3314,14 @@ function toggleBookmark(roleName) {
 
 // === SUBSCRIPTION ===
 function checkSubscription() {
-  // TODO: Replace with real Capacitor IAP plugin call
-  isSubscribed = localStorage.getItem('rolecall-subscribed') === 'true';
+  if (userSubscription && (userSubscription.status === 'active' || userSubscription.status === 'trialing' || userSubscription.migrated)) {
+    isSubscribed = true;
+  } else if (!currentUser && localStorage.getItem('rolecall-subscribed') === 'true') {
+    isSubscribed = true;
+  } else {
+    isSubscribed = false;
+  }
+  updateAuthUI();
   return isSubscribed;
 }
 
@@ -3100,18 +3338,41 @@ function selectPlan(plan, el) {
   selectedPlan = plan;
 }
 
-function subscribe() {
-  // TODO: Replace with real Capacitor IAP purchase call
-  localStorage.setItem('rolecall-subscribed', 'true');
-  isSubscribed = true;
-  showToast('Subscribed! All content unlocked.');
-  goBack();
+async function subscribe() {
+  playClick('tap');
+  if (!currentUser) {
+    showAuthPrompt('Sign in to start your subscription');
+    return;
+  }
+  const priceId = PRICE_IDS[selectedPlan];
+  if (!priceId) {
+    showToast('Error: please select a plan.');
+    return;
+  }
+  try {
+    const createCheckoutSession = firebaseFunctions.httpsCallable('createCheckoutSession');
+    const result = await createCheckoutSession({ priceId });
+    window.location.href = result.data.url;
+  } catch (err) {
+    console.error('Checkout error:', err);
+    showToast('Could not start checkout. Please try again.');
+  }
 }
 
 // === INIT ===
 const APP_VERSION = '1.0.0';
 
 function init() {
+  // Handle Stripe Checkout return
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('checkout') === 'success') {
+    showToast('Subscription activated! Welcome to RoleCall Pro.');
+    window.history.replaceState({}, '', window.location.pathname);
+  } else if (urlParams.get('checkout') === 'cancel') {
+    showToast('Checkout cancelled.');
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+
   loadTheme();
   renderThemeOptions();
   renderCategories();
@@ -3264,6 +3525,15 @@ function showThemeToast(name) {
   toast.textContent = t ? t.name + ' theme' : name;
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 1200);
+}
+
+function showToast(message, duration) {
+  duration = duration || 2500;
+  const toast = document.getElementById('themeToast');
+  if (!toast) return;
+  toast.textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), duration);
 }
 
 function renderHistory() {
