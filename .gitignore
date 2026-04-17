@@ -3,3 +3,6 @@ fix_endings.cjs
 remove_another_brace.cjs
 extract_data.cjs
 .git/
+functions/node_modules/
+functions/.env
+firebase-debug.log

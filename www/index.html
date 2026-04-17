@@ -82,7 +82,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .accordion.open .accordion-body{max-height:400px}
 .accordion-tip{padding:0 16px 16px 52px;font-size:13px;color:var(--text-secondary);line-height:1.6}
 .accordion-tip strong{color:var(--accent-light);font-weight:600}
-.mock-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:100;display:flex;flex-direction:column;transform:translateY(100%);transition:transform var(--transition);padding-top:calc(var(--safe-top) + 12px);padding-bottom:calc(var(--safe-bottom) + 12px)}
+.mock-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:200;display:flex;flex-direction:column;transform:translateY(100%);transition:transform var(--transition);padding-top:calc(var(--safe-top) + 12px);padding-bottom:calc(var(--safe-bottom) + 12px)}
 .mock-overlay.active{transform:translateY(0)}
 .mock-top{padding:12px 20px;display:flex;align-items:center;gap:12px}
 .mock-close{background:none;border:none;color:var(--text-secondary);font-size:22px;cursor:pointer;min-width:40px;min-height:40px;display:flex;align-items:center;justify-content:center;border-radius:8px}
@@ -287,15 +287,43 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .paywall-trial{font-size:12px;color:var(--text-secondary);margin-top:12px}
 .paywall-legal{font-size:11px;color:var(--text-secondary);margin-top:8px;opacity:0.7}
 .locked-question{cursor:pointer}
+.locked-question .accordion-question{filter:blur(5px);user-select:none;pointer-events:none}
 .accordion-lock{font-size:16px;flex-shrink:0;margin-top:2px}
 .mock-paywall-cta{text-align:center;padding:20px 0}
+/* === TAB BAR === */
+.tab-bar{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;align-items:center;height:60px;padding-bottom:env(safe-area-inset-bottom);background:var(--card);border-top:1px solid rgba(255,255,255,0.06);z-index:100}
+.tab-bar.hidden{display:none}
+.tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 0;background:none;border:none;cursor:pointer;opacity:0.5;transition:opacity 0.2s}
+.tab-btn.active{opacity:1}
+.tab-icon{font-size:20px}
+.tab-label{font-size:10px;font-weight:600;color:var(--text)}
+/* === TAB SCREENS === */
+.screen.tab-screen{padding-bottom:80px}
+.roles-tab-header{padding:12px 20px}
+.roles-tab-title{font-size:20px;font-weight:800;color:var(--text)}
+.more-list{padding:0 16px}
+.more-item{display:flex;align-items:center;gap:14px;padding:16px;background:var(--card);border-radius:14px;margin-bottom:8px;cursor:pointer}
+.more-icon{font-size:20px}
+.more-label{font-size:15px;font-weight:600;color:var(--text)}
+.more-arrow{margin-left:auto;color:var(--text-secondary);font-size:14px}
+.more-section{margin-top:16px}
+.more-section-title{font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;padding:0 20px;margin-bottom:8px}
+.more-footer{text-align:center;padding:24px 20px}
+.more-footer-text{font-size:12px;color:var(--text-secondary);opacity:0.5}
 </style>
+<!-- Firebase SDKs (compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-functions-compat.js"></script>
+<!-- Stripe.js -->
+<script src="https://js.stripe.com/v3/"></script>
 </head>
 <body data-theme="dark">
 <div id="app">
 
 <!-- HOME SCREEN -->
-<div id="screen-home" class="screen active">
+<div id="screen-home" class="screen active tab-screen">
   <div class="logo">
     <h1>RoleCall</h1>
     <p>Prepping you for interviews since 2026</p>
@@ -314,9 +342,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
   </div>
   <div class="section-title" id="bookmarksTitle" style="display:none">Bookmarked Roles</div>
   <div id="bookmarksList" class="bookmarks-list"></div>
-  <div class="section-title">Categories</div>
-  <div class="category-grid" id="categoryGrid"></div>
-  <div class="progress-card" id="progressCard" onclick="goHistory()">
+  <div class="progress-card" id="progressCard">
     <div class="progress-header">
       <h3>Your Progress</h3>
       <span class="progress-badge" id="progressBadge">Start practicing!</span>
@@ -336,39 +362,30 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
       </div>
     </div>
   </div>
-  <div class="mock-card" onclick="openMockPicker()">
-    <div class="mock-icon">&#9889;</div>
-    <h3>Mock Interview</h3>
-    <p>Practice with 10 random questions from any role</p>
-  </div>
-  <div class="suggest-card" onclick="goSuggestions()">
-    <div class="suggest-card-icon">&#128161;</div>
-    <h3>Suggest a Role</h3>
-    <p>Don't see your role? Let us know what to add</p>
-  </div>
   <div id="searchResults" style="display:none">
     <div class="section-title">Search Results</div>
     <div class="role-list" id="searchResultsList"></div>
   </div>
-  <div class="home-footer">
-    <a href="#" onclick="goPrivacy(); return false;">Privacy Policy</a>
-    <span class="footer-version" id="appVersion">v1.0.0</span>
+</div>
+
+<!-- ROLES TAB SCREEN -->
+<div id="screen-roles-tab" class="screen hidden tab-screen">
+  <div class="roles-tab-header">
+    <div class="roles-tab-title">Browse Roles</div>
+  </div>
+  <div id="rolesTabContent">
+    <div class="category-grid" id="categoryGrid"></div>
   </div>
 </div>
 
-<!-- ROLES SCREEN -->
-<div id="screen-roles" class="screen slide-left hidden">
-  <div class="header">
-    <div class="header-row">
-      <button class="back-btn" onclick="goHome()">&#8592;</button>
-      <div>
-        <h1 id="rolesTitle">Category</h1>
-        <div class="subtitle" id="rolesSubtitle"></div>
-      </div>
-    </div>
+<!-- MOCK TAB SCREEN -->
+<div id="screen-mock-tab" class="screen hidden tab-screen">
+  <div class="roles-tab-header">
+    <div class="roles-tab-title">Mock Interview</div>
   </div>
-  <div class="role-list" id="roleList"></div>
+  <div id="mockTabBody"></div>
 </div>
+
 
 <!-- QUESTIONS SCREEN -->
 <div id="screen-questions" class="screen slide-left hidden">
@@ -386,16 +403,10 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
   <div class="fab-mock" onclick="startMockFromQuestions()">&#9889; Mock Interview</div>
 </div>
 
-<!-- SUGGESTIONS SCREEN -->
-<div id="screen-suggestions" class="screen slide-left hidden">
-  <div class="header">
-    <div class="header-row">
-      <button class="back-btn" onclick="goHome()">&#8592;</button>
-      <div>
-        <h1>Suggest a Role</h1>
-        <div class="subtitle">Help us grow our question library</div>
-      </div>
-    </div>
+<!-- SUGGESTIONS TAB SCREEN -->
+<div id="screen-suggest-tab" class="screen hidden tab-screen">
+  <div class="roles-tab-header">
+    <div class="roles-tab-title">Suggest a Role</div>
   </div>
   <div class="suggest-body">
     <div id="suggestForm">
@@ -431,11 +442,11 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
   </div>
 </div>
 
-<!-- HISTORY SCREEN -->
+<!-- HISTORY SCREEN (overlay) -->
 <div id="screen-history" class="screen slide-left hidden">
   <div class="header">
     <div class="header-row">
-      <button class="back-btn" onclick="goHome()">&#8592;</button>
+      <button class="back-btn" onclick="goBack()">&#8592;</button>
       <div>
         <h1>Practice History</h1>
         <div class="subtitle">Your recent mock interview sessions</div>
@@ -449,7 +460,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 <div id="screen-privacy" class="screen slide-left hidden">
   <div class="header">
     <div class="header-row">
-      <button class="back-btn" onclick="goHome()">&#8592;</button>
+      <button class="back-btn" onclick="goBack()">&#8592;</button>
       <div>
         <h1>Privacy Policy</h1>
         <div class="subtitle">Last updated: April 2026</div>
@@ -495,9 +506,93 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
         <div class="price-amount">$29.99/yr</div>
       </div>
     </div>
-    <button class="paywall-subscribe-btn" onclick="subscribe()">Start Free Trial</button>
+    <button class="paywall-subscribe-btn" onclick="subscribe()" id="paywallBtn">Start Free Trial</button>
     <p class="paywall-trial">7-day free trial, cancel anytime</p>
     <p class="paywall-legal">Cancel in Settings anytime. Subscription renews automatically.</p>
+  </div>
+</div>
+
+<!-- AUTH PROMPT SCREEN -->
+<div id="screen-auth" class="screen slide-left hidden">
+  <div class="header">
+    <div class="header-row">
+      <button class="back-btn" onclick="goBack()">&#8592;</button>
+      <h1>Sign In</h1>
+    </div>
+  </div>
+  <div class="paywall-body" style="padding:20px">
+    <p id="authPromptText" style="color:var(--text-secondary);text-align:center;margin-bottom:24px;font-size:15px">
+      Sign in to continue
+    </p>
+    <button class="paywall-subscribe-btn" onclick="signInWithGoogle()" style="margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:10px">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#fff" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#fff" opacity=".6" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z"/><path fill="#fff" opacity=".6" d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#fff" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 6.29C4.672 4.163 6.656 2.58 9 2.58z"/></svg>
+      Sign in with Google
+    </button>
+    <div style="text-align:center;color:var(--text-secondary);font-size:13px;margin:16px 0;position:relative">
+      <hr style="border:none;border-top:1px solid var(--card-hover);margin:0">
+      <span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--bg);padding:0 12px">or</span>
+    </div>
+    <div style="margin-bottom:12px">
+      <input id="authEmail" type="email" placeholder="Email" autocomplete="email"
+        style="width:100%;padding:12px 16px;border-radius:var(--radius);border:1px solid var(--card-hover);background:var(--card);color:var(--text);font-size:15px;outline:none">
+    </div>
+    <div style="margin-bottom:16px">
+      <input id="authPassword" type="password" placeholder="Password" autocomplete="current-password"
+        style="width:100%;padding:12px 16px;border-radius:var(--radius);border:1px solid var(--card-hover);background:var(--card);color:var(--text);font-size:15px;outline:none">
+    </div>
+    <button class="paywall-subscribe-btn" onclick="handleEmailAuth()" style="background:var(--card);border:1px solid var(--card-hover)">
+      Sign in / Create Account
+    </button>
+  </div>
+</div>
+
+<!-- MORE TAB SCREEN -->
+<div id="screen-more" class="screen hidden tab-screen">
+  <div class="roles-tab-header">
+    <div class="roles-tab-title">More</div>
+  </div>
+  <div class="more-list">
+    <div class="more-section">
+      <div class="more-section-title">Account</div>
+      <div id="authMoreItem" class="more-item" onclick="handleAccountClick()">
+        <span class="more-icon" id="authMoreIcon">&#128100;</span>
+        <span class="more-label" id="authMoreLabel">Sign In</span>
+        <span class="more-arrow">&#8594;</span>
+      </div>
+      <div id="subscriptionMoreItem" class="more-item" onclick="showPaywall()">
+        <span class="more-icon">&#11088;</span>
+        <span class="more-label" id="subMoreLabel">Subscription</span>
+        <span class="more-arrow">&#8594;</span>
+      </div>
+      <div id="manageSubMoreItem" class="more-item" onclick="openCustomerPortal()" style="display:none">
+        <span class="more-icon">&#9881;&#65039;</span>
+        <span class="more-label">Manage Subscription</span>
+        <span class="more-arrow">&#8594;</span>
+      </div>
+    </div>
+    <div class="more-section">
+      <div class="more-section-title">Data</div>
+      <div class="more-item" onclick="goHistory()">
+        <span class="more-icon">&#128200;</span>
+        <span class="more-label">Practice History</span>
+        <span class="more-arrow">&#8594;</span>
+      </div>
+    </div>
+    <div class="more-section">
+      <div class="more-section-title">Settings</div>
+      <div id="moreThemePicker"></div>
+    </div>
+    <div class="more-section">
+      <div class="more-section-title">Legal</div>
+      <div class="more-item" onclick="goPrivacy()">
+        <span class="more-icon">&#128274;</span>
+        <span class="more-label">Privacy Policy</span>
+        <span class="more-arrow">&#8594;</span>
+      </div>
+    </div>
+  </div>
+  <div class="more-footer">
+    <span class="more-footer-text" id="appVersionMore">v1.0.0</span>
   </div>
 </div>
 
@@ -581,6 +676,187 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 <div class="theme-toast" id="themeToast"></div>
 
 <script>
+// === FIREBASE CONFIG ===
+const firebaseConfig = {
+  apiKey: "AIzaSyCvV-cHZxs8vVlUGd-rR9hsuV_emdnSGd0",
+  authDomain: "rolecall-interview-prep-a49a3.firebaseapp.com",
+  projectId: "rolecall-interview-prep-a49a3",
+  storageBucket: "rolecall-interview-prep-a49a3.firebasestorage.app",
+  messagingSenderId: "884506529130",
+  appId: "1:884506529130:web:f25e56c2ee4f7ef6506913"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+const firebaseFunctions = firebase.functions();
+const stripe = Stripe('pk_test_51TN3TvGt5uZHcKbB83lFj0mkzl7aTTmuLs0fyF8Mvnr8wcA53vjUvEPQicc38UMnuVIX3dFtsbxgOKOBMaP3fREZ00dx8qSFTK');
+
+// Stripe price IDs — replace with your actual price IDs from Stripe Dashboard
+const PRICE_IDS = {
+  monthly: 'price_1TN3YgGt5uZHcKbBx1254LHr',
+  yearly: 'price_1TN3ZtGt5uZHcKbBhspOo95L',
+};
+
+// Auth & subscription state
+let currentUser = null;
+let userSubscription = null;
+
+// === AUTH STATE ===
+auth.onAuthStateChanged(async (user) => {
+  currentUser = user;
+  updateAuthUI();
+  if (user) {
+    await loadSubscriptionFromFirestore(user.uid);
+    if (localStorage.getItem('rolecall-subscribed') === 'true' && !userSubscription) {
+      await migrateLocalSubscription(user.uid);
+    }
+  } else {
+    userSubscription = null;
+  }
+  checkSubscription();
+});
+
+// === AUTH FUNCTIONS ===
+async function signInWithGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  try {
+    await auth.signInWithPopup(provider);
+    showToast('Signed in successfully!');
+  } catch (err) {
+    if (err.code === 'auth/popup-closed-by-user') return;
+    showToast('Sign-in failed. Please try again.');
+    console.error('Google sign-in error:', err);
+  }
+}
+
+async function signInWithEmail(email, password) {
+  try {
+    await auth.signInWithEmailAndPassword(email, password);
+    showToast('Signed in!');
+  } catch (err) {
+    if (err.code === 'auth/user-not-found') {
+      try {
+        await auth.createUserWithEmailAndPassword(email, password);
+        showToast('Account created!');
+      } catch (createErr) {
+        showToast('Could not create account.');
+        console.error('Email sign-up error:', createErr);
+      }
+    } else {
+      showToast('Sign-in failed. Check your credentials.');
+      console.error('Email sign-in error:', err);
+    }
+  }
+}
+
+async function signOutUser() {
+  await auth.signOut();
+  isSubscribed = false;
+  userSubscription = null;
+  showToast('Signed out.');
+  updateAuthUI();
+  checkSubscription();
+}
+
+function showAuthPrompt(message) {
+  const textEl = document.getElementById('authPromptText');
+  if (textEl) textEl.textContent = message || 'Sign in to continue';
+  showScreen('auth');
+}
+
+function handleEmailAuth() {
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  if (!email || !password) {
+    showToast('Please enter email and password.');
+    return;
+  }
+  signInWithEmail(email, password);
+}
+
+function handleAccountClick() {
+  if (currentUser) {
+    if (confirm('Sign out of ' + (currentUser.email || 'your account') + '?')) {
+      signOutUser();
+    }
+  } else {
+    showAuthPrompt('Sign in to your account');
+  }
+}
+
+// === SUBSCRIPTION (FIRESTORE) ===
+async function loadSubscriptionFromFirestore(uid) {
+  try {
+    const subSnap = await db.collection('customers').doc(uid)
+      .collection('subscriptions')
+      .where('status', 'in', ['active', 'trialing'])
+      .get();
+    if (!subSnap.empty) {
+      const doc = subSnap.docs[0];
+      userSubscription = { id: doc.id, ...doc.data() };
+    } else {
+      userSubscription = null;
+    }
+  } catch (err) {
+    console.error('Error loading subscription:', err);
+    userSubscription = null;
+  }
+}
+
+async function migrateLocalSubscription(uid) {
+  try {
+    await db.collection('customers').doc(uid).set({
+      migratedFromLocalStorage: true,
+      migratedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+    localStorage.removeItem('rolecall-subscribed');
+    userSubscription = { status: 'active', migrated: true };
+    showToast('Your subscription has been linked to your account.');
+  } catch (err) {
+    console.error('Migration error:', err);
+  }
+}
+
+async function openCustomerPortal() {
+  if (!currentUser) return;
+  try {
+    const createPortalSession = firebaseFunctions.httpsCallable('createPortalSession');
+    const result = await createPortalSession();
+    window.location.href = result.data.url;
+  } catch (err) {
+    console.error('Portal error:', err);
+    showToast('Could not open subscription management.');
+  }
+}
+
+function updateAuthUI() {
+  const authLabel = document.getElementById('authMoreLabel');
+  const authIcon = document.getElementById('authMoreIcon');
+  const subLabel = document.getElementById('subMoreLabel');
+  const manageItem = document.getElementById('manageSubMoreItem');
+  const paywallBtn = document.getElementById('paywallBtn');
+
+  if (currentUser) {
+    if (authLabel) authLabel.textContent = currentUser.displayName || currentUser.email || 'Account';
+    if (authIcon) authIcon.textContent = '\u{1F464}';
+
+    if (isSubscribed) {
+      if (subLabel) subLabel.textContent = 'Pro (Active)';
+      if (manageItem) manageItem.style.display = '';
+    } else {
+      if (subLabel) subLabel.textContent = 'Free Tier';
+      if (manageItem) manageItem.style.display = 'none';
+    }
+    if (paywallBtn) paywallBtn.textContent = 'Start Free Trial';
+  } else {
+    if (authLabel) authLabel.textContent = 'Sign In';
+    if (authIcon) authIcon.textContent = '\u{1F511}';
+    if (subLabel) subLabel.textContent = 'Subscription';
+    if (manageItem) manageItem.style.display = 'none';
+    if (paywallBtn) paywallBtn.textContent = 'Sign In to Subscribe';
+  }
+}
+
 const CERTS = {
   // === TECH ===
   "Software Engineer": { degrees: ["BS Computer Science", "BS Software Engineering", "Related technical degree"], certs: ["AWS Certified Developer", "Google Professional Cloud Developer", "CompTIA Linux+"] },
@@ -3038,8 +3314,14 @@ function toggleBookmark(roleName) {
 
 // === SUBSCRIPTION ===
 function checkSubscription() {
-  // TODO: Replace with real Capacitor IAP plugin call
-  isSubscribed = localStorage.getItem('rolecall-subscribed') === 'true';
+  if (userSubscription && (userSubscription.status === 'active' || userSubscription.status === 'trialing' || userSubscription.migrated)) {
+    isSubscribed = true;
+  } else if (!currentUser && localStorage.getItem('rolecall-subscribed') === 'true') {
+    isSubscribed = true;
+  } else {
+    isSubscribed = false;
+  }
+  updateAuthUI();
   return isSubscribed;
 }
 
@@ -3056,21 +3338,45 @@ function selectPlan(plan, el) {
   selectedPlan = plan;
 }
 
-function subscribe() {
-  // TODO: Replace with real Capacitor IAP purchase call
-  localStorage.setItem('rolecall-subscribed', 'true');
-  isSubscribed = true;
-  showToast('Subscribed! All content unlocked.');
-  goBack();
+async function subscribe() {
+  playClick('tap');
+  if (!currentUser) {
+    showAuthPrompt('Sign in to start your subscription');
+    return;
+  }
+  const priceId = PRICE_IDS[selectedPlan];
+  if (!priceId) {
+    showToast('Error: please select a plan.');
+    return;
+  }
+  try {
+    const createCheckoutSession = firebaseFunctions.httpsCallable('createCheckoutSession');
+    const result = await createCheckoutSession({ priceId });
+    window.location.href = result.data.url;
+  } catch (err) {
+    console.error('Checkout error:', err);
+    showToast('Could not start checkout. Please try again.');
+  }
 }
 
 // === INIT ===
 const APP_VERSION = '1.0.0';
 
 function init() {
+  // Handle Stripe Checkout return
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('checkout') === 'success') {
+    showToast('Subscription activated! Welcome to RoleCall Pro.');
+    window.history.replaceState({}, '', window.location.pathname);
+  } else if (urlParams.get('checkout') === 'cancel') {
+    showToast('Checkout cancelled.');
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+
   loadTheme();
   renderThemeOptions();
   renderCategories();
+  renderMockTab();
   setupSearch();
   checkSubscription();
   hideFab();
@@ -3088,6 +3394,8 @@ function init() {
   // Version
   const verEl = document.getElementById('appVersion');
   if (verEl) verEl.textContent = 'v' + APP_VERSION;
+  const verElMore = document.getElementById('appVersionMore');
+  if (verElMore) verElMore.textContent = 'v' + APP_VERSION;
   // Analytics - increment app opens
   trackEvent('app_opens');
 }
@@ -3219,6 +3527,15 @@ function showThemeToast(name) {
   setTimeout(() => toast.classList.remove('show'), 1200);
 }
 
+function showToast(message, duration) {
+  duration = duration || 2500;
+  const toast = document.getElementById('themeToast');
+  if (!toast) return;
+  toast.textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), duration);
+}
+
 function renderHistory() {
   const container = document.getElementById('historyBody');
   if (!container) return;
@@ -3265,7 +3582,7 @@ function renderBookmarks() {
           toggleBookmark(roleName);
           renderBookmarks();
         });
-        card.addEventListener('click', () => { playClick('tap'); openCategory(catName); setTimeout(() => openRole(roleName, cat.roles[roleName]), 400); });
+        card.addEventListener('click', () => { playClick('tap'); switchTab('roles-tab'); setTimeout(() => openCategory(catName), 200); setTimeout(() => openRole(roleName, cat.roles[roleName]), 500); });
         container.appendChild(card);
       }
     });
@@ -3328,8 +3645,44 @@ document.addEventListener('click', function initAudioOnce() {
 
 // === NAVIGATION ===
 let navTimeout = null;
+let previousScreen = 'home';
+let currentTab = 'home';
+
+const TAB_SCREENS = ['home', 'roles-tab', 'mock-tab', 'suggest-tab', 'more'];
+
+function switchTab(tab) {
+  playClick('tap');
+  currentTab = tab;
+  // Hide all screens instantly
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active', 'slide-left', 'slide-right');
+    s.classList.add('hidden');
+    s.style.pointerEvents = 'none';
+    s.style.zIndex = '0';
+  });
+  // Show target
+  const target = document.getElementById('screen-' + tab);
+  if (target) {
+    target.classList.remove('hidden');
+    target.classList.add('active');
+    target.scrollTop = 0;
+    target.style.pointerEvents = '';
+    target.style.zIndex = '5';
+  }
+  // Update tab bar
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.tab-btn[data-tab="' + tab + '"]')?.classList.add('active');
+  // Show tab bar
+  document.getElementById('tabBar').classList.remove('hidden');
+}
+
 function showScreen(id) {
   if (navTimeout) { clearTimeout(navTimeout); navTimeout = null; }
+  // Track previous screen (don't track paywall so goBack works correctly)
+  const activeEl = document.querySelector('.screen.active');
+  if (activeEl && activeEl.id !== 'screen-paywall') {
+    previousScreen = activeEl.id.replace('screen-', '');
+  }
   const screens = document.querySelectorAll('.screen');
   screens.forEach(s => {
     const isTarget = s.id === 'screen-' + id;
@@ -3342,7 +3695,7 @@ function showScreen(id) {
       s.style.zIndex = '5';
     } else if (isActive) {
       s.classList.remove('active');
-      s.classList.add(id === 'home' ? 'slide-left' : 'slide-right');
+      s.classList.add('slide-right');
       s.style.pointerEvents = 'none';
       s.style.zIndex = '1';
       navTimeout = setTimeout(() => {
@@ -3357,10 +3710,22 @@ function showScreen(id) {
       s.style.zIndex = '0';
     }
   });
+  // Hide tab bar for overlay screens
+  if (TAB_SCREENS.indexOf(id) === -1) {
+    document.getElementById('tabBar').classList.add('hidden');
+  }
   currentScreen = id;
 }
 
-function goHome() { playClick('tap'); renderBookmarks(); showScreen('home'); hideFab(); }
+function goHome() { playClick('tap'); renderBookmarks(); switchTab('home'); hideFab(); }
+function goBack() {
+  playClick('tap');
+  if (TAB_SCREENS.indexOf(previousScreen) !== -1) {
+    switchTab(previousScreen);
+  } else {
+    showScreen(previousScreen);
+  }
+}
 function goHistory() { playClick('tap'); renderHistory(); showScreen('history'); }
 function goPrivacy() { playClick('tap'); showScreen('privacy'); }
 
@@ -3368,15 +3733,11 @@ function dismissOnboarding() {
   document.getElementById('onboardingOverlay').classList.add('hidden');
   localStorage.setItem('preppro-onboarded', 'true');
 }
-function goSuggestions() { playClick('tap'); renderSuggestCategories(); loadSuggestedRoles(); renderRequestedRoles(); showScreen('suggestions'); }
+function goSuggestions() { playClick('tap'); renderSuggestCategories(); loadSuggestedRoles(); renderRequestedRoles(); switchTab('suggest-tab'); }
 
 function goRoles() {
   hideFab();
-  if (currentCategory) {
-    showScreen('roles');
-  } else {
-    goHome();
-  }
+  switchTab('roles-tab');
 }
 
 // === CATEGORIES ===
@@ -3403,13 +3764,55 @@ function renderCategories() {
   });
 }
 
+function renderMockTab() {
+  const body = document.getElementById('mockTabBody');
+  if (body.children.length > 0) return; // already rendered
+  const picker = document.createElement('div');
+  picker.className = 'picker-list';
+  Object.entries(DATA).forEach(([catName, cat]) => {
+    const section = document.createElement('div');
+    section.className = 'picker-cat';
+    const header = document.createElement('div');
+    header.className = 'picker-cat-header';
+    header.innerHTML = '<span class="picker-cat-arrow">&#9654;</span> ' + cat.icon + ' ' + catName;
+    header.addEventListener('click', () => {
+      playClick('tap');
+      section.classList.toggle('open');
+    });
+    section.appendChild(header);
+    const rolesDiv = document.createElement('div');
+    rolesDiv.className = 'picker-cat-roles';
+    Object.entries(cat.roles).forEach(([roleName, questions]) => {
+      const row = document.createElement('div');
+      row.className = 'picker-role-row';
+      row.innerHTML = '<div class="picker-role-icon">' + cat.icon + '</div><div class="picker-role-name">' + roleName + '</div><div class="picker-role-count">' + questions.length + ' Q</div>';
+      row.addEventListener('click', () => {
+        playClick('select');
+        startMock(roleName, questions);
+      });
+      rolesDiv.appendChild(row);
+    });
+    section.appendChild(rolesDiv);
+    picker.appendChild(section);
+  });
+  body.appendChild(picker);
+}
+
 function openCategory(name, keepFilter) {
   currentCategory = name;
   if (!keepFilter) activeDifficulty = null;
   const cat = DATA[name];
-  document.getElementById('rolesTitle').textContent = name;
-  const list = document.getElementById('roleList');
-  list.innerHTML = '';
+  const content = document.getElementById('rolesTabContent');
+
+  // Build role list with back button
+  content.innerHTML = '';
+  const header = document.createElement('div');
+  header.style.cssText = 'display:flex;align-items:center;gap:12px;padding:0 20px 8px';
+  header.innerHTML = '<button class="back-btn" onclick="closeCategory()" style="font-size:22px;color:var(--accent)">&#8592;</button><div><div style="font-size:20px;font-weight:800;color:var(--text)">' + name + '</div></div>';
+  content.appendChild(header);
+
+  const list = document.createElement('div');
+  list.className = 'role-list';
 
   // Difficulty filter pills
   const filterRow = document.createElement('div');
@@ -3434,7 +3837,7 @@ function openCategory(name, keepFilter) {
     const card = document.createElement('div');
     card.className = 'role-card fade-in';
     const isBookmarked = bookmarks.includes(roleName);
-    card.innerHTML = `<div class="role-icon">${cat.icon}</div><div class="role-info"><div class="role-name">${roleName}</div><div class="role-meta">${questions.length} questions \u2022 ${diff}</div></div><div class="bookmark-btn ${isBookmarked ? 'active' : ''}" data-role="${roleName}">&#9733;</div><div class="role-arrow">\u203A</div>`;
+    card.innerHTML = '<div class="role-icon">' + cat.icon + '</div><div class="role-info"><div class="role-name">' + roleName + '</div><div class="role-meta">' + questions.length + ' questions \u2022 ' + diff + '</div></div><div class="bookmark-btn ' + (isBookmarked ? 'active' : '') + '" data-role="' + roleName + '">&#9733;</div><div class="role-arrow">\u203A</div>';
     card.querySelector('.bookmark-btn').addEventListener('click', (e) => {
       e.stopPropagation();
       toggleBookmark(roleName);
@@ -3443,8 +3846,15 @@ function openCategory(name, keepFilter) {
     card.addEventListener('click', () => { playClick('tap'); openRole(roleName, questions); });
     list.appendChild(card);
   });
-  document.getElementById('rolesSubtitle').textContent = count + ' roles' + (activeDifficulty ? ' (' + activeDifficulty + ')' : '');
-  showScreen('roles');
+  content.appendChild(list);
+}
+
+function closeCategory() {
+  currentCategory = null;
+  activeDifficulty = null;
+  const content = document.getElementById('rolesTabContent');
+  content.innerHTML = '<div class="category-grid" id="categoryGrid"></div>';
+  renderCategories();
 }
 
 // === QUESTIONS ===
@@ -3544,15 +3954,9 @@ function setupSearch() {
 function performSearch(query) {
   const resultsDiv = document.getElementById('searchResults');
   const resultsList = document.getElementById('searchResultsList');
-  const catGrid = document.getElementById('categoryGrid');
 
   if (!query) {
     resultsDiv.style.display = 'none';
-    catGrid.style.display = '';
-    document.querySelector('.section-title').style.display = '';
-    document.querySelector('.mock-card').style.display = '';
-    const pc = document.getElementById('progressCard'); if (pc) pc.style.display = '';
-    const sc = document.querySelector('.suggest-card'); if (sc) sc.style.display = '';
     return;
   }
 
@@ -3571,11 +3975,6 @@ function performSearch(query) {
     });
   });
 
-  catGrid.style.display = 'none';
-  document.querySelector('.mock-card').style.display = 'none';
-  document.querySelectorAll('.section-title')[0].style.display = 'none';
-  const pc = document.getElementById('progressCard'); if (pc) pc.style.display = 'none';
-  const sc = document.querySelector('.suggest-card'); if (sc) sc.style.display = 'none';
   resultsDiv.style.display = '';
   resultsList.innerHTML = '';
 
@@ -3784,6 +4183,7 @@ function startMock(roleName, questions) {
   showMockCard();
   startMockTimer();
   document.getElementById('mockOverlay').classList.add('active');
+  document.getElementById('tabBar').classList.add('hidden');
 }
 
 function showMockCard() {
@@ -3945,6 +4345,7 @@ function endMock() {
 function closeMock() {
   clearInterval(mockTimerInterval);
   document.getElementById('mockOverlay').classList.remove('active');
+  document.getElementById('tabBar').classList.remove('hidden');
 }
 
 function shareResults() {
@@ -4182,5 +4583,30 @@ function renderRequestedRoles() {
 }
 
 init();</script>
+
+<!-- BOTTOM TAB BAR -->
+<div class="tab-bar" id="tabBar">
+  <button class="tab-btn active" data-tab="home" onclick="switchTab('home')">
+    <span class="tab-icon">&#127968;</span>
+    <span class="tab-label">Home</span>
+  </button>
+  <button class="tab-btn" data-tab="roles-tab" onclick="switchTab('roles-tab')">
+    <span class="tab-icon">&#128218;</span>
+    <span class="tab-label">Roles</span>
+  </button>
+  <button class="tab-btn" data-tab="mock-tab" onclick="switchTab('mock-tab')">
+    <span class="tab-icon">&#9889;</span>
+    <span class="tab-label">Mock</span>
+  </button>
+  <button class="tab-btn" data-tab="suggest-tab" onclick="switchTab('suggest-tab')">
+    <span class="tab-icon">&#128161;</span>
+    <span class="tab-label">Suggest</span>
+  </button>
+  <button class="tab-btn" data-tab="more" onclick="switchTab('more')">
+    <span class="tab-icon">&#8942;</span>
+    <span class="tab-label">More</span>
+  </button>
+</div>
+
 </body>
 </html>
