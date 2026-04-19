@@ -708,7 +708,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 db = firebase.firestore();
 auth = firebase.auth();
-firebaseFunctions = firebase.functions();
+firebaseFunctions = firebase.app().functions('us-central1');
 stripe = Stripe('pk_test_51TN3TvGt5uZHcKbB83lFj0mkzl7aTTmuLs0fyF8Mvnr8wcA53vjUvEPQicc38UMnuVIX3dFtsbxgOKOBMaP3fREZ00dx8qSFTK');
 
 
