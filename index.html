@@ -347,6 +347,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .quick-practice-btn:active{transform:scale(.97);background:var(--card-hover)}
 .roles-explored{font-size:12px;color:var(--text-secondary);text-align:center;padding:8px 0 0;font-weight:600}
 .streak-pulse{animation:pulse 2s ease-in-out infinite}
+.streak-badge.pro{background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff}
 </style>
 <!-- Firebase + Stripe loaded dynamically -->
 <script>
@@ -635,6 +636,11 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
         <span class="more-label">Practice History</span>
         <span class="more-arrow">&#8594;</span>
       </div>
+      <div id="exportProgressItem" class="more-item" onclick="exportProgress()" style="display:none">
+        <span class="more-icon">&#128228;</span>
+        <span class="more-label">Export Progress</span>
+        <span class="more-arrow">&#8594;</span>
+      </div>
     </div>
     <div class="more-section">
       <div class="more-section-title">Settings</div>
@@ -719,6 +725,7 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
       <div class="summary-stat"><div class="val" id="summaryScore">0</div><div class="lbl">Avg Score</div></div>
     </div>
     <div id="summaryBreakdown" style="width:100%;max-width:400px;margin-top:12px;text-align:left;max-height:40vh;overflow-y:auto"></div>
+    <div id="summaryComparison" style="display:none;width:100%;max-width:400px;margin-top:12px;padding:12px;background:var(--card-hover);border-radius:10px;text-align:center"></div>
     <div style="display:flex;gap:8px;width:100%;max-width:400px;margin-top:12px">
       <button class="summary-btn" onclick="shareResults()" style="flex:1;background:var(--card-hover)">&#128228; Share</button>
       <button class="summary-btn" onclick="closeMock()" style="flex:1">Done</button>
@@ -915,9 +922,13 @@ function updateAuthUI() {
     if (isSubscribed) {
       if (subLabel) subLabel.textContent = 'Pro (Active)';
       if (manageItem) manageItem.style.display = '';
+      var exportItem = document.getElementById('exportProgressItem');
+      if (exportItem) exportItem.style.display = '';
     } else {
       if (subLabel) subLabel.textContent = 'Free Tier';
       if (manageItem) manageItem.style.display = 'none';
+      var exportItem2 = document.getElementById('exportProgressItem');
+      if (exportItem2) exportItem2.style.display = 'none';
     }
     if (paywallBtn) paywallBtn.textContent = 'Start Free Trial';
   } else {
@@ -4329,6 +4340,9 @@ function startMockInner() {
   document.getElementById('mockBody').style.display = '';
   document.getElementById('mockSummary').classList.remove('active');
   document.getElementById('mockBottom').style.display = '';
+  // Clear previous comparison
+  var prevComp = document.getElementById('summaryComparison');
+  if (prevComp) { prevComp.style.display = 'none'; prevComp.innerHTML = ''; }
   // Clear previous paywall CTA
   const oldCta = document.querySelector('.mock-paywall-cta');
   if (oldCta) oldCta.remove();
@@ -4476,6 +4490,37 @@ function endMock() {
   document.getElementById('mockBottom').style.display = 'none';
   document.getElementById('mockSummary').classList.add('active');
 
+  // Pro deep dive analysis
+  if (isSubscribed) {
+    var strongConcepts = [];
+    var weakConcepts = [];
+    mockQuestions.forEach(function(q, i) {
+      var a = mockAnswers[i];
+      if (!a) return;
+      var tipWords = extractKeywords(q.tip);
+      var primary = tipWords.slice(0, 3).join(', ');
+      if (a.score >= 4) {
+        strongConcepts.push(primary);
+      } else if (a.score <= 2) {
+        weakConcepts.push(primary);
+      }
+    });
+    if (strongConcepts.length > 0 || weakConcepts.length > 0) {
+      var dive = document.createElement('div');
+      dive.style.cssText = 'width:100%;max-width:400px;margin-top:12px;padding:12px;background:var(--card-hover);border-radius:10px;text-align:left;font-size:13px';
+      var html = '<div style="font-weight:600;margin-bottom:8px;color:var(--accent)">Deep Dive</div>';
+      if (strongConcepts.length > 0) {
+        html += '<div style="margin-bottom:6px"><span style="color:#22c55e">Strongest:</span> <span style="color:var(--text-secondary)">' + strongConcepts.slice(0, 3).join(' | ') + '</span></div>';
+      }
+      if (weakConcepts.length > 0) {
+        html += '<div><span style="color:#ef4444">Study next:</span> <span style="color:var(--text-secondary)">' + weakConcepts.slice(0, 3).join(' | ') + '</span></div>';
+      }
+      dive.innerHTML = html;
+      var breakdownEl = document.getElementById('summaryBreakdown');
+      breakdownEl.parentNode.insertBefore(dive, breakdownEl.nextSibling);
+    }
+  }
+
   // Paywall CTA for free users
   if (!isSubscribed) {
     const cta = document.createElement('div');
@@ -4499,6 +4544,34 @@ function endMock() {
   updateProgressCard();
   trackRolePractice(session.role);
   trackEvent('mock_interviews_completed');
+
+  // Submit score for comparison (signed-in users only)
+  if (currentUser && firebaseFunctions) {
+    var roleName = currentRole ? currentRole.name : 'Unknown';
+    try {
+      firebaseFunctions.httpsCallable('submitMockScore')({ role: roleName, avgScore: parseFloat(avgScore) }).then(function(res) {
+        var d = res.data;
+        var comp = document.getElementById('summaryComparison');
+        if (comp && d) {
+          var html = '<div style="font-size:18px;font-weight:600;color:var(--accent)">' + d.percentile + '%</div>';
+          html += '<div style="font-size:13px;color:var(--text-secondary);margin-top:4px">You scored better than ' + d.percentile + '% of ' + roleName + ' candidates</div>';
+          if (isSubscribed) {
+            // Pro: show detailed comparison
+            var history = [];
+            try { history = JSON.parse(localStorage.getItem('preppro-history') || '[]'); } catch(e) {}
+            var roleSessions = history.filter(function(h) { return h.role === roleName; });
+            var bestSession = roleSessions.length > 0 ? Math.max.apply(null, roleSessions.map(function(h) { return h.avgScore || 0; })) : parseFloat(avgScore);
+            html += '<div style="font-size:12px;color:var(--text-secondary);margin-top:6px">Your best: ' + bestSession.toFixed(1) + '/5 &middot; Role avg: ' + d.roleAvg + '/5</div>';
+            html += '<div style="font-size:12px;color:var(--text-secondary);margin-top:2px">' + d.totalAttempts + ' total attempts</div>';
+          } else {
+            html += '<div style="font-size:12px;color:var(--text-secondary);margin-top:2px">Role average: ' + d.roleAvg + '/5 across ' + d.totalAttempts + ' attempts</div>';
+          }
+          comp.innerHTML = html;
+          comp.style.display = 'block';
+        }
+      }).catch(function(){});
+    } catch(e) {}
+  }
 }
 
 function closeMock() {
@@ -4517,6 +4590,38 @@ function shareResults() {
     navigator.share({ title: 'RoleCall Mock Interview', text: text }).catch(() => {});
   } else {
     navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard!')).catch(() => {});
+  }
+}
+
+function exportProgress() {
+  playClick('tap');
+  var history = [];
+  var stats = {};
+  try { history = JSON.parse(localStorage.getItem('preppro-history') || '[]'); } catch(e) {}
+  try { stats = JSON.parse(localStorage.getItem('preppro-stats') || '{}'); } catch(e) {}
+  var total = history.length;
+  var avg = total > 0 ? (history.reduce(function(s, h) { return s + (h.avgScore || 0); }, 0) / total).toFixed(1) : '0';
+  var roles = stats.roles_practiced ? Object.keys(stats.roles_practiced).length : 0;
+  var topRole = 'None';
+  var topCount = 0;
+  if (stats.roles_practiced) {
+    Object.keys(stats.roles_practiced).forEach(function(r) {
+      if (stats.roles_practiced[r] > topCount) { topCount = stats.roles_practiced[r]; topRole = r; }
+    });
+  }
+  var streak = {};
+  try { streak = JSON.parse(localStorage.getItem('preppro-streak') || '{}'); } catch(e) {}
+  var text = 'RoleCall Pro Stats\n';
+  text += total + ' sessions completed\n';
+  text += avg + '/5 average score\n';
+  text += roles + ' roles explored\n';
+  text += 'Top role: ' + topRole + '\n';
+  if (streak.count > 1) text += streak.count + ' day streak\n';
+  text += '\nPractice your interview skills at rollcallinterviewprep.com';
+  if (navigator.share) {
+    navigator.share({ title: 'RoleCall Progress', text: text }).catch(function(){});
+  } else {
+    navigator.clipboard.writeText(text).then(function() { showToast('Copied to clipboard!'); }).catch(function() { showToast('Could not copy'); });
   }
 }
 
@@ -4551,6 +4656,7 @@ function initStreak() {
   if (badge) {
     badge.textContent = streak.count > 1 ? '\uD83D\uDD25 ' + streak.count + ' day streak!' : 'Welcome!';
     if (streak.count > 1) badge.classList.add('streak-pulse');
+    if (isSubscribed && streak.count > 1) badge.classList.add('pro');
   }
   // Schedule streak reminder notification (Capacitor native)
   if (streak.count > 1 && typeof Capacitor !== 'undefined' && Capacitor.isNativePlatform && Capacitor.isNativePlatform()) {

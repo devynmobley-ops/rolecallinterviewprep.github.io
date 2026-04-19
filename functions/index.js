@@ -163,6 +163,44 @@ exports.createPortalSession = functions.https.onCall(async (data, context) => {
   return { url: portalSession.url };
 });
 
+// Submit a mock score for percentile comparison
+exports.submitMockScore = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const { role, avgScore } = data;
+  if (!role || typeof avgScore !== 'number') {
+    throw new functions.https.HttpsError('invalid-argument', 'role and avgScore required');
+  }
+
+  const docRef = admin.firestore().collection('roleScores').doc(role);
+  const doc = await docRef.get();
+
+  let scores = [];
+  if (doc.exists && doc.data().scores) {
+    scores = doc.data().scores;
+  }
+
+  scores.push(avgScore);
+  // Cap at 200 entries
+  if (scores.length > 200) {
+    scores = scores.slice(-200);
+  }
+
+  const totalAttempts = scores.length;
+  const sum = scores.reduce((a, b) => a + b, 0);
+  const roleAvg = sum / totalAttempts;
+
+  await docRef.set({ scores, count: totalAttempts, avg: roleAvg }, { merge: true });
+
+  // Compute percentile: what % of stored scores are below the user's score
+  const belowCount = scores.filter(s => s < avgScore).length;
+  const percentile = Math.round((belowCount / totalAttempts) * 100);
+
+  return { percentile, totalAttempts, roleAvg: Math.round(roleAvg * 10) / 10 };
+});
+
 // Server-side subscription check (fallback)
 exports.checkSubscription = functions.https.onCall(async (data, context) => {
   if (!context.auth) {
