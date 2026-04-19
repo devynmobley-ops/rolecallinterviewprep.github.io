@@ -696,6 +696,7 @@ var PRICE_IDS = {
 var db, auth, firebaseFunctions, stripe;
 
 scriptsLoaded.then(function() {
+try {
 firebaseReady = true;
 // === FIREBASE CONFIG ===
 const firebaseConfig = {
@@ -727,7 +728,9 @@ auth.onAuthStateChanged(async (user) => {
   checkSubscription();
 });
 
+} catch (err) { console.error('Firebase init error:', err); }
 }); // end scriptsLoaded.then
+scriptsLoaded.catch(function(err) { console.error('Script loading failed:', err); });
 
 // === AUTH FUNCTIONS ===
 async function signInWithGoogle() {
@@ -791,12 +794,17 @@ function handleEmailAuth() {
 }
 
 function handleAccountClick() {
-  if (currentUser) {
-    if (confirm('Sign out of ' + (currentUser.email || 'your account') + '?')) {
-      signOutUser();
+  try {
+    if (currentUser) {
+      if (confirm('Sign out of ' + (currentUser.email || 'your account') + '?')) {
+        signOutUser();
+      }
+    } else {
+      showAuthPrompt('Sign in to your account');
     }
-  } else {
-    showAuthPrompt('Sign in to your account');
+  } catch (err) {
+    console.error('handleAccountClick error:', err);
+    showToast('Error: ' + err.message);
   }
 }
 
