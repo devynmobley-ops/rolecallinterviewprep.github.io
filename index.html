@@ -338,6 +338,15 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .coverage-bar-bg{flex:1;height:4px;background:var(--card-hover);border-radius:2px;overflow:hidden}
 .coverage-bar-fill{height:100%;border-radius:2px;background:var(--accent);transition:width .5s ease}
 .coverage-count{font-size:11px;color:var(--text-secondary);width:30px;text-align:right;flex-shrink:0}
+@keyframes confettiDrop{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(120px) rotate(720deg);opacity:0}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.confetti-container{position:relative;overflow:hidden;height:0}
+.confetti-piece{position:absolute;width:6px;height:6px;border-radius:50%;animation:confettiDrop 1.2s ease-out forwards}
+.quick-practice-wrap{margin:0 20px 8px}
+.quick-practice-btn{width:100%;padding:14px;border-radius:var(--radius);background:var(--card);border:1px solid var(--card-hover);color:var(--text);font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s}
+.quick-practice-btn:active{transform:scale(.97);background:var(--card-hover)}
+.roles-explored{font-size:12px;color:var(--text-secondary);text-align:center;padding:8px 0 0;font-weight:600}
+.streak-pulse{animation:pulse 2s ease-in-out infinite}
 </style>
 <!-- Firebase + Stripe loaded dynamically -->
 <script>
@@ -379,6 +388,7 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
     <div class="theme-dropdown-menu" id="themeDropdownMenu"></div>
   </div>
   <div class="daily-card" id="dailyCard"></div>
+  <div class="quick-practice-wrap"><button class="quick-practice-btn" onclick="quickPractice()">&#9889; Quick Practice</button></div>
   <div id="continueSection" style="display:none">
     <div class="section-title">Continue</div>
     <div id="continueContent"></div>
@@ -405,6 +415,7 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
         <div class="lbl">Sessions</div>
       </div>
     </div>
+    <div class="roles-explored" id="rolesExplored"></div>
   </div>
   <div id="searchResults" style="display:none">
     <div class="section-title">Search Results</div>
@@ -3444,6 +3455,7 @@ function init() {
   renderContinue();
   renderWeakest();
   renderCoverage();
+  renderRolesExplored();
   renderSuggestCategories();
   loadSuggestedRoles();
   renderBookmarks();
@@ -4454,7 +4466,26 @@ function initStreak() {
   localStorage.setItem('preppro-streak', JSON.stringify(streak));
   const badge = document.getElementById('streakBadge');
   if (badge) {
-    badge.textContent = streak.count > 1 ? streak.count + ' day streak!' : 'Welcome!';
+    badge.textContent = streak.count > 1 ? '\uD83D\uDD25 ' + streak.count + ' day streak!' : 'Welcome!';
+    if (streak.count > 1) badge.classList.add('streak-pulse');
+  }
+  // Schedule streak reminder notification (Capacitor native)
+  if (streak.count > 1 && typeof Capacitor !== 'undefined' && Capacitor.isNativePlatform && Capacitor.isNativePlatform()) {
+    try {
+      var LocalNotifications = Capacitor.Plugins.LocalNotifications;
+      LocalNotifications.cancel({ notifications: [{ id: 9999 }] }).catch(function(){});
+      var tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(9, 0, 0, 0);
+      LocalNotifications.schedule({
+        notifications: [{
+          id: 9999,
+          title: 'Keep your streak alive! \uD83D\uDD25',
+          body: 'You\'re on a ' + streak.count + ' day streak. Practice a question today!',
+          schedule: { at: tomorrow, repeats: true, every: 'day' }
+        }]
+      }).catch(function(){});
+    } catch(e) {}
   }
 }
 
@@ -4491,6 +4522,19 @@ function updateProgressCard() {
   }
 }
 
+// === ROLES EXPLORED ===
+function renderRolesExplored() {
+  const el = document.getElementById('rolesExplored');
+  if (!el) return;
+  let stats = {};
+  try { stats = JSON.parse(localStorage.getItem('preppro-stats') || '{}'); } catch(e) {}
+  const count = Object.keys(stats.top_roles || {}).length;
+  if (count === 0) { el.textContent = ''; return; }
+  let total = 0;
+  Object.values(DATA).forEach(function(cat) { total += Object.keys(cat.roles).length; });
+  el.textContent = count + '/' + total + ' roles explored';
+}
+
 // === DAILY CHALLENGE ===
 function renderDailyChallenge() {
   const el = document.getElementById('dailyCard');
@@ -4519,10 +4563,28 @@ function renderDailyChallenge() {
   html += '<div class="daily-card-role">' + pick.icon + ' ' + pick.roleName + ' \u2022 ' + pick.catName + '</div>';
   if (doneToday) {
     html += '<div class="daily-card-done">&#10003; Completed today!</div>';
+    html += '<div class="confetti-container" id="confettiBurst"></div>';
   } else {
     html += '<button class="daily-card-btn" onclick="playClick(\'tap\');startDailyChallenge(\'' + pick.catName.replace(/'/g, "\\'") + "','" + pick.roleName.replace(/'/g, "\\'") + "')\">Answer Now</button>";
   }
   el.innerHTML = html;
+  if (doneToday) spawnConfetti();
+}
+
+function spawnConfetti() {
+  const container = document.getElementById('confettiBurst');
+  if (!container) return;
+  const colors = ['#6c5ce7', '#00b894', '#fdcb6e', '#e17055', '#00cec9', '#e84393', '#0984e3'];
+  for (let i = 0; i < 20; i++) {
+    const piece = document.createElement('span');
+    piece.className = 'confetti-piece';
+    piece.style.left = (10 + Math.random() * 80) + '%';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDelay = (Math.random() * 0.4) + 's';
+    piece.style.animationDuration = (0.8 + Math.random() * 0.6) + 's';
+    container.appendChild(piece);
+  }
+  setTimeout(function() { container.innerHTML = ''; }, 2000);
 }
 
 function startDailyChallenge(catName, roleName) {
@@ -4531,6 +4593,19 @@ function startDailyChallenge(catName, roleName) {
   switchTab('roles-tab');
   setTimeout(function() { openCategory(catName); }, 200);
   setTimeout(function() { openRole(roleName, questions); }, 500);
+}
+
+// === QUICK PRACTICE ===
+function quickPractice() {
+  playClick('tap');
+  const allRoles = [];
+  Object.entries(DATA).forEach(function(pair) {
+    Object.entries(pair[1].roles).forEach(function(r) {
+      allRoles.push({ roleName: r[0], questions: r[1] });
+    });
+  });
+  const pick = allRoles[Math.floor(Math.random() * allRoles.length)];
+  startMock(pick.roleName, pick.questions);
 }
 
 // === CONTINUE SECTION ===
