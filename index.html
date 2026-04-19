@@ -696,6 +696,7 @@ var PRICE_IDS = {
 var db, auth, firebaseFunctions, stripe;
 
 scriptsLoaded.then(function() {
+try {
 firebaseReady = true;
 // === FIREBASE CONFIG ===
 const firebaseConfig = {
@@ -727,8 +728,13 @@ auth.onAuthStateChanged(async (user) => {
   checkSubscription();
 });
 
+} catch (err) { console.error('Firebase init error:', err); }
+}); // end scriptsLoaded.then
+scriptsLoaded.catch(function(err) { console.error('Script loading failed:', err); });
+
 // === AUTH FUNCTIONS ===
 async function signInWithGoogle() {
+  if (!firebaseReady) { showToast('Still loading, please wait...'); return; }
   const provider = new firebase.auth.GoogleAuthProvider();
   try {
     await auth.signInWithPopup(provider);
@@ -741,6 +747,7 @@ async function signInWithGoogle() {
 }
 
 async function signInWithEmail(email, password) {
+  if (!firebaseReady) { showToast('Still loading, please wait...'); return; }
   try {
     await auth.signInWithEmailAndPassword(email, password);
     showToast('Signed in!');
@@ -761,6 +768,7 @@ async function signInWithEmail(email, password) {
 }
 
 async function signOutUser() {
+  if (!firebaseReady) return;
   await auth.signOut();
   isSubscribed = false;
   userSubscription = null;
@@ -786,12 +794,17 @@ function handleEmailAuth() {
 }
 
 function handleAccountClick() {
-  if (currentUser) {
-    if (confirm('Sign out of ' + (currentUser.email || 'your account') + '?')) {
-      signOutUser();
+  try {
+    if (currentUser) {
+      if (confirm('Sign out of ' + (currentUser.email || 'your account') + '?')) {
+        signOutUser();
+      }
+    } else {
+      showAuthPrompt('Sign in to your account');
     }
-  } else {
-    showAuthPrompt('Sign in to your account');
+  } catch (err) {
+    console.error('handleAccountClick error:', err);
+    showToast('Error: ' + err.message);
   }
 }
 
@@ -867,7 +880,6 @@ function updateAuthUI() {
     if (paywallBtn) paywallBtn.textContent = 'Sign In to Subscribe';
   }
 }
-}); // end scriptsLoaded.then
 
 const CERTS = {
   // === TECH ===
@@ -3333,7 +3345,7 @@ function checkSubscription() {
   } else {
     isSubscribed = false;
   }
-  if (typeof updateAuthUI === 'function') updateAuthUI();
+  updateAuthUI();
   return isSubscribed;
 }
 
