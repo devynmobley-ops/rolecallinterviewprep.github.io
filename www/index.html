@@ -460,6 +460,14 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
   <div class="fab-mock" onclick="startMockFromQuestions()">&#9889; Mock Interview</div>
 </div>
 
+<!-- UPDATES TAB SCREEN -->
+<div id="screen-updates-tab" class="screen hidden tab-screen">
+  <div class="roles-tab-header">
+    <div class="roles-tab-title">What's New</div>
+  </div>
+  <div id="updatesList" style="padding:0 16px 80px"></div>
+</div>
+
 <!-- SUGGESTIONS TAB SCREEN -->
 <div id="screen-suggest-tab" class="screen hidden tab-screen">
   <div class="roles-tab-header">
@@ -3860,7 +3868,18 @@ async function subscribe() {
 }
 
 // === INIT ===
-const APP_VERSION = '1.0.0';
+const APP_VERSION = '1.1.0';
+
+const UPDATES = [
+  { date: "Apr 19, 2026", title: "27 New Roles Added", desc: "3 new roles per category: Network Engineer, Pharmacist, Solar Panel Installer, UI Designer, Sommelier, Arbitrator, and 21 more. Now 182 roles!", icon: "🆕" },
+  { date: "Apr 18, 2026", title: "Score Comparison", desc: "See how you rank against other candidates after each mock interview. Your percentile updates as more people practice.", icon: "📊" },
+  { date: "Apr 18, 2026", title: "Education & Certification Paths", desc: "Pro users get recommended paths for every role — bootcamps, online courses, apprenticeships, and exam prep strategies.", icon: "🧭" },
+  { date: "Apr 18, 2026", title: "Pro Deep Dive & Export", desc: "Pro users get post-mock concept analysis (strongest/weakest areas) and can export their full progress stats.", icon: "🏆" },
+  { date: "Apr 18, 2026", title: "Sign In on Home Page", desc: "New sign-in button in the top-right corner of the home page for quick access — no need to dig through the More tab.", icon: "🔑" },
+  { date: "Apr 17, 2026", title: "Home Page Improvements", desc: "Daily challenge, continue practicing section, weakest area tracker, coverage bars, and progress sparkline.", icon: "🏠" },
+  { date: "Apr 17, 2026", title: "Streak & Quick Practice", desc: "Daily streak tracker with fire icon, roles explored counter, and one-tap quick practice mode.", icon: "🔥" },
+  { date: "Apr 17, 2026", title: "Pro Subscription Launched", desc: "Auto expert tips, unlimited bookmarks, full history, custom mock lengths, and education & certification guide.", icon: "⭐" }
+];
 
 function init() {
   // Handle Stripe Checkout return
@@ -3889,6 +3908,7 @@ function init() {
   renderRolesExplored();
   renderSuggestCategories();
   loadSuggestedRoles();
+  renderUpdates();
   renderBookmarks();
   // Onboarding
   if (!localStorage.getItem('preppro-onboarded')) {
@@ -4164,7 +4184,7 @@ let navTimeout = null;
 let previousScreen = 'home';
 let currentTab = 'home';
 
-const TAB_SCREENS = ['home', 'roles-tab', 'mock-tab', 'suggest-tab', 'more'];
+const TAB_SCREENS = ['home', 'roles-tab', 'mock-tab', 'updates-tab', 'suggest-tab', 'more'];
 
 function switchTab(tab) {
   playClick('tap');
@@ -5344,6 +5364,20 @@ function renderCoverage() {
 // === SUGGESTIONS ===
 let selectedSuggestCat = null;
 
+function renderUpdates() {
+  var el = document.getElementById('updatesList');
+  if (!el) return;
+  el.innerHTML = UPDATES.map(function(u) {
+    return '<div style="display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--border)">'
+      + '<div style="font-size:24px;min-width:32px;text-align:center">' + u.icon + '</div>'
+      + '<div style="flex:1">'
+      + '<div style="font-size:11px;color:var(--text-secondary);margin-bottom:2px">' + u.date + '</div>'
+      + '<div style="font-weight:700;font-size:14px;color:var(--text-primary)">' + u.title + '</div>'
+      + '<div style="font-size:13px;color:var(--text-secondary);margin-top:3px;line-height:1.4">' + u.desc + '</div>'
+      + '</div></div>';
+  }).join('');
+}
+
 function renderSuggestCategories() {
   const sel = document.getElementById('suggestCatSelect');
   if (!sel) return;
@@ -5530,6 +5564,10 @@ init();</script>
   <button class="tab-btn" data-tab="mock-tab" onclick="switchTab('mock-tab')">
     <span class="tab-icon">&#9889;</span>
     <span class="tab-label">Mock</span>
+  </button>
+  <button class="tab-btn" data-tab="updates-tab" onclick="switchTab('updates-tab')">
+    <span class="tab-icon">&#128227;</span>
+    <span class="tab-label">Updates</span>
   </button>
   <button class="tab-btn" data-tab="suggest-tab" onclick="switchTab('suggest-tab')">
     <span class="tab-icon">&#128161;</span>
