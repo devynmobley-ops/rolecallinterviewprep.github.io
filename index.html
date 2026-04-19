@@ -310,6 +310,34 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .more-section-title{font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;padding:0 20px;margin-bottom:8px}
 .more-footer{text-align:center;padding:24px 20px}
 .more-footer-text{font-size:12px;color:var(--text-secondary);opacity:0.5}
+.daily-card{margin:12px 20px;background:var(--card);border-radius:var(--radius);padding:20px;border-left:3px solid var(--accent);animation:fadeIn .5s ease}
+.daily-card-label{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
+.daily-card-question{font-size:15px;font-weight:600;line-height:1.4;margin-bottom:6px}
+.daily-card-role{font-size:12px;color:var(--text-secondary);margin-bottom:14px}
+.daily-card-btn{display:inline-block;padding:10px 24px;border-radius:24px;background:var(--accent);color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer;transition:all .2s}
+.daily-card-btn:active{transform:scale(.95);opacity:.8}
+.daily-card-done{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#00b894;padding:10px 0}
+.continue-card{background:var(--card);border-radius:var(--radius);padding:16px;margin:0 20px 8px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .2s}
+.continue-card:active{transform:scale(.98);background:var(--card-hover)}
+.continue-card .role-icon{font-size:24px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:var(--card-hover);border-radius:12px;flex-shrink:0}
+.continue-card .role-info{flex:1}
+.continue-card .role-name{font-size:15px;font-weight:600}
+.continue-card .role-meta{font-size:12px;color:var(--text-secondary);margin-top:2px}
+.continue-card .role-arrow{color:var(--text-secondary);font-size:18px}
+.suggested-list{padding:0 20px;display:flex;flex-direction:column;gap:8px}
+.suggested-list .role-card{margin:0}
+.weakest-card{margin:12px 20px;background:var(--card);border-radius:var(--radius);padding:16px 20px;border-left:3px solid #e17055;cursor:pointer;transition:all .2s}
+.weakest-card:active{transform:scale(.98);background:var(--card-hover)}
+.weakest-card-label{font-size:11px;font-weight:700;color:#e17055;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+.weakest-card-text{font-size:14px;font-weight:600}
+.weakest-card-action{font-size:12px;color:var(--accent);margin-top:6px;font-weight:600}
+.coverage-section{margin-top:14px;padding-top:14px;border-top:1px solid var(--card-hover)}
+.coverage-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.coverage-row:last-child{margin-bottom:0}
+.coverage-label{font-size:12px;color:var(--text-secondary);width:90px;flex-shrink:0}
+.coverage-bar-bg{flex:1;height:4px;background:var(--card-hover);border-radius:2px;overflow:hidden}
+.coverage-bar-fill{height:100%;border-radius:2px;background:var(--accent);transition:width .5s ease}
+.coverage-count{font-size:11px;color:var(--text-secondary);width:30px;text-align:right;flex-shrink:0}
 </style>
 <!-- Firebase + Stripe loaded dynamically -->
 <script>
@@ -350,6 +378,12 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
     </button>
     <div class="theme-dropdown-menu" id="themeDropdownMenu"></div>
   </div>
+  <div class="daily-card" id="dailyCard"></div>
+  <div id="continueSection" style="display:none">
+    <div class="section-title">Continue</div>
+    <div id="continueContent"></div>
+  </div>
+  <div class="weakest-card" id="weakestCard" style="display:none"></div>
   <div class="section-title" id="bookmarksTitle" style="display:none">Bookmarked Roles</div>
   <div id="bookmarksList" class="bookmarks-list"></div>
   <div class="progress-card" id="progressCard">
@@ -364,7 +398,7 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
       </div>
       <div class="progress-stat">
         <div class="val" id="statAvgScore">-</div>
-        <div class="lbl">Avg Score</div>
+        <div class="lbl">Avg Score <span id="scoreSparkline"></span></div>
       </div>
       <div class="progress-stat">
         <div class="val" id="statSessions">0</div>
@@ -3406,6 +3440,10 @@ function init() {
   hideFab();
   initStreak();
   updateProgressCard();
+  renderDailyChallenge();
+  renderContinue();
+  renderWeakest();
+  renderCoverage();
   renderSuggestCategories();
   loadSuggestedRoles();
   renderBookmarks();
@@ -4427,11 +4465,202 @@ function updateProgressCard() {
   const totalSessions = history.length;
   const totalQuestions = history.reduce((s, h) => s + (h.questions || 0), 0);
   const avgScore = totalSessions > 0 ? (history.reduce((s, h) => s + (h.avgScore || 0), 0) / totalSessions).toFixed(1) : '0';
-  const el = document.getElementById('progressCard');
+  const qEl = document.getElementById('statQuestions');
+  const aEl = document.getElementById('statAvgScore');
+  const sEl = document.getElementById('statSessions');
+  if (qEl) qEl.textContent = totalQuestions;
+  if (aEl) aEl.textContent = avgScore + '/5';
+  if (sEl) sEl.textContent = totalSessions;
+  // Update badge
+  const badge = document.getElementById('progressBadge');
+  if (badge) badge.textContent = totalSessions > 0 ? totalSessions + ' session' + (totalSessions > 1 ? 's' : '') : 'Start practicing!';
+  // Sparkline
+  const sparkEl = document.getElementById('scoreSparkline');
+  if (sparkEl) {
+    if (history.length < 2) { sparkEl.innerHTML = ''; return; }
+    const recent = history.slice(-10);
+    const scores = recent.map(h => h.avgScore || 0);
+    const w = 60, ht = 20, pad = 2;
+    const pts = scores.map((v, i) => {
+      const x = pad + (i / Math.max(scores.length - 1, 1)) * (w - pad * 2);
+      const y = ht - pad - (v / 5) * (ht - pad * 2);
+      return x.toFixed(1) + ',' + y.toFixed(1);
+    }).join(' ');
+    const trend = scores[scores.length - 1] > scores[0] ? '#00b894' : 'var(--text-secondary)';
+    sparkEl.innerHTML = '<svg width="' + w + '" height="' + ht + '" style="vertical-align:middle;margin-left:4px"><polyline fill="none" stroke="' + trend + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="' + pts + '"/></svg>';
+  }
+}
+
+// === DAILY CHALLENGE ===
+function renderDailyChallenge() {
+  const el = document.getElementById('dailyCard');
   if (!el) return;
-  el.querySelector('.progress-stat:nth-child(1) .progress-value').textContent = totalQuestions;
-  el.querySelector('.progress-stat:nth-child(2) .progress-value').textContent = avgScore + '/5';
-  el.querySelector('.progress-stat:nth-child(3) .progress-value').textContent = totalSessions;
+  const today = new Date().toISOString().slice(0, 10);
+  // Build flat list of all questions
+  const all = [];
+  Object.entries(DATA).forEach(([catName, cat]) => {
+    Object.entries(cat.roles).forEach(([roleName, questions]) => {
+      questions.forEach((q, qi) => {
+        all.push({ catName, icon: cat.icon, roleName, question: q, qi });
+      });
+    });
+  });
+  // Hash today's date to pick a question
+  let hash = 0;
+  for (let i = 0; i < today.length; i++) { hash = ((hash << 5) - hash) + today.charCodeAt(i); hash |= 0; }
+  const idx = Math.abs(hash) % all.length;
+  const pick = all[idx];
+  // Check if already answered today
+  let history = [];
+  try { history = JSON.parse(localStorage.getItem('preppro-history') || '[]'); } catch(e) {}
+  const doneToday = history.some(h => h.date && h.date.slice(0, 10) === today);
+  let html = '<div class="daily-card-label">Daily Challenge</div>';
+  html += '<div class="daily-card-question">' + pick.question.q + '</div>';
+  html += '<div class="daily-card-role">' + pick.icon + ' ' + pick.roleName + ' \u2022 ' + pick.catName + '</div>';
+  if (doneToday) {
+    html += '<div class="daily-card-done">&#10003; Completed today!</div>';
+  } else {
+    html += '<button class="daily-card-btn" onclick="playClick(\'tap\');startDailyChallenge(\'' + pick.catName.replace(/'/g, "\\'") + "','" + pick.roleName.replace(/'/g, "\\'") + "')\">Answer Now</button>";
+  }
+  el.innerHTML = html;
+}
+
+function startDailyChallenge(catName, roleName) {
+  const questions = DATA[catName].roles[roleName];
+  if (!questions) return;
+  switchTab('roles-tab');
+  setTimeout(function() { openCategory(catName); }, 200);
+  setTimeout(function() { openRole(roleName, questions); }, 500);
+}
+
+// === CONTINUE SECTION ===
+function renderContinue() {
+  const section = document.getElementById('continueSection');
+  const content = document.getElementById('continueContent');
+  if (!section || !content) return;
+  let history = [];
+  try { history = JSON.parse(localStorage.getItem('preppro-history') || '[]'); } catch(e) {}
+  if (history.length === 0) { section.style.display = 'none'; return; }
+  section.style.display = '';
+  content.innerHTML = '';
+  // Last practiced
+  const last = history[history.length - 1];
+  const daysSince = Math.floor((Date.now() - new Date(last.date).getTime()) / 86400000);
+  const timeStr = daysSince === 0 ? 'today' : daysSince === 1 ? 'yesterday' : daysSince + ' days ago';
+  // Find category for last role
+  let lastCat = '', lastIcon = '';
+  Object.entries(DATA).forEach(([catName, cat]) => {
+    if (cat.roles[last.role]) { lastCat = catName; lastIcon = cat.icon; }
+  });
+  const card = document.createElement('div');
+  card.className = 'continue-card';
+  card.innerHTML = '<div class="role-icon">' + lastIcon + '</div><div class="role-info"><div class="role-name">' + last.role + '</div><div class="role-meta">Last practiced ' + timeStr + ' \u2022 ' + (last.avgScore || 0).toFixed(1) + '/5</div></div><div class="role-arrow">\u203A</div>';
+  card.addEventListener('click', function() {
+    playClick('tap');
+    if (lastCat && DATA[lastCat] && DATA[lastCat].roles[last.role]) {
+      switchTab('roles-tab');
+      setTimeout(function() { openCategory(lastCat); }, 200);
+      setTimeout(function() { openRole(last.role, DATA[lastCat].roles[last.role]); }, 500);
+    }
+  });
+  content.appendChild(card);
+  // Suggested roles from top_roles
+  let stats = {};
+  try { stats = JSON.parse(localStorage.getItem('preppro-stats') || '{}'); } catch(e) {}
+  const topRoles = stats.top_roles || {};
+  const sorted = Object.entries(topRoles).sort(function(a, b) { return b[1] - a[1]; });
+  const suggested = sorted.filter(function(r) { return r[0] !== last.role && bookmarks.indexOf(r[0]) === -1; }).slice(0, 3);
+  if (suggested.length > 0) {
+    const title = document.createElement('div');
+    title.className = 'section-title';
+    title.textContent = 'Suggested for You';
+    content.appendChild(title);
+    const list = document.createElement('div');
+    list.className = 'suggested-list';
+    suggested.forEach(function(entry) {
+      const roleName = entry[0];
+      let found = false;
+      Object.entries(DATA).forEach(function(pair) {
+        if (pair[1].roles[roleName] && !found) {
+          found = true;
+          const catName = pair[0], cat = pair[1];
+          const rc = document.createElement('div');
+          rc.className = 'role-card fade-in';
+          rc.innerHTML = '<div class="role-icon">' + cat.icon + '</div><div class="role-info"><div class="role-name">' + roleName + '</div><div class="role-meta">' + catName + ' \u2022 ' + cat.roles[roleName].length + ' questions</div></div><div class="role-arrow">\u203A</div>';
+          rc.addEventListener('click', function() {
+            playClick('tap');
+            switchTab('roles-tab');
+            setTimeout(function() { openCategory(catName); }, 200);
+            setTimeout(function() { openRole(roleName, cat.roles[roleName]); }, 500);
+          });
+          list.appendChild(rc);
+        }
+      });
+    });
+    content.appendChild(list);
+  }
+}
+
+// === WEAKEST AREA ===
+function renderWeakest() {
+  const el = document.getElementById('weakestCard');
+  if (!el) return;
+  let history = [];
+  try { history = JSON.parse(localStorage.getItem('preppro-history') || '[]'); } catch(e) {}
+  if (history.length < 3) { el.style.display = 'none'; return; }
+  // Map roles to categories and compute per-category scores
+  const catScores = {};
+  history.forEach(function(h) {
+    Object.entries(DATA).forEach(function(pair) {
+      if (pair[1].roles[h.role]) {
+        const catName = pair[0];
+        if (!catScores[catName]) catScores[catName] = [];
+        catScores[catName].push(h.avgScore || 0);
+      }
+    });
+  });
+  const catNames = Object.keys(catScores);
+  if (catNames.length < 2) { el.style.display = 'none'; return; }
+  let worst = null, worstAvg = 5;
+  catNames.forEach(function(cn) {
+    const avg = catScores[cn].reduce(function(s, v) { return s + v; }, 0) / catScores[cn].length;
+    if (avg < worstAvg) { worstAvg = avg; worst = cn; }
+  });
+  if (!worst) { el.style.display = 'none'; return; }
+  el.style.display = '';
+  el.innerHTML = '<div class="weakest-card-label">Needs Work</div><div class="weakest-card-text">Your ' + worst + ' answers average ' + worstAvg.toFixed(1) + '/5</div><div class="weakest-card-action">Practice now \u203A</div>';
+  el.onclick = function() { playClick('tap'); openCategory(worst); };
+}
+
+// === COVERAGE BARS ===
+function renderCoverage() {
+  const progressCard = document.getElementById('progressCard');
+  if (!progressCard) return;
+  // Remove existing coverage section if any
+  const old = progressCard.querySelector('.coverage-section');
+  if (old) old.remove();
+  let stats = {};
+  try { stats = JSON.parse(localStorage.getItem('preppro-stats') || '{}'); } catch(e) {}
+  const topRoles = stats.top_roles || {};
+  const entries = Object.entries(DATA);
+  // Only show if user has practiced at least one role
+  if (Object.keys(topRoles).length === 0) return;
+  const container = document.createElement('div');
+  container.className = 'coverage-section';
+  let hasContent = false;
+  entries.forEach(function(pair) {
+    const catName = pair[0], cat = pair[1];
+    const total = Object.keys(cat.roles).length;
+    const practiced = Object.keys(cat.roles).filter(function(r) { return topRoles[r]; }).length;
+    if (practiced === 0) return;
+    hasContent = true;
+    const pct = Math.round((practiced / total) * 100);
+    const row = document.createElement('div');
+    row.className = 'coverage-row';
+    row.innerHTML = '<span class="coverage-label">' + cat.icon + ' ' + catName + '</span><div class="coverage-bar-bg"><div class="coverage-bar-fill" style="width:' + pct + '%"></div></div><span class="coverage-count">' + practiced + '/' + total + '</span>';
+    container.appendChild(row);
+  });
+  if (hasContent) progressCard.appendChild(container);
 }
 
 // === SUGGESTIONS ===
