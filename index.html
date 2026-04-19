@@ -372,6 +372,7 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
 
 <!-- HOME SCREEN -->
 <div id="screen-home" class="screen active tab-screen">
+  <div id="homeSignInBtn" onclick="handleAccountClick()" style="position:absolute;top:12px;right:16px;z-index:5;padding:6px 14px;border-radius:20px;background:var(--accent);color:#fff;font-size:12px;font-weight:600;cursor:pointer;display:none">Sign In</div>
   <div class="logo">
     <h1>RoleCall</h1>
     <p>Roll into your next role</p>
@@ -914,10 +915,12 @@ function updateAuthUI() {
   const subLabel = document.getElementById('subMoreLabel');
   const manageItem = document.getElementById('manageSubMoreItem');
   const paywallBtn = document.getElementById('paywallBtn');
+  const homeSignIn = document.getElementById('homeSignInBtn');
 
   if (currentUser) {
     if (authLabel) authLabel.textContent = currentUser.displayName || currentUser.email || 'Account';
     if (authIcon) authIcon.textContent = '\u{1F464}';
+    if (homeSignIn) homeSignIn.style.display = 'none';
 
     if (isSubscribed) {
       if (subLabel) subLabel.textContent = 'Pro (Active)';
@@ -937,6 +940,7 @@ function updateAuthUI() {
     if (subLabel) subLabel.textContent = 'Subscription';
     if (manageItem) manageItem.style.display = 'none';
     if (paywallBtn) paywallBtn.textContent = 'Sign In to Subscribe';
+    if (homeSignIn) homeSignIn.style.display = '';
   }
 }
 
