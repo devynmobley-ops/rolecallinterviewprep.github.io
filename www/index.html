@@ -693,6 +693,7 @@ var PRICE_IDS = {
   monthly: 'price_1TN3YgGt5uZHcKbBx1254LHr',
   yearly: 'price_1TN3ZtGt5uZHcKbBhspOo95L',
 };
+var db, auth, firebaseFunctions, stripe;
 
 scriptsLoaded.then(function() {
 firebaseReady = true;
@@ -705,10 +706,10 @@ const firebaseConfig = {
   appId: "1:884506529130:web:f25e56c2ee4f7ef6506913"
 };
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const auth = firebase.auth();
-const firebaseFunctions = firebase.functions();
-const stripe = Stripe('pk_test_51TN3TvGt5uZHcKbB83lFj0mkzl7aTTmuLs0fyF8Mvnr8wcA53vjUvEPQicc38UMnuVIX3dFtsbxgOKOBMaP3fREZ00dx8qSFTK');
+db = firebase.firestore();
+auth = firebase.auth();
+firebaseFunctions = firebase.functions();
+stripe = Stripe('pk_test_51TN3TvGt5uZHcKbB83lFj0mkzl7aTTmuLs0fyF8Mvnr8wcA53vjUvEPQicc38UMnuVIX3dFtsbxgOKOBMaP3fREZ00dx8qSFTK');
 
 
 // === AUTH STATE ===
