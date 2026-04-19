@@ -26,7 +26,7 @@ body[data-theme="mint"]{--bg:#0e1412;--card:#1a2a24;--accent:#00cec9;--accent-li
 html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
 #app{height:100%;overflow:hidden;position:relative}
 .screen{position:absolute;top:0;left:0;width:100%;height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;transition:transform var(--transition),opacity var(--transition);padding-top:calc(var(--safe-top) + 12px);padding-bottom:calc(var(--safe-bottom) + 12px);will-change:transform,opacity;background:var(--bg);z-index:0}
-.screen.hidden{pointer-events:none}
+.screen.hidden{pointer-events:none;opacity:0}
 .screen.slide-left{transform:translateX(100%);opacity:0}
 .screen.slide-right{transform:translateX(-30%);opacity:0}
 .screen.active{transform:translateX(0);opacity:1}
