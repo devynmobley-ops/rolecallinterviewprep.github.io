@@ -1,5 +1,4 @@
-const { onCall, HttpsError } = require('firebase-functions/v2/https');
-const { onRequest } = require('firebase-functions/v2/https');
+const functions = require('firebase-functions/v1');
 const admin = require('firebase-admin');
 const Stripe = require('stripe');
 
@@ -14,16 +13,16 @@ function getStripe() {
 }
 
 // Create a Stripe Checkout Session
-exports.createCheckoutSession = onCall(async (request) => {
-  if (!request.auth) {
-    throw new HttpsError('unauthenticated', 'Must be signed in');
+exports.createCheckoutSession = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
   }
 
-  const uid = request.auth.uid;
-  const priceId = request.data.priceId;
+  const uid = context.auth.uid;
+  const priceId = data.priceId;
 
   if (!priceId) {
-    throw new HttpsError('invalid-argument', 'priceId required');
+    throw new functions.https.HttpsError('invalid-argument', 'priceId required');
   }
 
   // Get or create Stripe customer
@@ -34,7 +33,7 @@ exports.createCheckoutSession = onCall(async (request) => {
     customerId = customerSnap.data().stripeCustomerId;
   } else {
     const customer = await getStripe().customers.create({
-      email: request.auth.token.email,
+      email: context.auth.token.email,
       metadata: { firebaseUID: uid }
     });
     customerId = customer.id;
@@ -59,7 +58,7 @@ exports.createCheckoutSession = onCall(async (request) => {
 });
 
 // Receive Stripe webhook events and write subscription status to Firestore
-exports.stripeWebhook = onRequest(async (req, res) => {
+exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
 
@@ -142,16 +141,16 @@ exports.stripeWebhook = onRequest(async (req, res) => {
 });
 
 // Create a Stripe Customer Portal session for managing subscriptions
-exports.createPortalSession = onCall(async (request) => {
-  if (!request.auth) {
-    throw new HttpsError('unauthenticated', 'Must be signed in');
+exports.createPortalSession = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
   }
 
-  const uid = request.auth.uid;
+  const uid = context.auth.uid;
   const customerSnap = await admin.firestore().collection('customers').doc(uid).get();
 
   if (!customerSnap.exists || !customerSnap.data().stripeCustomerId) {
-    throw new HttpsError('not-found', 'No Stripe customer found');
+    throw new functions.https.HttpsError('not-found', 'No Stripe customer found');
   }
 
   const customerId = customerSnap.data().stripeCustomerId;
@@ -165,12 +164,12 @@ exports.createPortalSession = onCall(async (request) => {
 });
 
 // Server-side subscription check (fallback)
-exports.checkSubscription = onCall(async (request) => {
-  if (!request.auth) {
-    throw new HttpsError('unauthenticated', 'Must be signed in');
+exports.checkSubscription = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
   }
 
-  const uid = request.auth.uid;
+  const uid = context.auth.uid;
   const subscriptionsSnap = await admin.firestore()
     .collection('customers').doc(uid)
     .collection('subscriptions')
