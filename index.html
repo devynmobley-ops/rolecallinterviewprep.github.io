@@ -3422,6 +3422,7 @@ function init() {
   if (verElMore) verElMore.textContent = 'v' + APP_VERSION;
   // Analytics - increment app opens
   trackEvent('app_opens');
+  switchTab('home');
 }
 
 // === ANALYTICS ===
@@ -3697,7 +3698,8 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelector('.tab-btn[data-tab="' + tab + '"]')?.classList.add('active');
   // Show tab bar
-  document.getElementById('tabBar').classList.remove('hidden');
+  var tb = document.getElementById('tabBar');
+  if (tb) tb.classList.remove('hidden');
 }
 
 function showScreen(id) {
