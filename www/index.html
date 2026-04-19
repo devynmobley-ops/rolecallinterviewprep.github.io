@@ -727,8 +727,11 @@ auth.onAuthStateChanged(async (user) => {
   checkSubscription();
 });
 
+}); // end scriptsLoaded.then
+
 // === AUTH FUNCTIONS ===
 async function signInWithGoogle() {
+  if (!firebaseReady) { showToast('Still loading, please wait...'); return; }
   const provider = new firebase.auth.GoogleAuthProvider();
   try {
     await auth.signInWithPopup(provider);
@@ -741,6 +744,7 @@ async function signInWithGoogle() {
 }
 
 async function signInWithEmail(email, password) {
+  if (!firebaseReady) { showToast('Still loading, please wait...'); return; }
   try {
     await auth.signInWithEmailAndPassword(email, password);
     showToast('Signed in!');
@@ -761,6 +765,7 @@ async function signInWithEmail(email, password) {
 }
 
 async function signOutUser() {
+  if (!firebaseReady) return;
   await auth.signOut();
   isSubscribed = false;
   userSubscription = null;
@@ -867,7 +872,6 @@ function updateAuthUI() {
     if (paywallBtn) paywallBtn.textContent = 'Sign In to Subscribe';
   }
 }
-}); // end scriptsLoaded.then
 
 const CERTS = {
   // === TECH ===
@@ -3333,7 +3337,7 @@ function checkSubscription() {
   } else {
     isSubscribed = false;
   }
-  if (typeof updateAuthUI === 'function') updateAuthUI();
+  updateAuthUI();
   return isSubscribed;
 }
 
