@@ -43,16 +43,43 @@ exports.createCheckoutSession = functions.https.onCall(async (data, context) => 
   }
 
   // Create Checkout Session
-  const session = await getStripe().checkout.sessions.create({
-    customer: customerId,
-    mode: 'subscription',
-    line_items: [{ price: priceId, quantity: 1 }],
-    success_url: 'https://rollcallinterviewprep.com/?checkout=success',
-    cancel_url: 'https://rollcallinterviewprep.com/?checkout=cancel',
-    subscription_data: {
-      trial_period_days: 7,
-    },
-  });
+  let session;
+  try {
+    session = await getStripe().checkout.sessions.create({
+      customer: customerId,
+      mode: 'subscription',
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: 'https://rollcallinterviewprep.com/?checkout=success',
+      cancel_url: 'https://rollcallinterviewprep.com/?checkout=cancel',
+      subscription_data: {
+        trial_period_days: 7,
+      },
+    });
+  } catch (err) {
+    if (err.code === 'resource_missing') {
+      // Old test customer ID doesn't exist in live mode — create new customer
+      const customer = await getStripe().customers.create({
+        email: context.auth.token.email,
+        metadata: { firebaseUID: uid }
+      });
+      customerId = customer.id;
+      await admin.firestore().collection('customers').doc(uid).set(
+        { stripeCustomerId: customerId }, { merge: true }
+      );
+      session = await getStripe().checkout.sessions.create({
+        customer: customerId,
+        mode: 'subscription',
+        line_items: [{ price: priceId, quantity: 1 }],
+        success_url: 'https://rollcallinterviewprep.com/?checkout=success',
+        cancel_url: 'https://rollcallinterviewprep.com/?checkout=cancel',
+        subscription_data: {
+          trial_period_days: 7,
+        },
+      });
+    } else {
+      throw err;
+    }
+  }
 
   return { url: session.url };
 });
