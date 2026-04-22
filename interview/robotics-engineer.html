@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Robotics Engineer Interview Questions & Tips | RoleCall</title>
+  <meta name="description" content="Practice Robotics Engineer interview questions with expert tips. 12 questions covering key topics for mid-level tech roles.">
+  <meta name="keywords" content="Robotics Engineer interview questions, Robotics Engineer interview tips, Robotics Engineer interview prep, tech jobs">
+  <link rel="canonical" href="https://rollcallinterviewprep.com/interview/robotics-engineer.html">
+  <meta property="og:title" content="Robotics Engineer Interview Questions | RoleCall">
+  <meta property="og:description" content="Practice Robotics Engineer interview questions with expert tips. 12 questions covering key topics for mid-level tech roles.">
+  <meta property="og:url" content="https://rollcallinterviewprep.com/interview/robotics-engineer.html">
+  <meta property="og:type" content="article">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Robotics Engineer Interview Questions | RoleCall">
+  <meta name="twitter:description" content="Practice Robotics Engineer interview questions with expert tips. 12 questions covering key topics for mid-level tech roles.">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do you design the control system for a robot?","acceptedAnswer":{"@type":"Answer","text":"Discuss PID control, state machines, sensor fusion, actuator selection, and real-time control loops."}},{"@type":"Question","name":"Describe your experience with ROS (Robot Operating System).","acceptedAnswer":{"@type":"Answer","text":"Show ROS nodes, topics, services, launch files, and practical projects. Mention ROS2 if applicable."}},{"@type":"Question","name":"How do you approach path planning and navigation?","acceptedAnswer":{"@type":"Answer","text":"Discuss A*, RRT, SLAM, costmaps, and sensor-based obstacle avoidance in dynamic environments."}},{"@type":"Question","name":"What is your experience with computer vision for robotics?","acceptedAnswer":{"@type":"Answer","text":"Mention OpenCV, depth cameras, object detection, pose estimation, and integrating vision with motion planning."}}]}</script>
+  <style>
+    :root {
+      --bg: #0f0f14; --card: #1a1a24; --accent: #6c5ce7; --accent-light: #a29bfe;
+      --text: #f0f0f5; --text-secondary: #8e8ea0; --card-hover: #22222f;
+      --radius: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 720px; margin: 0 auto; padding: 20px 16px; }
+    .nav { padding: 12px 0; margin-bottom: 8px; }
+    .nav a { color: var(--accent); text-decoration: none; font-size: 14px; }
+    .nav a:hover { text-decoration: underline; }
+    .hero { text-align: center; padding: 32px 0 24px; }
+    .hero .category-badge {
+      display: inline-block; background: var(--card); color: var(--accent);
+      padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .hero h1 {
+      font-size: 32px; font-weight: 800; margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero .meta {
+      font-size: 14px; color: var(--text-secondary);
+    }
+    .hero .difficulty {
+      display: inline-block; padding: 2px 10px; border-radius: 12px;
+      font-size: 11px; font-weight: 700; margin-left: 8px;
+    }
+    .difficulty-entry { background: #2d6a4f33; color: #52b788; }
+    .difficulty-mid { background: #f9ca2433; color: #f9ca24; }
+    .difficulty-senior { background: #e74c3c33; color: #e74c3c; }
+    .cta-top {
+      text-align: center; margin: 20px 0 28px;
+    }
+    .btn {
+      display: inline-block; padding: 14px 32px; border-radius: var(--radius);
+      font-size: 16px; font-weight: 700; text-decoration: none; cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s; border: none;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      color: #fff;
+    }
+    .btn-outline {
+      background: transparent; color: var(--accent);
+      border: 2px solid var(--accent); margin-left: 12px;
+    }
+    h2 {
+      font-size: 20px; font-weight: 700; margin: 32px 0 16px;
+      padding-bottom: 8px; border-bottom: 1px solid var(--card-hover);
+    }
+    .question-card {
+      background: var(--card); border-radius: var(--radius); padding: 20px;
+      margin-bottom: 12px; border: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+    .question-card:hover { border-color: var(--accent); }
+    .question-card.locked { opacity: 0.55; }
+    .question-card.locked:hover { border-color: transparent; }
+    .q-number {
+      font-size: 11px; font-weight: 700; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+    }
+    .q-text { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+    .q-tip {
+      font-size: 14px; color: var(--text-secondary); line-height: 1.5;
+      padding: 12px; background: var(--card-hover); border-radius: 8px;
+    }
+    .q-tip strong { color: var(--accent-light); }
+    .q-lock {
+      text-align: center; padding: 12px;
+    }
+    .lock-icon { font-size: 20px; }
+    .unlock-link {
+      color: var(--accent); font-size: 13px; margin-left: 6px;
+      text-decoration: none; font-weight: 600;
+    }
+    .unlock-link:hover { text-decoration: underline; }
+    .certs-section { margin-top: 8px; }
+    .certs-grid {
+      display: grid; grid-template-columns: 1fr; gap: 16px;
+    }
+    @media (min-width: 600px) {
+      .certs-grid { grid-template-columns: 1fr 1fr 1fr; }
+    }
+    .cert-block {
+      background: var(--card); border-radius: var(--radius); padding: 16px;
+    }
+    .cert-block h3 {
+      font-size: 13px; font-weight: 700; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;
+    }
+    .cert-block ul {
+      list-style: none; padding: 0;
+    }
+    .cert-block li {
+      font-size: 13px; color: var(--text-secondary); padding: 4px 0;
+      border-bottom: 1px solid var(--card-hover);
+    }
+    .cert-block li:last-child { border-bottom: none; }
+    .cta-bottom {
+      text-align: center; padding: 40px 0 32px;
+    }
+    .related-section { margin-top: 8px; }
+    .related-grid {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .related-role {
+      display: inline-block; background: var(--card); color: var(--text);
+      padding: 8px 16px; border-radius: 20px; font-size: 13px;
+      text-decoration: none; transition: background 0.2s;
+    }
+    .related-role:hover { background: var(--card-hover); color: var(--accent); }
+    footer {
+      text-align: center; padding: 32px 0; border-top: 1px solid var(--card-hover);
+      margin-top: 40px;
+    }
+    footer a { color: var(--text-secondary); text-decoration: none; font-size: 13px; margin: 0 12px; }
+    footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="nav">
+      <a href="https://rollcallinterviewprep.com/">&#8592; Back to RoleCall</a>
+    </nav>
+
+    <div class="hero">
+      <span class="category-badge">💻 Tech</span>
+      <h1>Robotics Engineer Interview Questions</h1>
+      <div class="meta">
+        12 expert-crafted questions
+        <span class="difficulty difficulty-mid">Mid</span>
+      </div>
+    </div>
+
+    <div class="cta-top">
+      <a href="https://rollcallinterviewprep.com/" class="btn btn-primary">Practice Free</a>
+      <a href="https://rollcallinterviewprep.com/" class="btn btn-outline">Unlock All 12 Questions</a>
+    </div>
+
+    <section>
+      <h2>Sample Interview Questions</h2>
+      
+      <div class="question-card">
+        <div class="q-number">Q1</div>
+        <div class="q-text">How do you design the control system for a robot?</div>
+        <div class="q-tip">
+          <strong>Tip:</strong> Discuss PID control, state machines, sensor fusion, actuator selection, and real-time control loops.
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number">Q2</div>
+        <div class="q-text">Describe your experience with ROS (Robot Operating System).</div>
+        <div class="q-tip">
+          <strong>Tip:</strong> Show ROS nodes, topics, services, launch files, and practical projects. Mention ROS2 if applicable.
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number">Q3</div>
+        <div class="q-text">How do you approach path planning and navigation?</div>
+        <div class="q-tip">
+          <strong>Tip:</strong> Discuss A*, RRT, SLAM, costmaps, and sensor-based obstacle avoidance in dynamic environments.
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number">Q4</div>
+        <div class="q-text">What is your experience with computer vision for robotics?</div>
+        <div class="q-tip">
+          <strong>Tip:</strong> Mention OpenCV, depth cameras, object detection, pose estimation, and integrating vision with motion planning.
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>More Questions (8 locked)</h2>
+      
+      <div class="question-card locked">
+        <div class="q-number">Q5</div>
+        <div class="q-text">How do you handle kinematics and dynamics calculations?</div>
+        <div class="q-lock">
+          <span class="lock-icon">&#128274;</span>
+          <a href="https://rollcallinterviewprep.com/" class="unlock-link">Sign up free to unlock</a>
+        </div>
+      </div>
+
+      <div class="question-card locked">
+        <div class="q-number">Q6</div>
+        <div class="q-text">Describe a robotics project where you solved a challenging problem.</div>
+        <div class="q-lock">
+          <span class="lock-icon">&#128274;</span>
+          <a href="https://rollcallinterviewprep.com/" class="unlock-link">Sign up free to unlock</a>
+        </div>
+      </div>
+
+      <div class="question-card locked">
+        <div class="q-number">Q7</div>
+        <div class="q-text">How do you simulate robots before deploying to hardware?</div>
+        <div class="q-lock">
+          <span class="lock-icon">&#128274;</span>
+          <a href="https://rollcallinterviewprep.com/" class="unlock-link">Sign up free to unlock</a>
+        </div>
+      </div>
+
+      <div class="question-card locked">
+        <div class="q-number">Q8</div>
+        <div class="q-text">What is your experience with sensor integration on robots?</div>
+        <div class="q-lock">
+          <span class="lock-icon">&#128274;</span>
+          <a href="https://rollcallinterviewprep.com/" class="unlock-link">Sign up free to unlock</a>
+        </div>
+      </div>
+
+      <div class="question-card locked">
+        <div class="q-number">Q9</div>
+        <div class="q-text">How do you ensure safety in robotic systems?</div>
+        <div class="q-lock">
+          <span class="lock-icon">&#128274;</span>
+          <a href="https://rollcallinterviewprep.com/" class="unlock-link">Sign up free to unlock</a>
+        </div>
+      </div>
+
+      <div class="question-card locked">
+        <div class="q-number">Q10</div>
+        <div class="q-text">What programming languages and frameworks do you use for robotics?</div>
+        <div class="q-lock">
+          <span class="lock-icon">&#128274;</span>
+          <a href="https://rollcallinterviewprep.com/" class="unlock-link">Sign up free to unlock</a>
+        </div>
+      </div>
+
+      <div class="question-card locked">
+        <div class="q-number">Q11</div>
+        <div class="q-text">How do you approach testing and validation of robotic systems?</div>
+        <div class="q-lock">
+          <span class="lock-icon">&#128274;</span>
+          <a href="https://rollcallinterviewprep.com/" class="unlock-link">Sign up free to unlock</a>
+        </div>
+      </div>
+
+      <div class="question-card locked">
+        <div class="q-number">Q12</div>
+        <div class="q-text">Describe your experience with actuators and motor control.</div>
+        <div class="q-lock">
+          <span class="lock-icon">&#128274;</span>
+          <a href="https://rollcallinterviewprep.com/" class="unlock-link">Sign up free to unlock</a>
+        </div>
+      </div>
+    </section>
+    
+    <section class="certs-section">
+      <h2>Education & Certifications</h2>
+      <div class="certs-grid">
+        <div class="cert-block">
+          <h3>Degrees</h3>
+          <ul><li>BS Robotics Engineering</li><li>BS Mechanical Engineering</li><li>MS Robotics</li></ul>
+        </div>
+        <div class="cert-block">
+          <h3>Certifications</h3>
+          <ul><li>Certified Robotics Technician (RIA)</li><li>ROS Developer Certificate</li><li>FANUC/ABB Robot Programming Certification</li></ul>
+        </div>
+        <div class="cert-block">
+          <h3>Career Paths</h3>
+          <ul><li>Robotics or ME degree + capstone projects</li><li>ROS online courses + hands-on robot builds</li><li>Manufacturer-specific training (FANUC, ABB, KUKA)</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="cta-bottom">
+      <p style="color:var(--text-secondary);margin-bottom:16px;font-size:15px;">Get all 12 questions with expert tips on RoleCall</p>
+      <a href="https://rollcallinterviewprep.com/" class="btn btn-primary">Start Practicing Free</a>
+    </div>
+
+    <section class="related-section">
+      <h2>Related Tech Roles</h2>
+      <div class="related-grid">
+          <a href="/interview/software-engineer.html" class="related-role">Software Engineer</a>
+          <a href="/interview/data-analyst.html" class="related-role">Data Analyst</a>
+          <a href="/interview/it-support.html" class="related-role">IT Support</a>
+          <a href="/interview/devops-engineer.html" class="related-role">DevOps Engineer</a>
+          <a href="/interview/product-manager.html" class="related-role">Product Manager</a>
+          <a href="/interview/cybersecurity-analyst.html" class="related-role">Cybersecurity Analyst</a>
+      </div>
+    </section>
+
+    <footer>
+      <a href="https://rollcallinterviewprep.com/">Home</a>
+      <a href="https://rollcallinterviewprep.com/interview/software-engineer.html">Popular: Software Engineer</a>
+      <a href="https://rollcallinterviewprep.com/interview/registered-nurse.html">Popular: Nurse</a>
+      <a href="https://rollcallinterviewprep.com/interview/accountant.html">Popular: Accountant</a>
+    </footer>
+  </div>
+</body>
+</html>
