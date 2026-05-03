@@ -326,6 +326,7 @@ function generatePage(roleName, category) {
 
     <footer>
       <a href="https://rollcallinterviewprep.com/">Home</a>
+      <a href="https://rollcallinterviewprep.com/blog/">Blog</a>
       <a href="https://rollcallinterviewprep.com/interview/software-engineer.html">Popular: Software Engineer</a>
       <a href="https://rollcallinterviewprep.com/interview/registered-nurse.html">Popular: Nurse</a>
       <a href="https://rollcallinterviewprep.com/interview/accountant.html">Popular: Accountant</a>
@@ -364,6 +365,17 @@ for (const [category, catData] of Object.entries(DATA)) {
 console.log('Generated ' + count + ' landing pages in /interview/');
 
 // Generate sitemap.xml
+// Collect blog post URLs
+const blogDir = path.join(__dirname, 'blog');
+const blogUrls = [];
+if (fs.existsSync(blogDir)) {
+  fs.readdirSync(blogDir).forEach(file => {
+    if (file.endsWith('.html') && file !== 'index.html') {
+      blogUrls.push('https://rollcallinterviewprep.com/blog/' + file);
+    }
+  });
+}
+
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
@@ -371,12 +383,22 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+  <url>
+    <loc>https://rollcallinterviewprep.com/blog/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
 ${urls.map(u => `  <url>
     <loc>${u}</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>`).join('\n')}
+${blogUrls.map(u => `  <url>
+    <loc>${u}</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>`).join('\n')}
 </urlset>`;
 
 fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), sitemap, 'utf8');
-console.log('Generated sitemap.xml with ' + (urls.length + 1) + ' URLs');
+console.log('Generated sitemap.xml with ' + (urls.length + blogUrls.length + 2) + ' URLs');
