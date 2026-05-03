@@ -7,10 +7,10 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="google-site-verification" content="po-95JwNfNviEEvnL-gtapwVRzY_v8H42qORyAGlKi0">
 <title>RoleCall — Interview Prep for Every Career</title>
-<meta name="description" content="Practice interview questions for 329+ careers. Expert tips, education paths, and mock interviews to help you land the job.">
+<meta name="description" content="Practice interview questions for 374+ careers. Expert tips, education paths, and mock interviews to help you land the job.">
 <link rel="sitemap" type="application/xml" href="/sitemap.xml">
 <meta property="og:title" content="RoleCall — Interview Prep for Every Career">
-<meta property="og:description" content="Practice interview questions for 329+ careers. Expert tips, education paths, and mock interviews.">
+<meta property="og:description" content="Practice interview questions for 374+ careers. Expert tips, education paths, and mock interviews.">
 <meta property="og:url" content="https://rollcallinterviewprep.com/">
 <meta property="og:type" content="website">
 <style>
@@ -996,6 +996,11 @@ const CERTS = {
   "Security Engineer": { degrees: ["BS Cybersecurity", "BS Computer Science", "MS Information Security"], certs: ["CISSP (Certified Information Systems Security Professional)", "CEH (Certified Ethical Hacker)", "CompTIA Security+"], paths: ["Cybersecurity degree + CTF competitions", "CompTIA Security+ self-study + exam", "ISC2 CISSP prep after 5 years experience"] },
   "Data Architect": { degrees: ["BS Computer Science", "MS Data Science", "BS Information Systems"], certs: ["Google Cloud Professional Data Engineer", "AWS Solutions Architect", "IBM Certified Data Architect"], paths: ["CS or data science degree + database experience", "Google Cloud training + practice exams", "Progressive data engineering roles + architecture projects"] },
   "IT Manager": { degrees: ["BS IT/Computer Science", "MBA + IT focus", "BS Management Information Systems"], certs: ["PMP (Project Management Professional)", "ITIL Foundation", "CISSP"], paths: ["IT degree + progressive IT experience", "PMI PMP certification + IT leadership roles", "ITIL training + IT management experience"] },
+  "Platform Engineer": { degrees: ["BS Computer Science", "BS Software Engineering", "MS Cloud Computing"], certs: ["Certified Kubernetes Administrator (CKA)", "AWS Solutions Architect", "HashiCorp Terraform Associate"], paths: ["CS degree + DevOps/SRE experience", "CKA + cloud certifications + platform team experience", "Self-taught + open-source contributions + infrastructure roles"] },
+  "Release Engineer": { degrees: ["BS Computer Science", "BS Software Engineering", "MS DevOps/Software Engineering"], certs: ["AWS DevOps Engineer", "Jenkins Engineer", "Docker Certified Associate"], paths: ["CS degree + build/release experience", "CI/CD tooling certifications + progressive DevOps roles", "Software development experience + release management transition"] },
+  "Compiler Engineer": { degrees: ["BS Computer Science", "MS/PhD Computer Science (compilers focus)", "BS Mathematics + CS"], certs: ["No standard certification required", "LLVM contributor experience valued", "Published research or open-source compiler work"], paths: ["CS degree with PL theory + systems programming", "PhD in compilers/PL + industry or research roles", "Self-taught + building toy compilers + systems programming jobs"] },
+  "API Developer": { degrees: ["BS Computer Science", "BS Software Engineering", "Bootcamp certificate"], certs: ["AWS Certified Developer", "Postman API Fundamentals", "Swagger/OpenAPI certification"], paths: ["CS degree or bootcamp + backend development experience", "AWS + API design tool certifications", "Full-stack development + API specialization"] },
+  "Cloud Engineer": { degrees: ["BS Computer Science", "BS IT", "MS Cloud Computing"], certs: ["AWS Solutions Architect Associate", "Google Cloud Professional Cloud Architect", "Azure Administrator Associate"], paths: ["IT/CS degree + systems administration + cloud migration", "AWS or GCP certifications + hands-on labs", "Linux/Windows admin experience + cloud certification track"] },
 
   // === HEALTHCARE ===
   "Nurse": { degrees: ["BS Nursing (BSN)", "Associate Degree in Nursing (ADN)", "Nursing diploma"], certs: ["RN License (NCLEX-RN)", "BLS/CPR Certification", "ACLS Certification"], paths: ["Accredited nursing program (2-4 years) + clinicals", "American Heart Association BLS/CPR class", "ACLS certification course (1-2 days)"] },
@@ -1036,6 +1041,11 @@ const CERTS = {
   "Massage Therapist": { degrees: ["Certificate/AS Massage Therapy", "BS Kinesiology + massage cert", "No degree required (state-dependent)"], certs: ["Licensed Massage Therapist (LMT)", "NCBTMB Board Certification", "State massage license"], paths: ["Accredited massage program (500-1000 hours)", "NCBTMB exam + state licensing", "Specialized training (sports, medical massage) + CE"] },
   "Medical Receptionist": { degrees: ["No degree required", "AS Medical Office Administration", "Certificate in Medical Office"], certs: ["CMAA (Certified Medical Administrative Assistant)", "CPR/BLS Certification", "HIPAA Certification"], paths: ["On-the-job training + medical office experience", "NHA CMAA exam prep + administrative training", "HIPAA compliance training + office software courses"] },
   "Veterinarian": { degrees: ["DVM (Doctor of Veterinary Medicine)", "BS + DVM program", "BS Animal Science + DVM"], certs: ["State Veterinary License", "NAVLE (North American Veterinary Licensing Exam)", "Board Certification (specialty)"], paths: ["Accredited DVM program (4 years post-undergrad)", "NAVLE exam + state licensing", "Residency for specialty board certification (3-4 years)"] },
+  "Dermatologist": { degrees: ["MD or DO degree", "BS + medical school (4+4 years)", "BS Pre-Med + MD"], certs: ["Board Certification in Dermatology (ABD)", "State Medical License", "Mohs Surgery Fellowship (optional)"], paths: ["Medical school + dermatology residency (4 years)", "ABD board exam + state licensure", "Fellowship training for subspecialty (Mohs, dermatopathology)"] },
+  "Podiatrist": { degrees: ["DPM (Doctor of Podiatric Medicine)", "BS + DPM program", "BS Biology + DPM"], certs: ["State Podiatric Medical License", "ABFAS Board Certification", "APMLE (podiatric licensing exam)"], paths: ["Accredited DPM program (4 years post-undergrad)", "APMLE exams + state licensing", "Surgical residency (3 years) + board certification"] },
+  "Audiologist": { degrees: ["AuD (Doctor of Audiology)", "MS Audiology + clinical doctorate", "BS Communication Sciences + AuD"], certs: ["State Audiology License", "CCC-A (ASHA)", "ABA Board Certification"], paths: ["Accredited AuD program (4 years)", "ASHA CCC-A + state licensure", "Clinical fellowship + board certification exam"] },
+  "Neonatal Nurse Practitioner": { degrees: ["BSN + MSN/DNP (neonatal focus)", "BSN + NNP certificate program", "BS Nursing + doctoral program"], certs: ["NNP-BC (Neonatal Nurse Practitioner Board Certified)", "NRP (Neonatal Resuscitation Program)", "State APRN License"], paths: ["BSN + NICU RN experience (2+ years) + MSN NNP program", "NCC NNP-BC certification exam", "DNP with neonatal specialization + national certification"] },
+  "Clinical Psychologist": { degrees: ["PhD or PsyD in Clinical Psychology", "MA/MSc Psychology + doctoral program", "BS Psychology + PhD"], certs: ["State Psychology License", "Board Certification (ABPP)", "Health Service Provider designation"], paths: ["Doctoral program (5-7 years) + internship + postdoc", "State licensing exam (EPPP) + supervised hours", "ABPP board certification for specialty recognition"] },
 
   // === BUSINESS ===
   "Accountant": { degrees: ["BS Accounting", "BS Finance", "BBA with accounting focus"], certs: ["CPA (Certified Public Accountant)", "CMA (Certified Management Accountant)", "Enrolled Agent (EA)"], paths: ["University accounting program + 150 credit hours", "CPA exam prep (Becker, Roger, or Wiley)", "IRS EA exam prep + apply for enrollment"] },
@@ -1076,6 +1086,11 @@ const CERTS = {
   "Bookkeeper": { degrees: ["No degree required", "AS Accounting", "BS Accounting"], certs: ["Certified Bookkeeper (AIPB)", "QuickBooks ProAdvisor", "Xero Certified Advisor"], paths: ["On-the-job training + accounting fundamentals course", "AIPB certification exam + bookkeeping experience", "QuickBooks or Xero online certification + client work"] },
   "Administrative Assistant": { degrees: ["No degree required", "AS Business Administration", "Office technology certificate"], certs: ["Microsoft Office Specialist (MOS)", "Certified Administrative Professional (CAP)", "Google Workspace certification"], paths: ["On-the-job training + office skills courses", "Microsoft MOS certification (online) + experience", "IAAP CAP prep + administrative career progression"] },
   "Chief Operating Officer": { degrees: ["MBA", "BS Business/Engineering", "MS Operations Management"], certs: ["PMP (Project Management Professional)", "Six Sigma Black Belt", "CSCP (Certified Supply Chain Professional)"], paths: ["MBA + progressive operations leadership experience", "PMP + Six Sigma + executive experience", "Operations consulting or VP Ops track + board experience"] },
+  "Chief Marketing Officer": { degrees: ["MBA + marketing focus", "BS Marketing/Business", "MS Marketing Analytics"], certs: ["AMA Professional Certified Marketer", "Google Analytics Certification", "HubSpot Inbound Marketing"], paths: ["Marketing degree + progressive brand/growth leadership", "MBA + VP Marketing track to CMO", "Digital marketing certifications + CMO executive coaching"] },
+  "Chief Technology Officer": { degrees: ["BS/MS Computer Science", "MBA + engineering background", "PhD in technical field"], certs: ["AWS Solutions Architect Professional", "TOGAF Enterprise Architecture", "CISSP (for security-focused CTOs)"], paths: ["Engineering degree + progressive technical leadership", "VP Engineering track + board experience", "Startup founder/CTO path + scaling experience"] },
+  "Diversity & Inclusion Manager": { degrees: ["BS Human Resources/Sociology", "MS Organizational Development", "MBA + DEI concentration"], certs: ["SHRM-SCP", "CCDP (Certified Cultural Diversity Professional)", "Cornell DEIL Certificate"], paths: ["HR/sociology degree + DEI-focused roles", "SHRM certification + DEI training programs", "ERG leadership + progressive HR/DEI experience"] },
+  "Franchise Manager": { degrees: ["BS Business Administration", "BS Hospitality Management", "MBA"], certs: ["Certified Franchise Executive (CFE)", "PMP (Project Management Professional)", "State-specific franchise registration knowledge"], paths: ["Business degree + franchise operations experience", "IFA CFE program + multi-unit management", "Restaurant/retail management + franchise system transition"] },
+  "Change Management Consultant": { degrees: ["BS Business/Psychology", "MS Organizational Development", "MBA + OD focus"], certs: ["Prosci Change Management Certification", "CCMP (Certified Change Management Professional)", "ADKAR Certification"], paths: ["Business or psych degree + internal change roles", "Prosci or ACMP certification + consulting experience", "Project management + change management specialization"] },
 
   // === SALES ===
   "Sales Representative": { degrees: ["No degree required", "BS Business/Marketing", "BS Communications"], certs: ["Certified Professional Sales Person (CPSP)", "HubSpot Sales Software", "Challenger Sale Certification"], paths: ["On-the-job training + mentorship", "HubSpot Academy (free, online)", "Sales training programs (Sandler, Challenger)"] },
@@ -1118,6 +1133,11 @@ const CERTS = {
   "Sales Consultant": { degrees: ["No degree required", "BS Business/Marketing", "MBA"], certs: ["Certified Sales Professional (CSP)", "HubSpot Sales Software Certification", "Salesforce Certified Administrator"], paths: ["Progressive sales experience + consulting transition", "NASP CSP certification + industry specialization", "Salesforce/HubSpot free certifications + client work"] },
   "Territory Sales Manager": { degrees: ["BS Business Administration", "BS Marketing", "MBA"], certs: ["Certified Sales Leadership Professional", "Salesforce Administrator", "Miller Heiman Strategic Selling"], paths: ["Sales experience + promotion to management", "Sales leadership certification + territory management", "Salesforce certification + progressive sales management"] },
   "Advertising Manager": { degrees: ["BS Marketing", "BS Advertising", "MBA + marketing focus"], certs: ["Google Ads Certification", "Meta Blueprint Certification", "DMA Certified Marketing Professional"], paths: ["Marketing/advertising degree + agency or brand experience", "Google + Meta platform certifications + campaign experience", "Progressive advertising roles + professional development"] },
+  "Sales Operations Analyst": { degrees: ["BS Business Analytics", "BS Finance/Marketing", "MS Business Analytics"], certs: ["Salesforce Administrator", "HubSpot Sales Software", "Tableau Desktop Specialist"], paths: ["Business/analytics degree + sales operations entry role", "Salesforce Admin cert + CRM management experience", "Data analytics skills + sales team support experience"] },
+  "Partnership Manager": { degrees: ["BS Business/Marketing", "BS Communications", "MBA"], certs: ["Certified Strategic Alliance Professional", "HubSpot Inbound Marketing", "Salesforce Partner Management"], paths: ["Business degree + business development experience", "Alliance/partnership certification + channel management", "Sales or marketing background + partner program building"] },
+  "Government Sales Representative": { degrees: ["BS Business Administration", "BS Political Science", "MBA"], certs: ["Certified Professional Contract Manager (CPCM)", "Federal Acquisition Certification", "Shipley Associates proposal training"], paths: ["Business or poli sci degree + government sales entry", "Contract management certification + agency relationship building", "Military/federal experience + private sector transition"] },
+  "Export Sales Manager": { degrees: ["BS International Business", "BS Marketing + international focus", "MBA"], certs: ["Certified Global Business Professional (CGBP)", "Licensed Customs Broker", "FIT Diploma in International Trade"], paths: ["International business degree + export coordination roles", "NASBITE CGBP certification + international sales experience", "Language skills + trade compliance training + sales management"] },
+  "Digital Advertising Specialist": { degrees: ["BS Marketing", "BS Communications", "Digital marketing bootcamp"], certs: ["Google Ads Certification", "Meta Blueprint Certification", "Google Analytics Certification"], paths: ["Marketing degree or bootcamp + entry-level ad operations", "Google + Meta free certifications + freelance campaigns", "Self-taught + portfolio of ad campaigns + agency experience"] },
 
   // === EDUCATION ===
   "Teacher": { degrees: ["BS Education", "BA in subject area + teaching credential", "Master in Teaching (MIT)"], certs: ["State Teaching License", "Praxis exams", "ESL/Bilingual endorsement (optional)"], paths: ["University education program + student teaching", "Praxis exam prep (study guides + practice tests)", "Alternative certification programs (Teach For America, TNTP)"] },
@@ -1157,6 +1177,11 @@ const CERTS = {
   "Academic Coach": { degrees: ["MEd", "MA in subject area", "MS Curriculum & Instruction"], certs: ["Instructional coaching certification", "National Board Certification", "State teaching license"], paths: ["Teaching experience + coaching training", "University coaching certificate program", "National Board Certification + peer coaching experience"] },
   "Financial Aid Advisor": { degrees: ["No degree required", "BS Education/Business", "MS Higher Education"], certs: ["NASFAA Certified Financial Aid Administrator", "Title IV compliance training", "State-specific certifications"], paths: ["Entry-level financial aid office position + training", "NASFAA credential program + federal training", "Higher education degree + progressive financial aid roles"] },
   "School Resource Officer": { degrees: ["No degree required", "AS Criminal Justice", "BS Criminal Justice"], certs: ["State law enforcement certification", "NASRO Basic SRO Course", "CPR/First Aid"], paths: ["Law enforcement academy + patrol experience + SRO assignment", "NASRO SRO training + school district coordination", "Criminal justice degree + police academy + specialized SRO training"] },
+  "Online Course Instructor": { degrees: ["Master's degree in subject area", "MEd Instructional Design", "BS + professional expertise"], certs: ["Online Teaching Certificate", "Quality Matters Certification", "Platform-specific instructor certification"], paths: ["Subject expertise + online teaching certification", "University adjunct track + online pedagogy training", "Industry professional + course creation on platforms (Udemy, Coursera)"] },
+  "Student Affairs Coordinator": { degrees: ["MEd Student Affairs/Higher Education", "MS Counseling + student affairs focus", "BS + master's in related field"], certs: ["No specific certification required", "NASPA membership valued", "Mental Health First Aid"], paths: ["Master's in student affairs + graduate assistantship", "Entry-level residence life or student activities role", "Counseling or social work degree + higher education transition"] },
+  "Education Policy Analyst": { degrees: ["MEd Policy/Leadership", "MPA + education focus", "MA Education Policy"], certs: ["No specific certification required", "Data analytics certification valued", "Grant writing certification"], paths: ["Education or public policy master's + think tank/agency internship", "Teaching experience + policy graduate program", "Data analysis skills + education research organization work"] },
+  "Gifted Education Specialist": { degrees: ["MEd Gifted Education", "MEd Curriculum & Instruction + gifted focus", "EdD Educational Leadership"], certs: ["State gifted education endorsement", "NAGC membership", "National Board Certification"], paths: ["Teaching license + gifted education graduate coursework", "State endorsement program + gifted classroom experience", "National Board Certification + gifted program leadership"] },
+  "College Advisor": { degrees: ["BS Education/Counseling", "MEd Higher Education", "MS Counseling"], certs: ["NACAC membership", "Independent Educational Consultant certificate", "State school counseling license (if in schools)"], paths: ["College admissions or counseling experience + NACAC membership", "Master's in higher education + university admissions office", "IECA certification + independent consulting practice"] },
 
   // === TRADES ===
   "Electrician": { degrees: ["No degree required", "Trade school diploma", "AS Electrical Technology"], certs: ["Journeyman Electrician License", "Master Electrician License", "OSHA 10/30 Certification"], paths: ["Union or non-union apprenticeship (4-5 years)", "Trade school + apprenticeship hours", "OSHA 10/30 online course + state exam prep"] },
@@ -1194,6 +1219,11 @@ const CERTS = {
   "Tile Installer": { degrees: ["No degree required", "Apprenticeship", "Certificate program"], certs: ["CTEF Certified Tile Installer", "NTCA membership", "Manufacturer certifications"], paths: ["Apprenticeship or on-the-job training", "CTEF hands-on certification test", "NTCA workshops + manufacturer training + experience"] },
   "Pest Control Technician": { degrees: ["No degree required", "AS Environmental Science", "Certificate program"], certs: ["State pest control license", "Category certifications (general, termite, etc.)", "NPMA QualityPro"], paths: ["State-required training + licensing exam", "Employer training + category-specific certification", "NPMA courses + on-the-job experience"] },
   "Appliance Repair Technician": { degrees: ["No degree required", "AS Electronics/Appliance Repair", "Certificate program"], certs: ["EPA Section 608 Certification", "NASTeC (National Appliance Service Technician)", "Manufacturer certifications (Whirlpool, Samsung, etc.)"], paths: ["Trade school or manufacturer training program (6-12 months)", "EPA 608 certification + on-the-job training", "Manufacturer certification courses + field experience"] },
+  "Gas Fitter": { degrees: ["No degree required", "Apprenticeship program", "Certificate in gas fitting"], certs: ["Journeyman/Master Gas Fitter License", "Medical Gas Installer Certification", "EPA 608 (for refrigerant-adjacent work)"], paths: ["Apprenticeship (3-5 years) + licensing exam", "Plumbing + gas fitting dual certification", "Manufacturer training + state gas fitter license"] },
+  "Cable Installer": { degrees: ["No degree required", "AS Telecommunications", "Certificate program"], certs: ["BICSI Installer 1/2", "ETA Fiber Optic Technician", "OSHA 10"], paths: ["On-the-job training + employer certification", "BICSI installer certification + structured cabling experience", "Telecommunications certificate + field experience"] },
+  "Surveyor": { degrees: ["BS Surveying/Geomatics", "BS Civil Engineering + surveying focus", "AS Surveying Technology"], certs: ["PLS (Professional Land Surveyor)", "LSIT (Land Surveyor In Training)", "FAA Part 107 (for drone surveying)"], paths: ["Surveying degree + LSIT exam + supervised experience (4+ years)", "PLS licensing exam after required experience", "AS degree + progressive field experience + licensing track"] },
+  "Septic System Technician": { degrees: ["No degree required", "AS Environmental Science", "Wastewater treatment certificate"], certs: ["State septic system installer license", "NOWRA Installer Certification", "OSHA Trenching Safety"], paths: ["On-the-job training + state licensing exam", "NOWRA certification program + field apprenticeship", "Environmental science background + installer certification"] },
+  "Alarm System Installer": { degrees: ["No degree required", "AS Electronics/Security Technology", "Certificate program"], certs: ["NICET Fire Alarm Certification", "State alarm installer license", "Manufacturer certifications (Honeywell, DSC)"], paths: ["On-the-job training + state licensing", "NICET certification + low-voltage experience", "Electronics training + manufacturer certification + field experience"] },
 
   // === CREATIVE ===
   "Graphic Designer": { degrees: ["BFA Graphic Design", "BS Visual Communications", "AA/AS Design"], certs: ["Adobe Certified Professional", "Adobe Certified Expert (ACE)", "Google UX Design Certificate"], paths: ["Art school or university design program", "Adobe certification prep + portfolio building", "Google UX Certificate on Coursera (6 months)"] },
@@ -1232,6 +1262,11 @@ const CERTS = {
   "Theater Director": { degrees: ["BFA Theater/Directing", "MFA Directing", "BA Drama + directing experience"], certs: ["No formal certification required", "SDC (Stage Directors and Choreographers) membership", "AEA membership (if also acting)"], paths: ["Theater degree + assistant directing + independent productions", "SDC membership + directing workshops + regional theater work", "Self-taught + community theater + festival submissions"] },
   "Stage Manager": { degrees: ["BFA Stage Management", "BA Theater + SM concentration", "MFA Stage Management"], certs: ["No formal certification required", "Equity membership (for union productions)", "IATSE membership (varies)"], paths: ["Theater degree + assistant stage managing + production experience", "Equity SM candidacy + professional theater experience", "Community theater experience + progressive professional opportunities"] },
   "Web Designer": { degrees: ["BS Web Design/Development", "BS Graphic Design + web focus", "Bootcamp certificate"], certs: ["Google UX Design Certificate", "Adobe Certified Professional", "HubSpot Content Design Certification"], paths: ["Design bootcamp or degree + portfolio", "Google UX Certificate on Coursera + freelance projects", "Self-taught + online courses (Treehouse, Udemy) + client work"] },
+  "Lighting Designer": { degrees: ["BFA Lighting Design", "MFA Lighting Design", "BA Theater + lighting concentration"], certs: ["No formal certification required", "ETCP Entertainment Electrician Certification", "IATSE membership"], paths: ["Theater design degree + production experience + portfolio", "ETCP certification + professional assisting", "Community/regional theater experience + portfolio building"] },
+  "Projection Designer": { degrees: ["BFA Digital Media/Media Design", "MFA Integrated Media", "BS Film + digital arts"], certs: ["No formal certification required", "Disguise/QLab certification", "Unreal Engine certification (for virtual production)"], paths: ["Digital arts degree + media server experience + portfolio", "Self-taught + theater/film production projects", "Video editing background + live event technology transition"] },
+  "Prop Master": { degrees: ["BFA Technical Theater", "BA Theater + props concentration", "MFA Scenic Technology"], certs: ["No formal certification required", "ETA+ (Entertainment Technician Certification)", "IATSE membership"], paths: ["Theater degree + prop shop experience + apprenticeship", "Community theater props work + progressive professional opportunities", "Art/fabrication background + theater production experience"] },
+  "Dialect Coach": { degrees: ["MFA Acting/Voice", "MA Linguistics", "MFA Voice & Speech (specialized)"], certs: ["VASTA (Voice and Speech Trainers Association) membership", "Fitzmaurice Voicework certification", "Lessac Voice & Body training"], paths: ["Acting/voice MFA + assistant coaching + professional credits", "Linguistics background + voice training + theater production work", "Actor transition to coaching + mentorship + VASTA membership"] },
+  "Puppet Designer": { degrees: ["BFA Puppetry", "MFA Puppet Arts", "BFA Sculpture/Fabrication + puppetry focus"], certs: ["No formal certification required", "UNIMA membership", "Jim Henson Foundation grants (recognition)"], paths: ["Puppetry degree + puppet building apprenticeship + portfolio", "Art/fabrication background + puppet theater experience", "Self-taught + community puppet theater + festival work"] },
 
   // === SERVICE ===
   "Restaurant Manager": { degrees: ["BS Hospitality Management", "AS Culinary/Business", "No degree required"], certs: ["ServSafe Manager Certification", "Food Handler's Permit", "TIPS Certification"], paths: ["Hospitality degree or restaurant experience + promotion", "ServSafe online course + proctored exam", "TIPS certification online + food handler course"] },
@@ -1269,6 +1304,11 @@ const CERTS = {
   "Janitorial Supervisor": { degrees: ["No degree required", "AS Facilities Management", "Certificate in building maintenance"], certs: ["ISSA Cleaning Management Institute (CMI)", "OSHA 10/30", "Bloodborne Pathogen Certification"], paths: ["Custodial experience + internal promotion", "ISSA CMI certification program", "OSHA safety courses + supervisory training"] },
   "Valet Attendant": { degrees: ["No degree required", "High school diploma", "Hospitality certificate (optional)"], certs: ["Valid driver's license (clean record)", "CPR/First Aid (optional)", "Employer-specific training certification"], paths: ["On-the-job training at hotel or restaurant", "Clean driving record + customer service training", "Hospitality experience + employer valet training program"] },
   "School Bus Driver": { degrees: ["No degree required", "High school diploma", "CDL training program"], certs: ["CDL Class B with School Bus & Passenger endorsements", "State school bus driver certificate", "CPR/First Aid"], paths: ["CDL training program (2-4 weeks) + state testing", "School district training + background check + driving test", "Annual refresher training + defensive driving course"] },
+  "Valet Parking Supervisor": { degrees: ["No degree required", "AS Hospitality Management", "BS Business + hospitality focus"], certs: ["Valid driver's license (clean record)", "CPR/First Aid Certification", "OSHA 10 (for workplace safety)"], paths: ["Valet attendant experience + internal promotion", "Hospitality management training + valet operations", "Customer service background + supervisor training program"] },
+  "Catering Coordinator": { degrees: ["AS/BS Hospitality Management", "BS Culinary Arts", "Certificate in Event Management"], certs: ["ServSafe Food Protection Manager", "Certified Meeting Professional (CMP)", "Allergen awareness certification"], paths: ["Hospitality or culinary degree + catering assistant role", "ServSafe certification + event coordination experience", "Restaurant management experience + catering specialization"] },
+  "Pet Sitter": { degrees: ["No degree required", "AS Animal Science (optional)", "Veterinary assistant certificate (optional)"], certs: ["Pet First Aid/CPR (Red Cross or PetTech)", "National Association of Professional Pet Sitters membership", "Bonding and liability insurance"], paths: ["Animal care experience + Pet First Aid certification", "NAPPS membership + business setup + client building", "Veterinary clinic experience + independent pet sitting business"] },
+  "Optician": { degrees: ["AS Opticianry", "BS Vision Science", "Certificate in Ophthalmic Dispensing"], certs: ["ABO (American Board of Opticianry) Certification", "NCLE (National Contact Lens Examiners) Certification", "State optician license (varies)"], paths: ["Accredited opticianry program (2 years) + ABO/NCLE exams", "Apprenticeship + state licensing exam", "ABO certification + on-the-job training + dispensary experience"] },
+  "Fitness Studio Manager": { degrees: ["BS Kinesiology/Exercise Science", "BS Sports Management", "MBA + fitness focus"], certs: ["NCCA-accredited personal training cert (NASM, ACE, NSCA)", "CPR/AED/First Aid", "Group fitness instructor certification"], paths: ["Exercise science degree + personal training + management promotion", "Fitness certification + studio experience + business training", "Athletic background + fitness certification + leadership development"] },
 
   // === LEGAL ===
   "Paralegal": { degrees: ["ABA-approved Paralegal Certificate", "AS/BS Paralegal Studies", "BS + certificate"], certs: ["CP (Certified Paralegal)", "CLA (Certified Legal Assistant)", "State-specific certification"], paths: ["ABA-approved paralegal program (1-2 years)", "NALA CP exam prep after education", "State paralegal association certification"] },
@@ -1305,7 +1345,12 @@ const CERTS = {
   "Legal Document Preparer": { degrees: ["No degree required", "AS Legal Studies", "Paralegal certificate"], certs: ["Legal Document Assistant (LDA) registration (state-dependent)", "Notary Public commission", "NFPA certification"], paths: ["Paralegal training + LDA registration (if required)", "Notary commission + document preparation experience", "Legal office experience + self-employment setup"] },
   "Legal Nurse Consultant": { degrees: ["BSN (Bachelor of Science in Nursing)", "MSN + legal focus", "ADN + LNC certificate"], certs: ["LNCC (Legal Nurse Consultant Certified)", "RN License (NCLEX-RN)", "AALNC membership"], paths: ["RN experience (5+ years) + LNC certificate program", "AALNC certification prep + legal experience", "Nursing degree + legal consulting training + case experience"] },
   "Paralegal Manager": { degrees: ["BS Legal Studies", "BS Business + paralegal certificate", "MBA + legal focus"], certs: ["CP (Certified Paralegal)", "PMP (Project Management Professional)", "SHRM-CP (for HR-related management)"], paths: ["Paralegal experience + management promotion", "NALA CP certification + progressive supervisory roles", "PMP certification + legal department management experience"] },
-  "Compliance Analyst": { degrees: ["BS Business/Law", "BS Finance", "MBA + compliance focus"], certs: ["CCEP (Certified Compliance & Ethics Professional)", "CRCM (Certified Regulatory Compliance Manager)", "CAMS (Certified Anti-Money Laundering Specialist)"], paths: ["Business/law degree + compliance internship", "SCCE CCEP online prep + exam", "ACAMS CAMS certification + compliance experience"] }
+  "Compliance Analyst": { degrees: ["BS Business/Law", "BS Finance", "MBA + compliance focus"], certs: ["CCEP (Certified Compliance & Ethics Professional)", "CRCM (Certified Regulatory Compliance Manager)", "CAMS (Certified Anti-Money Laundering Specialist)"], paths: ["Business/law degree + compliance internship", "SCCE CCEP online prep + exam", "ACAMS CAMS certification + compliance experience"] },
+  "Legal Aid Attorney": { degrees: ["JD (Juris Doctor)", "BA/BS + law school", "BS Criminal Justice + JD"], certs: ["State Bar License", "State-specific legal aid certification", "Pro bono service recognition"], paths: ["Law school + public interest focus + bar passage", "Legal aid internship + fellowship + staff attorney position", "Private practice transition to legal aid + pro bono track record"] },
+  "Public Defender": { degrees: ["JD (Juris Doctor)", "BA/BS + law school", "BS Criminal Justice + JD"], certs: ["State Bar License", "NCDI (National Criminal Defense Institute) training", "Trial advocacy certification"], paths: ["Law school + criminal law clinic + bar passage", "Public defender internship + staff attorney position", "Private criminal defense + public defender office transition"] },
+  "District Attorney": { degrees: ["JD (Juris Doctor)", "BA Political Science/Criminal Justice + JD", "MPA + JD"], certs: ["State Bar License", "NDAA (National District Attorneys Association) training", "Trial advocacy certification"], paths: ["Law school + prosecutor internship + bar passage", "Assistant DA entry + progressive trial experience", "Private practice or clerkship + prosecutor career transition"] },
+  "Environmental Lawyer": { degrees: ["JD + environmental law focus", "BS Environmental Science + JD", "JD + LLM Environmental Law"], certs: ["State Bar License", "LEED Green Associate", "Environmental mediation certification"], paths: ["Law school + environmental law journal + clerkship", "EPA or state agency experience + private firm transition", "Environmental science background + law school + practice"] },
+  "Immigration Attorney": { degrees: ["JD (Juris Doctor)", "BA International Relations + JD", "JD + LLM Immigration Law"], certs: ["State Bar License", "AILA (American Immigration Lawyers Association) membership", "Board Certification in Immigration Law (where available)"], paths: ["Law school + immigration clinic + bar passage", "AILA membership + immigration firm experience", "Bilingual skills + immigration law practice + nonprofit partnership"] }
 };
 
 const DATA = {
@@ -1805,6 +1850,76 @@ const DATA = {
 {q:"How do you measure IT team performance?",tip:"Discuss KPIs: ticket resolution time, system uptime, project delivery, user satisfaction, and security incidents."},
 {q:"What is your experience with cloud migration?",tip:"Discuss assessment, planning, execution, cost management, and hybrid cloud strategies."},
 {q:"How do you align IT strategy with business goals?",tip:"Show partnership with leadership, understanding business needs, translating to technology solutions, and communicating value."}
+],
+"Platform Engineer": [
+{q:"What is your experience building internal developer platforms?",tip:"Discuss self-service tooling, golden paths, infrastructure abstraction, and developer experience improvements."},
+{q:"How do you design platform APIs for internal teams?",tip:"Show API design principles, versioning, documentation, and balancing standardization with team autonomy."},
+{q:"How do you measure platform adoption?",tip:"Mention developer satisfaction surveys, adoption metrics, time-to-production, and reducing cognitive load."},
+{q:"What infrastructure-as-code tools do you use?",tip:"Discuss Terraform, Pulumi, Crossplane, or similar tools and how you manage state and drift detection."},
+{q:"How do you handle multi-tenant platform concerns?",tip:"Show isolation strategies, resource quotas, cost allocation, and namespace management in Kubernetes."},
+{q:"What is your approach to platform reliability?",tip:"Discuss SLOs, error budgets, incident response, and balancing feature velocity with stability."},
+{q:"How do you enable self-service for developers?",tip:"Mention service catalogs, golden templates, CI/CD abstractions, and reducing time-to-first-deploy."},
+{q:"What experience do you have with Kubernetes at scale?",tip:"Show cluster management, multi-cluster strategies, service mesh, and operator patterns."},
+{q:"How do you manage secrets and configuration?",tip:"Discuss secrets management tools, external secrets operators, config drift detection, and rotation policies."},
+{q:"What is your approach to platform documentation?",tip:"Show internal docs-as-code, runbooks, architecture decision records, and onboarding guides."},
+{q:"How do you handle platform migrations?",tip:"Discuss phased rollouts, backward compatibility, migration tooling, and communicating changes to teams."},
+{q:"What observability tools do you integrate into the platform?",tip:"Mention centralized logging, distributed tracing, metrics platforms, and developer-facing dashboards."}
+],
+"Release Engineer": [
+{q:"How do you design a CI/CD pipeline?",tip:"Discuss build stages, test automation, deployment strategies (blue-green, canary), and rollback mechanisms."},
+{q:"What is your experience with release branching strategies?",tip:"Show understanding of GitFlow, trunk-based development, release branches, and hotfix workflows."},
+{q:"How do you manage release approvals and gates?",tip:"Discuss automated quality gates, manual approval workflows, compliance checks, and audit trails."},
+{q:"What tools do you use for build automation?",tip:"Mention Jenkins, GitHub Actions, GitLab CI, CircleCI, or similar and how you optimize build times."},
+{q:"How do you handle dependency management?",tip:"Show lock files, dependency scanning, version pinning strategies, and handling transitive dependencies."},
+{q:"What is your approach to release notes and changelogs?",tip:"Discuss automated changelog generation, semantic versioning, and communicating changes to stakeholders."},
+{q:"How do you ensure reproducible builds?",tip:"Mention containerized builds, hermetic builds, pinned tool versions, and build caching strategies."},
+{q:"What is your experience with artifact management?",tip:"Show artifact repositories, Docker registries, versioning schemes, and artifact promotion pipelines."},
+{q:"How do you handle rollbacks in production?",tip:"Discuss feature flags, database migration rollbacks, traffic shifting, and incident communication."},
+{q:"What metrics do you track for release health?",tip:"Mention deployment frequency, lead time, change failure rate, mean time to recovery (DORA metrics)."},
+{q:"How do you manage releases across microservices?",tip:"Show coordination strategies, contract testing, release trains, and independent vs. coupled deployments."},
+{q:"What is your approach to release security?",tip:"Discuss SBOM generation, vulnerability scanning, supply chain security, and signed artifacts."}
+],
+"Compiler Engineer": [
+{q:"What compiler phases are you most experienced with?",tip:"Discuss lexer, parser, semantic analysis, optimization, or code generation phases and your depth in each."},
+{q:"How do you approach language design decisions?",tip:"Show understanding of type systems, syntax design, ergonomics, and learning from existing languages."},
+{q:"What optimization techniques have you implemented?",tip:"Mention loop unrolling, dead code elimination, inlining, register allocation, or vectorization."},
+{q:"How do you test a compiler?",tip:"Discuss differential testing, fuzz testing, conformance test suites, and regression testing strategies."},
+{q:"What is your experience with LLVM or similar frameworks?",tip:"Show understanding of IR design, pass management, target backends, and how to write custom passes."},
+{q:"How do you handle error reporting in a compiler?",tip:"Discuss error recovery, helpful diagnostics, source location tracking, and suggesting fixes."},
+{q:"What intermediate representations have you worked with?",tip:"Show understanding of AST, SSA form, three-address code, and lowering strategies between representations."},
+{q:"How do you approach cross-compilation?",tip:"Discuss target triples, sysroot configuration, cross-linking, and platform-specific code generation."},
+{q:"What is your experience with JIT compilation?",tip:"Mention tracing JITs, method JITs, tiered compilation, deoptimization, and hot path detection."},
+{q:"How do you optimize for specific hardware targets?",tip:"Show SIMD intrinsics, CPU feature detection, GPU code generation, and platform-specific optimizations."},
+{q:"What is your experience with compiler toolchains?",tip:"Discuss assemblers, linkers, debug info generation (DWARF), and static/dynamic linking."},
+{q:"How do you handle memory safety in compiled output?",tip:"Show stack protection, address sanitization, bounds checking, and garbage collection integration."}
+],
+"API Developer": [
+{q:"How do you design a RESTful API?",tip:"Show resource modeling, HTTP method semantics, status codes, pagination, and HATEOAS principles."},
+{q:"What is your experience with GraphQL?",tip:"Discuss schema design, resolvers, query optimization, N+1 prevention, and when to choose GraphQL over REST."},
+{q:"How do you handle API versioning?",tip:"Discuss URL versioning, header versioning, content negotiation, and deprecation strategies."},
+{q:"What is your approach to API documentation?",tip:"Mention OpenAPI/Swagger, interactive docs, code generation, and keeping docs in sync with implementation."},
+{q:"How do you implement API authentication and authorization?",tip:"Show JWT, OAuth 2.0, API keys, scopes, and middleware patterns for securing endpoints."},
+{q:"How do you design APIs for mobile clients?",tip:"Discuss payload optimization, field selection, batching, caching headers, and offline-first patterns."},
+{q:"What is your approach to API rate limiting?",tip:"Show token bucket, sliding window, rate limit headers, and handling 429 responses gracefully."},
+{q:"How do you handle API errors consistently?",tip:"Discuss error response schemas, problem details (RFC 7807), error codes, and client-friendly messages."},
+{q:"What is your experience with webhook design?",tip:"Show event-driven architecture, retry policies, signature verification, and idempotency handling."},
+{q:"How do you test APIs?",tip:"Mention contract testing, integration tests, load testing, and API mocking strategies."},
+{q:"How do you handle breaking changes in an API?",tip:"Discuss backward compatibility, migration guides, sunset headers, and supporting multiple versions."},
+{q:"What is your approach to API performance?",tip:"Show response time optimization, caching strategies, database query optimization, and CDN integration."}
+],
+"Cloud Engineer": [
+{q:"What cloud platforms do you have experience with?",tip:"Discuss AWS, Azure, GCP, or multi-cloud experience and your depth in specific services."},
+{q:"How do you design for high availability in the cloud?",tip:"Show multi-AZ deployments, load balancing, health checks, auto-scaling, and failover strategies."},
+{q:"What is your experience with cloud networking?",tip:"Discuss VPCs, subnets, security groups, VPNs, transit gateways, and peering configurations."},
+{q:"How do you manage cloud costs?",tip:"Mention reserved instances, spot instances, right-sizing, cost allocation tags, and FinOps practices."},
+{q:"What is your approach to cloud security?",tip:"Show IAM policies, least privilege, encryption at rest/transit, security groups, and compliance frameworks."},
+{q:"How do you implement infrastructure as code?",tip:"Discuss Terraform, CloudFormation, Pulumi, state management, and infrastructure testing strategies."},
+{q:"What is your experience with containerization?",tip:"Show Docker, ECS/EKS, container orchestration, image management, and container security."},
+{q:"How do you handle cloud migrations?",tip:"Discuss the 6 Rs of migration, dependency mapping, cutover strategies, and hybrid cloud approaches."},
+{q:"What monitoring and logging tools do you use?",tip:"Mention CloudWatch, Datadog, Prometheus, centralized logging, and alerting strategies."},
+{q:"How do you design disaster recovery in the cloud?",tip:"Show RTO/RPO targets, backup strategies, cross-region replication, and DR testing procedures."},
+{q:"What is your experience with serverless architectures?",tip:"Discuss Lambda, API Gateway, event-driven patterns, cold starts, and when serverless is appropriate."},
+{q:"How do you manage cloud compliance?",tip:"Show SOC 2, HIPAA, PCI-DSS compliance in cloud, audit trails, and automated compliance checking."}
 ]
   }
 },
@@ -2347,6 +2462,76 @@ const DATA = {
 {q:"What is your experience with dental procedures?",tip:"Discuss dental exams, cleanings, extractions, dental radiography, and home care education."},
 {q:"How do you stay current with veterinary medicine?",tip:"Mention continuing education, journals, conferences (AVMA, ACVIM), and specialist consultations."},
 {q:"What licenses and certifications do you hold?",tip:"Mention DVM degree, state license, DEA registration, and any board certifications."}
+],
+"Dermatologist": [
+{q:"How do you approach a patient presenting with an undiagnosed skin condition?",tip:"Show systematic examination, differential diagnosis process, and when to biopsy or refer."},
+{q:"What is your experience with Mohs micrographic surgery?",tip:"Discuss training, case volume, tissue preservation techniques, and reconstruction experience."},
+{q:"How do you stay current with dermatological treatments?",tip:"Mention AAD meetings, JAAD publications, continuing education, and clinical trial participation."},
+{q:"What is your approach to managing chronic skin conditions?",tip:"Discuss treatment plans for eczema, psoriasis, rosacea — including biologics and patient education."},
+{q:"How do you handle cosmetic vs. medical dermatology balance?",tip:"Show understanding of both areas, patient expectations, and scope of practice boundaries."},
+{q:"What dermoscopy experience do you have?",tip:"Discuss pattern recognition,ABCDE criteria, digital dermoscopy, and melanoma detection protocols."},
+{q:"How do you approach pediatric dermatology cases?",tip:"Show knowledge of childhood conditions, age-appropriate treatments, and parent communication."},
+{q:"What is your experience with phototherapy?",tip:"Discuss narrowband UVB, PUVA, excimer laser, treatment protocols, and patient monitoring."},
+{q:"How do you communicate skin cancer risk to patients?",tip:"Show risk factor education, sun protection counseling, and screening recommendations."},
+{q:"What teledermatology experience do you have?",tip:"Discuss store-and-forward vs. live telemedicine, triaging, image quality, and when in-person is needed."},
+{q:"How do you manage a dermatology practice?",tip:"Show scheduling optimization, equipment maintenance, staff training, and insurance navigation."},
+{q:"What is your approach to managing drug reactions presenting as skin conditions?",tip:"Discuss identifying causative agents, Stevens-Johnson syndrome recognition, and coordination with prescribing physicians."}
+],
+"Podiatrist": [
+{q:"How do you diagnose and treat plantar fasciitis?",tip:"Show clinical assessment, imaging protocols, conservative treatments (orthotics, PT), and surgical options."},
+{q:"What surgical procedures do you perform?",tip:"Discuss bunionectomies, hammertoe correction, neuroma excision, and ankle arthroscopy experience."},
+{q:"How do you manage diabetic foot care?",tip:"Show comprehensive foot exams, wound prevention, patient education, and multidisciplinary coordination."},
+{q:"What is your approach to sports-related foot injuries?",tip:"Discuss stress fractures, Achilles tendinopathy, ankle sprains, and return-to-play protocols."},
+{q:"How do you handle wound care for chronic ulcers?",tip:"Show debridement techniques, offloading strategies, advanced wound products, and infection management."},
+{q:"What experience do you have with custom orthotics?",tip:"Discuss gait analysis, casting techniques, material selection, and patient follow-up for adjustments."},
+{q:"How do you approach pediatric foot conditions?",tip:"Show knowledge of flat feet, in-toeing, Sever's disease, and when intervention is needed."},
+{q:"What is your experience with diabetic limb salvage?",tip:"Discuss revascularization coordination, negative pressure wound therapy, and preventing amputations."},
+{q:"How do you stay current with podiatric medicine?",tip:"Mention APMA conferences, board certifications, journal reviews, and surgical technique workshops."},
+{q:"What imaging modalities do you use in your practice?",tip:"Discuss X-ray, MRI, ultrasound, and CT indications for foot and ankle conditions."},
+{q:"How do you manage a podiatry practice?",tip:"Show patient flow, referral networks, insurance billing for DME, and surgical scheduling."},
+{q:"What is your approach to nail procedures?",tip:"Discuss ingrown toenail management, matrixectomy, fungal nail treatment, and biopsy protocols."}
+],
+"Audiologist": [
+{q:"How do you conduct a comprehensive hearing evaluation?",tip:"Show audiometric testing battery, tympanometry, otoacoustic emissions, and speech recognition testing."},
+{q:"What hearing aid fitting experience do you have?",tip:"Discuss real-ear measurements, manufacturer selection, programming adjustments, and follow-up protocols."},
+{q:"How do you manage patients with tinnitus?",tip:"Show tinnitus assessment, sound therapy, CBT-based approaches, and hearing aid masking features."},
+{q:"What is your experience with cochlear implants?",tip:"Discuss candidacy evaluation, surgical mapping, programming, and auditory rehabilitation."},
+{q:"How do you work with pediatric patients?",tip:"Show newborn hearing screening, play audiometry, family counseling, and school collaboration."},
+{q:"What vestibular assessment experience do you have?",tip:"Discuss VNG/ENG, rotary chair testing, VEMP, BPPV diagnosis, and Epley maneuver."},
+{q:"How do you approach auditory processing evaluations?",tip:"Show test battery selection, interprofessional collaboration, and classroom accommodation recommendations."},
+{q:"What is your experience with assistive listening devices?",tip:"Discuss FM systems, loop systems, captioning technology, and smartphone connectivity options."},
+{q:"How do you counsel patients and families on hearing loss?",tip:"Show communication strategies, realistic expectations, emotional support, and resource referrals."},
+{q:"What experience do you have with industrial audiology?",tip:"Discuss OSHA compliance, hearing conservation programs, baseline testing, and noise monitoring."},
+{q:"How do you stay current with audiology technology?",tip:"Mention manufacturer training, AAA conferences, journal reviews, and hands-on product evaluations."},
+{q:"What is your approach to hearing aid follow-up care?",tip:"Show scheduled adjustments, outcome measures, technology upgrades, and long-term relationship management."}
+],
+"Neonatal Nurse Practitioner": [
+{q:"How do you manage a premature infant in the NICU?",tip:"Show knowledge of respiratory support, thermoregulation, nutrition, and developmental care protocols."},
+{q:"What is your experience with ventilator management?",tip:"Discuss conventional vs. high-frequency ventilation, surfactant therapy, and weaning strategies."},
+{q:"How do you handle neonatal resuscitation?",tip:"Show NRP certification, team dynamics, initial stabilization, and escalation protocols."},
+{q:"What is your approach to parent education in the NICU?",tip:"Discuss kangaroo care, feeding support, discharge planning, and emotional support for families."},
+{q:"How do you manage neonatal sepsis?",tip:"Show risk assessment, empiric antibiotic selection, lab monitoring, and duration-of-therapy decisions."},
+{q:"What experience do you have with neonatal procedures?",tip:"Discuss intubation, umbilical lines, lumbar punctures, chest tube insertion, and central line placement."},
+{q:"How do you approach feeding intolerance in neonates?",tip:"Show assessment of abdominal exam, imaging interpretation, feeding advancement protocols, and NEC prevention."},
+{q:"What is your experience with neonatal abstinence syndrome?",tip:"Discuss assessment tools (Finnegan), pharmacologic management, non-pharmacologic interventions, and discharge planning."},
+{q:"How do you coordinate with neonatologists and subspecialists?",tip:"Show collaborative rounding, consult management, care plan communication, and handoff protocols."},
+{q:"How do you manage pain in neonates?",tip:"Discuss pain assessment tools, pharmacologic options, non-pharmacologic comfort measures, and procedural pain management."},
+{q:"What quality improvement initiatives have you led in the NICU?",tip:"Mention CLABSI reduction, antibiotic stewardship, breast milk optimization, or other QI projects."},
+{q:"How do you handle end-of-life care in the NICU?",tip:"Show palliative care principles, family support, ethical considerations, and bereavement resources."}
+],
+"Clinical Psychologist": [
+{q:"What therapeutic modalities are you trained in?",tip:"Discuss CBT, DBT, psychodynamic, ACT, EMDR, or other approaches and when you use each."},
+{q:"How do you conduct a psychological assessment?",tip:"Show clinical interview, standardized testing (MMPI, WAIS), behavioral observation, and report writing."},
+{q:"How do you develop a treatment plan?",tip:"Discuss goal setting, evidence-based interventions, measurable outcomes, and periodic reassessment."},
+{q:"What is your experience with crisis intervention?",tip:"Show suicide risk assessment, safety planning, de-escalation, and coordination with emergency services."},
+{q:"How do you handle dual diagnosis cases?",tip:"Discuss integrated treatment for co-occurring mental health and substance use disorders."},
+{q:"What is your approach to working with diverse populations?",tip:"Show cultural humility, adapted interventions, interpreter use, and awareness of systemic barriers."},
+{q:"How do you maintain ethical boundaries?",tip:"Discuss dual relationships, informed consent, confidentiality limits, and consultation on complex cases."},
+{q:"What experience do you have with group therapy?",tip:"Show group design, facilitation skills, managing group dynamics, and outcome measurement."},
+{q:"How do you stay current with clinical research?",tip:"Mention journal reviews, continuing education, professional conferences, and peer consultation groups."},
+{q:"What is your experience with psychological testing?",tip:"Discuss neuropsychological assessment, personality testing, forensic evaluations, and report writing."},
+{q:"How do you measure treatment progress?",tip:"Show standardized outcome measures, session-by-session tracking, treatment plan modifications, and discharge criteria."},
+{q:"What is your approach to supervision and training?",tip:"Discuss supervision models, providing feedback, ethics in supervision, and developing clinical judgment."}
 ]
   }
 },
@@ -2889,6 +3074,76 @@ const DATA = {
 {q:"How do you align operations with customer experience?",tip:"Show customer feedback loops, NPS tracking, process design around customer needs, and quality standards."},
 {q:"What is your approach to building and developing an operations team?",tip:"Show hiring for key roles, developing talent, succession planning, and creating accountability."},
 {q:"How do you balance short-term execution with long-term strategy?",tip:"Show quarterly planning, strategic initiatives, resource trade-offs, and board-level communication."}
+],
+"Chief Marketing Officer": [
+{q:"How do you develop a brand strategy from scratch?",tip:"Show market research, positioning, brand identity creation, and go-to-market planning."},
+{q:"What is your approach to marketing ROI measurement?",tip:"Discuss attribution models, CAC/LTV, marketing mix modeling, and connecting spend to revenue."},
+{q:"How do you build and manage a marketing team?",tip:"Show hiring for key roles, team structure, agency vs. in-house decisions, and talent development."},
+{q:"What experience do you have with demand generation?",tip:"Discuss multi-channel campaigns, lead scoring, ABM strategies, and sales-marketing alignment."},
+{q:"How do you handle a brand crisis?",tip:"Show crisis communication planning, rapid response, stakeholder messaging, and reputation recovery."},
+{q:"What is your approach to digital transformation in marketing?",tip:"Discuss martech stack design, data infrastructure, personalization at scale, and organizational change."},
+{q:"How do you balance brand building with performance marketing?",tip:"Show awareness vs. conversion budget allocation, long-term brand equity, and short-term revenue needs."},
+{q:"What experience do you have with product marketing?",tip:"Discuss positioning, competitive analysis, launch strategies, and sales enablement materials."},
+{q:"How do you present marketing strategy to the board?",tip:"Show business impact framing, market opportunity sizing, investment justification, and KPI dashboards."},
+{q:"What is your approach to customer research?",tip:"Mention qualitative and quantitative methods, voice-of-customer programs, and insights-to-action processes."},
+{q:"How do you manage marketing during economic downturns?",tip:"Discuss budget prioritization, message adaptation, maintaining share of voice, and efficiency improvements."},
+{q:"What is your experience with international marketing?",tip:"Show localization strategies, regional team management, cultural adaptation, and global brand consistency."}
+],
+"Chief Technology Officer": [
+{q:"How do you set the technology vision for a company?",tip:"Show alignment with business strategy, technology roadmap creation, and communicating vision to stakeholders."},
+{q:"What is your approach to build vs. buy decisions?",tip:"Discuss evaluation frameworks, TCO analysis, vendor assessment, and strategic importance of the capability."},
+{q:"How do you manage technical debt at an organizational level?",tip:"Show prioritization frameworks, allocating capacity, communicating impact to non-technical stakeholders."},
+{q:"What is your experience scaling engineering teams?",tip:"Discuss org design, hiring processes, onboarding, culture preservation, and management layer development."},
+{q:"How do you evaluate and adopt new technologies?",tip:"Show proof-of-concept processes, risk assessment, migration planning, and avoiding hype-driven decisions."},
+{q:"What is your approach to engineering culture?",tip:"Discuss code review practices, learning culture, psychological safety, and developer productivity metrics."},
+{q:"How do you manage security as a CTO?",tip:"Show security strategy, compliance frameworks, incident response planning, and security team building."},
+{q:"What experience do you have with M&A technical due diligence?",tip:"Discuss codebase assessment, architecture evaluation, integration planning, and talent retention."},
+{q:"How do you communicate technical decisions to non-technical executives?",tip:"Show translating complexity, risk framing, business impact language, and visual storytelling."},
+{q:"What is your approach to platform vs. product engineering?",tip:"Discuss platform team investment, shared services, developer experience, and balancing internal vs. external."},
+{q:"How do you handle cloud cost optimization at scale?",tip:"Show FinOps practices, reserved capacity, right-sizing, architectural cost optimization, and accountability."},
+{q:"What is your experience with data strategy?",tip:"Discuss data governance, analytics infrastructure, ML/AI strategy, and data-driven culture development."}
+],
+"Diversity & Inclusion Manager": [
+{q:"How do you develop a DEI strategy for an organization?",tip:"Show needs assessment, goal setting, stakeholder engagement, and integration with business objectives."},
+{q:"What metrics do you use to measure DEI progress?",tip:"Discuss representation data, pay equity analysis, engagement survey results, and promotion rates by demographic."},
+{q:"How do you handle resistance to DEI initiatives?",tip:"Show empathy, data-driven conversations, finding allies, and addressing concerns without being confrontational."},
+{q:"What is your experience with inclusive hiring practices?",tip:"Discuss diverse sourcing, structured interviews, bias training, and equitable evaluation criteria."},
+{q:"How do you design DEI training programs?",tip:"Show curriculum development, interactive formats, measuring behavior change, and avoiding checkbox approaches."},
+{q:"What employee resource group experience do you have?",tip:"Discuss ERG launch, executive sponsorship, budget allocation, and measuring ERG impact on culture."},
+{q:"How do you address pay equity?",tip:"Show compensation auditing, market benchmarking, adjustment processes, and ongoing monitoring."},
+{q:"What is your approach to accessibility in the workplace?",tip:"Discuss physical, digital, and process accessibility, accommodation requests, and universal design principles."},
+{q:"How do you measure inclusion beyond diversity numbers?",tip:"Show belonging surveys, psychological safety assessment, inclusion index development, and qualitative feedback."},
+{q:"What experience do you have with supplier diversity?",tip:"Discuss diverse vendor programs, certification verification, spend tracking, and integrating with procurement."},
+{q:"How do you handle DEI-related conflicts or complaints?",tip:"Show investigation processes, restorative justice approaches, policy enforcement, and follow-up."},
+{q:"How do you communicate DEI progress to leadership?",tip:"Show executive dashboards, storytelling with data, benchmarking against industry, and connecting to business outcomes."}
+],
+"Franchise Manager": [
+{q:"How do you evaluate a new franchise territory?",tip:"Show market analysis, demographic research, competition assessment, and site selection criteria."},
+{q:"What is your approach to franchisee recruitment?",tip:"Discuss candidate qualification, discovery day process, financial requirements, and cultural fit assessment."},
+{q:"How do you ensure brand consistency across franchise locations?",tip:"Show operational standards, audit programs, mystery shopping, and corrective action processes."},
+{q:"What is your experience with franchise operations manuals?",tip:"Discuss documenting SOPs, training materials, updating for changes, and ensuring accessibility."},
+{q:"How do you support struggling franchisees?",tip:"Show performance analysis, action plans, additional training, field support, and turnaround strategies."},
+{q:"What is your approach to franchise territory disputes?",tip:"Discuss territory definitions, encroachment policies, resolution processes, and franchisee communication."},
+{q:"How do you manage franchise compliance?",tip:"Show brand standards audits, health/safety inspections, corrective action timelines, and termination processes."},
+{q:"What experience do you have with franchise marketing?",tip:"Discuss national vs. local marketing funds, co-op advertising, digital marketing guidelines, and brand assets."},
+{q:"How do you handle franchise renewals and transfers?",tip:"Show renewal criteria, transfer approval processes, valuation methods, and franchisee exit planning."},
+{q:"What technology systems do you use to manage franchises?",tip:"Mention POS systems, franchise management platforms, reporting dashboards, and communication tools."},
+{q:"How do you develop franchise training programs?",tip:"Show initial training, ongoing education, new product training, and multi-unit owner development."},
+{q:"What is your approach to franchisee relations?",tip:"Discuss advisory councils, regular communication, annual conventions, and building a franchise community."}
+],
+"Change Management Consultant": [
+{q:"What change management frameworks do you use?",tip:"Discuss ADKAR, Kotter's 8 Steps, Prosci methodology, or Lewin's model and when each applies."},
+{q:"How do you assess organizational readiness for change?",tip:"Show stakeholder analysis, current state assessment, readiness surveys, and risk identification."},
+{q:"What is your approach to stakeholder engagement?",tip:"Discuss influence mapping, communication planning, resistance management, and champion networks."},
+{q:"How do you measure change adoption?",tip:"Show adoption metrics, proficiency assessments, business KPIs, and sustained behavior change tracking."},
+{q:"What is your experience with technology-driven change?",tip:"Discuss ERP implementations, digital transformations, user adoption strategies, and training programs."},
+{q:"How do you handle resistance to change?",tip:"Show empathy, root cause analysis, addressing concerns, involving resistors in solutions, and escalation paths."},
+{q:"What communication strategies do you use during change?",tip:"Discuss tailored messaging, multi-channel approaches, two-way feedback, and leadership alignment."},
+{q:"How do you build change capability within an organization?",tip:"Show train-the-trainer programs, change agent networks, toolkits, and embedding change practices."},
+{q:"What is your experience with cultural transformation?",tip:"Discuss values alignment, behavior modeling, leadership development, and reinforcing mechanisms."},
+{q:"How do you manage multiple concurrent changes?",tip:"Show change portfolio management, impact assessment, change saturation analysis, and prioritization."},
+{q:"What is your approach to sustaining change long-term?",tip:"Discuss reinforcement mechanisms, accountability structures, performance management integration, and monitoring."},
+{q:"How do you handle change in unionized environments?",tip:"Show labor relations considerations, early engagement with union leadership, and collaborative approaches."}
 ]
   }
 },
@@ -3459,6 +3714,76 @@ const DATA = {
 {q:"How do you stay current with advertising trends and technology?",tip:"Mention industry conferences, trade publications, platform updates, and peer networks."},
 {q:"What is your approach to testing and optimization?",tip:"Discuss structured testing frameworks, statistical significance, creative iteration, and scaling winners."},
 {q:"How do you present advertising results to leadership?",tip:"Show dashboard design, KPI selection, storytelling with data, and connecting advertising to business outcomes."}
+],
+"Sales Operations Analyst": [
+{q:"How do you build a sales forecasting model?",tip:"Show pipeline analysis, historical trends, weighted probability, and adjusting for seasonality and market changes."},
+{q:"What CRM tools and reports do you build?",tip:"Discuss Salesforce dashboards, pipeline reports, activity tracking, and data hygiene processes."},
+{q:"How do you analyze sales team performance?",tip:"Show quota attainment analysis, activity metrics, conversion rates, and rep-to-rep benchmarking."},
+{q:"What is your experience with territory planning?",tip:"Discuss territory design, account assignment, workload balancing, and revenue potential mapping."},
+{q:"How do you identify bottlenecks in the sales process?",tip:"Show funnel analysis, stage-by-stage conversion, cycle time measurement, and root cause investigation."},
+{q:"What data tools do you use for sales analysis?",tip:"Mention Excel, SQL, Tableau/Power BI, Python, and how you combine data from multiple sources."},
+{q:"How do you design sales compensation plans?",tip:"Discuss quota setting, variable structures, SPIFs, accelerators, and ensuring alignment with company goals."},
+{q:"What is your approach to commission tracking?",tip:"Show commission calculation, dispute resolution, reporting, and ensuring transparency with the sales team."},
+{q:"How do you support sales leadership with strategic decisions?",tip:"Show market sizing, white space analysis, competitive intelligence, and scenario modeling."},
+{q:"What experience do you have with CPQ tools?",tip:"Discuss Configure-Price-Quote systems, pricing rules, approval workflows, and quote-to-cash integration."},
+{q:"How do you ensure data quality in the CRM?",tip:"Show validation rules, duplicate management, data enrichment, and user training on data entry standards."},
+{q:"What sales enablement initiatives have you driven?",tip:"Discuss playbooks, battle cards, training programs, and measuring their impact on win rates."}
+],
+"Partnership Manager": [
+{q:"How do you identify and evaluate potential partners?",tip:"Show strategic fit assessment, market reach analysis, capability gaps, and mutual value creation."},
+{q:"What is your approach to negotiating partnership agreements?",tip:"Discuss term sheets, revenue sharing models, exclusivity considerations, and legal frameworks."},
+{q:"How do you measure partnership success?",tip:"Show partner-sourced revenue, co-marketing ROI, customer satisfaction, and strategic milestone tracking."},
+{q:"What experience do you have with channel partnerships?",tip:"Discuss partner recruitment, enablement programs, deal registration, and channel conflict management."},
+{q:"How do you onboard new partners?",tip:"Show training programs, technical integration, go-to-market planning, and establishing communication cadence."},
+{q:"What is your approach to co-marketing with partners?",tip:"Discuss joint campaigns, co-branded content, event collaboration, and shared lead management."},
+{q:"How do you handle underperforming partnerships?",tip:"Show performance reviews, improvement plans, reallocation of resources, and graceful exit strategies."},
+{q:"What CRM or PRM tools do you use?",tip:"Mention Salesforce, PartnerStack, Impartner, or similar tools for tracking partner pipeline and activities."},
+{q:"How do you manage partner conflicts?",tip:"Discuss territory disputes, deal registration conflicts, escalation processes, and maintaining relationships."},
+{q:"What is your experience with technology integrations?",tip:"Show API partnerships, co-development projects, marketplace listings, and technical certification programs."},
+{q:"How do you build a partner program from scratch?",tip:"Discuss tier structures, benefits design, certification paths, and go-to-market frameworks."},
+{q:"What is your approach to partner QBRs?",tip:"Show business review structure, performance metrics, strategic alignment, and joint planning exercises."}
+],
+"Government Sales Representative": [
+{q:"How do you navigate the government procurement process?",tip:"Show understanding of RFP/RFQ, SAM.gov, GSA schedules, and federal/state/local procurement rules."},
+{q:"What is your experience writing government proposals?",tip:"Discuss compliance matrix, technical volumes, past performance, and pricing strategies for government contracts."},
+{q:"How do you identify government opportunities?",tip:"Mention GovWin, SAM.gov, agency forecasts, incumbent analysis, and relationship-based intelligence."},
+{q:"What contract types have you worked with?",tip:"Show experience with firm-fixed-price, cost-plus, time-and-materials, and IDIQ contracts."},
+{q:"How do you build relationships with government buyers?",tip:"Discuss industry days, capability briefings, conference networking, and adhering to procurement ethics."},
+{q:"What is your experience with set-aside contracts?",tip:"Show understanding of small business, 8(a), HUBZone, SDVOSB, and WOSB certifications."},
+{q:"How do you handle the long government sales cycle?",tip:"Show pipeline management, patience strategies, maintaining engagement, and multi-year relationship building."},
+{q:"What compliance considerations are important in government sales?",tip:"Discuss ITAR, FedRAMP, Section 508, TAA compliance, and security clearance requirements."},
+{q:"How do you manage contract delivery after winning?",tip:"Show post-award processes, project kickoff, customer relationship management, and contract modifications."},
+{q:"What is your experience with government subcontracting?",tip:"Discuss teaming agreements, subcontractor management, compliance flow-down, and mentor-protégé programs."},
+{q:"How do you price products for government customers?",tip:"Show cost analysis, competitive pricing, TINA compliance, and commercial pricing exception."},
+{q:"What state and local government experience do you have?",tip:"Discuss differences from federal, cooperative purchasing, state RFP processes, and local relationships."}
+],
+"Export Sales Manager": [
+{q:"How do you research and select international markets?",tip:"Show market analysis, trade data, competitive landscape, regulatory requirements, and demand assessment."},
+{q:"What is your experience with export documentation?",tip:"Discuss commercial invoices, bills of lading, certificates of origin, and customs declarations."},
+{q:"How do you handle international pricing and currency?",tip:"Show FX risk management, pricing strategies, Incoterms selection, and cost-plus calculations."},
+{q:"What export compliance regulations do you follow?",tip:"Discuss EAR, ITAR, sanctions screening, denied party lists, and classification (ECCN/HTS)."},
+{q:"How do you find and manage international distributors?",tip:"Show distributor vetting, agreement structures, performance management, and territory exclusivity."},
+{q:"What experience do you have with trade finance?",tip:"Discuss letters of credit, documentary collections, export credit insurance, and working capital solutions."},
+{q:"How do you handle logistics and shipping internationally?",tip:"Show freight forwarding, Incoterms, customs brokerage, and supply chain visibility."},
+{q:"What is your approach to international trade shows?",tip:"Discuss show selection, booth design, lead capture, follow-up processes, and measuring ROI."},
+{q:"How do you adapt products for international markets?",tip:"Show localization, regulatory compliance, packaging, labeling, and cultural adaptation."},
+{q:"What experience do you have with free trade agreements?",tip:"Discuss FTA utilization, rules of origin, tariff savings, and compliance documentation."},
+{q:"How do you manage international customer relationships?",tip:"Show time zone management, cultural awareness, language considerations, and regular visit schedules."},
+{q:"What trade compliance tools or software do you use?",tip:"Mention classification tools, screening software, trade management platforms, and document automation."}
+],
+"Digital Advertising Specialist": [
+{q:"How do you plan a digital advertising campaign?",tip:"Show audience research, channel selection, budget allocation, creative strategy, and KPI setting."},
+{q:"What experience do you have with Google Ads?",tip:"Discuss campaign types, keyword research, bidding strategies, Quality Score optimization, and conversion tracking."},
+{q:"How do you approach Facebook/Meta advertising?",tip:"Show audience targeting, lookalike audiences, creative testing, pixel implementation, and campaign optimization."},
+{q:"What is your experience with programmatic advertising?",tip:"Discuss DSP platforms, audience targeting, bid strategies, brand safety, and viewability measurement."},
+{q:"How do you optimize underperforming campaigns?",tip:"Show diagnostic approach: creative fatigue, audience saturation, bid adjustments, and landing page testing."},
+{q:"What attribution models do you use?",tip:"Discuss first-touch, last-touch, multi-touch, data-driven attribution, and their impact on budget decisions."},
+{q:"How do you A/B test ad creative?",tip:"Show variable isolation, sample size calculation, statistical significance, and iterative testing frameworks."},
+{q:"What analytics tools do you use?",tip:"Mention Google Analytics, platform dashboards, Looker/Tableau, and custom tracking implementations."},
+{q:"How do you handle ad fraud and brand safety?",tip:"Discuss verification tools, placement exclusions, invalid traffic filtering, and pre-bid safety measures."},
+{q:"What is your approach to retargeting?",tip:"Show audience segmentation, frequency capping, sequential messaging, and privacy-compliant retargeting."},
+{q:"How do you report advertising results to stakeholders?",tip:"Show dashboard design, KPI frameworks, executive summaries, and connecting metrics to business goals."},
+{q:"What experience do you have with emerging ad platforms?",tip:"Discuss TikTok, LinkedIn, Reddit, CTV, podcast advertising, or other emerging channels and their fit."}
 ]
   }
 },
@@ -3987,6 +4312,76 @@ const DATA = {
 {q:"How do you balance safety with maintaining a positive school climate?",tip:"Show understanding that over-policing harms trust, and the importance of proportional, supportive presence."},
 {q:"What specialized training have you completed for school settings?",tip:"Mention NASRO SRO training, crisis intervention, youth mental health first aid, and de-escalation courses."},
 {q:"How do you handle social media threats or cyberbullying?",tip:"Discuss investigation procedures, evidence preservation, student interviews, and coordination with administration."}
+],
+"Online Course Instructor": [
+{q:"How do you design an engaging online course?",tip:"Show learning objectives, modular structure, multimedia integration, and interactive elements like quizzes and discussions."},
+{q:"What learning management systems have you used?",tip:"Discuss Canvas, Moodle, Blackboard, Coursera, Udemy, or other platforms and your proficiency with each."},
+{q:"How do you handle student engagement in a virtual setting?",tip:"Show synchronous vs. asynchronous strategies, discussion facilitation, breakout rooms, and polling."},
+{q:"What is your approach to online assessment?",tip:"Discuss authentic assessments, proctoring solutions, open-book design, and preventing academic dishonesty."},
+{q:"How do you create accessible course content?",tip:"Show captioning, screen reader compatibility, alt text, color contrast, and UDL principles."},
+{q:"How do you provide feedback to online students?",tip:"Discuss rubric-based grading, video feedback, timely turnaround, and personalized comments."},
+{q:"What experience do you have with video production?",tip:"Show recording setup, editing skills, screen capture tools, and creating professional-quality lectures."},
+{q:"How do you handle technical issues during live sessions?",tip:"Discuss backup plans, recording live sessions, tech support resources, and accommodating students with connectivity issues."},
+{q:"How do you build community in an online classroom?",tip:"Show icebreakers, peer collaboration, group projects, and creating social presence."},
+{q:"What data do you use to improve your courses?",tip:"Mention completion rates, assessment analytics, student feedback surveys, and learning outcome tracking."},
+{q:"How do you stay current with online pedagogy?",tip:"Discuss EdTech conferences, teaching certifications, peer observation, and experimenting with new tools."},
+{q:"What is your approach to course updates and maintenance?",tip:"Show content review cycles, updating for current events, refreshing multimedia, and incorporating student feedback."}
+],
+"Student Affairs Coordinator": [
+{q:"How do you develop student programming and events?",tip:"Show needs assessment, learning outcomes, budget management, and assessing program effectiveness."},
+{q:"What is your approach to student conduct management?",tip:"Discuss conduct code administration, due process, restorative justice, and educational sanctions."},
+{q:"How do you support students in crisis?",tip:"Show crisis intervention protocols, resource referrals, case management, and follow-up procedures."},
+{q:"What experience do you have with residence life?",tip:"Discuss RA training, programming in residence halls, roommate mediation, and community building."},
+{q:"How do you promote student engagement and retention?",tip:"Show involvement opportunities, early alert systems, mentoring programs, and belonging initiatives."},
+{q:"What is your approach to multicultural programming?",tip:"Discuss culturally responsive events, heritage celebrations, identity-based support, and inclusive practices."},
+{q:"How do you collaborate with academic departments?",tip:"Show partnerships for academic support, faculty liaison, co-curricular integration, and shared student success goals."},
+{q:"What experience do you have with student organizations?",tip:"Discuss club advising, leadership development, budget allocation, and event planning support."},
+{q:"How do you assess student satisfaction and needs?",tip:"Show surveys, focus groups, suggestion systems, and data-driven program development."},
+{q:"What is your experience with Title IX compliance?",tip:"Discuss training programs, reporting procedures, supportive measures, and coordination with Title IX coordinator."},
+{q:"How do you manage your budget and resources?",tip:"Show budget planning, grant writing, vendor relationships, and maximizing impact with limited resources."},
+{q:"What professional development have you pursued?",tip:"Mention NASPA, ACPA memberships, graduate coursework, and emerging trends in student affairs."}
+],
+"Education Policy Analyst": [
+{q:"How do you analyze the impact of education legislation?",tip:"Show policy research methods, data analysis, stakeholder impact assessment, and evidence-based recommendations."},
+{q:"What education data sources do you use?",tip:"Discuss NCES, state longitudinal data systems, PISA, NAEP, and how you interpret education statistics."},
+{q:"How do you write policy briefs for legislators?",tip:"Show concise writing, evidence presentation, cost-benefit analysis, and actionable recommendations."},
+{q:"What is your experience with education funding formulas?",tip:"Discuss weighted student funding, Title I, IDEA, and how funding mechanisms affect equity."},
+{q:"How do you assess school accountability systems?",tip:"Show understanding of ESSA, state report cards, growth models, and unintended consequences of metrics."},
+{q:"What is your approach to equity analysis in education?",tip:"Discuss achievement gap data, resource equity, access metrics, and disaggregated outcome reporting."},
+{q:"How do you engage stakeholders in policy development?",tip:"Show public comment processes, focus groups, coalition building, and balancing competing interests."},
+{q:"What experience do you have with comparative education policy?",tip:"Discuss international benchmarks, best practices from other states/countries, and adaptation for local context."},
+{q:"How do you communicate complex education data?",tip:"Show data visualization, plain language writing, executive summaries, and presenting to non-technical audiences."},
+{q:"What is your experience with higher education policy?",tip:"Discuss financial aid policy, accreditation, student debt, completion initiatives, or workforce alignment."},
+{q:"How do you stay current with education policy trends?",tip:"Mention think tank reports, legislative tracking, professional associations, and academic journals."},
+{q:"What role does research play in education policy decisions?",tip:"Discuss evidence-based policy, randomized controlled trials, implementation science, and political considerations."}
+],
+"Gifted Education Specialist": [
+{q:"How do you identify gifted students?",tip:"Discuss multiple criteria: standardized testing, teacher nominations, portfolio assessment, and equitable identification."},
+{q:"What curriculum differentiation strategies do you use?",tip:"Show compacting, tiered assignments, independent study, subject acceleration, and depth vs. breadth."},
+{q:"How do you address the social-emotional needs of gifted learners?",tip:"Discuss perfectionism, asynchronous development, peer relationships, and counseling support."},
+{q:"What is your experience with acceleration policies?",tip:"Show understanding of grade skipping, subject acceleration, early entrance, and research supporting acceleration."},
+{q:"How do you design enrichment programs?",tip:"Discuss pull-out programs, cluster grouping, mentorship, competitions, and passion project facilitation."},
+{q:"How do you identify gifted students from underrepresented populations?",tip:"Show nonverbal assessments, local norms, talent development approaches, and bias reduction in identification."},
+{q:"What professional development have you completed in gifted education?",tip:"Mention NAGC conferences, state gifted associations, endorsement/certification coursework, and book studies."},
+{q:"How do you collaborate with general education teachers?",tip:"Show co-planning, differentiation support, professional development delivery, and advocating for gifted learners."},
+{q:"What is your experience with twice-exceptional students?",tip:"Discuss identifying giftedness alongside disabilities, strength-based IEPs, and accommodation strategies."},
+{q:"How do you communicate with parents of gifted children?",tip:"Show managing expectations, sharing resources, addressing concerns about underachievement, and partnership building."},
+{q:"What assessment tools do you use for gifted programming?",tip:"Discuss above-level testing, portfolio assessment, performance-based assessment, and progress monitoring."},
+{q:"How do you advocate for gifted education funding and support?",tip:"Show data-driven advocacy, legislative engagement, parent coalitions, and demonstrating program outcomes."}
+],
+"College Advisor": [
+{q:"How do you help students select colleges that fit?",tip:"Discuss academic fit, social fit, financial fit, and using data (admission rates, outcomes) to guide decisions."},
+{q:"What is your approach to college essay coaching?",tip:"Show brainstorming techniques, narrative development, authentic voice, and revision processes without writing for students."},
+{q:"How do you stay current with admissions trends?",tip:"Mention NACAC conferences, admissions counselor relationships, Common App updates, and test-optional policy changes."},
+{q:"How do you manage the financial aid process?",tip:"Discuss FAFSA, CSS Profile, scholarship searches, negotiation strategies, and understanding aid letters."},
+{q:"What experience do you have with first-generation students?",tip:"Show additional support, family education, navigating unfamiliar systems, and connecting to campus resources."},
+{q:"How do you help students build a college list?",tip:"Show reach/match/safety framework, application portfolio strategy, and balancing ambition with realism."},
+{q:"What is your approach to standardized test preparation?",tip:"Discuss test-optional considerations, prep strategies, score interpretation, and deciding whether to submit scores."},
+{q:"How do you support students with learning differences?",tip:"Show accommodation documentation, identifying supportive colleges, transition planning, and self-advocacy skills."},
+{q:"What technology tools do you use for college advising?",tip:"Mention Naviance, Scoir, application tracking systems, and communication platforms."},
+{q:"How do you handle parent involvement in the college process?",tip:"Show setting boundaries, parent education sessions, managing family expectations, and mediating disagreements."},
+{q:"What is your experience with international university applications?",tip:"Discuss UCAS, direct applications, credential evaluation, visa requirements, and country-specific processes."},
+{q:"How do you measure your advising program's success?",tip:"Show college enrollment rates, student satisfaction, persistence data, and fit-based outcome tracking."}
 ]
   }
 },
@@ -4487,6 +4882,76 @@ const DATA = {
 {q:"What safety practices do you follow?",tip:"Discuss electrical safety, gas leak testing, proper lifting, and appliance-specific hazards."},
 {q:"How do you source and manage parts?",tip:"Show parts lookup, supplier relationships, inventory management, and handling backordered parts."},
 {q:"What certifications do you hold?",tip:"Mention EPA Section 608, manufacturer certifications, and NASTeC or equivalent."}
+],
+"Gas Fitter": [
+{q:"What certifications are required for gas fitting?",tip:"Discuss journeyman/master gas fitter license, medical gas certification, and manufacturer training."},
+{q:"How do you detect and repair gas leaks?",tip:"Show electronic detectors, soap bubble testing, pressure decay testing, and emergency shutoff procedures."},
+{q:"What is your experience with gas piping installations?",tip:"Discuss material selection (black iron, CSST, copper), sizing calculations, and code compliance."},
+{q:"How do you ensure proper ventilation for gas appliances?",tip:"Show knowledge of combustion air requirements, vent sizing, and direct vent vs. natural draft."},
+{q:"What gas appliances have you installed or serviced?",tip:"Discuss furnaces, water heaters, ranges, dryers, fireplaces, and commercial equipment."},
+{q:"How do you handle carbon monoxide emergencies?",tip:"Show CO detection, evacuation procedures, appliance inspection, and source identification."},
+{q:"What codes and standards do you follow?",tip:"Mention International Fuel Gas Code, NFPA 54, local amendments, and manufacturer specifications."},
+{q:"How do you perform gas pressure testing?",tip:"Discuss test pressures, duration requirements, acceptable pressure drop, and documentation."},
+{q:"What is your experience with commercial gas systems?",tip:"Show high-pressure systems, regulators, meter installations, and restaurant/commercial kitchen work."},
+{q:"How do you handle gas appliance conversions?",tip:"Discuss LP to natural gas conversion, orifice changes, regulator adjustments, and testing procedures."},
+{q:"What safety protocols do you follow on gas jobs?",tip:"Show lockout/tagout, gas shutoff procedures, permit requirements, and inspection processes."},
+{q:"How do you stay current with gas fitting technology?",tip:"Mention continuing education, code update training, new product certifications, and manufacturer schools."}
+],
+"Cable Installer": [
+{q:"What types of cable installations do you have experience with?",tip:"Discuss coaxial, Ethernet (Cat5e/6/6A), fiber optic, and structured cabling systems."},
+{q:"How do you test and certify cable installations?",tip:"Show cable testers, certifiers, TDR usage, and understanding of test result parameters."},
+{q:"What is your experience with fiber optic splicing?",tip:"Discuss fusion splicing, mechanical splicing, OTDR testing, and loss budget calculations."},
+{q:"How do you plan cable routes in new construction?",tip:"Show blueprint reading, pathway design, bend radius requirements, and separation from power."},
+{q:"What industry standards do you follow?",tip:"Mention TIA/EIA-568, BICSI guidelines, local building codes, and manufacturer specifications."},
+{q:"How do you troubleshoot network connectivity issues?",tip:"Show systematic testing, toner and probe usage, punchdown verification, and documentation."},
+{q:"What is your experience with rack and closet buildouts?",tip:"Discuss rack installation, patch panel termination, cable management, and labeling systems."},
+{q:"How do you handle working in finished spaces?",tip:"Show techniques for fishing cable, minimizing damage, wall repair, and clean work practices."},
+{q:"What safety practices do you follow?",tip:"Discuss ladder safety, PPE, working at heights, electrical safety, and confined space awareness."},
+{q:"What certifications do you hold?",tip:"Mention BICSI installer/technician, manufacturer certifications, OSHA 10/30, and lift certifications."},
+{q:"How do you document your installations?",tip:"Show as-built drawings, cable schedules, test results, labeling standards, and customer handoff."},
+{q:"What is your experience with low-voltage systems beyond data?",tip:"Discuss security cameras, access control, fire alarm, audio/visual, and nurse call systems."}
+],
+"Surveyor": [
+{q:"What types of surveys have you conducted?",tip:"Discuss boundary, topographic, construction staking, ALTA, and as-built surveys."},
+{q:"What surveying equipment are you proficient with?",tip:"Show total stations, GPS/GNSS receivers, levels, 3D laser scanners, and drone mapping."},
+{q:"How do you research property boundaries?",tip:"Show deed research, plat maps, monument recovery, and resolving boundary discrepancies."},
+{q:"What is your experience with construction staking?",tip:"Discuss building layout, grading stakes, utility staking, and working from construction plans."},
+{q:"How do you ensure survey accuracy?",tip:"Show control networks, redundant measurements, closure tolerances, and quality check procedures."},
+{q:"What CAD/GIS software do you use?",tip:"Mention AutoCAD Civil 3D, Carlson, ArcGIS, or other software and your proficiency."},
+{q:"How do you handle boundary disputes?",tip:"Show evidence evaluation, original monument recovery, applying boundary law principles, and expert testimony."},
+{q:"What is your experience with drone surveying?",tip:"Discuss FAA Part 107, photogrammetry, LiDAR, ground control points, and accuracy validation."},
+{q:"How do you work with other professionals on projects?",tip:"Show collaboration with engineers, architects, attorneys, and real estate professionals."},
+{q:"What licensing and certifications do you hold?",tip:"Discuss PLS (Professional Land Surveyor), state-specific requirements, and continuing education."},
+{q:"How do you manage survey data and deliverables?",tip:"Show data processing workflows, coordinate systems, plat preparation, and quality assurance."},
+{q:"What field-to-finish workflows do you use?",tip:"Discuss coding systems, automated drafting, feature libraries, and reducing office processing time."}
+],
+"Septic System Technician": [
+{q:"How do you inspect a septic system?",tip:"Show tank inspection, baffle evaluation, distribution box assessment, and drain field observation."},
+{q:"What types of septic systems have you worked with?",tip:"Discuss conventional, aerobic, mound, sand filter, and engineered systems."},
+{q:"How do you diagnose septic system failures?",tip:"Show indicators: backups, surfacing effluent, slow drains, and inspection findings."},
+{q:"What is your experience with septic tank pumping?",tip:"Discuss pumping procedures, sludge measurement, inspection during pumping, and disposal requirements."},
+{q:"How do you install septic systems?",tip:"Show site evaluation, soil testing, permit process, excavation, and system installation steps."},
+{q:"What permits and regulations govern septic work?",tip:"Mention state/local health department regulations, installer licensing, and inspection requirements."},
+{q:"How do you handle aerobic treatment unit maintenance?",tip:"Discuss chlorination systems, aerator maintenance, alarm troubleshooting, and monitoring visits."},
+{q:"What is your experience with drain field repair?",tip:"Show diagnosis of field failure, remediation options (aeration, replacement), and soil evaluation."},
+{q:"How do you educate homeowners about septic maintenance?",tip:"Discuss pumping schedules, what not to flush, water conservation, and drain field care."},
+{q:"What safety practices do you follow?",tip:"Show confined space entry, trenching safety, PPE, chemical handling, and hazardous atmosphere testing."},
+{q:"How do you perform percolation tests?",tip:"Show perc test procedures, soil classification, interpreting results, and system sizing based on results."},
+{q:"What certifications do you hold?",tip:"Mention state installer certifications, manufacturer training, OSHA certifications, and continuing education."}
+],
+"Alarm System Installer": [
+{q:"What alarm systems have you installed?",tip:"Discuss burglar alarms, fire alarms, access control, video surveillance, and integrated systems."},
+{q:"How do you design an alarm system for a property?",tip:"Show risk assessment, zone planning, sensor placement, and code compliance considerations."},
+{q:"What panel programming experience do you have?",tip:"Discuss DSC, Honeywell, Bosch, or other panels — zone programming, user codes, and communicator setup."},
+{q:"How do you install and position motion detectors?",tip:"Show placement for optimal coverage, pet immunity settings, avoiding false alarms, and testing."},
+{q:"What fire alarm certifications do you hold?",tip:"Mention NICET certification, state fire alarm licenses, and manufacturer-specific certifications."},
+{q:"How do you troubleshoot false alarms?",tip:"Show systematic diagnosis, environmental factors, sensor sensitivity, and customer education."},
+{q:"What is your experience with IP-based security systems?",tip:"Discuss network cameras, NVR configuration, remote access setup, and cybersecurity considerations."},
+{q:"How do you handle low-voltage wiring?",tip:"Show cable types, proper routing, termination, splicing, and following local codes."},
+{q:"What monitoring services have you worked with?",tip:"Discuss central station connection, cellular/IP communicators, and self-monitoring platforms."},
+{q:"How do you test and commission an alarm system?",tip:"Show walk-test procedures, signal verification, monitoring confirmation, and customer training."},
+{q:"What access control systems have you installed?",tip:"Discuss card readers, keypads, electric strikes, mag locks, and door position monitoring."},
+{q:"How do you stay current with security technology?",tip:"Mention manufacturer training, ESA/NICET certifications, trade shows, and product demonstrations."}
 ]
   }
 },
@@ -5001,6 +5466,76 @@ const DATA = {
 {q:"How do you stay current with web design trends?",tip:"Mention design blogs, Awwwards, conferences, peer communities, and distinguishing trends from best practices."},
 {q:"What is your experience with e-commerce design?",tip:"Discuss product pages, checkout optimization, trust signals, and conversion-focused design."},
 {q:"How do you approach designing for different audiences?",tip:"Show user persona development, demographic considerations, and adapting visual style to target users."}
+],
+"Lighting Designer": [
+{q:"How do you create a lighting design concept?",tip:"Show reading the script/space, mood research, collaboration with director, and developing a lighting cue sheet."},
+{q:"What lighting control systems are you proficient with?",tip:"Discuss ETC, GrandMA, Avolites, or other consoles and your experience with programming."},
+{q:"How do you balance artistic vision with technical constraints?",tip:"Show budget awareness, fixture inventory, power limitations, and creative problem-solving."},
+{q:"What is your experience with LED vs. conventional fixtures?",tip:"Discuss color rendering, heat management, energy efficiency, and when to use each type."},
+{q:"How do you approach color in lighting design?",tip:"Show gel selection, color theory, LED color mixing, and creating atmospheric palettes."},
+{q:"What is your experience with moving lights?",tip:"Discuss programming, maintenance, positioning, and integrating automated fixtures into designs."},
+{q:"How do you handle lighting for different performance types?",tip:"Show adaptations for theater, dance, concerts, corporate events, and architectural applications."},
+{q:"What drafting software do you use?",tip:"Mention Vectorworks Spotlight, AutoCAD, Lightwright, or other tools for plot creation and paperwork."},
+{q:"How do you collaborate with other production designers?",tip:"Show coordination with scenic, costume, sound, and video designers for a cohesive production."},
+{q:"What is your experience with rigging and hanging?",tip:"Discuss safety protocols, trim heights, focus sessions, and working with electricians."},
+{q:"How do you handle time-coded or automated lighting?",tip:"Show MIDI triggering, SMPTE sync, show control integration, and cue stacking."},
+{q:"What portfolio or documentation do you maintain?",tip:"Discuss photography of your work, light plots, cue lists, and design statements."}
+],
+"Projection Designer": [
+{q:"What projection software and tools do you use?",tip:"Discuss QLab, Disguise, Resolume, TouchDesigner, Watchout, or other media servers."},
+{q:"How do you approach surface mapping for projection?",tip:"Show 3D scanning, calibration processes, content creation for irregular surfaces, and alignment techniques."},
+{q:"What is your experience with content creation for projection?",tip:"Discuss video editing, motion graphics, real-time generative content, and compositing workflows."},
+{q:"How do you design projection for live performance?",tip:"Show cue integration with lighting/sound, actor tracking, and responsive content design."},
+{q:"What projector specifications matter most for your designs?",tip:"Discuss lumens, lens throw ratios, resolution, edge blending, and brightness in ambient light."},
+{q:"How do you handle projection in challenging environments?",tip:"Show outdoor projection, high ambient light solutions, and unconventional surface considerations."},
+{q:"What is your experience with LED walls vs. projection?",tip:"Compare advantages of each, cost considerations, and when to recommend one over the other."},
+{q:"How do you sync projection with other production elements?",tip:"Show timecode integration, OSC/MIDI communication, and multi-system show control."},
+{q:"What is your approach to interactive projection?",tip:"Discuss sensor-based interaction (cameras, depth sensors, touch), real-time rendering, and audience engagement."},
+{q:"How do you manage file formats and media workflows?",tip:"Show codec selection, resolution management, render pipelines, and media server optimization."},
+{q:"What is your experience with virtual production?",tip:"Discuss LED volume stages, real-time rendering (Unreal Engine), camera tracking, and in-camera VFX."},
+{q:"How do you budget for projection-heavy designs?",tip:"Show equipment rental, content creation hours, crew requirements, and cost-saving alternatives."}
+],
+"Prop Master": [
+{q:"How do you analyze a script for prop requirements?",tip:"Show systematic script breakdown, prop lists, tracking character interactions with objects, and identifying research needs."},
+{q:"What is your approach to sourcing props?",tip:"Discuss buying, renting, building, borrowing, and creating from scratch based on budget and period."},
+{q:"How do you manage prop budgets?",tip:"Show cost tracking, prioritizing spending, finding creative alternatives, and maintaining contingency funds."},
+{q:"What is your experience building props from scratch?",tip:"Discuss fabrication techniques, materials (foam, resin, wood, 3D printing), and aging/distressing."},
+{q:"How do you handle food props for performances?",tip:"Show food safety, replicating food appearances, managing perishables, and edible vs. inedible decisions."},
+{q:"What is your approach to weapon props?",tip:"Discuss safety protocols, real vs. replica weapons, stage combat coordination, and audience safety."},
+{q:"How do you manage props during a run of shows?",tip:"Show pre-show checks, replacement tracking, repair schedules, and maintaining prop continuity."},
+{q:"What experience do you have with special effects props?",tip:"Discuss breakaway items, squibs, smoke effects, mechanical props, and safety testing."},
+{q:"How do you organize your prop shop?",tip:"Show storage systems, inventory management, labeling, checkout systems, and workspace layout."},
+{q:"How do you collaborate with directors and designers?",tip:"Show communication styles, rendering expectations, revision processes, and attending production meetings."},
+{q:"What historical research methods do you use for period props?",tip:"Discuss museum visits, primary source research, consulting experts, and accuracy vs. budget trade-offs."},
+{q:"What is your experience with digital props?",tip:"Discuss 3D printing, CNC cutting, laser cutting, and integrating technology with traditional prop-making."}
+],
+"Dialect Coach": [
+{q:"What dialects and accents are you most proficient in?",tip:"List your strongest dialects (RP, Southern American, Cockney, etc.) and your methodology for learning new ones."},
+{q:"How do you approach teaching a dialect to an actor?",tip:"Show IPA transcription, sound changes, mouth positioning, prosody patterns, and gradual integration."},
+{q:"What is your process for researching a specific dialect?",tip:"Discuss field recordings, native speaker consultation, linguistic analysis, and building resource guides."},
+{q:"How do you maintain consistency across a cast?",tip:"Show group sessions, sound guides, reference recordings, and monitoring during rehearsal."},
+{q:"What is your experience with dialects for specific periods?",tip:"Discuss historical pronunciation, received pronunciation evolution, and period-appropriate speech."},
+{q:"How do you handle an actor struggling with a dialect?",tip:"Show alternative teaching approaches, simplification strategies, building confidence, and individual coaching."},
+{q:"What phonetic tools do you use?",tip:"Mention IPA, vowel quadrants, spectrograms, and how you use technology for sound analysis."},
+{q:"How do you differentiate between dialect, accent, and speech impediment?",tip:"Show understanding of linguistic vs. pathological speech differences and when to refer."},
+{q:"What is your experience with film vs. stage dialect work?",tip:"Discuss microphone sensitivity, close-up scrutiny in film vs. projection needs on stage."},
+{q:"How do you handle cultural sensitivity in dialect work?",tip:"Show awareness of stereotyping, authentic representation, and collaborating with cultural consultants."},
+{q:"What training and certifications do you hold?",tip:"Mention VASTA membership, linguistics education, voice training, and mentorship experience."},
+{q:"How do you integrate dialect work with overall voice coaching?",tip:"Show combining breath support, resonance, articulation, and dialect into unified vocal performance."}
+],
+"Puppet Designer": [
+{q:"What types of puppets have you designed and built?",tip:"Discuss hand puppets, rod puppets, marionettes, shadow puppets, bunraku, or large-scale puppetry."},
+{q:"What materials and fabrication techniques do you use?",tip:"Show foam carving, fabric manipulation, 3D printing, casting, and lightweight structural materials."},
+{q:"How do you design puppets for specific performance needs?",tip:"Discuss visibility, movement range, weight considerations, and character requirements."},
+{q:"What is your approach to puppet character design?",tip:"Show sketching, maquette building, color exploration, and translating personality into physical form."},
+{q:"How do you engineer puppet mechanisms?",tip:"Discuss mouth mechanisms, eye movement, rod controls, and cable-operated features."},
+{q:"What is your experience with puppet scale and proportion?",tip:"Show understanding of audience distance, performance space, and human-to-puppet scale relationships."},
+{q:"How do you handle puppet repairs during a run?",tip:"Discuss quick-fix kits, spare parts, maintenance schedules, and damage prevention strategies."},
+{q:"What is your experience performing with puppets?",tip:"Show understanding of performer needs, manipulation techniques, and designing from a performer's perspective."},
+{q:"How do you collaborate with directors on puppet design?",tip:"Discuss concept presentations, revision processes, scale mockups, and accommodating creative vision."},
+{q:"What is your approach to puppet costuming?",tip:"Show working with costume designers, fabric selection for movement, and integrating costume into the puppet."},
+{q:"How do you document your puppet designs?",tip:"Discuss technical drawings, build documentation, photo records, and design statements for portfolio."},
+{q:"What puppetry traditions inspire your work?",tip:"Show knowledge of Wayang, Bunraku, Bread and Puppet, Handspring, or other influential companies."}
 ]
   }
 },
@@ -5501,6 +6036,76 @@ const DATA = {
 {q:"What CDL and endorsements do you hold?",tip:"Mention CDL Class B, passenger endorsement, school bus endorsement, and air brake restriction removal."},
 {q:"How do you handle field trips and extracurricular routes?",tip:"Show route planning, unfamiliar locations, student counts, and extended day procedures."},
 {q:"What ongoing training and certifications are required?",tip:"Discuss annual refresher training, CPR/First Aid, defensive driving courses, and state requirements."}
+],
+"Valet Parking Supervisor": [
+{q:"How do you manage a valet team during peak hours?",tip:"Show staff scheduling, traffic flow management, key organization, and maintaining service speed."},
+{q:"What is your approach to vehicle damage claims?",tip:"Discuss documentation procedures, incident reports, camera footage review, and resolution processes."},
+{q:"How do you ensure efficient vehicle retrieval?",tip:"Show key management systems, lot organization, numbering systems, and communication protocols."},
+{q:"What training do you provide to new valet attendants?",tip:"Show driving skills assessment, customer service training, vehicle handling, and safety protocols."},
+{q:"How do you manage customer wait times?",tip:"Discuss staffing adjustments, staging vehicles, pre-positioning during events, and communication with guests."},
+{q:"What is your experience with event valet services?",tip:"Show planning for high-volume events, coordination with venues, and managing special requests."},
+{q:"How do you handle high-value or specialty vehicles?",tip:"Discuss extra precautions, designated parking, documentation, and staff training for exotic cars."},
+{q:"What POS or ticketing systems have you used?",tip:"Mention digital ticket systems, mobile apps, payment processing, and tip management."},
+{q:"How do you maintain accountability among your team?",tip:"Show GPS tracking, check-in procedures, performance monitoring, and addressing policy violations."},
+{q:"What is your approach to weather-related challenges?",tip:"Discuss rain/snow procedures, equipment needs, adjusting service flow, and protecting customer vehicles."},
+{q:"How do you handle liability and insurance concerns?",tip:"Show understanding of garage keeper's liability, staff driving records, and insurance requirements."},
+{q:"What metrics do you track for valet operations?",tip:"Mention cars per hour, average retrieval time, customer complaints, and revenue per attendant."}
+],
+"Catering Coordinator": [
+{q:"How do you plan a menu for a catered event?",tip:"Show client consultation, dietary restriction accommodation, seasonal sourcing, and budget alignment."},
+{q:"What is your approach to event logistics?",tip:"Discuss venue coordination, equipment needs, staffing plans, timelines, and contingency planning."},
+{q:"How do you manage food safety at events?",tip:"Show temperature monitoring, cross-contamination prevention, allergen management, and health code compliance."},
+{q:"What experience do you have with different event types?",tip:"Discuss weddings, corporate events, fundraisers, private parties, and adapting service style to each."},
+{q:"How do you handle last-minute changes?",tip:"Show flexibility, backup plans, clear communication with kitchen and staff, and maintaining composure."},
+{q:"What is your approach to vendor management?",tip:"Discuss linen rentals, equipment rentals, florists, and coordinating multiple vendors for seamless execution."},
+{q:"How do you manage catering budgets?",tip:"Show cost estimation, food cost percentages, labor calculations, and presenting options at different price points."},
+{q:"What is your experience with dietary accommodations?",tip:"Discuss vegan, gluten-free, kosher, halal, and allergy-specific menu development and labeling."},
+{q:"How do you coordinate staff for catered events?",tip:"Show scheduling, role assignment, event briefing, and managing front-of-house and back-of-house teams."},
+{q:"What technology tools do you use?",tip:"Mention event management software, ordering platforms, CRM systems, and communication tools."},
+{q:"How do you handle client communication throughout the process?",tip:"Show consultation meetings, tastings, proposal revisions, confirmation calls, and post-event follow-up."},
+{q:"What is your approach to post-event cleanup and wrap-up?",tip:"Discuss breakdown procedures, leftover management, equipment return, and damage documentation."}
+],
+"Pet Sitter": [
+{q:"How do you conduct an initial consultation with a new client?",tip:"Show home visit, pet assessment, routine documentation, emergency contacts, and key/access arrangements."},
+{q:"What is your experience with different animal types?",tip:"Discuss dogs, cats, birds, reptiles, small mammals, and any exotic animal experience."},
+{q:"How do you handle pet medical emergencies?",tip:"Show veterinary contact protocols, first aid knowledge, transport procedures, and owner communication."},
+{q:"What services do you offer beyond basic sitting?",tip:"Discuss walks, medication administration, grooming, plant watering, mail collection, and overnight stays."},
+{q:"How do you manage multiple pet sitting clients?",tip:"Show scheduling tools, route planning, time management, and maintaining quality of care across visits."},
+{q:"What is your approach to building trust with pet owners?",tip:"Show photo/video updates, communication frequency, reliability, and professionalism."},
+{q:"How do you handle behavioral issues in pets?",tip:"Discuss anxiety, aggression, destructive behavior, and when to contact the owner or seek help."},
+{q:"What business practices do you follow?",tip:"Show contracts, liability insurance, cancellation policies, pricing structures, and payment processing."},
+{q:"How do you market your pet sitting services?",tip:"Mention word-of-mouth, Nextdoor, Rover, social media, vet office referrals, and repeat clients."},
+{q:"What certifications or training do you have?",tip:"Discuss Pet First Aid/CPR, pet care certifications, continuing education, and professional memberships."},
+{q:"How do you handle home security while pet sitting?",tip:"Show alarm systems, key management, lockup procedures, and respecting client property."},
+{q:"What is your experience with special needs pets?",tip:"Discuss senior pets, diabetic animals, post-surgery care, and administering injections or medications."}
+],
+"Optician": [
+{q:"How do you interpret a prescription?",tip:"Show understanding of sphere, cylinder, axis, add power, prism, and PD measurements."},
+{q:"What is your experience with lens options and materials?",tip:"Discuss single vision, progressive, bifocal, polycarbonate, high-index, and photochromic lenses."},
+{q:"How do you assist patients with frame selection?",tip:"Show face shape analysis, lifestyle considerations, fit assessment, and style recommendations."},
+{q:"What is your experience with contact lens fitting?",tip:"Discuss soft vs. rigid lenses, specialty lenses, fitting parameters, and follow-up care."},
+{q:"How do you handle insurance and billing?",tip:"Show vision plan verification, frame/lens benefit application, and explaining out-of-pocket costs."},
+{q:"What equipment do you use for measurements?",tip:"Mention pupillometers, lensometers, auto-refractors, and digital fitting systems."},
+{q:"How do you manage lab orders and quality control?",tip:"Discuss lab communication, order verification, inspection of finished products, and remake management."},
+{q:"What is your experience with specialty eyewear?",tip:"Discuss safety glasses, sports eyewear, low vision aids, and occupational lenses."},
+{q:"How do you handle patient complaints about new glasses?",tip:"Show troubleshooting adaptation issues, verifying measurements, adjusting frames, and managing expectations."},
+{q:"What dispensary management experience do you have?",tip:"Show frame board merchandising, inventory management, vendor relationships, and sales tracking."},
+{q:"How do you stay current with eyewear technology?",tip:"Mention industry shows (Vision Expo), brand training, new lens technology, and continuing education."},
+{q:"What licenses or certifications do you hold?",tip:"Discuss ABO/NCLE certification, state licensing, and any specialty certifications."}
+],
+"Fitness Studio Manager": [
+{q:"How do you manage daily studio operations?",tip:"Show opening/closing procedures, staff scheduling, class scheduling, and facility maintenance."},
+{q:"What is your approach to member retention?",tip:"Show engagement programs, progress tracking, community building, and addressing cancellation concerns."},
+{q:"How do you hire and manage fitness instructors?",tip:"Show certification verification, audition processes, ongoing education, and performance feedback."},
+{q:"What is your experience with class programming?",tip:"Discuss scheduling strategy, class variety, peak time optimization, and introducing new formats."},
+{q:"How do you market a fitness studio?",tip:"Show social media strategy, local partnerships, referral programs, grand opening, and seasonal promotions."},
+{q:"What membership management software have you used?",tip:"Mention Mindbody, Glofox, Zen Planner, or other platforms and your proficiency with each."},
+{q:"How do you manage the studio budget?",tip:"Show revenue forecasting, expense management, equipment investment, and profitability analysis."},
+{q:"What is your approach to facility safety and cleanliness?",tip:"Discuss equipment maintenance, cleaning protocols, safety inspections, and emergency procedures."},
+{q:"How do you handle member complaints?",tip:"Show active listening, resolution strategies, policy enforcement, and turning negative experiences positive."},
+{q:"What experience do you have with personal training sales?",tip:"Discuss trainer-client matching, package pricing, sales processes, and tracking trainer utilization."},
+{q:"How do you create a positive studio culture?",tip:"Show community events, member recognition, staff culture, and creating an inclusive environment."},
+{q:"What KPIs do you track for studio performance?",tip:"Mention membership numbers, class attendance, revenue per member, retention rate, and NPS scores."}
 ]
   }
 },
@@ -6001,6 +6606,76 @@ const DATA = {
 {q:"What is your experience with regulatory examinations?",tip:"Show preparation, document production, examiner coordination, and post-exam remediation."},
 {q:"How do you measure compliance program effectiveness?",tip:"Discuss KPIs: violation rates, training completion, issue resolution time, and audit findings."},
 {q:"What certifications do you hold?",tip:"Mention CCEP, CRCM, CAMS, CFE, or other relevant compliance certifications."}
+],
+"Legal Aid Attorney": [
+{q:"Why did you choose to work in legal aid?",tip:"Show genuine commitment to access to justice, personal motivation, and understanding of the populations served."},
+{q:"What types of cases do you typically handle?",tip:"Discuss housing, family law, immigration, public benefits, consumer protection, or other civil legal matters."},
+{q:"How do you manage a high-volume caseload?",tip:"Show prioritization frameworks, case management systems, and balancing quality with quantity."},
+{q:"What is your experience with client intake processes?",tip:"Discuss eligibility screening, conflict checks, initial assessment, and setting realistic expectations."},
+{q:"How do you work with clients facing trauma?",tip:"Show trauma-informed lawyering, patience, cultural sensitivity, and connecting clients to social services."},
+{q:"What is your experience with court proceedings?",tip:"Discuss motion practice, hearings, trials, and advocacy in front of judges in civil matters."},
+{q:"How do you collaborate with social workers and community organizations?",tip:"Show holistic legal services, referral networks, and addressing non-legal barriers clients face."},
+{q:"What funding and grant experience do you have?",tip:"Discuss LSC compliance, grant reporting, pro bono coordination, and measuring legal aid impact."},
+{q:"How do you handle language barriers with clients?",tip:"Show interpreter services, translated documents, bilingual staff, and ensuring meaningful communication."},
+{q:"What is your approach to legal writing for underserved populations?",tip:"Show plain language documents, client-friendly correspondence, and avoiding legal jargon."},
+{q:"How do you stay current in multiple practice areas?",tip:"Mention CLE requirements, legal aid network conferences, practice area listservs, and mentorship."},
+{q:"What policy advocacy work have you done?",tip:"Discuss systemic advocacy, legislative testimony, impact litigation, and community education efforts."}
+],
+"Public Defender": [
+{q:"Why are you passionate about public defense?",tip:"Show commitment to constitutional rights, equal justice, and understanding the Sixth Amendment."},
+{q:"How do you manage a heavy caseload?",tip:"Discuss prioritization, case triage, plea negotiation strategy, and time management systems."},
+{q:"What is your experience with criminal trial work?",tip:"Show jury trial experience, opening/closing statements, cross-examination, and witness preparation."},
+{q:"How do you build trust with skeptical clients?",tip:"Show active listening, transparency about process, consistent communication, and genuine advocacy."},
+{q:"What is your approach to plea negotiations?",tip:"Discuss evaluating evidence strength, client goals, collateral consequences, and when to go to trial."},
+{q:"How do you investigate cases?",tip:"Show working with investigators, visiting crime scenes, interviewing witnesses, and reviewing body camera footage."},
+{q:"What experience do you have with expert witnesses?",tip:"Discuss forensic experts, mental health professionals, private investigators, and Daubert challenges."},
+{q:"How do you handle motions practice?",tip:"Show suppression motions, discovery motions, bail hearings, and pre-trial litigation strategy."},
+{q:"What is your experience with sentencing advocacy?",tip:"Discuss mitigation investigation, sentencing memoranda, alternative sentencing, and rehabilitation arguments."},
+{q:"How do you handle the emotional toll of public defense?",tip:"Show coping strategies, peer support, work-life balance, and recognizing secondary trauma."},
+{q:"What is your approach to appellate work?",tip:"Show identifying appealable issues, preserving the record, brief writing, and oral argument preparation."},
+{q:"How do you collaborate with social workers in your office?",tip:"Discuss holistic defense, connecting clients to services, bail advocacy, and reentry planning."}
+],
+"District Attorney": [
+{q:"What is your philosophy on prosecution?",tip:"Show balance between accountability and fairness, evidence-based decision making, and community safety."},
+{q:"How do you evaluate cases for charging decisions?",tip:"Discuss evidence sufficiency, public interest, resource allocation, and ethical prosecution standards."},
+{q:"What is your experience with trial advocacy?",tip:"Show jury trial experience, case preparation, witness management, and courtroom presence."},
+{q:"How do you work with crime victims?",tip:"Discuss victim notification, impact statements, advocacy referrals, and balancing victim wishes with justice."},
+{q:"What is your approach to plea bargaining?",tip:"Show proportionality, defendant history, victim input, and efficient resolution while maintaining accountability."},
+{q:"How do you handle high-profile cases?",tip:"Discuss media management, courtroom security, ethical obligations, and maintaining fair trial rights."},
+{q:"What experience do you have with grand jury proceedings?",tip:"Show presenting evidence, witness preparation, legal instructions, and indictment decisions."},
+{q:"How do you manage a team of assistant district attorneys?",tip:"Discuss caseload assignment, mentoring, performance evaluation, and professional development."},
+{q:"What diversion programs have you implemented or supported?",tip:"Show drug courts, veterans courts, mental health courts, and restorative justice programs."},
+{q:"How do you handle evidence disclosure obligations?",tip:"Discuss Brady material, discovery compliance, tracking systems, and consequences of non-disclosure."},
+{q:"What is your experience with appellate work?",tip:"Show brief writing, preserving trial records, oral arguments, and staying current on legal developments."},
+{q:"How do you engage with the community you serve?",tip:"Show community meetings, school outreach, faith-based partnerships, and transparency initiatives."}
+],
+"Environmental Lawyer": [
+{q:"What environmental statutes are you most experienced with?",tip:"Discuss CERCLA, Clean Water Act, Clean Air Act, NEPA, RCRA, or state environmental laws."},
+{q:"How do you approach environmental compliance counseling?",tip:"Show auditing, permit management, regulatory interpretation, and proactive compliance programs."},
+{q:"What experience do you have with environmental litigation?",tip:"Discuss enforcement defense, citizen suits, toxic tort defense, and administrative hearings."},
+{q:"How do you handle environmental due diligence?",tip:"Show Phase I/II assessments, liability analysis, brownfield redevelopment, and risk allocation in transactions."},
+{q:"What is your experience with permitting processes?",tip:"Discuss air permits, water discharge permits, wetland permits, and navigating agency review."},
+{q:"How do you stay current with environmental regulations?",tip:"Mention EPA rulemaking tracking, state agency updates, environmental law conferences, and industry publications."},
+{q:"What is your experience with land use and environmental impact?",tip:"Show NEPA compliance, EIS preparation, zoning, and balancing development with environmental protection."},
+{q:"How do you handle multi-party contaminated site cases?",tip:"Discuss PRP identification, allocation negotiations, contribution claims, and consent decree negotiations."},
+{q:"What experience do you have with climate change law?",tip:"Discuss carbon credits, emissions reporting, renewable energy regulations, and climate disclosure requirements."},
+{q:"How do you work with technical experts in environmental cases?",tip:"Show working with hydrogeologists, toxicologists, engineers, and presenting complex science to courts."},
+{q:"What is your experience with environmental enforcement?",tip:"Discuss agency inspections, notice of violation responses, settlement negotiations, and consent orders."},
+{q:"How do you advise clients on sustainability compliance?",tip:"Show ESG frameworks, supply chain environmental requirements, greenwashing risk, and reporting obligations."}
+],
+"Immigration Attorney": [
+{q:"What types of immigration cases do you handle?",tip:"Discuss family-based, employment-based, removal defense, asylum, or a combination of practice areas."},
+{q:"How do you approach employment-based visa cases?",tip:"Show PERM labor certification, H-1B, L-1, O-1, and green card processing strategies."},
+{q:"What is your experience with removal defense?",tip:"Discuss cancellation of removal, asylum, withholding, CAT, and representing clients in immigration court."},
+{q:"How do you handle family-based petitions?",tip:"Show I-130 filing, adjustment of status, consular processing, and managing priority date backlogs."},
+{q:"What is your experience with asylum cases?",tip:"Discuss credible fear, asylum applications, country condition research, and preparing clients for interviews."},
+{q:"How do you stay current with immigration law changes?",tip:"Mention USCIS policy updates, AILA resources, federal court decisions, and regulatory tracking."},
+{q:"How do you manage client expectations in immigration cases?",tip:"Show honest timelines, explaining processing delays, worst-case scenarios, and maintaining hope."},
+{q:"What is your experience with naturalization?",tip:"Discuss eligibility analysis, N-400 preparation, civics test coaching, and addressing good moral character issues."},
+{q:"How do you handle complex waiver cases?",tip:"Show I-601/I-601A unlawful presence waivers, criminal waivers, and extreme hardship arguments."},
+{q:"What technology tools do you use for case management?",tip:"Mention immigration-specific CMS, form automation, case tracking, and client communication platforms."},
+{q:"How do you handle pro bono or reduced-fee immigration cases?",tip:"Show commitment to access, working with legal aid organizations, and balancing with business sustainability."},
+{q:"What experience do you have with immigration compliance for businesses?",tip:"Discuss I-9 audits, E-Verify, H-1B compliance, and developing corporate immigration policies."}
 ]
 }
 }
@@ -6083,6 +6758,7 @@ async function subscribe() {
 const APP_VERSION = '1.1.0';
 
 const UPDATES = [
+  { date: "May 2, 2026", title: "45 More Roles Added", desc: "5 new roles per category: Cloud Engineer, Dermatologist, CMO, Sales Operations Analyst, College Advisor, Surveyor, Lighting Designer, Optician, Immigration Attorney, and 36 more. Now 374 roles!", icon: "🆕" },
   { date: "Apr 21, 2026", title: "45 More Roles Added", desc: "5 new roles per category: Frontend Developer, Veterinarian, Executive Assistant, Advertising Sales Rep, Daycare Provider, Roofer, Makeup Artist, Tour Guide, Compliance Analyst, and 36 more. Now 329 roles!", icon: "🆕" },
   { date: "Apr 20, 2026", title: "45 New Roles Added", desc: "5 new roles per category: Penetration Tester, Biomedical Engineer, Risk Manager, Account Executive, ESL Teacher, Electrician, and 38 more. Now 239 roles!", icon: "🆕" },
   { date: "Apr 19, 2026", title: "27 New Roles Added", desc: "3 new roles per category: Network Engineer, Pharmacist, Solar Panel Installer, UI Designer, Sommelier, Arbitrator, and 21 more. Now 182 roles!", icon: "🆕" },
@@ -6200,7 +6876,16 @@ const DIFFICULTY = {
   "Department Head (Education)": "Mid",
   "Theater Director": "Mid", "Stage Manager": "Mid",
   "Janitorial Supervisor": "Mid",
-  "Legal Nurse Consultant": "Mid", "Paralegal Manager": "Mid", "Compliance Analyst": "Mid"
+  "Legal Nurse Consultant": "Mid", "Paralegal Manager": "Mid", "Compliance Analyst": "Mid",
+  "Platform Engineer": "Mid", "Release Engineer": "Mid", "Compiler Engineer": "Mid", "Cloud Engineer": "Mid",
+  "Dermatologist": "Mid", "Podiatrist": "Mid", "Audiologist": "Mid", "Neonatal Nurse Practitioner": "Mid", "Clinical Psychologist": "Mid",
+  "Chief Marketing Officer": "Senior", "Chief Technology Officer": "Senior", "Diversity & Inclusion Manager": "Mid", "Franchise Manager": "Mid", "Change Management Consultant": "Mid",
+  "Sales Operations Analyst": "Mid", "Partnership Manager": "Mid", "Government Sales Representative": "Mid", "Export Sales Manager": "Mid",
+  "Student Affairs Coordinator": "Mid", "Education Policy Analyst": "Mid", "Gifted Education Specialist": "Mid", "College Advisor": "Mid",
+  "Gas Fitter": "Mid", "Surveyor": "Mid",
+  "Lighting Designer": "Mid", "Projection Designer": "Mid", "Dialect Coach": "Mid",
+  "Optician": "Mid",
+  "Legal Aid Attorney": "Mid", "Public Defender": "Mid", "District Attorney": "Mid", "Environmental Lawyer": "Mid", "Immigration Attorney": "Mid"
 };
 const CATEGORY_DEFAULT_DIFFICULTY = {
   "Tech": "Entry", "Healthcare": "Entry", "Business": "Entry", "Sales": "Entry",
