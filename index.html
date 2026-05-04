@@ -244,6 +244,18 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .home-footer{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;font-size:12px;color:var(--text-secondary)}
 .home-footer a{color:var(--text-secondary);text-decoration:none}
 .footer-version{opacity:0.5}
+.for-schools-card{margin:12px 20px;background:var(--card);border-radius:var(--radius);padding:24px 20px;border:1px solid var(--card-hover);position:relative;overflow:hidden}
+.for-schools-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-light))}
+.for-schools-badge{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:8px}
+.for-schools-card h3{font-size:18px;font-weight:800;margin-bottom:6px}
+.for-schools-card .for-schools-sub{font-size:13px;color:var(--text-secondary);margin-bottom:16px;line-height:1.5}
+.for-schools-features{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.for-schools-feat{display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.4}
+.for-schools-feat-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.for-schools-feat-text{color:var(--text-secondary)}
+.for-schools-feat-text strong{color:var(--text);font-weight:600}
+.for-schools-cta{display:block;width:100%;padding:14px;border-radius:var(--radius);border:none;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:15px;font-weight:700;cursor:pointer;text-align:center;transition:all var(--transition);text-decoration:none}
+.for-schools-cta:active{transform:scale(0.97);opacity:0.9}
 .onboarding-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px}
 .onboarding-overlay.hidden{display:none}
 .onboarding-content{background:var(--card);border-radius:var(--radius);padding:32px 24px;max-width:360px;width:100%;text-align:center}
@@ -429,6 +441,32 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
     </div>
     <div class="roles-explored" id="rolesExplored"></div>
   </div>
+  <!-- FOR SCHOOLS -->
+  <div class="for-schools-card">
+    <div class="for-schools-badge">For Schools & Universities</div>
+    <h3>Prepare Your Students for Every Career</h3>
+    <p class="for-schools-sub">RoleCall covers 374+ careers across 9 industries — from nursing to welding, software engineering to culinary arts.</p>
+    <div class="for-schools-features">
+      <div class="for-schools-feat">
+        <span class="for-schools-feat-icon">&#127891;</span>
+        <span class="for-schools-feat-text"><strong>Education & certification paths</strong> for every role — guide students from classroom to career</span>
+      </div>
+      <div class="for-schools-feat">
+        <span class="for-schools-feat-icon">&#128200;</span>
+        <span class="for-schools-feat-text"><strong>Track student progress</strong> with scores, session history, and skill gap analysis</span>
+      </div>
+      <div class="for-schools-feat">
+        <span class="for-schools-feat-icon">&#128241;</span>
+        <span class="for-schools-feat-text"><strong>Mobile-first</strong> — works on any device, no install required</span>
+      </div>
+      <div class="for-schools-feat">
+        <span class="for-schools-feat-icon">&#128176;</span>
+        <span class="for-schools-feat-text"><strong>Free to start</strong> — no credit card required for students or institutions</span>
+      </div>
+    </div>
+    <a class="for-schools-cta" href="mailto:contact@rollcallinterviewprep.com?subject=RoleCall%20for%20Schools%20%E2%80%94%20Inquiry">Get in Touch for Institutional Access</a>
+  </div>
+
   <div id="searchResults" style="display:none">
     <div class="section-title">Search Results</div>
     <div class="role-list" id="searchResultsList"></div>
@@ -670,6 +708,11 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
       <div class="more-item" onclick="window.open('https://rollcallinterviewprep.com/blog/', '_blank')">
         <span class="more-icon">&#128214;</span>
         <span class="more-label">Interview Tips Blog</span>
+        <span class="more-arrow">&#8594;</span>
+      </div>
+      <div class="more-item" onclick="switchTab('home')">
+        <span class="more-icon">&#127979;</span>
+        <span class="more-label">RoleCall for Schools</span>
         <span class="more-arrow">&#8594;</span>
       </div>
     </div>
