@@ -698,6 +698,11 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
         <span class="more-label">Export Progress</span>
         <span class="more-arrow">&#8594;</span>
       </div>
+      <div class="more-item" onclick="showPromoModal()">
+        <span class="more-icon">&#127915;</span>
+        <span class="more-label">Redeem Promo Code</span>
+        <span class="more-arrow">&#8594;</span>
+      </div>
     </div>
     <div class="more-section">
       <div class="more-section-title">Settings</div>
@@ -742,6 +747,20 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
       <div class="onboarding-step"><span class="onboarding-num">4</span><span><strong>Star</strong> your favorite roles to save them</span></div>
     </div>
     <button class="suggest-submit" onclick="dismissOnboarding()" style="margin-top:20px">Get Started</button>
+  </div>
+</div>
+
+<!-- PROMO CODE MODAL -->
+<div class="onboarding-overlay hidden" id="promoOverlay">
+  <div class="onboarding-content">
+    <div class="onboarding-icon">&#127915;</div>
+    <h2>Redeem Promo Code</h2>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;line-height:1.5">Enter a promo code from your school or organization to unlock Pro features for free.</p>
+    <input type="text" id="promoInput" placeholder="Enter code..." autocomplete="off" autocapitalize="characters" spellcheck="false" style="width:100%;padding:12px 16px;border-radius:var(--radius);border:1px solid var(--card-hover);background:var(--bg);color:var(--text);font-size:16px;text-align:center;letter-spacing:2px;text-transform:uppercase;outline:none;margin-bottom:12px">
+    <div id="promoError" style="font-size:13px;color:#e74c3c;margin-bottom:8px;display:none"></div>
+    <div id="promoSuccess" style="font-size:13px;color:#2ecc71;margin-bottom:8px;display:none"></div>
+    <button class="suggest-submit" onclick="redeemPromoCode()" id="promoSubmitBtn" style="width:100%">Redeem</button>
+    <button onclick="hidePromoModal()" style="background:none;border:none;color:var(--text-secondary);font-size:13px;margin-top:12px;cursor:pointer">Cancel</button>
   </div>
 </div>
 
@@ -944,6 +963,15 @@ async function loadSubscriptionFromFirestore(uid) {
       const doc = subSnap.docs[0];
       userSubscription = { id: doc.id, ...doc.data() };
     } else {
+      // Check for promo code access
+      const custDoc = await db.collection('customers').doc(uid).get();
+      if (custDoc.exists && custDoc.data().promoCode) {
+        const promoExp = custDoc.data().promoExpiresAt;
+        if (!promoExp || promoExp.toDate() > new Date()) {
+          userSubscription = { status: 'active', promoCode: true };
+          return;
+        }
+      }
       userSubscription = null;
     }
   } catch (err) {
@@ -975,6 +1003,120 @@ async function openCustomerPortal() {
   } catch (err) {
     console.error('Portal error:', err);
     showToast('Could not open subscription management.');
+  }
+}
+
+// === PROMO CODES ===
+function showPromoModal() {
+  playClick('tap');
+  if (!currentUser) {
+    showAuthPrompt('Sign in to redeem a promo code');
+    return;
+  }
+  document.getElementById('promoInput').value = '';
+  document.getElementById('promoError').style.display = 'none';
+  document.getElementById('promoSuccess').style.display = 'none';
+  document.getElementById('promoOverlay').classList.remove('hidden');
+}
+
+function hidePromoModal() {
+  document.getElementById('promoOverlay').classList.add('hidden');
+}
+
+async function redeemPromoCode() {
+  const input = document.getElementById('promoInput');
+  const errorEl = document.getElementById('promoError');
+  const successEl = document.getElementById('promoSuccess');
+  const btn = document.getElementById('promoSubmitBtn');
+  const code = input.value.trim().toUpperCase();
+
+  errorEl.style.display = 'none';
+  successEl.style.display = 'none';
+
+  if (!code) {
+    errorEl.textContent = 'Please enter a promo code.';
+    errorEl.style.display = 'block';
+    return;
+  }
+  if (!currentUser) {
+    showAuthPrompt('Sign in to redeem a promo code');
+    return;
+  }
+
+  btn.textContent = 'Redeeming...';
+  btn.disabled = true;
+
+  try {
+    const codeDoc = await db.collection('promoCodes').doc(code).get();
+    if (!codeDoc.exists) {
+      errorEl.textContent = 'Invalid promo code. Please check and try again.';
+      errorEl.style.display = 'block';
+      btn.textContent = 'Redeem';
+      btn.disabled = false;
+      return;
+    }
+
+    const data = codeDoc.data();
+    if (!data.active) {
+      errorEl.textContent = 'This promo code is no longer active.';
+      errorEl.style.display = 'block';
+      btn.textContent = 'Redeem';
+      btn.disabled = false;
+      return;
+    }
+
+    if (data.expiresAt && data.expiresAt.toDate() < new Date()) {
+      errorEl.textContent = 'This promo code has expired.';
+      errorEl.style.display = 'block';
+      btn.textContent = 'Redeem';
+      btn.disabled = false;
+      return;
+    }
+
+    if (data.maxUses && data.usesCount >= data.maxUses) {
+      errorEl.textContent = 'This promo code has reached its usage limit.';
+      errorEl.style.display = 'block';
+      btn.textContent = 'Redeem';
+      btn.disabled = false;
+      return;
+    }
+
+    // Grant promo access
+    const expiry = data.expiresAt ? data.expiresAt.toDate() : null;
+    await db.collection('customers').doc(currentUser.uid).set({
+      promoCode: code,
+      promoGrantedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      promoExpiresAt: expiry ? firebase.firestore.Timestamp.fromDate(expiry) : null,
+      promoSource: data.source || code
+    }, { merge: true });
+
+    // Increment usage count
+    await db.collection('promoCodes').doc(code).update({
+      usesCount: firebase.firestore.FieldValue.increment(1)
+    });
+
+    // Update local state
+    userSubscription = { status: 'active', promoCode: true };
+    checkSubscription();
+
+    successEl.textContent = 'Pro unlocked! Enjoy all features.';
+    successEl.style.display = 'block';
+    btn.textContent = 'Redeemed!';
+    input.disabled = true;
+
+    setTimeout(() => {
+      hidePromoModal();
+      btn.textContent = 'Redeem';
+      btn.disabled = false;
+      input.disabled = false;
+    }, 2000);
+
+  } catch (err) {
+    console.error('Promo code error:', err);
+    errorEl.textContent = 'Something went wrong. Please try again.';
+    errorEl.style.display = 'block';
+    btn.textContent = 'Redeem';
+    btn.disabled = false;
   }
 }
 
