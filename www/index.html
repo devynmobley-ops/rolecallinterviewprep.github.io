@@ -693,10 +693,10 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
     <div class="more-section">
       <div class="more-section-title">Settings</div>
       <div id="moreThemePicker"></div>
-      <div class="more-item" id="scrollbarToggle" onclick="toggleScrollbar()" role="button" tabindex="0" aria-label="Toggle scrollbar visibility">
+      <div class="more-item" id="scrollbarToggle" onclick="toggleScrollbar()" role="switch" aria-checked="false" tabindex="0" aria-label="Toggle scrollbar visibility">
         <span class="more-icon" aria-hidden="true">&#9776;</span>
         <span class="more-label">Show Scrollbars</span>
-        <span class="more-arrow" id="scrollbarToggleState" style="font-size:13px;color:var(--text-secondary)">Off</span>
+        <span id="scrollbarToggleState" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:12px;background:var(--card-hover);color:var(--text-secondary);margin-left:auto">OFF</span>
       </div>
     </div>
     <div class="more-section">
@@ -7014,7 +7014,13 @@ function loadScrollbarPref() {
 }
 function updateScrollbarToggle(on) {
   const el = document.getElementById('scrollbarToggleState');
-  if (el) el.textContent = on ? 'On' : 'Off';
+  if (el) {
+    el.textContent = on ? 'ON' : 'OFF';
+    el.style.background = on ? 'rgba(108,92,231,0.2)' : 'var(--card-hover)';
+    el.style.color = on ? 'var(--accent-text)' : 'var(--text-secondary)';
+  }
+  const toggle = document.getElementById('scrollbarToggle');
+  if (toggle) toggle.setAttribute('aria-checked', on ? 'true' : 'false');
 }
 function toggleScrollbar() {
   const on = document.body.classList.toggle('show-scrollbars');
@@ -7046,23 +7052,42 @@ function renderThemeOptions() {
   const menu = document.getElementById('themeDropdownMenu');
   menu.innerHTML = '';
   const current = localStorage.getItem('preppro-theme') || 'dark';
+  function applyTheme(key) {
+    document.body.setAttribute('data-theme', key);
+    localStorage.setItem('preppro-theme', key);
+    updateThemeButton(key);
+    menu.querySelectorAll('.theme-option').forEach(o => o.classList.toggle('active', o.dataset.theme === key));
+    document.getElementById('themeDropdownBtn').classList.remove('open');
+    menu.classList.remove('open');
+    picker.querySelectorAll('.theme-pill').forEach(p => p.classList.toggle('active', p.dataset.theme === key));
+    showThemeToast(key);
+    playClick('select');
+  }
   THEMES.forEach(t => {
     const opt = document.createElement('div');
     opt.className = 'theme-option' + (t.key === current ? ' active' : '');
     opt.dataset.theme = t.key;
     opt.innerHTML = `<span class="theme-dot" style="background:${t.accent}"></span>${t.name}`;
-    opt.addEventListener('click', () => {
-      document.body.setAttribute('data-theme', t.key);
-      localStorage.setItem('preppro-theme', t.key);
-      updateThemeButton(t.key);
-      menu.querySelectorAll('.theme-option').forEach(o => o.classList.toggle('active', o.dataset.theme === t.key));
-      document.getElementById('themeDropdownBtn').classList.remove('open');
-      menu.classList.remove('open');
-      showThemeToast(t.key);
-      playClick('select');
-    });
+    opt.addEventListener('click', () => applyTheme(t.key));
     menu.appendChild(opt);
   });
+  // Also populate settings section theme picker
+  const picker = document.getElementById('moreThemePicker');
+  if (picker) {
+    picker.innerHTML = '';
+    const grid = document.createElement('div');
+    grid.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;padding:4px 0 8px';
+    THEMES.forEach(t => {
+      const pill = document.createElement('div');
+      pill.className = 'theme-pill' + (t.key === current ? ' active' : '');
+      pill.dataset.theme = t.key;
+      pill.style.cssText = 'cursor:pointer';
+      pill.innerHTML = `<span class="theme-dot" style="background:${t.accent};display:inline-block;width:10px;height:10px;border-radius:50;margin-right:6px;vertical-align:middle"></span>${t.name}`;
+      pill.addEventListener('click', () => applyTheme(t.key));
+      grid.appendChild(pill);
+    });
+    picker.appendChild(grid);
+  }
 }
 
 // === THEME DROPDOWN ===
