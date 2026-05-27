@@ -5,7 +5,7 @@
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-EDPB7FVZDV"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-EDPB7FVZDV');</script>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="google-site-verification" content="po-95JwNfNviEEvnL-gtapwVRzY_v8H42qORyAGlKi0">
@@ -18,21 +18,25 @@
 <meta property="og:type" content="website">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+*:focus:not(:focus-visible){outline:none}
+.skip-nav{position:absolute;top:-100%;left:16px;z-index:9999;padding:12px 20px;background:var(--accent);color:#fff;font-size:14px;font-weight:600;border-radius:0 0 8px 8px;text-decoration:none;transition:top 0.2s}
+.skip-nav:focus{top:0}
 :root{
   --bg:#0f0f14;--card:#1a1a24;--accent:#6c5ce7;--accent-light:#a29bfe;
-  --text:#f0f0f5;--text-secondary:#8e8ea0;--card-hover:#22222f;
+  --accent-text:#8b7cf7;--text:#f0f0f5;--text-secondary:#8e8ea0;--card-hover:#22222f;
   --safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);
   --radius:14px;--transition:0.3s cubic-bezier(.4,0,.2,1);
 }
-body[data-theme="ocean"]{--bg:#0a1628;--card:#122240;--accent:#00b4d8;--accent-light:#90e0ef;--text:#e8f4f8;--text-secondary:#6c8ea0;--card-hover:#1a3050}
-body[data-theme="forest"]{--bg:#0d1a0d;--card:#1a2e1a;--accent:#2d6a4f;--accent-light:#52b788;--text:#e8f5e9;--text-secondary:#7aaa80;--card-hover:#223322}
-body[data-theme="sunset"]{--bg:#1a0f0f;--card:#2a1a1a;--accent:#e76f51;--accent-light:#f4a261;--text:#fdf0e8;--text-secondary:#b08a70;--card-hover:#352222}
-body[data-theme="lavender"]{--bg:#14101e;--card:#1f1a30;--accent:#9b59b6;--accent-light:#c39bd3;--text:#f0e8f8;--text-secondary:#8a7aaa;--card-hover:#282240}
-body[data-theme="rose"]{--bg:#1a0f14;--card:#2a1a22;--accent:#e84393;--accent-light:#fd79a8;--text:#f8e8f0;--text-secondary:#a07a8e;--card-hover:#352228}
-body[data-theme="cyberpunk"]{--bg:#0a0a14;--card:#141428;--accent:#f9ca24;--accent-light:#ffeaa7;--text:#f0f0e8;--text-secondary:#8a8a70;--card-hover:#1e1e35}
-body[data-theme="arctic"]{--bg:#0b1222;--card:#12203a;--accent:#74b9ff;--accent-light:#dfe6e9;--text:#e8f0f8;--text-secondary:#6a8aaa;--card-hover:#1a2a48}
-body[data-theme="ember"]{--bg:#141010;--card:#241a1a;--accent:#ff6348;--accent-light:#ffa502;--text:#f8f0e8;--text-secondary:#a08a70;--card-hover:#302220}
-body[data-theme="mint"]{--bg:#0e1412;--card:#1a2a24;--accent:#00cec9;--accent-light:#81ecec;--text:#e8f8f5;--text-secondary:#709a95;--card-hover:#223530}
+body[data-theme="ocean"]{--bg:#0a1628;--card:#122240;--accent:#00b4d8;--accent-light:#90e0ef;--accent-text:#33c5e3;--text:#e8f4f8;--text-secondary:#6c8ea0;--card-hover:#1a3050}
+body[data-theme="forest"]{--bg:#0d1a0d;--card:#1a2e1a;--accent:#2d6a4f;--accent-light:#52b788;--accent-text:#5db882;--text:#e8f5e9;--text-secondary:#7aaa80;--card-hover:#223322}
+body[data-theme="sunset"]{--bg:#1a0f0f;--card:#2a1a1a;--accent:#e76f51;--accent-light:#f4a261;--accent-text:#f5a080;--text:#fdf0e8;--text-secondary:#b08a70;--card-hover:#352222}
+body[data-theme="lavender"]{--bg:#14101e;--card:#1f1a30;--accent:#9b59b6;--accent-light:#c39bd3;--accent-text:#b57ed0;--text:#f0e8f8;--text-secondary:#8a7aaa;--card-hover:#282240}
+body[data-theme="rose"]{--bg:#1a0f14;--card:#2a1a22;--accent:#e84393;--accent-light:#fd79a8;--accent-text:#f26aaa;--text:#f8e8f0;--text-secondary:#a07a8e;--card-hover:#352228}
+body[data-theme="cyberpunk"]{--bg:#0a0a14;--card:#141428;--accent:#f9ca24;--accent-light:#ffeaa7;--accent-text:#f0c830;--text:#f0f0e8;--text-secondary:#8a8a70;--card-hover:#1e1e35}
+body[data-theme="arctic"]{--bg:#0b1222;--card:#12203a;--accent:#74b9ff;--accent-light:#dfe6e9;--accent-text:#90ccff;--text:#e8f0f8;--text-secondary:#6a8aaa;--card-hover:#1a2a48}
+body[data-theme="ember"]{--bg:#141010;--card:#241a1a;--accent:#ff6348;--accent-light:#ffa502;--accent-text:#ff846b;--text:#f8f0e8;--text-secondary:#a08a70;--card-hover:#302220}
+body[data-theme="mint"]{--bg:#0e1412;--card:#1a2a24;--accent:#00cec9;--accent-light:#81ecec;--accent-text:#33d8d4;--text:#e8f8f5;--text-secondary:#709a95;--card-hover:#223530}
 html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
 #app{height:100%;overflow:hidden;position:relative}
 .screen{position:absolute;top:0;left:0;width:100%;height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;transition:transform var(--transition),opacity var(--transition);padding-top:calc(var(--safe-top) + 12px);padding-bottom:calc(var(--safe-bottom) + 12px);will-change:transform,opacity;background:var(--bg);z-index:0}
@@ -42,7 +46,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .screen.active{transform:translateX(0);opacity:1}
 .header{padding:8px 20px 12px;position:sticky;top:0;background:var(--bg);z-index:10;backdrop-filter:blur(12px)}
 .header-row{display:flex;align-items:center;gap:12px}
-.back-btn{background:none;border:none;color:var(--accent);font-size:22px;cursor:pointer;padding:4px 8px;border-radius:8px;display:flex;align-items:center;justify-content:center;min-width:40px;min-height:40px}
+.back-btn{background:none;border:none;color:var(--accent-text);font-size:22px;cursor:pointer;padding:4px 8px;border-radius:8px;display:flex;align-items:center;justify-content:center;min-width:40px;min-height:40px}
 .back-btn:active{background:var(--card)}
 .header h1{font-size:20px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .subtitle{font-size:13px;color:var(--text-secondary);margin-top:2px}
@@ -58,7 +62,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .theme-row{display:flex;gap:8px;padding:12px 20px;overflow-x:auto;scrollbar-width:none}
 .theme-row::-webkit-scrollbar{display:none}
 .theme-pill{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;border:2px solid var(--card);background:var(--card);color:var(--text-secondary);transition:all var(--transition)}
-.theme-pill.active{border-color:var(--accent);color:var(--accent);background:transparent}
+.theme-pill.active{border-color:var(--accent);color:var(--accent-text);background:transparent}
 .theme-pill:active{transform:scale(0.95)}
 .section-title{font-size:16px;font-weight:700;padding:16px 20px 8px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;font-size:12px}
 .category-grid{padding:4px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -84,7 +88,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .accordion{background:var(--card);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;transition:all var(--transition)}
 .accordion-header{padding:16px;cursor:pointer;display:flex;align-items:flex-start;gap:12px;transition:background var(--transition)}
 .accordion-header:active{background:var(--card-hover)}
-.accordion-num{font-size:12px;font-weight:700;color:var(--accent);min-width:24px;height:24px;display:flex;align-items:center;justify-content:center;background:rgba(108,92,231,0.15);border-radius:8px;flex-shrink:0;margin-top:1px}
+.accordion-num{font-size:12px;font-weight:700;color:var(--accent-text);min-width:24px;height:24px;display:flex;align-items:center;justify-content:center;background:rgba(108,92,231,0.15);border-radius:8px;flex-shrink:0;margin-top:1px}
 .accordion-question{font-size:14px;font-weight:500;flex:1;line-height:1.4}
 .accordion-arrow{color:var(--text-secondary);font-size:14px;transition:transform var(--transition);flex-shrink:0;margin-top:3px}
 .accordion.open .accordion-arrow{transform:rotate(180deg)}
@@ -101,7 +105,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .mock-progress-text{font-size:12px;color:var(--text-secondary);margin-bottom:4px}
 .mock-progress-bar{height:6px;background:var(--card);border-radius:3px;overflow:hidden}
 .mock-progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width 0.4s ease}
-.mock-timer{font-size:14px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;min-width:50px;text-align:right}
+.mock-timer{font-size:14px;font-weight:700;color:var(--accent-text);font-variant-numeric:tabular-nums;min-width:50px;text-align:right}
 .mock-body{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;perspective:1000px}
 .flip-card{width:100%;max-width:380px;aspect-ratio:3/4;max-height:65vh;cursor:pointer;position:relative}
 .flip-card-inner{width:100%;height:100%;position:relative;transition:transform 0.6s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
@@ -109,14 +113,14 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .flip-face{position:absolute;top:0;left:0;width:100%;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;text-align:center}
 .flip-front{background:var(--card);border:1px solid rgba(255,255,255,0.06)}
 .flip-back{background:var(--card);border:1px solid var(--accent);transform:rotateY(180deg)}
-.flip-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:700;margin-bottom:16px}
+.flip-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--accent-text);font-weight:700;margin-bottom:16px}
 .flip-question{font-size:17px;font-weight:600;line-height:1.5}
 .flip-tip-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--accent-light);font-weight:700;margin-bottom:16px}
 .flip-tip{font-size:14px;line-height:1.6;color:var(--text-secondary)}
 .flip-hint{font-size:11px;color:var(--text-secondary);margin-top:auto;opacity:0.6}
 .answer-section{flex:1;display:flex;flex-direction:column;padding:0 20px;overflow-y:auto}
 .mock-question-card{background:var(--card);border-radius:var(--radius);padding:20px;margin-bottom:16px;border-left:3px solid var(--accent)}
-.mock-q-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:700;margin-bottom:10px}
+.mock-q-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--accent-text);font-weight:700;margin-bottom:10px}
 .mock-q-text{font-size:16px;font-weight:600;line-height:1.5}
 .answer-textarea{width:100%;min-height:120px;padding:14px;border-radius:var(--radius);border:1px solid var(--card-hover);background:var(--card);color:var(--text);font-size:14px;font-family:inherit;resize:vertical;outline:none;transition:border var(--transition);line-height:1.5}
 .answer-textarea:focus{border-color:var(--accent)}
@@ -135,7 +139,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .concept-pill{padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600}
 .concept-pill.matched{background:rgba(46,204,113,0.15);color:#2ecc71}
 .concept-pill.missed{background:rgba(231,76,60,0.15);color:#e74c3c}
-.show-tip-btn{width:100%;padding:12px;border-radius:var(--radius);border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;transition:all var(--transition)}
+.show-tip-btn{width:100%;padding:12px;border-radius:var(--radius);border:1px solid var(--accent);background:transparent;color:var(--accent-text);font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;transition:all var(--transition)}
 .show-tip-btn:active{transform:scale(0.97)}
 .expert-tip{padding:16px;margin-top:12px;border-radius:var(--radius);background:rgba(108,92,231,0.08);border-left:3px solid var(--accent-light);font-size:13px;color:var(--text-secondary);line-height:1.6;display:none}
 .expert-tip.visible{display:block;animation:fadeIn 0.3s ease}
@@ -152,7 +156,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .summary-title{font-size:24px;font-weight:800;margin-bottom:8px}
 .summary-stats{display:flex;gap:24px;margin:20px 0}
 .summary-stat{text-align:center}
-.summary-stat .val{font-size:28px;font-weight:800;color:var(--accent)}
+.summary-stat .val{font-size:28px;font-weight:800;color:var(--accent-text)}
 .summary-stat .lbl{font-size:12px;color:var(--text-secondary);margin-top:2px}
 .summary-btn{margin-top:20px;padding:14px 40px;border-radius:var(--radius);background:var(--accent);color:#fff;border:none;font-size:15px;font-weight:700;cursor:pointer}
 .summary-btn:active{transform:scale(0.97)}
@@ -187,13 +191,13 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .feedback-star.filled{animation:starPop 0.3s ease forwards}
 .theme-toast{position:fixed;bottom:calc(var(--safe-bottom) + 60px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--card);color:var(--text);padding:8px 16px;border-radius:20px;font-size:12px;font-weight:600;opacity:0;transition:all 0.3s ease;z-index:200;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,0.3)}
 .theme-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.streak-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;background:rgba(108,92,231,0.12);color:var(--accent);font-size:12px;font-weight:700;margin-top:8px;animation:fadeIn 0.5s ease}
+.streak-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;background:rgba(108,92,231,0.12);color:var(--accent-text);font-size:12px;font-weight:700;margin-top:8px;animation:fadeIn 0.5s ease}
 .progress-card{margin:12px 20px;background:var(--card);border-radius:var(--radius);padding:16px 20px;border-left:3px solid var(--accent)}
 .progress-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .progress-header h3{font-size:15px;font-weight:700}
-.progress-badge{font-size:11px;font-weight:600;color:var(--accent);background:rgba(108,92,231,0.12);padding:3px 10px;border-radius:12px}
+.progress-badge{font-size:11px;font-weight:600;color:var(--accent-text);background:rgba(108,92,231,0.12);padding:3px 10px;border-radius:12px}
 .progress-stats{display:flex;gap:20px}
-.progress-stat .val{font-size:22px;font-weight:800;color:var(--accent)}
+.progress-stat .val{font-size:22px;font-weight:800;color:var(--accent-text)}
 .progress-stat .lbl{font-size:11px;color:var(--text-secondary);margin-top:2px}
 .suggest-card{margin:12px 20px;background:linear-gradient(135deg,var(--accent-light),var(--accent));border-radius:var(--radius);padding:20px;cursor:pointer;transition:all var(--transition);color:#fff}
 .suggest-card:active{transform:scale(0.98)}
@@ -207,7 +211,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .suggest-categories{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
 .suggest-cat-btn{padding:8px 14px;border-radius:20px;border:2px solid var(--card-hover);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;transition:all var(--transition);display:inline-flex;align-items:center;gap:6px;user-select:none;-webkit-user-select:none}
 .suggest-cat-btn:active{transform:scale(0.95)}
-.suggest-cat-btn.selected{border-color:var(--accent);color:var(--accent);background:transparent}
+.suggest-cat-btn.selected{border-color:var(--accent);color:var(--accent-text);background:transparent}
 .suggest-input{width:100%;padding:12px 16px;border-radius:var(--radius);border:1px solid var(--card-hover);background:var(--card);color:var(--text);font-size:15px;font-family:inherit;outline:none;transition:border var(--transition)}
 .suggest-input:focus{border-color:var(--accent)}
 .suggest-input::placeholder{color:var(--text-secondary)}
@@ -223,7 +227,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .requested-roles{display:flex;flex-direction:column;gap:6px}
 .requested-role-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius);background:var(--card);font-size:14px}
 .requested-role-row.added{opacity:0.5}
-.requested-role-check{font-size:18px;color:var(--accent);flex-shrink:0}
+.requested-role-check{font-size:18px;color:var(--accent-text);flex-shrink:0}
 .requested-role-row:not(.added) .requested-role-check{color:var(--text-secondary)}
 .requested-role-name{flex:1;font-weight:600}
 .requested-role-cat{font-size:11px;color:var(--text-secondary);background:var(--card-hover);padding:3px 8px;border-radius:10px;flex-shrink:0}
@@ -244,22 +248,6 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .home-footer{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;font-size:12px;color:var(--text-secondary)}
 .home-footer a{color:var(--text-secondary);text-decoration:none}
 .footer-version{opacity:0.5}
-.for-schools-card{margin:12px 20px;background:var(--card);border-radius:var(--radius);padding:24px 20px;border:1px solid var(--card-hover);position:relative;overflow:hidden}
-.for-schools-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-light))}
-.for-schools-badge{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:8px}
-.for-schools-card h3{font-size:18px;font-weight:800;margin-bottom:6px}
-.for-schools-card .for-schools-sub{font-size:13px;color:var(--text-secondary);margin-bottom:16px;line-height:1.5}
-.for-schools-features{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
-.for-schools-feat{display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.4}
-.for-schools-feat-icon{font-size:18px;flex-shrink:0;margin-top:1px}
-.for-schools-feat-text{color:var(--text-secondary)}
-.for-schools-feat-text strong{color:var(--text);font-weight:600}
-.for-schools-cta{display:block;width:100%;padding:14px;border-radius:var(--radius);border:none;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:15px;font-weight:700;cursor:pointer;text-align:center;transition:all var(--transition);text-decoration:none}
-.for-schools-cta:active{transform:scale(0.97);opacity:0.9}
-.role-desc-snippet{font-size:12px;color:var(--text-secondary);margin-top:3px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.role-about-card{margin:12px 16px;background:var(--card);border-radius:var(--radius);padding:16px;border-left:3px solid var(--accent)}
-.role-about-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--accent);margin-bottom:6px}
-.role-about-text{font-size:13px;color:var(--text-secondary);line-height:1.6}
 .onboarding-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px}
 .onboarding-overlay.hidden{display:none}
 .onboarding-content{background:var(--card);border-radius:var(--radius);padding:32px 24px;max-width:360px;width:100%;text-align:center}
@@ -279,7 +267,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .theme-dropdown-menu.open{max-height:400px;opacity:1;border-color:var(--card-hover);box-shadow:0 8px 24px rgba(0,0,0,0.3)}
 .theme-option{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:background 0.15s ease;font-size:14px;color:var(--text)}
 .theme-option:active{background:var(--card-hover)}
-.theme-option.active{color:var(--accent);font-weight:600}
+.theme-option.active{color:var(--accent-text);font-weight:600}
 .theme-option .theme-dot{width:12px;height:12px}
 .req-card{margin:8px 16px;background:var(--card);border-radius:var(--radius);overflow:hidden;border:1px solid var(--card-hover)}
 .req-card-header{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;transition:background var(--transition)}
@@ -337,7 +325,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .more-footer{text-align:center;padding:24px 20px}
 .more-footer-text{font-size:12px;color:var(--text-secondary);opacity:0.5}
 .daily-card{margin:12px 20px;background:var(--card);border-radius:var(--radius);padding:20px;border-left:3px solid var(--accent);animation:fadeIn .5s ease}
-.daily-card-label{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
+.daily-card-label{font-size:11px;font-weight:700;color:var(--accent-text);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
 .daily-card-question{font-size:15px;font-weight:600;line-height:1.4;margin-bottom:6px}
 .daily-card-role{font-size:12px;color:var(--text-secondary);margin-bottom:14px}
 .daily-card-btn{display:inline-block;padding:10px 24px;border-radius:24px;background:var(--accent);color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer;transition:all .2s}
@@ -356,7 +344,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .weakest-card:active{transform:scale(.98);background:var(--card-hover)}
 .weakest-card-label{font-size:11px;font-weight:700;color:#e17055;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
 .weakest-card-text{font-size:14px;font-weight:600}
-.weakest-card-action{font-size:12px;color:var(--accent);margin-top:6px;font-weight:600}
+.weakest-card-action{font-size:12px;color:var(--accent-text);margin-top:6px;font-weight:600}
 .coverage-section{margin-top:14px;padding-top:14px;border-top:1px solid var(--card-hover)}
 .coverage-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .coverage-row:last-child{margin-bottom:0}
@@ -374,6 +362,25 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .roles-explored{font-size:12px;color:var(--text-secondary);text-align:center;padding:8px 0 0;font-weight:600}
 .streak-pulse{animation:pulse 2s ease-in-out infinite}
 .streak-badge.pro{background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff}
+/* === HIGH CONTRAST THEME === */
+body[data-theme="high-contrast"]{--bg:#000;--card:#1a1a1a;--accent:#ffdd00;--accent-light:#ffff55;--accent-text:#ffdd00;--text:#ffffff;--text-secondary:#cccccc;--card-hover:#2a2a2a}
+body[data-theme="high-contrast"] .cat-card,body[data-theme="high-contrast"] .role-card,body[data-theme="high-contrast"] .accordion,body[data-theme="high-contrast"] .more-item,body[data-theme="high-contrast"] .daily-card,body[data-theme="high-contrast"] .progress-card,body[data-theme="high-contrast"] .history-row,body[data-theme="high-contrast"] .req-card,body[data-theme="high-contrast"] .continue-card,body[data-theme="high-contrast"] .weakest-card,body[data-theme="high-contrast"] .paywall-price-option{border:2px solid #555}
+body[data-theme="high-contrast"] .accordion-num{background:rgba(255,221,0,0.2);color:#ffdd00}
+body[data-theme="high-contrast"] *:focus-visible{outline:3px solid #ffdd00;outline-offset:3px}
+/* === REDUCED MOTION === */
+@media(prefers-reduced-motion:reduce){
+*,.flip-card-inner,.mock-overlay,.picker-overlay,.accordion-body,.accordion-arrow,.theme-dropdown-arrow,.theme-dropdown-menu,.feedback-star.filled,.confetti-piece{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}
+}
+/* === FORM ERROR MESSAGES === */
+.input-error{font-size:12px;color:#e74c3c;margin-top:4px;display:none;line-height:1.4}
+.input-error.visible{display:block}
+.input-error:empty{display:none}
+input[aria-invalid="true"],textarea[aria-invalid="true"]{border-color:#e74c3c!important}
+/* === SCROLLBAR VISIBILITY === */
+body.show-scrollbars .screen{scrollbar-width:thin;scrollbar-color:var(--text-secondary) transparent}
+body.show-scrollbars .screen::-webkit-scrollbar{width:6px}
+body.show-scrollbars .screen::-webkit-scrollbar-thumb{background:var(--text-secondary);border-radius:3px}
+body.show-scrollbars .screen::-webkit-scrollbar-track{background:transparent}
 </style>
 <!-- Firebase + Stripe loaded dynamically -->
 <script>
@@ -394,22 +401,23 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
 </script>
 </head>
 <body data-theme="dark">
+<a href="#screen-home" class="skip-nav">Skip to main content</a>
 <div id="app">
 
 <!-- HOME SCREEN -->
-<div id="screen-home" class="screen active tab-screen">
-  <div id="homeSignInBtn" onclick="handleAccountClick()" style="position:absolute;top:12px;right:16px;z-index:5;padding:6px 14px;border-radius:20px;background:var(--accent);color:#fff;font-size:12px;font-weight:600;cursor:pointer;display:none">Sign In</div>
+<div id="screen-home" class="screen active tab-screen" role="main" aria-label="Main content">
+  <div id="homeSignInBtn" onclick="handleAccountClick()" role="button" tabindex="0" aria-label="Sign in" style="position:absolute;top:12px;right:16px;z-index:5;padding:6px 14px;border-radius:20px;background:var(--accent);color:#fff;font-size:12px;font-weight:600;cursor:pointer;display:none">Sign In</div>
   <div class="logo">
     <h1>RoleCall</h1>
     <p>Roll into your next role</p>
     <div class="streak-badge" id="streakBadge"></div>
   </div>
   <div class="search-wrap">
-    <span class="search-icon">&#128269;</span>
-    <input type="text" class="search-box" id="searchInput" placeholder="Search roles or questions..." autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">
+    <span class="search-icon" aria-hidden="true">&#128269;</span>
+    <input type="text" class="search-box" id="searchInput" placeholder="Search roles or questions..." autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" aria-label="Search roles or questions">
   </div>
   <div class="theme-dropdown-wrap" id="themeDropdown">
-    <button class="theme-dropdown-btn" id="themeDropdownBtn">
+    <button class="theme-dropdown-btn" id="themeDropdownBtn" aria-label="Choose theme" aria-expanded="false" aria-haspopup="true">
       <span class="theme-dropdown-label"><span style="font-size:12px;color:var(--text-secondary);font-weight:600">Theme:</span> <span class="theme-dot" id="themeDot"></span> <span id="themeDropdownName">Dark</span></span>
       <span class="theme-dropdown-arrow">&#9662;</span>
     </button>
@@ -418,15 +426,15 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
   <div class="daily-card" id="dailyCard"></div>
   <div class="quick-practice-wrap"><button class="quick-practice-btn" onclick="quickPractice()">&#9889; Quick Practice</button></div>
   <div id="continueSection" style="display:none">
-    <div class="section-title">Continue</div>
+    <h2 class="section-title">Continue</h2>
     <div id="continueContent"></div>
   </div>
   <div class="weakest-card" id="weakestCard" style="display:none"></div>
-  <div class="section-title" id="bookmarksTitle" style="display:none">Bookmarked Roles</div>
+  <h2 class="section-title" id="bookmarksTitle" style="display:none">Bookmarked Roles</h2>
   <div id="bookmarksList" class="bookmarks-list"></div>
   <div class="progress-card" id="progressCard">
     <div class="progress-header">
-      <h3>Your Progress</h3>
+      <h2>Your Progress</h2>
       <span class="progress-badge" id="progressBadge">Start practicing!</span>
     </div>
     <div class="progress-stats" id="progressStats">
@@ -445,40 +453,14 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
     </div>
     <div class="roles-explored" id="rolesExplored"></div>
   </div>
-  <!-- FOR SCHOOLS -->
-  <div class="for-schools-card">
-    <div class="for-schools-badge">For Schools & Universities</div>
-    <h3>Prepare Your Students for Every Career</h3>
-    <p class="for-schools-sub">RoleCall covers 374+ careers across 9 industries — from nursing to welding, software engineering to culinary arts.</p>
-    <div class="for-schools-features">
-      <div class="for-schools-feat">
-        <span class="for-schools-feat-icon">&#127891;</span>
-        <span class="for-schools-feat-text"><strong>Education & certification paths</strong> for every role — guide students from classroom to career</span>
-      </div>
-      <div class="for-schools-feat">
-        <span class="for-schools-feat-icon">&#128200;</span>
-        <span class="for-schools-feat-text"><strong>Track student progress</strong> with scores, session history, and skill gap analysis</span>
-      </div>
-      <div class="for-schools-feat">
-        <span class="for-schools-feat-icon">&#128241;</span>
-        <span class="for-schools-feat-text"><strong>Mobile-first</strong> — works on any device, no install required</span>
-      </div>
-      <div class="for-schools-feat">
-        <span class="for-schools-feat-icon">&#128176;</span>
-        <span class="for-schools-feat-text"><strong>Free to start</strong> — no credit card required for students or institutions</span>
-      </div>
-    </div>
-    <a class="for-schools-cta" href="mailto:rollcallinterviewprep@outlook.com?subject=RoleCall%20for%20Schools%20%E2%80%94%20Inquiry">Get in Touch for Institutional Access</a>
-  </div>
-
-  <div id="searchResults" style="display:none">
-    <div class="section-title">Search Results</div>
+  <div id="searchResults" style="display:none" aria-live="polite" aria-label="Search results">
+    <h2 class="section-title">Search Results</h2>
     <div class="role-list" id="searchResultsList"></div>
   </div>
 </div>
 
 <!-- ROLES TAB SCREEN -->
-<div id="screen-roles-tab" class="screen hidden tab-screen">
+<div id="screen-roles-tab" class="screen hidden tab-screen" role="tabpanel" aria-label="Roles">
   <div class="roles-tab-header">
     <div class="roles-tab-title">Browse Roles</div>
   </div>
@@ -488,7 +470,7 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
 </div>
 
 <!-- MOCK TAB SCREEN -->
-<div id="screen-mock-tab" class="screen hidden tab-screen">
+<div id="screen-mock-tab" class="screen hidden tab-screen" role="tabpanel" aria-label="Mock interview">
   <div class="roles-tab-header">
     <div class="roles-tab-title">Mock Interview</div>
   </div>
@@ -500,21 +482,20 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
 <div id="screen-questions" class="screen slide-left hidden">
   <div class="header">
     <div class="header-row">
-      <button class="back-btn" onclick="goRoles()">&#8592;</button>
+      <button class="back-btn" onclick="goRoles()" aria-label="Go back">&#8592;</button>
       <div>
         <h1 id="questionsTitle">Questions</h1>
         <div class="subtitle" id="questionsSubtitle"></div>
       </div>
     </div>
   </div>
-  <div id="roleAboutCard" style="display:none"></div>
   <div id="reqCard"></div>
   <div class="question-list" id="questionList"></div>
-  <div class="fab-mock" onclick="startMockFromQuestions()">&#9889; Mock Interview</div>
+  <div class="fab-mock" onclick="startMockFromQuestions()" role="button" tabindex="0" aria-label="Start mock interview">&#9889; Mock Interview</div>
 </div>
 
 <!-- UPDATES TAB SCREEN -->
-<div id="screen-updates-tab" class="screen hidden tab-screen">
+<div id="screen-updates-tab" class="screen hidden tab-screen" role="tabpanel" aria-label="Updates">
   <div class="roles-tab-header">
     <div class="roles-tab-title">What's New</div>
   </div>
@@ -522,25 +503,27 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
 </div>
 
 <!-- SUGGESTIONS TAB SCREEN -->
-<div id="screen-suggest-tab" class="screen hidden tab-screen">
+<div id="screen-suggest-tab" class="screen hidden tab-screen" role="tabpanel" aria-label="Suggest a role">
   <div class="roles-tab-header">
     <div class="roles-tab-title">Suggest a Role</div>
   </div>
   <div class="suggest-body">
     <div id="suggestForm">
     <div class="suggest-label">Which category fits best?</div>
-    <select class="suggest-input" id="suggestCatSelect">
+    <select class="suggest-input" id="suggestCatSelect" aria-label="Which category fits best" aria-describedby="suggestCatError">
       <option value="">Select a category...</option>
     </select>
+    <div class="input-error" id="suggestCatError" role="alert"></div>
     <div class="suggest-label">What role should we add?</div>
-    <input type="text" class="suggest-input" id="suggestRoleInput" placeholder="e.g. Blockchain Developer, Sonographer..." autocomplete="off">
+    <input type="text" class="suggest-input" id="suggestRoleInput" placeholder="e.g. Blockchain Developer, Sonographer..." autocomplete="off" aria-label="Suggested role name" aria-describedby="suggestRoleError">
+    <div class="input-error" id="suggestRoleError" role="alert"></div>
     <div class="suggest-label">Why would this role be useful? <span class="suggest-optional">(optional)</span></div>
-    <textarea class="suggest-textarea" id="suggestWhyInput" placeholder="Briefly explain why this role would help you or others prepare..."></textarea>
+    <textarea class="suggest-textarea" id="suggestWhyInput" placeholder="Briefly explain why this role would help you or others prepare..." aria-label="Why this role should be added"></textarea>
     <button class="suggest-submit" id="suggestSubmit" onclick="submitSuggestion()">Submit Suggestion</button>
     </div>
     <div class="suggest-confirmation" id="suggestConfirm" style="display:none">
       <div class="suggest-confirm-icon">&#10004;</div>
-      <h3>Thanks for your suggestion!</h3>
+      <h2>Thanks for your suggestion!</h2>
       <p>We'll review it and consider adding it in a future update.</p>
       <button class="suggest-submit" onclick="resetSuggestion()">Suggest Another</button>
     </div>
@@ -549,7 +532,8 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
     <div class="suggest-label" style="margin-top:32px">General Feedback</div>
     <p style="color:var(--text-secondary);font-size:13px;margin-bottom:12px">Have an idea to improve the app? Let us know!</p>
     <div id="feedbackForm">
-      <textarea class="suggest-textarea" id="feedbackInput" placeholder="Share your ideas, feature requests, or anything we can do better..." style="min-height:100px"></textarea>
+      <textarea class="suggest-textarea" id="feedbackInput" placeholder="Share your ideas, feature requests, or anything we can do better..." style="min-height:100px" aria-label="Feedback" aria-describedby="feedbackError"></textarea>
+      <div class="input-error" id="feedbackError" role="alert"></div>
       <button class="suggest-submit" onclick="submitFeedback()" style="margin-top:8px">Submit Feedback</button>
     </div>
     <div id="feedbackConfirm" style="display:none;text-align:center;padding:20px 0">
@@ -564,7 +548,7 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
 <div id="screen-history" class="screen slide-left hidden">
   <div class="header">
     <div class="header-row">
-      <button class="back-btn" onclick="goBack()">&#8592;</button>
+      <button class="back-btn" onclick="goBack()" aria-label="Go back">&#8592;</button>
       <div>
         <h1>Practice History</h1>
         <div class="subtitle">Your recent mock interview sessions</div>
@@ -578,7 +562,7 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
 <div id="screen-privacy" class="screen slide-left hidden">
   <div class="header">
     <div class="header-row">
-      <button class="back-btn" onclick="goBack()">&#8592;</button>
+      <button class="back-btn" onclick="goBack()" aria-label="Go back">&#8592;</button>
       <div>
         <h1>Privacy Policy</h1>
         <div class="subtitle">Last updated: April 2026</div>
@@ -599,12 +583,12 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
 <div id="screen-paywall" class="screen slide-left hidden">
   <div class="header">
     <div class="header-row">
-      <button class="back-btn" onclick="goBack()">&#8592;</button>
+      <button class="back-btn" onclick="goBack()" aria-label="Go back">&#8592;</button>
       <h1>RoleCall Pro</h1>
     </div>
   </div>
   <div class="paywall-body">
-    <div class="paywall-icon">&#11088;</div>
+    <div class="paywall-icon" aria-hidden="true">&#11088;</div>
     <h2 class="paywall-title">Unlock All Interview Prep</h2>
     <p class="paywall-subtitle">Get access to all questions and full mock interviews</p>
     <div class="paywall-features">
@@ -637,7 +621,7 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
 <div id="screen-auth" class="screen slide-left hidden">
   <div class="header">
     <div class="header-row">
-      <button class="back-btn" onclick="goBack()">&#8592;</button>
+      <button class="back-btn" onclick="goBack()" aria-label="Go back">&#8592;</button>
       <h1>Sign In</h1>
     </div>
   </div>
@@ -654,12 +638,14 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
       <span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--bg);padding:0 12px">or</span>
     </div>
     <div style="margin-bottom:12px">
-      <input id="authEmail" type="email" placeholder="Email" autocomplete="email"
+      <input id="authEmail" type="email" placeholder="Email" autocomplete="email" aria-label="Email address" aria-describedby="authEmailError"
         style="width:100%;padding:12px 16px;border-radius:var(--radius);border:1px solid var(--card-hover);background:var(--card);color:var(--text);font-size:15px;outline:none">
+      <div class="input-error" id="authEmailError" role="alert"></div>
     </div>
     <div style="margin-bottom:16px">
-      <input id="authPassword" type="password" placeholder="Password" autocomplete="current-password"
+      <input id="authPassword" type="password" placeholder="Password" autocomplete="current-password" aria-label="Password" aria-describedby="authPasswordError"
         style="width:100%;padding:12px 16px;border-radius:var(--radius);border:1px solid var(--card-hover);background:var(--card);color:var(--text);font-size:15px;outline:none">
+      <div class="input-error" id="authPasswordError" role="alert"></div>
     </div>
     <button class="paywall-subscribe-btn" onclick="handleEmailAuth()" style="background:var(--card);border:1px solid var(--card-hover)">
       Sign in / Create Account
@@ -668,70 +654,65 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
 </div>
 
 <!-- MORE TAB SCREEN -->
-<div id="screen-more" class="screen hidden tab-screen">
+<div id="screen-more" class="screen hidden tab-screen" role="tabpanel" aria-label="More options">
   <div class="roles-tab-header">
     <div class="roles-tab-title">More</div>
   </div>
   <div class="more-list">
     <div class="more-section">
       <div class="more-section-title">Account</div>
-      <div id="authMoreItem" class="more-item" onclick="handleAccountClick()">
-        <span class="more-icon" id="authMoreIcon">&#128100;</span>
+      <div id="authMoreItem" class="more-item" onclick="handleAccountClick()" role="button" tabindex="0">
+        <span class="more-icon" id="authMoreIcon" aria-hidden="true">&#128100;</span>
         <span class="more-label" id="authMoreLabel">Sign In</span>
-        <span class="more-arrow">&#8594;</span>
+        <span class="more-arrow" aria-hidden="true">&#8594;</span>
       </div>
-      <div id="subscriptionMoreItem" class="more-item" onclick="showPaywall()">
-        <span class="more-icon">&#11088;</span>
+      <div id="subscriptionMoreItem" class="more-item" onclick="showPaywall()" role="button" tabindex="0">
+        <span class="more-icon" aria-hidden="true">&#11088;</span>
         <span class="more-label" id="subMoreLabel">Subscription</span>
-        <span class="more-arrow">&#8594;</span>
+        <span class="more-arrow" aria-hidden="true">&#8594;</span>
       </div>
-      <div id="manageSubMoreItem" class="more-item" onclick="openCustomerPortal()" style="display:none">
-        <span class="more-icon">&#9881;&#65039;</span>
+      <div id="manageSubMoreItem" class="more-item" onclick="openCustomerPortal()" style="display:none" role="button" tabindex="0">
+        <span class="more-icon" aria-hidden="true">&#9881;&#65039;</span>
         <span class="more-label">Manage Subscription</span>
-        <span class="more-arrow">&#8594;</span>
+        <span class="more-arrow" aria-hidden="true">&#8594;</span>
       </div>
     </div>
     <div class="more-section">
       <div class="more-section-title">Data</div>
-      <div class="more-item" onclick="goHistory()">
-        <span class="more-icon">&#128200;</span>
+      <div class="more-item" onclick="goHistory()" role="button" tabindex="0">
+        <span class="more-icon" aria-hidden="true">&#128200;</span>
         <span class="more-label">Practice History</span>
-        <span class="more-arrow">&#8594;</span>
+        <span class="more-arrow" aria-hidden="true">&#8594;</span>
       </div>
-      <div id="exportProgressItem" class="more-item" onclick="exportProgress()" style="display:none">
-        <span class="more-icon">&#128228;</span>
+      <div id="exportProgressItem" class="more-item" onclick="exportProgress()" style="display:none" role="button" tabindex="0">
+        <span class="more-icon" aria-hidden="true">&#128228;</span>
         <span class="more-label">Export Progress</span>
-        <span class="more-arrow">&#8594;</span>
-      </div>
-      <div class="more-item" onclick="showPromoModal()">
-        <span class="more-icon">&#127915;</span>
-        <span class="more-label">Redeem Promo Code</span>
-        <span class="more-arrow">&#8594;</span>
+        <span class="more-arrow" aria-hidden="true">&#8594;</span>
       </div>
     </div>
     <div class="more-section">
       <div class="more-section-title">Settings</div>
       <div id="moreThemePicker"></div>
+      <div class="more-item" id="scrollbarToggle" onclick="toggleScrollbar()" role="switch" aria-checked="false" tabindex="0" aria-label="Toggle scrollbar visibility">
+        <span class="more-icon" aria-hidden="true">&#9776;</span>
+        <span class="more-label">Show Scrollbars</span>
+        <span id="scrollbarToggleState" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:12px;background:var(--card-hover);color:var(--text-secondary);margin-left:auto">OFF</span>
+      </div>
     </div>
     <div class="more-section">
       <div class="more-section-title">Resources</div>
-      <div class="more-item" onclick="window.open('https://rollcallinterviewprep.com/blog/', '_blank')">
-        <span class="more-icon">&#128214;</span>
+      <div class="more-item" onclick="window.open('https://rollcallinterviewprep.com/blog/', '_blank')" role="button" tabindex="0">
+        <span class="more-icon" aria-hidden="true">&#128214;</span>
         <span class="more-label">Interview Tips Blog</span>
-        <span class="more-arrow">&#8594;</span>
-      </div>
-      <div class="more-item" onclick="switchTab('home')">
-        <span class="more-icon">&#127979;</span>
-        <span class="more-label">RoleCall for Schools</span>
-        <span class="more-arrow">&#8594;</span>
+        <span class="more-arrow" aria-hidden="true">&#8594;</span>
       </div>
     </div>
     <div class="more-section">
       <div class="more-section-title">Legal</div>
-      <div class="more-item" onclick="goPrivacy()">
-        <span class="more-icon">&#128274;</span>
+      <div class="more-item" onclick="goPrivacy()" role="button" tabindex="0">
+        <span class="more-icon" aria-hidden="true">&#128274;</span>
         <span class="more-label">Privacy Policy</span>
-        <span class="more-arrow">&#8594;</span>
+        <span class="more-arrow" aria-hidden="true">&#8594;</span>
       </div>
     </div>
   </div>
@@ -741,9 +722,9 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
 </div>
 
 <!-- ONBOARDING OVERLAY -->
-<div class="onboarding-overlay" id="onboardingOverlay">
+<div class="onboarding-overlay" id="onboardingOverlay" role="dialog" aria-modal="true" aria-label="Welcome to RoleCall">
   <div class="onboarding-content">
-    <div class="onboarding-icon">&#128075;</div>
+    <div class="onboarding-icon" aria-hidden="true">&#128075;</div>
     <h2>Welcome to RoleCall!</h2>
     <div class="onboarding-steps">
       <div class="onboarding-step"><span class="onboarding-num">1</span><span>Pick a <strong>category</strong> to browse roles</span></div>
@@ -755,36 +736,22 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
   </div>
 </div>
 
-<!-- PROMO CODE MODAL -->
-<div class="onboarding-overlay hidden" id="promoOverlay">
-  <div class="onboarding-content">
-    <div class="onboarding-icon">&#127915;</div>
-    <h2>Redeem Promo Code</h2>
-    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;line-height:1.5">Enter a promo code from your school or organization to unlock Pro features for free.</p>
-    <input type="text" id="promoInput" placeholder="Enter code..." autocomplete="off" autocapitalize="characters" spellcheck="false" style="width:100%;padding:12px 16px;border-radius:var(--radius);border:1px solid var(--card-hover);background:var(--bg);color:var(--text);font-size:16px;text-align:center;letter-spacing:2px;text-transform:uppercase;outline:none;margin-bottom:12px">
-    <div id="promoError" style="font-size:13px;color:#e74c3c;margin-bottom:8px;display:none"></div>
-    <div id="promoSuccess" style="font-size:13px;color:#2ecc71;margin-bottom:8px;display:none"></div>
-    <button class="suggest-submit" onclick="redeemPromoCode()" id="promoSubmitBtn" style="width:100%">Redeem</button>
-    <button onclick="hidePromoModal()" style="background:none;border:none;color:var(--text-secondary);font-size:13px;margin-top:12px;cursor:pointer">Cancel</button>
-  </div>
-</div>
-
 <!-- ROLE PICKER OVERLAY -->
-<div class="picker-overlay" id="pickerOverlay">
+<div class="picker-overlay" id="pickerOverlay" role="dialog" aria-modal="true" aria-label="Choose a role">
   <div class="picker-top">
-    <button class="picker-close" onclick="closeMockPicker()">&#10005;</button>
+    <button class="picker-close" onclick="closeMockPicker()" aria-label="Close">&#10005;</button>
     <div class="picker-title">Choose a Role</div>
   </div>
   <div class="picker-list" id="pickerList"></div>
 </div>
 
 <!-- MOCK INTERVIEW OVERLAY -->
-<div class="mock-overlay" id="mockOverlay">
+<div class="mock-overlay" id="mockOverlay" role="dialog" aria-modal="true" aria-label="Mock interview">
   <div class="mock-top">
-    <button class="mock-close" onclick="closeMock()">&#10005;</button>
+    <button class="mock-close" onclick="closeMock()" aria-label="Close">&#10005;</button>
     <div class="mock-progress-wrap">
-      <div class="mock-progress-text" id="mockProgressText">1 / 10</div>
-      <div class="mock-progress-bar"><div class="mock-progress-fill" id="mockProgressFill" style="width:10%"></div></div>
+      <div class="mock-progress-text" id="mockProgressText" aria-live="polite" aria-label="Mock interview progress">1 / 10</div>
+      <div class="mock-progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="10"><div class="mock-progress-fill" id="mockProgressFill" style="width:10%"></div></div>
     </div>
     <div class="mock-timer" id="mockTimer">0:00</div>
   </div>
@@ -794,9 +761,10 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
         <div class="mock-q-label">Question <span id="mockQNum">1</span></div>
         <div class="mock-q-text" id="mockQText"></div>
       </div>
-      <textarea class="answer-textarea" id="answerInput" placeholder="Type your answer here..."></textarea>
+      <textarea class="answer-textarea" id="answerInput" placeholder="Type your answer here..." aria-label="Type your answer" aria-describedby="answerError"></textarea>
+      <div class="input-error" id="answerError" role="alert"></div>
       <button class="check-btn" id="checkBtn" onclick="checkAnswer()">Check My Answer</button>
-      <div class="feedback-panel" id="feedbackPanel" style="display:none">
+      <div class="feedback-panel" id="feedbackPanel" style="display:none" aria-live="polite" aria-label="Answer feedback">
         <div class="feedback-score" id="feedbackStars"></div>
         <div class="feedback-heading" id="feedbackHeading"></div>
         <div class="feedback-text" id="feedbackText"></div>
@@ -809,8 +777,8 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
       </div>
     </div>
   </div>
-  <div class="mock-summary" id="mockSummary">
-    <div class="summary-icon">&#127942;</div>
+  <div class="mock-summary" id="mockSummary" aria-live="polite" aria-label="Mock interview results">
+    <div class="summary-icon" aria-hidden="true">&#127942;</div>
     <div class="summary-title">Great Job!</div>
     <p style="color:var(--text-secondary);font-size:14px">You completed the mock interview</p>
     <div class="summary-stats">
@@ -832,7 +800,7 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
 </div>
 
 </div>
-<div class="theme-toast" id="themeToast"></div>
+<div class="theme-toast" id="themeToast" role="status" aria-live="polite"></div>
 
 <script>
 var currentUser = null;
@@ -881,6 +849,58 @@ auth.onAuthStateChanged(async (user) => {
 }); // end scriptsLoaded.then
 scriptsLoaded.catch(function(err) { console.error('Script loading failed:', err); });
 
+// === ACCESSIBILITY: Global keyboard handler for role="button" elements ===
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' || e.key === ' ') {
+    var target = e.target;
+    if (target.getAttribute('role') === 'button' && target.hasAttribute('tabindex')) {
+      e.preventDefault();
+      target.click();
+    }
+  }
+});
+
+// === ACCESSIBILITY: Focus trap and Escape key for modals ===
+var lastFocusedElement = null;
+var FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+function trapFocus(container) {
+  lastFocusedElement = document.activeElement;
+  var focusable = container.querySelectorAll(FOCUSABLE_SELECTOR);
+  if (focusable.length > 0) {
+    focusable[0].focus();
+  }
+
+  container._focusTrapHandler = function(e) {
+    if (e.key === 'Escape') {
+      // Find and click close button
+      var closeBtn = container.querySelector('.picker-close, .mock-close, [onclick*="dismissOnboarding"], [onclick*="closeMock"]');
+      if (closeBtn) { closeBtn.click(); return; }
+    }
+    if (e.key !== 'Tab') return;
+    var focusableNow = container.querySelectorAll(FOCUSABLE_SELECTOR);
+    if (focusableNow.length === 0) return;
+    var first = focusableNow[0];
+    var last = focusableNow[focusableNow.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+    } else {
+      if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  };
+  container.addEventListener('keydown', container._focusTrapHandler);
+}
+
+function releaseFocus(container) {
+  if (container._focusTrapHandler) {
+    container.removeEventListener('keydown', container._focusTrapHandler);
+    container._focusTrapHandler = null;
+  }
+  if (lastFocusedElement && lastFocusedElement.focus) {
+    setTimeout(function() { lastFocusedElement.focus(); }, 50);
+  }
+}
+
 // === AUTH FUNCTIONS ===
 async function signInWithGoogle() {
   if (!firebaseReady) { showToast('Still loading, please wait...'); return; }
@@ -906,11 +926,11 @@ async function signInWithEmail(email, password) {
         await auth.createUserWithEmailAndPassword(email, password);
         showToast('Account created!');
       } catch (createErr) {
-        showToast('Could not create account.');
+        showInputError('authPassword', 'authPasswordError', 'Could not create account.');
         console.error('Email sign-up error:', createErr);
       }
     } else {
-      showToast('Sign-in failed. Check your credentials.');
+      showInputError('authPassword', 'authPasswordError', 'Sign-in failed. Check your credentials.');
       console.error('Email sign-in error:', err);
     }
   }
@@ -935,10 +955,10 @@ function showAuthPrompt(message) {
 function handleEmailAuth() {
   const email = document.getElementById('authEmail').value.trim();
   const password = document.getElementById('authPassword').value;
-  if (!email || !password) {
-    showToast('Please enter email and password.');
-    return;
-  }
+  clearInputError('authEmail', 'authEmailError');
+  clearInputError('authPassword', 'authPasswordError');
+  if (!email) { showInputError('authEmail', 'authEmailError', 'Please enter your email.'); return; }
+  if (!password) { showInputError('authPassword', 'authPasswordError', 'Please enter your password.'); return; }
   signInWithEmail(email, password);
 }
 
@@ -968,15 +988,6 @@ async function loadSubscriptionFromFirestore(uid) {
       const doc = subSnap.docs[0];
       userSubscription = { id: doc.id, ...doc.data() };
     } else {
-      // Check for promo code access
-      const custDoc = await db.collection('customers').doc(uid).get();
-      if (custDoc.exists && custDoc.data().promoCode) {
-        const promoExp = custDoc.data().promoExpiresAt;
-        if (!promoExp || promoExp.toDate() > new Date()) {
-          userSubscription = { status: 'active', promoCode: true };
-          return;
-        }
-      }
       userSubscription = null;
     }
   } catch (err) {
@@ -1008,120 +1019,6 @@ async function openCustomerPortal() {
   } catch (err) {
     console.error('Portal error:', err);
     showToast('Could not open subscription management.');
-  }
-}
-
-// === PROMO CODES ===
-function showPromoModal() {
-  playClick('tap');
-  if (!currentUser) {
-    showAuthPrompt('Sign in to redeem a promo code');
-    return;
-  }
-  document.getElementById('promoInput').value = '';
-  document.getElementById('promoError').style.display = 'none';
-  document.getElementById('promoSuccess').style.display = 'none';
-  document.getElementById('promoOverlay').classList.remove('hidden');
-}
-
-function hidePromoModal() {
-  document.getElementById('promoOverlay').classList.add('hidden');
-}
-
-async function redeemPromoCode() {
-  const input = document.getElementById('promoInput');
-  const errorEl = document.getElementById('promoError');
-  const successEl = document.getElementById('promoSuccess');
-  const btn = document.getElementById('promoSubmitBtn');
-  const code = input.value.trim().toUpperCase();
-
-  errorEl.style.display = 'none';
-  successEl.style.display = 'none';
-
-  if (!code) {
-    errorEl.textContent = 'Please enter a promo code.';
-    errorEl.style.display = 'block';
-    return;
-  }
-  if (!currentUser) {
-    showAuthPrompt('Sign in to redeem a promo code');
-    return;
-  }
-
-  btn.textContent = 'Redeeming...';
-  btn.disabled = true;
-
-  try {
-    const codeDoc = await db.collection('promoCodes').doc(code).get();
-    if (!codeDoc.exists) {
-      errorEl.textContent = 'Invalid promo code. Please check and try again.';
-      errorEl.style.display = 'block';
-      btn.textContent = 'Redeem';
-      btn.disabled = false;
-      return;
-    }
-
-    const data = codeDoc.data();
-    if (!data.active) {
-      errorEl.textContent = 'This promo code is no longer active.';
-      errorEl.style.display = 'block';
-      btn.textContent = 'Redeem';
-      btn.disabled = false;
-      return;
-    }
-
-    if (data.expiresAt && data.expiresAt.toDate() < new Date()) {
-      errorEl.textContent = 'This promo code has expired.';
-      errorEl.style.display = 'block';
-      btn.textContent = 'Redeem';
-      btn.disabled = false;
-      return;
-    }
-
-    if (data.maxUses && data.usesCount >= data.maxUses) {
-      errorEl.textContent = 'This promo code has reached its usage limit.';
-      errorEl.style.display = 'block';
-      btn.textContent = 'Redeem';
-      btn.disabled = false;
-      return;
-    }
-
-    // Grant promo access
-    const expiry = data.expiresAt ? data.expiresAt.toDate() : null;
-    await db.collection('customers').doc(currentUser.uid).set({
-      promoCode: code,
-      promoGrantedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      promoExpiresAt: expiry ? firebase.firestore.Timestamp.fromDate(expiry) : null,
-      promoSource: data.source || code
-    }, { merge: true });
-
-    // Increment usage count
-    await db.collection('promoCodes').doc(code).update({
-      usesCount: firebase.firestore.FieldValue.increment(1)
-    });
-
-    // Update local state
-    userSubscription = { status: 'active', promoCode: true };
-    checkSubscription();
-
-    successEl.textContent = 'Pro unlocked! Enjoy all features.';
-    successEl.style.display = 'block';
-    btn.textContent = 'Redeemed!';
-    input.disabled = true;
-
-    setTimeout(() => {
-      hidePromoModal();
-      btn.textContent = 'Redeem';
-      btn.disabled = false;
-      input.disabled = false;
-    }, 2000);
-
-  } catch (err) {
-    console.error('Promo code error:', err);
-    errorEl.textContent = 'Something went wrong. Please try again.';
-    errorEl.style.display = 'block';
-    btn.textContent = 'Redeem';
-    btn.disabled = false;
   }
 }
 
@@ -1159,400 +1056,6 @@ function updateAuthUI() {
     if (homeSignIn) homeSignIn.style.display = '';
   }
 }
-
-const DESCRIPTIONS = {
-  // === TECH (40 roles) ===
-  "Software Engineer": "Designs, builds, and maintains software applications and systems. Works with programming languages, frameworks, and development tools to solve problems through code. Typically works in tech companies, startups, or as part of engineering teams in any industry.",
-  "Data Analyst": "Collects, cleans, and interprets data to help organizations make informed decisions. Uses tools like SQL, Excel, Python, and visualization platforms to uncover trends and patterns. Works across industries in offices or remotely, often collaborating with business and operations teams.",
-  "IT Support": "Provides technical assistance to users experiencing hardware, software, or network issues. Troubleshoots problems, sets up equipment, and maintains IT systems. Works in help desks, on-site support roles, or remotely for companies of all sizes.",
-  "DevOps Engineer": "Bridges software development and IT operations by automating deployment pipelines and managing infrastructure. Works with cloud platforms, containerization, and CI/CD tools to ensure reliable software delivery. Typically employed by tech companies or large organizations with significant software operations.",
-  "Product Manager": "Defines the vision, strategy, and roadmap for a product by balancing user needs with business goals. Works closely with engineering, design, and marketing teams to prioritize features and launch updates. Found in tech companies, startups, and any organization building digital products.",
-  "Cybersecurity Analyst": "Protects organizations from digital threats by monitoring networks, investigating incidents, and implementing security measures. Analyzes vulnerabilities, responds to breaches, and ensures compliance with security standards. Works in security operations centers, government agencies, or as part of corporate IT teams.",
-  "Cloud Architect": "Designs and oversees an organization's cloud computing strategy, including infrastructure, security, and scalability. Works with platforms like AWS, Azure, or Google Cloud to build reliable cloud environments. Typically works for large enterprises, consulting firms, or cloud service providers.",
-  "Web Developer": "Builds and maintains websites and web applications using front-end, back-end, or full-stack technologies. Works with HTML, CSS, JavaScript, and server-side languages to create functional and visually appealing sites. Employed by agencies, tech companies, or works freelance across industries.",
-  "Database Administrator": "Manages and maintains database systems to ensure data is organized, secure, and accessible. Handles backups, performance tuning, migrations, and access controls. Works in IT departments across industries including finance, healthcare, and government.",
-  "Mobile Developer": "Creates applications for smartphones and tablets using platforms like iOS (Swift) or Android (Kotlin), or cross-platform frameworks like React Native. Designs user interfaces, integrates APIs, and optimizes performance for mobile devices. Works for tech companies, app studios, or as a freelancer.",
-  "Machine Learning Engineer": "Builds and deploys machine learning models that enable systems to learn from data and make predictions. Works with large datasets, neural networks, and frameworks like TensorFlow or PyTorch. Typically works in tech companies, research labs, or AI-focused startups.",
-  "QA Engineer": "Tests software applications to identify bugs, ensure functionality, and verify that products meet quality standards. Creates test plans, runs automated and manual tests, and works with developers to resolve issues. Works in software companies across all industries.",
-  "AI Engineer": "Develops artificial intelligence systems including natural language processing, computer vision, and generative AI applications. Builds, trains, and integrates AI models into production products. Works at tech companies, research institutions, and organizations adopting AI solutions.",
-  "Site Reliability Engineer": "Ensures the reliability, availability, and performance of large-scale production systems. Monitors infrastructure, automates incident response, and manages system capacity. Works at companies with significant online services like Google, Netflix, or major cloud-dependent businesses.",
-  "Blockchain Developer": "Builds decentralized applications and smart contracts on blockchain platforms like Ethereum or Solana. Works with cryptographic protocols, consensus mechanisms, and Web3 tooling. Typically works at blockchain startups, fintech companies, or enterprise teams exploring distributed ledger technology.",
-  "Technical Writer": "Creates clear documentation for technical products including user guides, API references, and internal knowledge bases. Translates complex technical concepts into accessible content for various audiences. Works across tech companies, often collaborating closely with engineering and product teams.",
-  "Systems Administrator": "Manages and maintains an organization's IT infrastructure including servers, operating systems, and network services. Handles installation, configuration, updates, and troubleshooting of enterprise systems. Works in IT departments across all industries.",
-  "Network Engineer": "Designs, implements, and manages computer networks including LANs, WANs, and cloud networking. Configures routers, switches, firewalls, and monitors network performance. Works for ISPs, large enterprises, or managed service providers.",
-  "Full Stack Developer": "Works on both the front-end (user interface) and back-end (server, database) of web applications. Proficient in multiple programming languages and frameworks across the entire software stack. Works at startups, agencies, or any company building web-based products.",
-  "Scrum Master": "Facilitates Agile development processes by leading sprint ceremonies, removing blockers, and coaching teams on Scrum practices. Acts as a servant-leader to ensure the team delivers work iteratively and efficiently. Works in software development teams across industries.",
-  "Firmware Engineer": "Writes low-level software that directly controls hardware devices like sensors, microcontrollers, and embedded systems. Works closely with hardware engineers to program and test device behavior. Employed by electronics manufacturers, automotive companies, and IoT device makers.",
-  "Data Engineer": "Builds and maintains the infrastructure that collects, stores, and processes large volumes of data. Creates data pipelines, manages data warehouses, and ensures data quality for analytics teams. Works at data-driven companies across tech, finance, healthcare, and retail.",
-  "Penetration Tester": "Simulates cyberattacks on systems, networks, and applications to identify security vulnerabilities before malicious actors exploit them. Conducts authorized hacking attempts and provides detailed reports with remediation recommendations. Works for cybersecurity firms, consulting companies, or in-house security teams.",
-  "Solutions Architect": "Designs comprehensive technical solutions that address specific business needs by selecting appropriate technologies and system architectures. Works with stakeholders to translate requirements into scalable, maintainable technical plans. Typically works at consulting firms or large enterprise organizations.",
-  "Robotics Engineer": "Designs, builds, and programs robotic systems for manufacturing, healthcare, exploration, or consumer applications. Combines mechanical engineering, electronics, and software to create autonomous or semi-autonomous machines. Works in manufacturing, research labs, or robotics startups.",
-  "Game Developer": "Creates video games by writing code for gameplay mechanics, physics, AI, and user interfaces. Works with game engines like Unity or Unreal and collaborates with artists, designers, and sound engineers. Employed by game studios, indie teams, or works independently.",
-  "IT Auditor": "Evaluates an organization's IT systems, controls, and processes to ensure security, compliance, and efficiency. Identifies risks, tests controls, and recommends improvements to management. Works in internal audit departments, consulting firms, or regulatory agencies.",
-  "GIS Analyst": "Uses geographic information systems to analyze spatial data and create maps that support decision-making. Works with tools like ArcGIS and QGIS to visualize patterns related to location, environment, or demographics. Employed by government agencies, urban planners, environmental firms, and utilities.",
-  "AR/VR Developer": "Builds augmented and virtual reality applications for entertainment, education, training, or enterprise use. Works with platforms like Unity, Unreal, and ARKit/ARCore to create immersive 3D experiences. Typically works at tech companies, game studios, or specialized XR firms.",
-  "Embedded Systems Engineer": "Develops software for specialized computing systems built into devices like medical equipment, automobiles, and consumer electronics. Programs microcontrollers and works within tight hardware constraints. Employed by electronics manufacturers, automotive companies, and IoT device makers.",
-  "Frontend Developer": "Builds the user-facing parts of websites and applications using HTML, CSS, JavaScript, and frameworks like React or Vue. Focuses on visual design implementation, responsiveness, and user interaction. Works at tech companies, agencies, or freelance across industries.",
-  "Backend Developer": "Creates the server-side logic, databases, and APIs that power web and mobile applications. Works with languages like Python, Java, Node.js, or Go to handle data processing and business logic. Works at tech companies, startups, or any organization with digital products.",
-  "Security Engineer": "Designs and implements security solutions to protect an organization's systems, networks, and data. Builds firewalls, intrusion detection systems, and encryption protocols. Works at tech companies, financial institutions, government agencies, or cybersecurity firms.",
-  "Data Architect": "Designs the overall structure of an organization's data systems including data models, storage solutions, and integration frameworks. Ensures data is organized for accessibility, security, and scalability. Works at large enterprises, tech companies, or consulting firms.",
-  "IT Manager": "Oversees an organization's technology operations including IT staff, infrastructure, budgets, and strategic planning. Ensures systems support business goals and manages vendor relationships. Works in IT departments across all industries.",
-  "Platform Engineer": "Builds and maintains the internal developer platforms and infrastructure that software teams use to build and deploy applications. Automates workflows, manages cloud resources, and improves developer experience. Works at tech companies with engineering teams.",
-  "Release Engineer": "Manages the process of packaging, testing, and deploying software releases to production. Coordinates between development, QA, and operations teams to ensure smooth and reliable deployments. Works at software companies with frequent release cycles.",
-  "Compiler Engineer": "Develops and optimizes compilers and language tools that translate programming languages into machine code. Works on performance optimization, language design, and low-level systems. Typically works at companies like Apple, Google, Intel, or NVIDIA.",
-  "API Developer": "Designs and builds application programming interfaces that allow different software systems to communicate. Creates RESTful or GraphQL endpoints, handles authentication, and documents API usage. Works at tech companies or any organization building platform services.",
-  "Cloud Engineer": "Implements and manages cloud infrastructure, including computing resources, storage, and networking on platforms like AWS, Azure, or GCP. Automates provisioning and monitors cloud environments for performance and cost. Works at enterprises, cloud consultancies, or tech companies.",
-
-  // === HEALTHCARE (43 roles) ===
-  "Nurse": "Provides direct patient care including administering medications, monitoring vitals, and coordinating treatment plans. Works in hospitals, clinics, long-term care facilities, or patients' homes. Plays a central role in patient advocacy and education.",
-  "Medical Assistant": "Performs clinical and administrative tasks in healthcare settings including taking vitals, preparing patients for exams, and managing records. Works alongside physicians in clinics, urgent care centers, and doctor's offices. Entry-level role with on-the-job or certificate-based training.",
-  "Pharmacy Technician": "Assists pharmacists with dispensing prescriptions, managing inventory, and processing insurance claims. Works in retail pharmacies, hospitals, or mail-order pharmacy operations. Requires attention to detail and knowledge of medications and dosing.",
-  "Health Administrator": "Manages the operations of healthcare facilities including staffing, budgets, compliance, and patient flow. Works in hospitals, clinics, nursing homes, or public health organizations. Combines business management skills with healthcare industry knowledge.",
-  "Physical Therapist": "Helps patients recover from injuries, surgeries, or chronic conditions through exercise, manual therapy, and rehabilitation programs. Works in hospitals, outpatient clinics, sports facilities, or patients' homes. Requires a doctoral degree and state licensure.",
-  "Dental Hygienist": "Performs teeth cleanings, takes X-rays, applies fluoride treatments, and educates patients on oral hygiene. Works in dental offices alongside dentists. Requires an associate degree in dental hygiene and state licensure.",
-  "Paramedic/EMT": "Responds to emergency calls, provides life-saving medical care on scene, and transports patients to hospitals. Works on ambulances, at fire departments, or in emergency rooms. Requires certification and thrives in high-pressure, fast-paced environments.",
-  "Radiologic Technologist": "Operates imaging equipment like X-rays, CT scanners, and MRIs to help diagnose injuries and illnesses. Works in hospitals, imaging centers, and urgent care facilities. Requires an associate degree and professional certification.",
-  "Respiratory Therapist": "Treats patients with breathing disorders using oxygen therapy, ventilators, and pulmonary rehabilitation. Works in hospitals, neonatal ICUs, sleep labs, and long-term care facilities. Critical role in emergency and critical care settings.",
-  "Phlebotomist": "Draws blood from patients for lab testing, transfusions, or blood donations. Works in hospitals, diagnostic labs, blood banks, and clinics. Entry-level healthcare role with certificate-based training.",
-  "Occupational Therapist": "Helps patients develop or recover daily living and work skills after injury, illness, or disability. Works in hospitals, schools, rehabilitation centers, and patients' homes. Requires a master's degree and state licensure.",
-  "Speech-Language Pathologist": "Diagnoses and treats speech, language, voice, and swallowing disorders in children and adults. Works in schools, hospitals, rehabilitation centers, or private practice. Requires a master's degree and clinical certification.",
-  "Medical Lab Technician": "Performs laboratory tests on blood, tissue, and other samples to help diagnose diseases. Works in hospital labs, diagnostic centers, and research facilities. Requires an associate or bachelor's degree in medical laboratory science.",
-  "Physician Assistant": "Practices medicine under physician supervision, diagnosing illnesses, prescribing medications, and developing treatment plans. Works in hospitals, clinics, and specialty practices. Requires a master's degree and national certification.",
-  "Biomedical Engineer": "Designs and develops medical devices, equipment, and software used in healthcare. Combines engineering principles with biological sciences to improve patient care. Works for medical device companies, hospitals, or research institutions.",
-  "Health Information Technician": "Manages and organizes patient health data, ensuring accuracy, accessibility, and security of medical records. Works with electronic health record (EHR) systems in hospitals, clinics, and insurance companies. Requires knowledge of medical coding and data standards.",
-  "Clinical Research Coordinator": "Manages clinical trials by recruiting participants, collecting data, ensuring regulatory compliance, and coordinating with research teams. Works at hospitals, universities, pharmaceutical companies, or research organizations. Requires attention to detail and knowledge of research protocols.",
-  "Dietitian/Nutritionist": "Assesses patients' nutritional needs and develops meal plans to support health goals or manage medical conditions. Works in hospitals, clinics, schools, or private practice. Requires a bachelor's degree, supervised training, and often state licensure.",
-  "Pharmacist": "Dispenses medications, counsels patients on proper use, and monitors for drug interactions and side effects. Works in retail pharmacies, hospitals, or pharmaceutical companies. Requires a Doctor of Pharmacy (PharmD) degree and state licensure.",
-  "Surgeon": "Performs surgical operations to treat injuries, diseases, and deformities. Specializes in areas like general surgery, orthopedics, cardiovascular, or neurosurgery. Works in hospitals and surgical centers. Requires extensive education and residency training.",
-  "Mental Health Counselor": "Provides therapy and support for individuals dealing with mental health issues including anxiety, depression, trauma, and substance abuse. Works in clinics, hospitals, schools, or private practice. Requires a master's degree and state licensure.",
-  "Geriatric Nurse": "Provides specialized nursing care for elderly patients, addressing age-related health issues, chronic conditions, and end-of-life care. Works in nursing homes, assisted living facilities, hospitals, or home health settings. Requires RN licensure with gerontology specialization.",
-  "Sonographer": "Operates ultrasound equipment to create images of internal body structures for diagnostic purposes. Works in hospitals, imaging centers, and obstetric offices. Requires an associate or bachelor's degree in diagnostic medical sonography and professional certification.",
-  "Epidemiologist": "Studies the patterns, causes, and spread of diseases in populations to inform public health policy and interventions. Analyzes data from outbreaks, conducts research, and develops prevention strategies. Works for government health agencies, universities, or research organizations.",
-  "Anesthesiologist": "Administers anesthesia during surgical procedures and monitors patients' vital signs throughout operations. Manages pain before, during, and after surgery. Works in hospitals and surgical centers. Requires medical school, residency, and specialized fellowship training.",
-  "Genetic Counselor": "Helps patients understand genetic testing results and their implications for health, family planning, or disease risk. Works in hospitals, cancer centers, prenatal clinics, or laboratories. Requires a master's degree in genetic counseling and board certification.",
-  "Optometrist": "Examines eyes for vision problems and diseases, prescribes corrective lenses, and manages certain eye conditions. Works in private practices, retail optical chains, or hospital eye clinics. Requires a Doctor of Optometry (OD) degree and state licensure.",
-  "NICU Nurse": "Provides critical care for premature and critically ill newborns in the neonatal intensive care unit. Monitors vital signs, administers medications, and supports families during difficult times. Works in hospital NICUs. Requires RN licensure with neonatal specialization.",
-  "Orthotist": "Designs, fabricates, and fits orthotic devices like braces and splints to support or correct musculoskeletal conditions. Works with patients recovering from injuries or managing chronic conditions. Works in rehabilitation centers, hospitals, or private practices.",
-  "Cardiac Sonographer": "Performs echocardiograms and other cardiac ultrasound procedures to help diagnose heart conditions. Works in hospitals, cardiology clinics, and diagnostic imaging centers. Requires specialized training in cardiac sonography and professional certification.",
-  "Art Therapist": "Uses creative art-making as a therapeutic tool to help clients express emotions, cope with stress, and improve mental health. Works in hospitals, mental health clinics, schools, or rehabilitation centers. Requires a master's degree in art therapy and board certification.",
-  "Health Informatics Specialist": "Manages health information systems and analyzes healthcare data to improve patient outcomes and operational efficiency. Works at the intersection of healthcare, data science, and IT. Employed by hospitals, health systems, insurance companies, or government agencies.",
-  "Medical Writer": "Creates scientific and medical documents including clinical study reports, regulatory submissions, and educational materials. Translates complex medical data into clear, accurate content. Works for pharmaceutical companies, CROs, medical device firms, or as a freelancer.",
-  "Chiropractor": "Diagnoses and treats musculoskeletal conditions, primarily through spinal adjustments and manual therapies. Helps patients manage pain and improve mobility. Works in private practice or multi-disciplinary clinics. Requires a Doctor of Chiropractic (DC) degree and licensure.",
-  "Surgical Technologist": "Prepares operating rooms, arranges surgical instruments, and assists the surgical team during procedures. Maintains sterile field and anticipates surgeons' needs. Works in hospitals and outpatient surgical centers. Requires a certificate or associate degree.",
-  "Massage Therapist": "Provides therapeutic massage to relieve pain, reduce stress, and promote relaxation. Uses techniques like Swedish, deep tissue, and sports massage. Works in spas, chiropractic offices, physical therapy clinics, or freelance. Requires state licensure and completion of a training program.",
-  "Medical Receptionist": "Greets patients, schedules appointments, manages phone calls, and handles medical records and insurance forms. Works at the front desk of doctor's offices, clinics, and hospitals. Entry-level administrative role in healthcare.",
-  "Veterinarian": "Diagnoses and treats illnesses and injuries in animals, performs surgeries, and provides preventive care like vaccinations. Works in animal hospitals, clinics, farms, or zoos. Requires a Doctor of Veterinary Medicine (DVM) degree and state licensure.",
-  "Dermatologist": "Diagnoses and treats conditions affecting the skin, hair, and nails including acne, eczema, skin cancer, and cosmetic concerns. Works in private practices, hospitals, or dermatology clinics. Requires medical school, residency, and board certification in dermatology.",
-  "Podiatrist": "Diagnoses and treats conditions of the foot, ankle, and lower leg including injuries, deformities, and diabetic foot care. Performs surgeries and prescribes orthotics. Works in private practice or hospitals. Requires a Doctor of Podiatric Medicine (DPM) degree.",
-  "Audiologist": "Diagnoses and treats hearing and balance disorders, fits hearing aids, and provides auditory rehabilitation. Works in hospitals, ENT clinics, schools, or private practice. Requires a Doctor of Audiology (AuD) degree and state licensure.",
-  "Neonatal Nurse Practitioner": "Provides advanced care for premature and critically ill newborns, including managing ventilators, ordering tests, and performing procedures. Works in NICUs alongside neonatologists. Requires an advanced practice nursing degree and neonatal specialization.",
-  "Clinical Psychologist": "Assesses, diagnoses, and treats mental health disorders through psychotherapy, psychological testing, and evidence-based interventions. Works in hospitals, private practice, universities, or community mental health centers. Requires a doctoral degree and state licensure.",
-
-  // === BUSINESS (43 roles) ===
-  "Accountant": "Prepares and examines financial records, ensures accuracy of tax filings, and helps organizations manage budgets and compliance. Works in accounting firms, corporate finance departments, or government agencies. May hold CPA licensure for advanced roles.",
-  "Marketing Manager": "Develops and executes marketing strategies to promote products or services, manage brand identity, and drive customer acquisition. Oversees campaigns, budgets, and marketing teams. Works across industries in corporate offices or agencies.",
-  "HR Specialist": "Handles recruitment, onboarding, benefits administration, and employee relations within an organization. Ensures compliance with labor laws and supports workplace culture. Works in human resources departments across all industries.",
-  "Project Manager": "Plans, organizes, and oversees projects from initiation to completion, managing timelines, budgets, and team coordination. Ensures deliverables meet scope and quality standards. Works across industries in construction, tech, healthcare, and more.",
-  "Business Analyst": "Bridges business needs and technical solutions by analyzing processes, identifying improvements, and documenting requirements. Works with stakeholders and development teams to implement changes. Employed across industries in corporate settings.",
-  "Financial Analyst": "Analyzes financial data, creates forecasts, and provides recommendations to guide business investment and budgeting decisions. Works with spreadsheets, financial models, and market research. Employed by banks, corporations, investment firms, or government agencies.",
-  "Operations Manager": "Oversees daily business operations including production, supply chain, quality control, and staffing. Ensures efficiency, manages budgets, and implements process improvements. Works in manufacturing, retail, logistics, or service companies.",
-  "Management Consultant": "Advises organizations on solving complex business problems, improving performance, and implementing strategic changes. Works on short-term engagements across industries, analyzing data and presenting recommendations. Employed by consulting firms or works independently.",
-  "Supply Chain Manager": "Coordinates the flow of goods from raw materials to finished products, managing procurement, logistics, inventory, and distribution. Optimizes costs and ensures timely delivery. Works in manufacturing, retail, e-commerce, or logistics companies.",
-  "Real Estate Agent": "Helps clients buy, sell, or rent properties by conducting market analysis, showing listings, and negotiating deals. Works on commission in residential or commercial real estate. Requires state licensure and strong sales and interpersonal skills.",
-  "Event Planner": "Coordinates all aspects of events including venues, vendors, budgets, timelines, and attendee experience. Works on conferences, weddings, corporate events, or festivals. Works for event agencies, corporations, or freelance.",
-  "Human Resources Manager": "Leads the HR department, overseeing hiring, employee development, compliance, compensation, and workplace policies. Serves as a strategic partner to leadership on workforce planning. Works across industries in corporate or organizational settings.",
-  "Data Scientist": "Uses statistical analysis, machine learning, and programming to extract insights from complex datasets. Builds predictive models and data-driven solutions to business problems. Works at tech companies, banks, healthcare organizations, or research institutions.",
-  "Risk Manager": "Identifies, assesses, and mitigates risks that could impact an organization's operations, finances, or reputation. Develops risk management frameworks and insurance strategies. Works in finance, insurance, healthcare, or large corporate environments.",
-  "CEO/Executive": "Sets the overall vision, strategy, and direction for an organization. Makes high-level decisions, manages senior leadership, and represents the company to stakeholders and the public. Works at the top of any organization, from startups to Fortune 500 companies.",
-  "Chief Financial Officer": "Oversees all financial operations including budgeting, reporting, forecasting, and investment strategy. Manages finance teams and ensures regulatory compliance. Works at the executive level in companies of all sizes across industries.",
-  "Product Owner": "Defines and prioritizes the product backlog in Agile development, ensuring the team builds features that deliver maximum value. Acts as the voice of the customer and works closely with development teams. Found in tech companies and organizations using Scrum.",
-  "Actuary": "Uses mathematics, statistics, and financial theory to analyze risk and uncertainty, primarily in insurance and pension planning. Calculates premiums, reserves, and forecasts. Works for insurance companies, consulting firms, or government agencies. Requires professional certification.",
-  "Logistics Coordinator": "Manages the movement, storage, and distribution of goods, coordinating shipments, tracking deliveries, and resolving supply chain issues. Works in warehouses, shipping companies, or corporate logistics departments. Entry to mid-level role.",
-  "Training & Development Manager": "Designs and implements employee training programs to improve skills, performance, and career growth. Assesses learning needs, develops curricula, and measures training effectiveness. Works across industries in corporate HR or learning departments.",
-  "Economist": "Studies economic trends, data, and policies to forecast market conditions and advise organizations or governments on financial decisions. Conducts research, builds models, and publishes analysis. Works for government agencies, think tanks, banks, or universities.",
-  "Management Analyst": "Studies organizational processes and recommends improvements to increase efficiency and reduce costs. Conducts interviews, analyzes data, and develops new procedures. Works as an internal analyst or external consultant across industries.",
-  "Purchasing Manager": "Oversees procurement of goods and services, negotiates contracts with suppliers, and manages vendor relationships. Ensures quality, cost-effectiveness, and timely delivery. Works in manufacturing, retail, government, or any organization with significant purchasing needs.",
-  "Compliance Analyst": "Ensures organizations adhere to laws, regulations, and internal policies by monitoring operations, conducting audits, and reporting findings. Works in heavily regulated industries like finance, healthcare, and insurance. Entry to mid-level compliance role.",
-  "Venture Capital Analyst": "Evaluates startup investment opportunities by conducting market research, financial modeling, and due diligence. Supports partners in making investment decisions and managing portfolio companies. Works at venture capital firms in major tech and business hubs.",
-  "Sustainability Manager": "Develops and implements environmental sustainability strategies including reducing carbon footprints, managing waste, and ensuring regulatory compliance. Works with operations, facilities, and leadership teams. Employed by corporations, nonprofits, or government agencies.",
-  "Internal Auditor": "Evaluates an organization's financial controls, risk management, and operational efficiency through systematic audits. Identifies weaknesses and recommends improvements. Works in internal audit departments across industries or at accounting firms.",
-  "Treasury Analyst": "Manages an organization's cash flow, investments, and financial risk including liquidity, foreign exchange, and debt management. Monitors bank accounts and forecasts cash needs. Works in corporate treasury departments at large companies or financial institutions.",
-  "Compensation Analyst": "Researches and analyzes salary data, benefits structures, and incentive programs to ensure competitive and equitable pay practices. Conducts salary surveys and develops compensation frameworks. Works in HR departments across industries.",
-  "Business Development Manager": "Identifies and pursues new business opportunities, partnerships, and revenue streams. Builds relationships with potential clients and negotiates deals. Works across industries in sales-oriented or strategic growth roles.",
-  "Market Research Analyst": "Studies market conditions to identify potential sales opportunities and consumer trends. Conducts surveys, analyzes data, and presents findings to guide marketing strategy. Works for market research firms, corporations, or advertising agencies.",
-  "Political Scientist": "Studies political systems, policies, and behavior to analyze government operations and public opinion. Conducts research on elections, international relations, or public policy. Works for think tanks, universities, government agencies, or polling organizations.",
-  "Urban Planner": "Develops plans and programs for land use in communities, addressing housing, transportation, parks, and infrastructure. Works with government officials, developers, and the public to shape city growth. Employed by municipal governments or consulting firms.",
-  "Office Manager": "Oversees daily administrative operations including scheduling, supplies, facility maintenance, and office staff coordination. Ensures the workplace runs smoothly and efficiently. Works in offices across all industries.",
-  "Executive Assistant": "Provides high-level administrative support to senior executives including calendar management, travel coordination, and communications. Acts as a gatekeeper and liaison between executives and other staff. Works in corporate offices across industries.",
-  "Bookkeeper": "Records financial transactions, manages accounts payable and receivable, reconciles bank statements, and prepares basic financial reports. Works for small businesses, accounting firms, or as a freelancer. Entry-level finance role.",
-  "Administrative Assistant": "Performs clerical tasks including filing, data entry, scheduling, and correspondence to support office operations. Answers phones and greets visitors. Works in offices across all industries. Entry-level administrative role.",
-  "Chief Operating Officer": "Oversees the day-to-day operations of a company, implementing strategies set by the CEO and ensuring departments work efficiently. Manages operations, production, and organizational processes. Senior executive role across industries.",
-  "Chief Marketing Officer": "Leads the marketing organization, setting brand strategy, overseeing campaigns, and driving customer growth and retention. Aligns marketing efforts with business objectives. Senior executive role at mid-to-large companies.",
-  "Chief Technology Officer": "Sets the technology vision and strategy for an organization, overseeing engineering teams, product development, and technical infrastructure. Evaluates emerging technologies and ensures systems support business goals. Senior executive role at tech and tech-enabled companies.",
-  "Diversity & Inclusion Manager": "Develops and implements programs to promote diversity, equity, and inclusion within an organization. Conducts training, analyzes workforce demographics, and advises leadership on inclusive practices. Works in HR or dedicated DEI departments.",
-  "Franchise Manager": "Oversees franchise operations including recruiting franchisees, ensuring brand standards, and supporting individual franchise locations. Works with legal, marketing, and operations teams. Employed by franchise organizations in food service, retail, or fitness.",
-  "Change Management Consultant": "Helps organizations navigate major transitions like mergers, technology implementations, or restructuring. Develops communication plans, training programs, and stakeholder engagement strategies. Works at consulting firms or large enterprises.",
-
-  // === SALES (45 roles) ===
-  "Sales Representative": "Sells products or services to businesses or consumers by identifying prospects, presenting offerings, and closing deals. Builds relationships with clients and meets sales quotas. Works in virtually every industry, from retail to enterprise software.",
-  "Account Manager": "Maintains and grows relationships with existing clients, ensuring satisfaction, renewals, and upsell opportunities. Acts as the primary point of contact after the initial sale. Works in B2B companies across industries.",
-  "Retail Manager": "Oversees daily store operations including sales, staffing, inventory, and customer experience. Sets sales targets, trains employees, and ensures visual merchandising standards. Works in retail stores, from small shops to large chains.",
-  "Real Estate Broker": "Manages real estate transactions and may oversee a team of agents. Assists clients with buying, selling, or leasing commercial or residential properties. Requires additional licensure beyond a real estate agent. Earns income through commissions.",
-  "Business Development Rep": "Identifies and qualifies potential new customers through outbound prospecting, cold outreach, and lead generation. Sets meetings and hands off qualified leads to sales teams. Common entry-level role in B2B and SaaS sales.",
-  "Territory Manager": "Manages sales operations within a specific geographic region, developing relationships with local clients and hitting revenue targets. Travels within the territory to visit customers and prospects. Works in industries like medical devices, manufacturing, or distribution.",
-  "Inside Sales Rep": "Sells products or services remotely via phone, email, and video calls rather than in-person meetings. Manages a pipeline of prospects and closes deals from the office or home. Common in SaaS, telecommunications, and B2B services.",
-  "Sales Engineer": "Provides technical expertise during the sales process, demonstrating products, answering technical questions, and designing solutions for prospects. Bridges the gap between sales and engineering. Works in tech, manufacturing, or industrial sales.",
-  "Pharmaceutical Sales Rep": "Promotes prescription medications to physicians, pharmacists, and hospitals. Builds relationships with healthcare providers and educates them on drug benefits and uses. Works for pharmaceutical companies, traveling within an assigned territory.",
-  "Insurance Agent": "Sells insurance policies including life, health, auto, or property coverage to individuals and businesses. Assesses client needs, explains coverage options, and helps with claims. May work independently or for an insurance company.",
-  "Technical Sales Rep": "Sells complex technical products or services by understanding customer needs and demonstrating how the product solves their problems. Combines product knowledge with sales skills. Works in industries like manufacturing, IT, or engineering services.",
-  "Sales Manager": "Leads a team of sales representatives, setting quotas, coaching performance, and developing sales strategies. Analyzes sales data and forecasts revenue. Works across industries in companies with dedicated sales organizations.",
-  "Account Executive": "Manages the full sales cycle from prospecting to closing deals, typically in B2B environments. Builds relationships with decision-makers and negotiates contracts. Common in SaaS, advertising, media, and professional services.",
-  "Sales Development Rep": "Focuses exclusively on top-of-funnel activities like outbound prospecting, qualifying leads, and booking meetings for account executives. Entry-level role in B2B sales, especially in SaaS and tech companies.",
-  "Channel Partner Manager": "Develops and manages relationships with third-party partners, resellers, or distributors who sell the company's products. Provides training, marketing support, and incentive programs. Works in tech, manufacturing, or telecommunications.",
-  "Revenue Operations Manager": "Aligns sales, marketing, and customer success operations to optimize the revenue funnel. Manages CRM data, reporting, process automation, and sales tools. Works at B2B companies, especially in SaaS and tech.",
-  "Customer Success Manager": "Ensures customers achieve their desired outcomes with a product or service, driving retention, expansion, and satisfaction. Onboards new clients, monitors health scores, and proactively addresses issues. Core role in SaaS and subscription businesses.",
-  "E-Commerce Manager": "Manages online sales channels including website merchandising, product listings, conversion optimization, and digital marketing coordination. Analyzes traffic and sales data to grow online revenue. Works for retailers, D2C brands, or e-commerce companies.",
-  "Fundraising Manager": "Develops and executes fundraising campaigns to secure donations for nonprofits, political campaigns, or educational institutions. Cultivates donor relationships, plans events, and writes grant proposals. Works in nonprofit and mission-driven organizations.",
-  "Proposal Manager": "Oversees the creation of business proposals and RFP responses, coordinating subject matter experts, writing content, and ensuring timely submission. Works in professional services, government contracting, or B2B companies.",
-  "Wholesale Buyer": "Purchases goods in bulk from manufacturers or distributors for resale to retailers. Negotiates prices, manages vendor relationships, and analyzes market trends. Works in wholesale, retail, or distribution companies.",
-  "Sales Enablement Manager": "Creates tools, training, and content that help sales teams sell more effectively. Develops playbooks, onboarding programs, and competitive intelligence resources. Works at B2B companies with growing sales organizations.",
-  "Distributor Manager": "Manages relationships with distribution partners who move products to end customers. Negotiates terms, monitors performance, and ensures product availability. Works in manufacturing, consumer goods, or pharmaceutical distribution.",
-  "B2B Marketing Specialist": "Creates marketing campaigns targeting other businesses through content, email, events, and digital advertising. Generates leads and supports the sales pipeline. Works at companies selling products or services to other organizations.",
-  "Key Account Director": "Manages relationships with the company's largest and most strategic clients. Develops custom solutions, negotiates enterprise contracts, and ensures long-term retention. Senior sales role in B2B industries.",
-  "SaaS Account Manager": "Manages customer relationships for a software-as-a-service product, focusing on renewals, upsells, and product adoption. Monitors usage data and ensures clients derive ongoing value. Works at SaaS companies of all sizes.",
-  "Medical Device Sales Rep": "Sells medical devices and equipment to hospitals, surgery centers, and physician practices. Often present during surgical procedures to support device use. Works for medical device manufacturers in an assigned territory.",
-  "Luxury Sales Consultant": "Assists high-end clients in selecting luxury goods including jewelry, watches, fashion, or automobiles. Provides personalized service and builds long-term relationships. Works in luxury retail or exclusive showrooms.",
-  "Franchise Sales Manager": "Recruits and qualifies potential franchisees, presents franchise opportunities, and guides prospects through the acquisition process. Works for franchise organizations in food service, fitness, or retail.",
-  "International Sales Manager": "Develops and manages sales strategies across global markets, navigating cultural differences, trade regulations, and international logistics. Oversees regional sales teams or distributors. Works for companies expanding into foreign markets.",
-  "Retail Merchandiser": "Plans and executes product displays, store layouts, and promotional arrangements to maximize sales. Analyzes sales data and coordinates with suppliers. Works for retailers, brands, or merchandising agencies.",
-  "Life Insurance Agent": "Specializes in selling life insurance policies, annuities, and related financial products. Helps clients plan for financial protection and estate planning. Works for insurance companies or as an independent agent.",
-  "Mortgage Loan Officer": "Helps clients secure home loans by evaluating financial qualifications, explaining mortgage options, and guiding borrowers through the application process. Works for banks, credit unions, or mortgage companies. Requires state licensure.",
-  "Collections Specialist": "Contacts customers with overdue accounts to negotiate payment arrangements and recover outstanding debts. Works with billing systems and maintains records of communications. Works for lenders, hospitals, utilities, or collection agencies.",
-  "Revenue Analyst": "Analyzes revenue data, pricing strategies, and sales performance to identify trends and optimization opportunities. Creates reports and forecasts for sales leadership. Works in finance or sales operations across industries.",
-  "Advertising Sales Representative": "Sells advertising space or time across media platforms including print, digital, TV, or radio. Builds relationships with advertisers and agencies to secure ad placements. Works at media companies, publishers, or broadcasting networks.",
-  "Real Estate Investor": "Purchases, manages, and sells properties for profit through rental income, appreciation, or flipping. Analyzes market conditions, evaluates deals, and manages renovations. Self-employed or works with investment firms.",
-  "Sales Consultant": "Advises clients on products or services, matches solutions to needs, and guides purchasing decisions. May work in retail, B2B, or specialized industries. Combines product expertise with relationship-building skills.",
-  "Territory Sales Manager": "Oversees all sales activities within a defined geographic area, managing reps, developing accounts, and executing regional strategies. Balances hunting for new business with farming existing accounts. Travels within the territory.",
-  "Advertising Manager": "Plans and oversees advertising campaigns across channels including digital, print, TV, and social media. Manages budgets, creative direction, and media buying. Works at advertising agencies or in-house marketing departments.",
-  "Sales Operations Analyst": "Supports the sales team by analyzing performance data, managing CRM systems, forecasting revenue, and optimizing sales processes. Creates dashboards and reports for sales leadership. Works at B2B companies in sales operations departments.",
-  "Partnership Manager": "Develops and manages strategic partnerships with other companies, organizations, or influencers to drive mutual growth. Negotiates agreements and coordinates joint marketing or product initiatives. Works across industries in business development roles.",
-  "Government Sales Representative": "Sells products or services to federal, state, or local government agencies. Navigates procurement processes, RFPs, and compliance requirements. Works for companies targeting government contracts in defense, IT, or professional services.",
-  "Export Sales Manager": "Manages international sales of products including navigating customs, trade compliance, and international logistics. Develops relationships with foreign distributors and buyers. Works for manufacturers or exporters expanding into global markets.",
-  "Digital Advertising Specialist": "Plans and executes paid digital advertising campaigns across platforms like Google Ads, Meta, LinkedIn, and programmatic networks. Optimizes targeting, bidding, and creative for maximum ROI. Works at agencies, media companies, or in-house marketing teams.",
-
-  // === EDUCATION (42 roles) ===
-  "Teacher": "Plans and delivers lessons, assesses student learning, and manages classroom behavior in K-12 schools. Develops curriculum aligned with state standards and communicates with parents. Works in public or private schools. Requires state teaching licensure and often a master's degree.",
-  "School Administrator": "Manages school operations including budgets, staffing, policy implementation, and compliance. Supports teachers and ensures a safe learning environment. Works in K-12 schools or district offices. Typically requires administrative licensure.",
-  "Academic Advisor": "Guides students in selecting courses, planning academic paths, and meeting graduation requirements. Helps with career exploration and connects students to campus resources. Works in colleges and universities.",
-  "Librarian": "Manages library collections, assists patrons with research, and develops programs to promote literacy and learning. Works in public libraries, school libraries, or academic institutions. Requires a Master of Library Science (MLS) degree.",
-  "School Counselor": "Supports students' academic, social, and emotional development through individual and group counseling. Helps with college planning, conflict resolution, and crisis intervention. Works in K-12 schools. Requires a master's degree and school counselor licensure.",
-  "Curriculum Developer": "Designs educational programs, lesson plans, and assessment materials aligned with learning standards and institutional goals. Works with teachers and administrators to improve instructional quality. Works for school districts, publishers, or educational organizations.",
-  "ESL Teacher": "Teaches English to non-native speakers using specialized methods for language acquisition. Develops culturally responsive lessons and assesses language proficiency. Works in schools, community programs, language institutes, or abroad.",
-  "Instructional Designer": "Creates educational courses and training materials using learning theories, multimedia, and technology. Designs engaging content for schools, universities, or corporate training programs. Works with subject matter experts to develop effective learning experiences.",
-  "Tutor": "Provides one-on-one or small group academic support to help students understand course material, prepare for exams, or improve study skills. Works independently, through tutoring centers, or online platforms. Covers subjects from elementary math to college-level courses.",
-  "Corporate Trainer": "Delivers professional development and skills training to employees within organizations. Designs workshops, e-learning modules, and onboarding programs. Works in corporate HR/L&D departments or as an independent trainer.",
-  "Special Education Teacher": "Works with students who have disabilities or learning differences, adapting instruction and creating individualized education programs (IEPs). Collaborates with families, specialists, and general education teachers. Requires special education licensure.",
-  "Education Consultant": "Advises schools, districts, or educational organizations on improving programs, policies, and outcomes. Conducts assessments, develops strategies, and provides professional development. Works independently or for consulting firms.",
-  "Professor": "Teaches courses at the college or university level, conducts research, and publishes scholarly work in their field of expertise. Advises students and serves on academic committees. Requires a doctoral degree in most fields.",
-  "School Psychologist": "Assesses students' learning and emotional needs, provides counseling, and develops intervention strategies. Works with teachers, parents, and administrators to support student success. Requires a master's or doctoral degree and state licensure.",
-  "E-Learning Developer": "Builds online courses and digital learning experiences using authoring tools, multimedia, and learning management systems. Creates interactive content, quizzes, and video-based instruction. Works for universities, corporations, or e-learning companies.",
-  "Guidance Counselor": "Helps students with academic planning, college applications, career exploration, and personal challenges. Coordinates testing, scholarships, and post-graduation planning. Works in high schools. Requires a master's degree and counselor licensure.",
-  "Teaching Assistant": "Supports lead teachers by helping with instruction, grading, classroom management, and one-on-one student support. May lead small groups or supervise activities. Works in K-12 schools or universities. Entry-level education role.",
-  "Principal": "Leads a school by setting vision, managing staff, overseeing curriculum, and ensuring a positive school culture. Handles discipline, budgets, and parent communication. Requires administrative licensure and significant teaching experience.",
-  "Reading Specialist": "Provides targeted reading instruction and intervention for struggling readers. Assesses literacy skills, develops reading programs, and trains teachers on evidence-based reading strategies. Works in schools or literacy centers. Requires specialized certification.",
-  "Athletic Director": "Manages a school's athletic programs including scheduling, budgets, coaching staff, compliance, and facilities. Promotes student-athlete development and ensures eligibility standards. Works at high schools or colleges.",
-  "School Social Worker": "Addresses students' social, emotional, and behavioral challenges that affect learning. Connects families with community resources, conducts assessments, and provides crisis intervention. Works in schools. Requires a master's in social work and licensure.",
-  "Montessori Teacher": "Guides learning in a Montessori classroom using hands-on materials, mixed-age groups, and child-led exploration. Follows the Montessori method's emphasis on independence and discovery. Works in Montessori schools. Requires Montessori certification.",
-  "Career Coach": "Helps individuals identify career goals, develop job search strategies, and build professional skills. Assists with resume writing, interview preparation, and networking. Works at universities, workforce development centers, or independently.",
-  "Literacy Coach": "Supports teachers in improving reading and writing instruction through coaching, modeling, and professional development. Analyzes student literacy data and implements evidence-based strategies. Works in K-12 schools or districts.",
-  "Adult Education Instructor": "Teaches adults foundational skills including GED preparation, English language learning, workforce readiness, and continuing education. Creates flexible learning environments for non-traditional students. Works at community colleges, community centers, or workforce agencies.",
-  "STEM Coordinator": "Develops and implements science, technology, engineering, and math programs across a school or district. Secures funding, trains teachers, and coordinates STEM competitions and partnerships. Works in K-12 education settings.",
-  "Dean of Students": "Oversees student life, discipline, and support services at a college or high school. Addresses student conduct issues, coordinates housing, and promotes campus engagement. Works in student affairs divisions.",
-  "Admissions Counselor": "Recruits and evaluates prospective students, conducts campus visits, and guides applicants through the admissions process. Represents the institution at college fairs and high schools. Works in college and university admissions offices.",
-  "Early Childhood Educator": "Teaches and cares for children from birth through age five, focusing on social, emotional, and cognitive development through play-based learning. Works in preschools, daycare centers, or Head Start programs.",
-  "University Registrar": "Manages student records, course registration, transcripts, and academic policies at a college or university. Oversees the student information system and ensures compliance with federal regulations. Works in higher education administration.",
-  "Test Prep Tutor": "Helps students prepare for standardized tests like the SAT, ACT, GRE, or GMAT through content review, test-taking strategies, and practice exams. Works for test prep companies, tutoring centers, or independently.",
-  "School Nutritionist": "Plans and manages school meal programs that meet federal nutrition standards and student dietary needs. Oversees food service operations and promotes healthy eating. Works in K-12 school districts.",
-  "Daycare Provider": "Supervises and cares for infants, toddlers, and young children in a childcare setting. Plans age-appropriate activities, ensures safety, and supports early development. Works in daycare centers or runs a home-based childcare business.",
-  "Department Head (Education)": "Leads an academic department at a school or university, managing faculty, curriculum, budgets, and strategic planning. Teaches courses and mentors other instructors. Senior role requiring significant teaching experience.",
-  "Academic Coach": "Helps students develop study skills, time management, and learning strategies to improve academic performance. Works one-on-one or in small groups. Works at tutoring centers, high schools, or colleges.",
-  "Financial Aid Advisor": "Helps students and families navigate financial aid options including grants, scholarships, loans, and work-study programs. Processes applications and ensures compliance with federal regulations. Works in college financial aid offices.",
-  "School Resource Officer": "A law enforcement officer assigned to a school to maintain safety, build relationships with students, and respond to emergencies. Conducts security assessments and teaches safety programs. Employed by local police departments.",
-  "Online Course Instructor": "Teaches courses in a virtual environment using video lectures, discussion boards, and digital assessments. Designs engaging online learning experiences and provides remote feedback. Works for online universities, community colleges, or e-learning platforms.",
-  "Student Affairs Coordinator": "Plans and manages student programs, events, and services that support campus life and student engagement. Coordinates orientation, clubs, leadership programs, and residence life activities. Works in higher education.",
-  "Education Policy Analyst": "Researches and analyzes education policies and legislation to inform decision-making at government agencies, think tanks, or advocacy organizations. Evaluates program effectiveness and publishes policy recommendations.",
-  "Gifted Education Specialist": "Develops and implements advanced learning programs for gifted and talented students. Differentiates curriculum, provides enrichment opportunities, and identifies students for gifted services. Works in K-12 schools. Requires gifted education certification.",
-  "College Advisor": "Guides high school or college students through the college selection, application, and enrollment process. Helps with essay writing, school matching, and financial aid navigation. Works at high schools, nonprofits, or independent advising firms.",
-
-  // === TRADES (40 roles) ===
-  "Electrician": "Installs, maintains, and repairs electrical systems in residential, commercial, and industrial buildings. Reads blueprints, follows electrical codes, and troubleshoots wiring issues. Requires an apprenticeship and state licensure.",
-  "Plumber": "Installs and repairs piping systems for water, gas, and drainage in homes, businesses, and construction sites. Reads blueprints and ensures compliance with building codes. Requires an apprenticeship and state or local licensure.",
-  "HVAC Technician": "Installs, maintains, and repairs heating, ventilation, and air conditioning systems. Diagnoses mechanical and electrical issues and ensures indoor air quality. Works in residential, commercial, or industrial settings. Requires EPA certification.",
-  "Welder": "Joins metal parts using various welding techniques including MIG, TIG, and stick welding. Reads blueprints and inspects finished welds for quality. Works in manufacturing, construction, shipbuilding, or pipeline industries. May require AWS certification.",
-  "Carpenter": "Builds, installs, and repairs structures and fixtures made of wood and other materials. Works on framing, cabinetry, trim, and finish work. Works in residential or commercial construction. Requires an apprenticeship or trade school training.",
-  "Automotive Technician": "Diagnoses and repairs mechanical and electrical issues in cars and light trucks. Performs maintenance like oil changes, brake jobs, and engine tune-ups. Works in dealerships, independent shops, or fleet maintenance. ASE certification is preferred.",
-  "Locksmith": "Installs, repairs, and replaces locks and security systems for homes, businesses, and vehicles. Creates keys, rekeys locks, and may work with electronic access control. Can be self-employed or work for a locksmith company.",
-  "Heavy Equipment Operator": "Operates machinery like excavators, bulldozers, cranes, and loaders on construction, mining, or road-building sites. Reads grade stakes and follows safety protocols. Requires training and may need a CDL. Works for construction or utility companies.",
-  "Pipefitter": "Installs and maintains piping systems that carry high-pressure liquids, gases, or chemicals in industrial and commercial settings. Reads schematics and welds or solders pipe joints. Works in power plants, refineries, and manufacturing facilities.",
-  "Mason": "Builds structures using bricks, blocks, stones, and concrete. Constructs walls, patios, walkways, and decorative features. Works in residential or commercial construction. Requires an apprenticeship and physical stamina.",
-  "Landscaper": "Designs, installs, and maintains outdoor spaces including lawns, gardens, walkways, and irrigation systems. Operates mowers, trimmers, and other equipment. Works for landscaping companies, property management firms, or independently.",
-  "Roofing Contractor": "Installs, repairs, and replaces roofs on residential and commercial buildings using materials like shingles, metal, or flat roofing systems. Ensures weatherproofing and follows safety protocols. May require a contractor's license.",
-  "Elevator Technician": "Installs, maintains, and repairs elevators, escalators, and moving walkways. Works with electrical, mechanical, and computer control systems. Requires an apprenticeship and state licensure. Works for elevator companies or building maintenance.",
-  "Crane Operator": "Operates tower, mobile, or crawler cranes to lift and move heavy materials on construction or industrial sites. Reads load charts and follows strict safety protocols. Requires certification and significant training.",
-  "Insulation Installer": "Applies insulation materials to walls, ceilings, floors, and pipes to improve energy efficiency and temperature control. Works with fiberglass, foam, or cellulose in new construction or retrofit projects. Entry-level trade role.",
-  "Glazier": "Installs glass in windows, skylights, storefronts, and display cases. Cuts, fits, and secures glass and mirrors in residential and commercial buildings. Requires an apprenticeship and works for glass companies or general contractors.",
-  "Fire Sprinkler Installer": "Installs and maintains fire sprinkler systems in commercial and residential buildings. Reads blueprints, cuts and threads pipe, and tests system functionality. Requires an apprenticeship and NICET certification.",
-  "Solar Panel Installer": "Assembles and installs solar photovoltaic panels on rooftops or ground-mounted systems. Connects electrical wiring and ensures systems meet code. Works for solar installation companies. Growing field driven by renewable energy demand.",
-  "Ironworker": "Erects structural steel frameworks for buildings, bridges, and other structures. Installs reinforcing bars (rebar), metal decking, and ornamental iron. Works at significant heights on construction sites. Requires an apprenticeship.",
-  "Sheet Metal Worker": "Fabricates and installs sheet metal products including ductwork, roofing, gutters, and industrial components. Reads blueprints and operates cutting and forming equipment. Works in HVAC, construction, or manufacturing.",
-  "Boilermaker": "Builds, installs, and maintains boilers, tanks, and large containers that hold liquids and gases. Works in power plants, refineries, and industrial facilities. Requires an apprenticeship and comfort working in confined spaces.",
-  "Wind Turbine Technician": "Installs, inspects, and repairs wind turbines including mechanical, electrical, and hydraulic systems. Works at significant heights in often remote locations. Growing field in the renewable energy sector. Requires technical training.",
-  "Plasterer": "Applies plaster, stucco, and other finishes to walls and ceilings in residential and commercial buildings. Creates smooth or textured surfaces and may do decorative molding work. Requires an apprenticeship.",
-  "Insulation Technician": "Specializes in applying thermal insulation to pipes, ducts, and equipment in commercial and industrial settings. Works with various insulation materials to improve energy efficiency. May require OSHA safety certification.",
-  "Concrete Finisher": "Pours, levels, and finishes concrete for sidewalks, floors, driveways, and foundations. Uses trowels, floats, and screeds to achieve smooth surfaces. Works in construction and must work quickly before concrete sets.",
-  "Diesel Mechanic": "Diagnoses and repairs diesel engines in trucks, buses, construction equipment, and generators. Performs routine maintenance and overhauls. Works in fleet maintenance shops, dealerships, or independent repair facilities.",
-  "Tower Technician": "Climbs and maintains cell towers, broadcast towers, and other communication structures. Installs antennas, runs cables, and performs repairs at extreme heights. Works for telecommunications or tower service companies.",
-  "Flooring Installer": "Lays hardwood, tile, laminate, vinyl, and carpet flooring in residential and commercial spaces. Prepares subfloors, cuts materials, and ensures proper installation. Works for flooring companies or as a subcontractor.",
-  "Pool/Spa Technician": "Maintains and repairs swimming pools and spas including water chemistry, filtration systems, and mechanical equipment. Tests water quality and performs seasonal openings and closings. Works for pool service companies or independently.",
-  "Chimney Sweep": "Cleans, inspects, and repairs chimneys and fireplaces to prevent fires and ensure safe operation. Removes creosote buildup and checks for structural issues. Can be self-employed or work for a chimney service company.",
-  "Painter (Construction)": "Applies paint, stain, and coatings to interior and exterior surfaces of buildings. Prepares surfaces, selects materials, and ensures clean, professional finishes. Works in residential or commercial construction.",
-  "Roofer": "Installs and repairs roofing materials including shingles, tiles, metal, and flat roofing membranes. Works at heights in all weather conditions. Ensures watertight installations and follows safety protocols. Works for roofing contractors.",
-  "Tile Installer": "Cuts, lays, and grouts tile for floors, walls, countertops, and backsplashes. Works with ceramic, porcelain, stone, and mosaic tiles. Requires precision and an eye for pattern alignment. Works in residential and commercial construction.",
-  "Pest Control Technician": "Inspects properties for pest infestations, applies treatments, and implements prevention strategies. Handles chemicals safely and educates customers on pest management. Works for pest control companies. Requires state licensure.",
-  "Appliance Repair Technician": "Diagnoses and repairs household appliances like refrigerators, washers, dryers, and dishwashers. Orders parts, performs maintenance, and explains repairs to customers. Works for repair companies or appliance manufacturers.",
-  "Gas Fitter": "Installs, maintains, and repairs gas piping and appliances including furnaces, water heaters, and stoves. Ensures systems are safe and comply with gas codes. Requires certification and works in residential or commercial settings.",
-  "Cable Installer": "Installs and maintains cable television, internet, and telephone lines in homes and businesses. Runs cables through walls, connects equipment, and tests signal quality. Works for telecommunications or cable companies.",
-  "Surveyor": "Measures and maps land boundaries, elevations, and features using GPS, total stations, and other surveying equipment. Provides data for construction, property lines, and land development. Works for surveying firms, engineering companies, or government agencies.",
-  "Septic System Technician": "Installs, maintains, and repairs septic systems including tanks, drain fields, and distribution boxes. Performs inspections and pump-outs. Works for septic service companies in rural and suburban areas.",
-  "Alarm System Installer": "Installs and configures security alarm systems, surveillance cameras, and access control systems in homes and businesses. Runs wiring, programs panels, and tests equipment. Works for security companies. May require state licensure.",
-
-  // === CREATIVE (41 roles) ===
-  "Graphic Designer": "Creates visual content including logos, marketing materials, social media graphics, and layouts using tools like Adobe Photoshop, Illustrator, and InDesign. Works with clients or creative teams to develop brand identities. Works at agencies, in-house teams, or freelance.",
-  "UX Designer": "Researches user needs and designs intuitive, accessible interfaces for websites and applications. Creates wireframes, prototypes, and user flows informed by usability testing. Works at tech companies, design agencies, or product teams.",
-  "Content Writer": "Produces written content for websites, blogs, social media, email campaigns, and marketing materials. Researches topics, optimizes for SEO, and adapts tone for different audiences. Works for agencies, media companies, or freelance.",
-  "Video Editor": "Assembles raw footage into polished videos by cutting, sequencing, adding effects, color grading, and mixing audio. Works with directors and producers to achieve the creative vision. Works in film, TV, advertising, or digital content creation.",
-  "Photographer": "Captures images for commercial, editorial, portrait, event, or artistic purposes. Manages lighting, composition, and post-processing. Works freelance or for studios, agencies, media outlets, or e-commerce companies.",
-  "Motion Graphics Designer": "Creates animated visual content for videos, advertisements, UI elements, and explainer videos. Works with After Effects, Cinema 4D, and similar tools. Works at production studios, agencies, or tech companies.",
-  "Copywriter": "Writes persuasive marketing and advertising copy including taglines, emails, landing pages, and ad campaigns. Crafts messaging that drives conversions and builds brand voice. Works at agencies, in-house marketing teams, or freelance.",
-  "3D Artist": "Creates three-dimensional models, environments, and visual effects for games, films, architectural visualization, or product design. Works with tools like Blender, Maya, or ZBrush. Employed by game studios, film production companies, or design firms.",
-  "Brand Strategist": "Develops brand positioning, messaging frameworks, and identity systems that differentiate a company in the market. Conducts competitive analysis and audience research. Works at branding agencies, marketing firms, or in-house creative teams.",
-  "Interior Designer": "Plans and designs interior spaces including layout, furniture, color schemes, and materials for residential or commercial projects. Creates floor plans, mood boards, and specifications. Works for design firms, architecture firms, or freelance.",
-  "Animator": "Creates animated sequences for films, TV shows, video games, or advertisements using 2D or 3D techniques. Brings characters and scenes to life through movement and timing. Works at animation studios, game companies, or production houses.",
-  "Creative Director": "Leads the creative vision for projects, campaigns, or brands, guiding designers, writers, and other creatives. Approves concepts, maintains brand consistency, and presents to clients. Senior role at agencies, studios, or in-house creative departments.",
-  "Art Director": "Oversees the visual style and creative execution of projects including advertising campaigns, publications, or film productions. Collaborates with designers, photographers, and illustrators. Works at agencies, magazines, or production companies.",
-  "Social Media Manager": "Develops and executes social media strategies including content creation, community management, and performance analytics. Manages brand presence across platforms like Instagram, TikTok, LinkedIn, and X. Works for brands, agencies, or freelance.",
-  "Game Designer": "Conceptualizes game mechanics, levels, narratives, and player experiences. Creates design documents, prototypes, and balancing systems. Works at game studios collaborating with developers, artists, and producers.",
-  "Sound Designer": "Creates and manipulates audio elements including sound effects, ambient sounds, and foley for films, games, theater, or apps. Records, edits, and mixes audio to enhance storytelling. Works in post-production studios or game companies.",
-  "Fashion Designer": "Designs clothing, accessories, and footwear by sketching concepts, selecting fabrics, and overseeing production. Develops collections and follows market trends. Works for fashion brands, manufacturers, or runs an independent label.",
-  "DJ": "Selects and mixes music for live events, clubs, radio, or streaming. Reads crowds, builds playlists, and manages audio equipment. May produce original music. Works as a freelancer, at venues, or for event companies.",
-  "UI Designer": "Designs the visual interface of digital products including buttons, icons, typography, and color systems. Creates pixel-perfect mockups and design systems. Works at tech companies, agencies, or product teams alongside UX designers.",
-  "Podcast Producer": "Manages the production of podcasts including recording, editing, mixing, and publishing episodes. Coordinates guests, develops show formats, and may handle distribution and promotion. Works for media companies or independently.",
-  "Illustrator": "Creates original artwork for books, magazines, advertising, products, or digital media. Develops visual concepts and works in traditional or digital media. Works freelance or for publishers, agencies, or game studios.",
-  "Sound Engineer": "Operates audio equipment to record, mix, and master sound for music, film, live events, or broadcasts. Sets up microphones, adjusts levels, and ensures high-quality audio output. Works in recording studios, concert venues, or broadcast facilities.",
-  "Film Director": "Leads the creative vision of a film or video project, guiding actors, camera crews, and editors. Makes decisions on shot composition, pacing, and storytelling. Works in film, television, commercials, or independent production.",
-  "Music Producer": "Oversees the creation of musical recordings including song arrangement, instrumentation, vocal coaching, and mixing. Collaborates with artists to shape the sound and direction of a project. Works in recording studios or independently.",
-  "Set Designer": "Designs and constructs physical environments for theater, film, television, or events. Creates scale models, selects materials, and coordinates with carpenters and painters. Works in entertainment production or event design.",
-  "Gallery Curator": "Selects, organizes, and presents art exhibitions in galleries or museums. Researches artists, writes catalog essays, and manages collections. Works at museums, galleries, or cultural institutions. Requires art history knowledge.",
-  "Voice Actor": "Provides vocal performances for animations, video games, commercials, audiobooks, and dubbing. Auditions for roles, records in studios, and takes direction on tone and character. Works freelance or through talent agencies.",
-  "Production Designer": "Creates the overall visual look of a film, TV show, or theater production including sets, props, color palettes, and locations. Works with the director to establish the visual tone. Senior creative role in entertainment production.",
-  "Tattoo Artist": "Creates permanent body art by applying ink designs to clients' skin using tattoo machines. Consults with clients on custom designs and ensures safe, sterile practices. Works in tattoo studios. Requires apprenticeship and health certifications.",
-  "Ceramicist": "Creates functional or artistic pottery and ceramic pieces using techniques like wheel throwing, hand-building, and glazing. May sell work through galleries, craft fairs, or online. Works in studios or teaches ceramics.",
-  "Experiential Designer": "Designs immersive, interactive experiences for events, brand activations, museums, or retail spaces. Combines physical design, technology, and storytelling to engage audiences. Works at design agencies or experience-focused studios.",
-  "Floral Designer": "Arranges flowers and plants for events, weddings, retail displays, and daily orders. Selects blooms, creates arrangements, and manages inventory. Works in flower shops, event planning companies, or independently.",
-  "Makeup Artist": "Applies makeup for photoshoots, film, television, theater, weddings, or special events. Creates looks ranging from natural to theatrical. Works freelance, for production companies, or at cosmetics brands.",
-  "Theater Director": "Guids the artistic vision of a theatrical production, working with actors, designers, and crew to bring a script to life. Makes casting, staging, and pacing decisions. Works at theaters, universities, or community productions.",
-  "Stage Manager": "Coordinates all logistical aspects of a theater production including rehearsals, cueing, scheduling, and communication between departments. Ensures performances run smoothly. Works in theater, opera, dance, or live events.",
-  "Web Designer": "Designs the visual layout and user experience of websites, focusing on aesthetics, usability, and responsiveness. Creates mockups and prototypes using tools like Figma or Adobe XD. Works at agencies, tech companies, or freelance.",
-  "Lighting Designer": "Designs lighting setups for theater, concerts, film, or architectural spaces to create mood, focus, and visual interest. Programs lighting consoles and coordinates with production teams. Works in entertainment, events, or architectural design.",
-  "Projection Designer": "Creates video and projection content for live performances, events, and installations. Maps projections onto surfaces and integrates visuals with stage action. Works in theater, concerts, or immersive experience design.",
-  "Prop Master": "Sources, builds, and manages props used in film, TV, or theater productions. Collaborates with directors and set designers to ensure props match the creative vision. Works on set or in prop shops.",
-  "Dialect Coach": "Helps actors develop authentic accents and speech patterns for roles. Analyzes phonetic characteristics and provides one-on-one coaching. Works in theater, film, and television production.",
-  "Puppet Designer": "Designs and fabricates puppets for theater, film, television, or educational programs. Works with various materials and mechanisms to create expressive characters. Works at puppetry companies, production studios, or as a freelancer.",
-
-  // === SERVICE (40 roles) ===
-  "Restaurant Manager": "Oversees daily restaurant operations including staffing, inventory, customer service, and health code compliance. Manages budgets and works to ensure a positive dining experience. Works in restaurants, fast food chains, or hotel dining.",
-  "Hotel Front Desk": "Greets guests, handles check-in and check-out, manages reservations, and addresses guest inquiries and complaints. Works at hotel reception areas. Entry-level hospitality role with strong customer service focus.",
-  "Customer Service Representative": "Assists customers with inquiries, complaints, and orders via phone, email, or chat. Resolves issues, processes returns, and provides product information. Works in call centers, retail, or remote for companies across industries.",
-  "Flight Attendant": "Ensures passenger safety and comfort during flights, demonstrates safety procedures, serves food and beverages, and handles in-flight emergencies. Works for airlines, traveling domestically and internationally. Requires FAA training.",
-  "Security Guard": "Monitors and protects property, people, and assets by patrolling areas, controlling access, and responding to incidents. Works at buildings, events, hospitals, or retail locations. May require state licensure.",
-  "Event Coordinator": "Assists with planning and executing events by managing logistics, coordinating vendors, tracking budgets, and ensuring everything runs smoothly on event day. Works for event companies, hotels, corporations, or nonprofits.",
-  "Housekeeping Supervisor": "Oversees housekeeping staff and ensures cleanliness standards are met in hotels, hospitals, or commercial buildings. Manages schedules, inspects rooms, and trains employees. Mid-level hospitality or facilities role.",
-  "Social Worker": "Helps individuals and families cope with challenges including poverty, abuse, mental health issues, and disability. Connects clients with resources and advocates for their needs. Works in hospitals, schools, government agencies, or nonprofits.",
-  "Park Ranger": "Protects and manages natural and cultural resources in parks and public lands. Educates visitors, enforces regulations, and responds to emergencies. Works for national, state, or local park agencies.",
-  "Concierge": "Provides personalized assistance to hotel guests or residents including restaurant reservations, travel arrangements, event tickets, and local recommendations. Works at hotels, luxury apartments, or corporate offices.",
-  "Travel Agent": "Helps clients plan and book travel including flights, hotels, tours, and vacation packages. Advises on destinations, handles itineraries, and resolves travel issues. Works for travel agencies or independently.",
-  "Personal Trainer": "Designs and leads individualized exercise programs to help clients achieve fitness goals. Demonstrates proper form, tracks progress, and provides nutrition guidance. Works at gyms, studios, or independently. Requires certification.",
-  "Barista": "Prepares and serves coffee and espresso drinks, operates coffee equipment, handles transactions, and maintains a clean workspace. Provides customer service in a fast-paced environment. Works at coffee shops and cafes.",
-  "Casino Dealer": "Operates table games like blackjack, poker, and roulette, managing bets, payouts, and game flow. Maintains game integrity and provides an entertaining guest experience. Works at casinos. Requires gaming licensure and training.",
-  "Funeral Director": "Manages funeral arrangements including embalming or cremation coordination, service planning, and supporting grieving families. Handles legal paperwork and ensures compliance with regulations. Requires mortuary science education and licensure.",
-  "Dental Office Receptionist": "Schedules appointments, manages patient records, handles insurance billing, and greets patients at a dental office. Coordinates with dentists and hygienists on scheduling. Entry-level administrative role in healthcare.",
-  "Property Manager": "Oversees residential or commercial properties including tenant relations, rent collection, maintenance, and lease agreements. Ensures properties are well-maintained and profitable. Works for property management companies or real estate firms.",
-  "Sommelier": "Curates wine lists, recommends wine pairings, and serves wine in upscale restaurants. Has deep knowledge of wine regions, varietals, and vintages. Works in fine dining establishments. May hold sommelier certification.",
-  "Nanny/Childcare Provider": "Cares for children in a private home, managing daily routines, activities, meals, and educational support. May live in or work set hours. Provides personalized childcare beyond what daycare offers.",
-  "Home Health Aide": "Assists elderly, disabled, or ill individuals with daily living activities including bathing, dressing, meal preparation, and medication reminders. Works in clients' homes. Entry-level healthcare role with on-the-job training.",
-  "Bartender": "Mixes and serves alcoholic and non-alcoholic beverages, manages bar inventory, and provides customer service. Creates drink menus and maintains a clean bar area. Works at bars, restaurants, hotels, or event venues.",
-  "Hotel Manager": "Oversees all hotel operations including front desk, housekeeping, food service, maintenance, and guest satisfaction. Manages staff, budgets, and revenue. Works in hotels ranging from boutique to major chains.",
-  "Event Planner": "Plans and coordinates events from concept to completion, managing venues, vendors, budgets, timelines, and guest experience. Works on weddings, corporate events, galas, or conferences. Works for agencies or independently.",
-  "Travel Consultant": "Advises clients on travel destinations, creates customized itineraries, and books accommodations and transportation. Specializes in areas like luxury, adventure, or corporate travel. Works for travel agencies or tour operators.",
-  "Camp Director": "Manages summer or year-round camp programs including staffing, programming, safety, and budgeting. Oversees camper experience and parent communication. Works at youth camps, day camps, or specialty camps.",
-  "Cruise Director": "Plans and leads entertainment and activities aboard cruise ships. Manages entertainment staff, coordinates events, and ensures guests have an engaging experience. Works for cruise lines, traveling extensively.",
-  "Catering Manager": "Plans and oversees catering operations for events including menu selection, food preparation, staffing, and service logistics. Manages client relationships and ensures events run smoothly. Works for catering companies or hotel banquet departments.",
-  "Wedding Planner": "Coordinates all aspects of a wedding including venues, vendors, timelines, budgets, and day-of logistics. Works closely with couples to bring their vision to life. Works independently or for event planning companies.",
-  "Dog Groomer": "Bathes, trims, and styles dogs' coats, cleans ears, clips nails, and maintains pets' hygiene. Consults with owners on desired styles. Works at grooming salons, pet stores, veterinary offices, or independently.",
-  "Lifeguard": "Monitors swimming areas to ensure swimmer safety, enforces pool rules, and responds to water emergencies. Administers first aid and CPR when needed. Works at pools, beaches, water parks, or recreation centers.",
-  "Tour Guide": "Leads groups on guided tours of historical sites, cities, museums, or natural attractions. Provides commentary, answers questions, and ensures group safety. Works for tour companies, national parks, or independently.",
-  "Receptionist": "Greets visitors, answers phones, manages schedules, and performs clerical tasks. Serves as the first point of contact for an organization. Works in offices, medical practices, hotels, or any customer-facing business.",
-  "Janitorial Supervisor": "Manages cleaning staff and ensures facilities are maintained to cleanliness standards. Schedules tasks, orders supplies, and trains employees. Works in schools, office buildings, hospitals, or commercial facilities.",
-  "Valet Attendant": "Parks and retrieves guests' vehicles at hotels, restaurants, hospitals, or event venues. Provides courteous service and handles cars carefully. Entry-level service role with driving requirements.",
-  "School Bus Driver": "Transports students to and from school safely, following designated routes and schedules. Maintains order on the bus and follows traffic laws. Works for school districts. Requires a CDL with passenger and school bus endorsements.",
-  "Valet Parking Supervisor": "Manages valet parking operations including staff scheduling, vehicle handling procedures, and guest service quality. Ensures efficient parking flow at hotels, restaurants, or event venues. Mid-level service management role.",
-  "Catering Coordinator": "Assists with organizing catering events by managing orders, coordinating delivery logistics, and communicating with clients. Supports the catering manager with scheduling and setup. Works for catering companies or hotels.",
-  "Pet Sitter": "Cares for pets in their owners' homes or at a boarding facility while owners are away. Provides feeding, walking, play, and basic medical monitoring. Works independently or through pet care platforms.",
-  "Optician": "Helps customers select eyeglasses and contact lenses, takes measurements, and fits and adjusts frames. Interprets prescriptions from optometrists or ophthalmologists. Works in optical shops, eye care clinics, or retail stores.",
-  "Fitness Studio Manager": "Oversees daily operations of a fitness studio including membership sales, class scheduling, staff management, and facility maintenance. Drives revenue and member retention. Works at boutique fitness studios, gyms, or yoga studios.",
-
-  // === LEGAL (40 roles) ===
-  "Paralegal": "Assists lawyers by conducting legal research, drafting documents, organizing case files, and managing deadlines. Works in law firms, corporate legal departments, or government agencies. Requires a paralegal certificate or associate degree.",
-  "Compliance Officer": "Ensures organizations follow laws, regulations, and internal policies by developing compliance programs, conducting audits, and training employees. Works in heavily regulated industries like finance, healthcare, and insurance.",
-  "Legal Secretary": "Provides administrative support to lawyers including scheduling, correspondence, filing court documents, and managing calendars. Requires knowledge of legal terminology and procedures. Works in law firms or legal departments.",
-  "Mediator": "Facilitates negotiation between disputing parties to help them reach a mutually acceptable agreement without going to court. Works in family law, business disputes, or community conflicts. Requires mediation training and certification.",
-  "Court Reporter": "Creates verbatim transcripts of legal proceedings including depositions, trials, and hearings using stenotype machines or voice recording technology. Works in courtrooms, law firms, or freelance. Requires certification.",
-  "Patent Agent": "Helps inventors and companies secure patent protection by drafting and filing patent applications with the USPTO. Requires technical expertise in science or engineering. Works at law firms, corporations, or independently.",
-  "Contracts Manager": "Drafts, reviews, and negotiates contracts and agreements to protect an organization's interests. Manages contract lifecycle and ensures compliance. Works in corporate legal departments across industries.",
-  "Immigration Specialist": "Assists individuals and businesses with visa applications, green cards, citizenship, and immigration compliance. Prepares and files legal documents with USCIS. Works at immigration law firms or corporate HR departments.",
-  "Legal Analyst": "Researches legal issues, analyzes case law and regulations, and prepares reports to support attorneys and decision-makers. Uses legal databases and analytical tools. Works at law firms, corporations, or government agencies.",
-  "Intellectual Property Specialist": "Manages an organization's intellectual property portfolio including trademarks, copyrights, and trade secrets. Handles filings, renewals, and infringement monitoring. Works at law firms, corporations, or IP agencies.",
-  "Legal Tech Consultant": "Advises law firms and legal departments on implementing technology solutions including case management software, e-discovery tools, and AI-powered legal research. Works at legal tech companies or consulting firms.",
-  "Litigation Support Specialist": "Manages electronic evidence and data for litigation cases including document review, e-discovery, and trial presentation technology. Works at law firms or litigation support companies. Requires technical and legal knowledge.",
-  "Lawyer/Attorney": "Represents clients in legal matters including litigation, contract negotiation, and regulatory compliance. Provides legal advice, drafts documents, and advocates in court. Requires a law degree and state bar licensure. Works in law firms, government, or corporate settings.",
-  "Legal Operations Manager": "Oversees the business operations of a legal department including budgeting, vendor management, technology implementation, and process improvement. Bridges legal and business functions. Works at large corporations.",
-  "E-Discovery Specialist": "Manages the identification, collection, and review of electronic documents and data for litigation. Works with e-discovery platforms and ensures defensible legal holds. Works at law firms, corporations, or e-discovery service providers.",
-  "Title Examiner": "Searches public records to verify property ownership and identify liens, encumbrances, or legal issues affecting a property title. Prepares title reports for real estate transactions. Works for title companies, law firms, or real estate agencies.",
-  "Notary Public": "Administers oaths, witnesses signatures, and certifies documents to deter fraud. Verifies the identity of signers on legal documents. Works in banks, law offices, government offices, or independently. State-appointed commission required.",
-  "Arbitrator": "Acts as a neutral third party to resolve disputes outside of court by hearing both sides and issuing a binding or non-binding decision. Specializes in commercial, labor, or consumer arbitration. Works independently or through arbitration organizations.",
-  "Real Estate Attorney": "Handles legal aspects of real estate transactions including purchase agreements, title issues, zoning disputes, and closings. Represents buyers, sellers, or lenders. Works at law firms or in-house at real estate companies.",
-  "Privacy Officer": "Develops and enforces data privacy policies to ensure compliance with regulations like GDPR, CCPA, and HIPAA. Conducts privacy impact assessments and manages data breach response. Works at corporations, healthcare organizations, or tech companies.",
-  "Judicial Law Clerk": "Assists judges by conducting legal research, drafting opinions, and reviewing case materials. Serves as a legal advisor to the court. Typically a one or two-year position for recent law school graduates. Works in federal or state courts.",
-  "Legal Recruiter": "Sources, evaluates, and places legal professionals including attorneys, paralegals, and legal staff. Builds relationships with law firms and candidates. Works for legal recruiting agencies or in-house at large firms.",
-  "Regulatory Affairs Specialist": "Ensures products and operations comply with government regulations by preparing submissions, monitoring regulatory changes, and advising internal teams. Works in pharmaceutical, medical device, food, or chemical industries.",
-  "Contract Negotiator": "Represents organizations in negotiating terms and conditions of business agreements, vendor contracts, and partnerships. Balances legal protection with business objectives. Works at corporations or law firms.",
-  "Forensic Accountant": "Investigates financial fraud, embezzlement, and financial disputes by analyzing complex financial records. Provides expert testimony and prepares reports for legal proceedings. Works at accounting firms, law enforcement, or insurance companies.",
-  "Court Clerk": "Manages court records, processes filings, assists with jury selection, and supports judges during proceedings. Maintains the official record of court activities. Works in local, state, or federal courts.",
-  "Lobbyist": "Represents organizations or interest groups to influence legislation and government policy. Meets with lawmakers, testifies at hearings, and builds coalitions. Works for corporations, nonprofits, trade associations, or lobbying firms.",
-  "Title Agent": "Facilitates real estate closings by issuing title insurance, coordinating document signing, and ensuring clear property transfers. Works at title companies or law firms. Requires state licensure.",
-  "Bailiff": "Maintains order and security in courtrooms, escorts juries, guards evidence, and serves court documents. Works directly for the court system. May require law enforcement training.",
-  "Government Affairs Specialist": "Monitors legislation and regulatory developments affecting an organization, develops advocacy strategies, and engages with government officials. Works at corporations, trade associations, or nonprofits.",
-  "Process Server": "Delivers legal documents such as subpoenas, summons, and complaints to parties involved in court cases. Ensures proper legal notification. Works independently or for process serving agencies.",
-  "Legal Document Preparer": "Assists individuals with preparing legal documents like divorce papers, wills, and business filings without providing legal advice. Works in jurisdictions that allow document preparation services. Self-employed or works for a legal services company.",
-  "Legal Nurse Consultant": "Applies nursing expertise to legal cases by reviewing medical records, identifying standards of care, and providing expert analysis for medical malpractice or personal injury cases. Works at law firms or insurance companies. Requires RN licensure.",
-  "Paralegal Manager": "Supervises a team of paralegals, manages workload distribution, ensures quality of legal work, and coordinates with attorneys on staffing. Senior paralegal role in large law firms or corporate legal departments.",
-  "Compliance Analyst": "Monitors and evaluates an organization's compliance with laws, regulations, and internal policies. Conducts reviews, documents findings, and recommends corrective actions. Works in finance, healthcare, or heavily regulated industries.",
-  "Legal Aid Attorney": "Provides free or low-cost legal representation to individuals who cannot afford a lawyer. Handles cases involving housing, family law, immigration, or public benefits. Works at legal aid organizations or nonprofits.",
-  "Public Defender": "Represents defendants who cannot afford an attorney in criminal cases. Prepares defenses, negotiates plea deals, and advocates in court. Works for the public defender's office. Requires law degree and bar licensure.",
-  "District Attorney": "Prosecutes criminal cases on behalf of the government, working with law enforcement to investigate crimes and present evidence in court. Manages a team of assistant district attorneys. Elected or appointed office.",
-  "Environmental Lawyer": "Handles legal issues related to environmental regulations, land use, pollution, and natural resources. Represents clients in environmental disputes or advises on compliance. Works at law firms, government agencies, or environmental organizations.",
-  "Immigration Attorney": "Represents individuals and businesses in immigration matters including visa applications, deportation defense, asylum cases, and citizenship. Navigates complex immigration law and policy. Works at immigration law firms or nonprofits."
-};
 
 const CERTS = {
   // === TECH ===
@@ -7353,7 +6856,6 @@ async function subscribe() {
 const APP_VERSION = '1.1.0';
 
 const UPDATES = [
-  { date: "May 12, 2026", title: "Role Descriptions Added", desc: "Every role now has a description explaining what the job involves, key responsibilities, and work environment. Browse and explore careers — not just interview questions.", icon: "📝" },
   { date: "May 2, 2026", title: "45 More Roles Added", desc: "5 new roles per category: Cloud Engineer, Dermatologist, CMO, Sales Operations Analyst, College Advisor, Surveyor, Lighting Designer, Optician, Immigration Attorney, and 36 more. Now 374 roles!", icon: "🆕" },
   { date: "Apr 21, 2026", title: "45 More Roles Added", desc: "5 new roles per category: Frontend Developer, Veterinarian, Executive Assistant, Advertising Sales Rep, Daycare Provider, Roofer, Makeup Artist, Tour Guide, Compliance Analyst, and 36 more. Now 329 roles!", icon: "🆕" },
   { date: "Apr 20, 2026", title: "45 New Roles Added", desc: "5 new roles per category: Penetration Tester, Biomedical Engineer, Risk Manager, Account Executive, ESL Teacher, Electrician, and 38 more. Now 239 roles!", icon: "🆕" },
@@ -7379,6 +6881,7 @@ function init() {
   }
 
   loadTheme();
+  loadScrollbarPref();
   renderThemeOptions();
   renderCategories();
   renderMockTab();
@@ -7399,6 +6902,7 @@ function init() {
   // Onboarding
   if (!localStorage.getItem('preppro-onboarded')) {
     document.getElementById('onboardingOverlay').classList.remove('hidden');
+    trapFocus(document.getElementById('onboardingOverlay'));
   } else {
     document.getElementById('onboardingOverlay').classList.add('hidden');
   }
@@ -7503,6 +7007,26 @@ function loadTheme() {
   document.body.setAttribute('data-theme', saved);
   updateThemeButton(saved);
 }
+function loadScrollbarPref() {
+  const on = localStorage.getItem('preppro-scrollbars') === 'on';
+  if (on) document.body.classList.add('show-scrollbars');
+  updateScrollbarToggle(on);
+}
+function updateScrollbarToggle(on) {
+  const el = document.getElementById('scrollbarToggleState');
+  if (el) {
+    el.textContent = on ? 'ON' : 'OFF';
+    el.style.background = on ? 'rgba(108,92,231,0.2)' : 'var(--card-hover)';
+    el.style.color = on ? 'var(--accent-text)' : 'var(--text-secondary)';
+  }
+  const toggle = document.getElementById('scrollbarToggle');
+  if (toggle) toggle.setAttribute('aria-checked', on ? 'true' : 'false');
+}
+function toggleScrollbar() {
+  const on = document.body.classList.toggle('show-scrollbars');
+  localStorage.setItem('preppro-scrollbars', on ? 'on' : 'off');
+  updateScrollbarToggle(on);
+}
 
 const THEMES = [
   { key: 'dark', name: 'Dark', accent: '#6c5ce7' },
@@ -7514,7 +7038,8 @@ const THEMES = [
   { key: 'cyberpunk', name: 'Cyberpunk', accent: '#f9ca24' },
   { key: 'arctic', name: 'Arctic', accent: '#74b9ff' },
   { key: 'ember', name: 'Ember', accent: '#ff6348' },
-  { key: 'mint', name: 'Mint', accent: '#00cec9' }
+  { key: 'mint', name: 'Mint', accent: '#00cec9' },
+  { key: 'high-contrast', name: 'High Contrast', accent: '#ffdd00' }
 ];
 
 function updateThemeButton(key) {
@@ -7527,23 +7052,42 @@ function renderThemeOptions() {
   const menu = document.getElementById('themeDropdownMenu');
   menu.innerHTML = '';
   const current = localStorage.getItem('preppro-theme') || 'dark';
+  function applyTheme(key) {
+    document.body.setAttribute('data-theme', key);
+    localStorage.setItem('preppro-theme', key);
+    updateThemeButton(key);
+    menu.querySelectorAll('.theme-option').forEach(o => o.classList.toggle('active', o.dataset.theme === key));
+    document.getElementById('themeDropdownBtn').classList.remove('open');
+    menu.classList.remove('open');
+    picker.querySelectorAll('.theme-pill').forEach(p => p.classList.toggle('active', p.dataset.theme === key));
+    showThemeToast(key);
+    playClick('select');
+  }
   THEMES.forEach(t => {
     const opt = document.createElement('div');
     opt.className = 'theme-option' + (t.key === current ? ' active' : '');
     opt.dataset.theme = t.key;
     opt.innerHTML = `<span class="theme-dot" style="background:${t.accent}"></span>${t.name}`;
-    opt.addEventListener('click', () => {
-      document.body.setAttribute('data-theme', t.key);
-      localStorage.setItem('preppro-theme', t.key);
-      updateThemeButton(t.key);
-      menu.querySelectorAll('.theme-option').forEach(o => o.classList.toggle('active', o.dataset.theme === t.key));
-      document.getElementById('themeDropdownBtn').classList.remove('open');
-      menu.classList.remove('open');
-      showThemeToast(t.key);
-      playClick('select');
-    });
+    opt.addEventListener('click', () => applyTheme(t.key));
     menu.appendChild(opt);
   });
+  // Also populate settings section theme picker
+  const picker = document.getElementById('moreThemePicker');
+  if (picker) {
+    picker.innerHTML = '';
+    const grid = document.createElement('div');
+    grid.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;padding:4px 0 8px';
+    THEMES.forEach(t => {
+      const pill = document.createElement('div');
+      pill.className = 'theme-pill' + (t.key === current ? ' active' : '');
+      pill.dataset.theme = t.key;
+      pill.style.cssText = 'cursor:pointer';
+      pill.innerHTML = `<span class="theme-dot" style="background:${t.accent};display:inline-block;width:10px;height:10px;border-radius:50;margin-right:6px;vertical-align:middle"></span>${t.name}`;
+      pill.addEventListener('click', () => applyTheme(t.key));
+      grid.appendChild(pill);
+    });
+    picker.appendChild(grid);
+  }
 }
 
 // === THEME DROPDOWN ===
@@ -7553,11 +7097,13 @@ document.getElementById('themeDropdownBtn').addEventListener('click', e => {
   const menu = document.getElementById('themeDropdownMenu');
   btn.classList.toggle('open');
   menu.classList.toggle('open');
+  btn.setAttribute('aria-expanded', btn.classList.contains('open'));
 });
 document.addEventListener('click', e => {
   if (!e.target.closest('#themeDropdown')) {
     document.getElementById('themeDropdownBtn').classList.remove('open');
     document.getElementById('themeDropdownMenu').classList.remove('open');
+    document.getElementById('themeDropdownBtn').setAttribute('aria-expanded', 'false');
   }
 });
 
@@ -7626,7 +7172,10 @@ function renderBookmarks() {
         found = true;
         const card = document.createElement('div');
         card.className = 'role-card fade-in';
-        card.innerHTML = `<div class="role-icon">${cat.icon}</div><div class="role-info"><div class="role-name">${roleName}</div><div class="role-meta">${catName} \u2022 ${cat.roles[roleName].length} questions</div></div><div class="bookmark-btn active" data-role="${roleName}">&#9733;</div><div class="role-arrow">\u203A</div>`;
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('aria-label', roleName + ', ' + cat.roles[roleName].length + ' questions');
+        card.innerHTML = `<div class="role-icon" aria-hidden="true">${cat.icon}</div><div class="role-info"><div class="role-name">${roleName}</div><div class="role-meta">${catName} \u2022 ${cat.roles[roleName].length} questions</div></div><div class="bookmark-btn active" data-role="${roleName}" role="button" tabindex="0" aria-label="Bookmark ${roleName}">&#9733;</div><div class="role-arrow" aria-hidden="true">\u203A</div>`;
         card.querySelector('.bookmark-btn').addEventListener('click', (e) => {
           e.stopPropagation();
           toggleBookmark(roleName);
@@ -7720,8 +7269,15 @@ function switchTab(tab) {
     target.style.zIndex = '5';
   }
   // Update tab bar
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector('.tab-btn[data-tab="' + tab + '"]')?.classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.remove('active');
+    b.setAttribute('aria-selected', 'false');
+  });
+  var activeTab = document.querySelector('.tab-btn[data-tab="' + tab + '"]');
+  if (activeTab) {
+    activeTab.classList.add('active');
+    activeTab.setAttribute('aria-selected', 'true');
+  }
   // Show tab bar
   var tb = document.getElementById('tabBar');
   if (tb) tb.classList.remove('hidden');
@@ -7781,7 +7337,9 @@ function goHistory() { playClick('tap'); renderHistory(); showScreen('history');
 function goPrivacy() { playClick('tap'); showScreen('privacy'); }
 
 function dismissOnboarding() {
-  document.getElementById('onboardingOverlay').classList.add('hidden');
+  var overlay = document.getElementById('onboardingOverlay');
+  releaseFocus(overlay);
+  overlay.classList.add('hidden');
   localStorage.setItem('preppro-onboarded', 'true');
 }
 function goSuggestions() { playClick('tap'); renderSuggestCategories(); loadSuggestedRoles(); renderRequestedRoles(); switchTab('suggest-tab'); }
@@ -7799,7 +7357,10 @@ function renderCategories() {
     const roleCount = Object.keys(cat.roles).length;
     const card = document.createElement('div');
     card.className = 'cat-card fade-in';
-    card.innerHTML = `<div class="cat-icon">${cat.icon}</div><div class="cat-name">${name}</div><div class="cat-count">${roleCount} roles</div>`;
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', name + ', ' + roleCount + ' roles');
+    card.innerHTML = `<div class="cat-icon" aria-hidden="true">${cat.icon}</div><div class="cat-name">${name}</div><div class="cat-count">${roleCount} roles</div>`;
     card.addEventListener('click', () => { playClick('tap'); openCategory(name); });
     grid.appendChild(card);
   });
@@ -7825,10 +7386,15 @@ function renderMockTab() {
     section.className = 'picker-cat';
     const header = document.createElement('div');
     header.className = 'picker-cat-header';
-    header.innerHTML = '<span class="picker-cat-arrow">&#9654;</span> ' + cat.icon + ' ' + catName;
+    header.setAttribute('role', 'button');
+    header.setAttribute('tabindex', '0');
+    header.setAttribute('aria-label', catName + ' category');
+    header.setAttribute('aria-expanded', 'false');
+    header.innerHTML = '<span class="picker-cat-arrow" aria-hidden="true">&#9654;</span> ' + cat.icon + ' ' + catName;
     header.addEventListener('click', () => {
       playClick('tap');
       section.classList.toggle('open');
+      header.setAttribute('aria-expanded', section.classList.contains('open'));
     });
     section.appendChild(header);
     const rolesDiv = document.createElement('div');
@@ -7836,7 +7402,10 @@ function renderMockTab() {
     Object.entries(cat.roles).forEach(([roleName, questions]) => {
       const row = document.createElement('div');
       row.className = 'picker-role-row';
-      row.innerHTML = '<div class="picker-role-icon">' + cat.icon + '</div><div class="picker-role-name">' + roleName + '</div><div class="picker-role-count">' + questions.length + ' Q</div>';
+      row.setAttribute('role', 'button');
+      row.setAttribute('tabindex', '0');
+      row.setAttribute('aria-label', roleName + ', ' + questions.length + ' questions');
+      row.innerHTML = '<div class="picker-role-icon" aria-hidden="true">' + cat.icon + '</div><div class="picker-role-name">' + roleName + '</div><div class="picker-role-count">' + questions.length + ' Q</div>';
       row.addEventListener('click', () => {
         playClick('select');
         startMock(roleName, questions);
@@ -7859,7 +7428,7 @@ function openCategory(name, keepFilter) {
   content.innerHTML = '';
   const header = document.createElement('div');
   header.style.cssText = 'display:flex;align-items:center;gap:12px;padding:0 20px 8px';
-  header.innerHTML = '<button class="back-btn" onclick="closeCategory()" style="font-size:22px;color:var(--accent)">&#8592;</button><div><div style="font-size:20px;font-weight:800;color:var(--text)">' + name + '</div></div>';
+  header.innerHTML = '<button class="back-btn" onclick="closeCategory()" style="font-size:22px;color:var(--accent-text)" aria-label="Go back">&#8592;</button><div><div style="font-size:20px;font-weight:800;color:var(--text)">' + name + '</div></div>';
   content.appendChild(header);
 
   const list = document.createElement('div');
@@ -7887,9 +7456,11 @@ function openCategory(name, keepFilter) {
     count++;
     const card = document.createElement('div');
     card.className = 'role-card fade-in';
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', roleName + ', ' + questions.length + ' questions');
     const isBookmarked = bookmarks.includes(roleName);
-    const descSnippet = DESCRIPTIONS[roleName] ? '<div class="role-desc-snippet">' + DESCRIPTIONS[roleName].split('. ')[0] + '.</div>' : '';
-    card.innerHTML = '<div class="role-icon">' + cat.icon + '</div><div class="role-info"><div class="role-name">' + roleName + '</div><div class="role-meta">' + questions.length + ' questions \u2022 ' + diff + '</div>' + descSnippet + '</div><div class="bookmark-btn ' + (isBookmarked ? 'active' : '') + '" data-role="' + roleName + '">&#9733;</div><div class="role-arrow">\u203A</div>';
+    card.innerHTML = '<div class="role-icon" aria-hidden="true">' + cat.icon + '</div><div class="role-info"><div class="role-name">' + roleName + '</div><div class="role-meta">' + questions.length + ' questions \u2022 ' + diff + '</div></div><div class="bookmark-btn ' + (isBookmarked ? 'active' : '') + '" data-role="' + roleName + '" role="button" tabindex="0" aria-label="Bookmark ' + roleName + '">&#9733;</div><div class="role-arrow">\u203A</div>';
     card.querySelector('.bookmark-btn').addEventListener('click', (e) => {
       e.stopPropagation();
       toggleBookmark(roleName);
@@ -7916,17 +7487,6 @@ function openRole(roleName, questions) {
   currentRole = { name: roleName, questions: shuffled };
   document.getElementById('questionsTitle').textContent = roleName;
   document.getElementById('questionsSubtitle').textContent = shuffled.length + ' questions';
-
-  // Render role description
-  const aboutCard = document.getElementById('roleAboutCard');
-  const desc = typeof DESCRIPTIONS !== 'undefined' ? DESCRIPTIONS[roleName] : null;
-  if (desc) {
-    aboutCard.innerHTML = '<div class="role-about-card"><div class="role-about-label">About This Role</div><div class="role-about-text">' + desc + '</div></div>';
-    aboutCard.style.display = '';
-  } else {
-    aboutCard.style.display = 'none';
-    aboutCard.innerHTML = '';
-  }
 
   // Render requirements card
   const reqCard = document.getElementById('reqCard');
@@ -8061,9 +7621,12 @@ function performSearch(query) {
   matches.forEach(m => {
     const card = document.createElement('div');
     card.className = 'role-card fade-in';
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
     const meta = m.matchCount ? `${m.matchCount} matching questions` : `${m.questions.length} questions`;
+    card.setAttribute('aria-label', m.roleName + ', ' + meta);
     const isBookmarked = bookmarks.includes(m.roleName);
-    card.innerHTML = `<div class="role-icon">${m.icon}</div><div class="role-info"><div class="role-name">${m.roleName}</div><div class="role-meta">${m.catName} \u2022 ${meta}</div></div><div class="bookmark-btn ${isBookmarked ? 'active' : ''}">&#9733;</div><div class="role-arrow">\u203A</div>`;
+    card.innerHTML = `<div class="role-icon" aria-hidden="true">${m.icon}</div><div class="role-info"><div class="role-name">${m.roleName}</div><div class="role-meta">${m.catName} \u2022 ${meta}</div></div><div class="bookmark-btn ${isBookmarked ? 'active' : ''}" role="button" tabindex="0" aria-label="Bookmark ${m.roleName}">&#9733;</div><div class="role-arrow" aria-hidden="true">\u203A</div>`;
     card.querySelector('.bookmark-btn').addEventListener('click', (e) => {
       e.stopPropagation();
       toggleBookmark(m.roleName);
@@ -8112,10 +7675,13 @@ function openMockPicker() {
     list.appendChild(section);
   });
   document.getElementById('pickerOverlay').classList.add('active');
+  trapFocus(document.getElementById('pickerOverlay'));
 }
 
 function closeMockPicker() {
-  document.getElementById('pickerOverlay').classList.remove('active');
+  var overlay = document.getElementById('pickerOverlay');
+  releaseFocus(overlay);
+  overlay.classList.remove('active');
 }
 
 // === MOCK INTERVIEW ===
@@ -8157,7 +7723,8 @@ function analyzeAnswer(answer, keywords) {
 
 function checkAnswer() {
   const answer = document.getElementById('answerInput').value.trim();
-  if (!answer) return;
+  clearInputError('answerInput', 'answerError');
+  if (!answer) { showInputError('answerInput', 'answerError', 'Please type your answer before checking.'); return; }
   playClick('tap');
   const q = mockQuestions[mockIndex];
   const keywords = extractKeywords(q.tip);
@@ -8259,7 +7826,7 @@ function startMock(roleName, questions) {
 
 function showMockCountPicker(roleName, shuffled) {
   const options = [3, 5, 10].filter(n => n <= shuffled.length);
-  let html = '<div style="padding:20px;text-align:center"><h3 style="margin-bottom:16px">How many questions?</h3><div style="display:flex;gap:12px;justify-content:center">';
+  let html = '<div style="padding:20px;text-align:center"><h2 style="margin-bottom:16px;font-size:18px">How many questions?</h2><div style="display:flex;gap:12px;justify-content:center">';
   options.forEach(n => {
     html += '<button class="daily-card-btn" onclick="playClick(\'tap\');pickMockCount(' + n + ')" style="min-width:60px">' + n + '</button>';
   });
@@ -8309,6 +7876,7 @@ function startMockInner() {
   showMockCard();
   startMockTimer();
   document.getElementById('mockOverlay').classList.add('active');
+  trapFocus(document.getElementById('mockOverlay'));
   document.getElementById('tabBar').classList.add('hidden');
 }
 
@@ -8536,7 +8104,9 @@ function endMock() {
 
 function closeMock() {
   clearInterval(mockTimerInterval);
-  document.getElementById('mockOverlay').classList.remove('active');
+  var overlay = document.getElementById('mockOverlay');
+  releaseFocus(overlay);
+  overlay.classList.remove('active');
   document.getElementById('tabBar').classList.remove('hidden');
 }
 
@@ -8810,7 +8380,10 @@ function renderContinue() {
           const catName = pair[0], cat = pair[1];
           const rc = document.createElement('div');
           rc.className = 'role-card fade-in';
-          rc.innerHTML = '<div class="role-icon">' + cat.icon + '</div><div class="role-info"><div class="role-name">' + roleName + '</div><div class="role-meta">' + catName + ' \u2022 ' + cat.roles[roleName].length + ' questions</div></div><div class="role-arrow">\u203A</div>';
+          rc.setAttribute('role', 'button');
+          rc.setAttribute('tabindex', '0');
+          rc.setAttribute('aria-label', roleName + ', ' + cat.roles[roleName].length + ' questions');
+          rc.innerHTML = '<div class="role-icon" aria-hidden="true">' + cat.icon + '</div><div class="role-info"><div class="role-name">' + roleName + '</div><div class="role-meta">' + catName + ' \u2022 ' + cat.roles[roleName].length + ' questions</div></div><div class="role-arrow">\u203A</div>';
           rc.addEventListener('click', function() {
             playClick('tap');
             switchTab('roles-tab');
@@ -8943,6 +8516,24 @@ function loadSuggestedRoles() {
     .catch(e => { console.log('Suggestion fetch error:', e); });
 }
 
+function showInputError(inputId, errorId, message) {
+  const input = document.getElementById(inputId);
+  const error = document.getElementById(errorId);
+  if (input) input.setAttribute('aria-invalid', 'true');
+  if (error) { error.textContent = message; error.classList.add('visible'); }
+  if (input) input.addEventListener('input', function handler() {
+    input.removeAttribute('aria-invalid');
+    if (error) { error.textContent = ''; error.classList.remove('visible'); }
+    input.removeEventListener('input', handler);
+  });
+}
+function clearInputError(inputId, errorId) {
+  const input = document.getElementById(inputId);
+  const error = document.getElementById(errorId);
+  if (input) input.removeAttribute('aria-invalid');
+  if (error) { error.textContent = ''; error.classList.remove('visible'); }
+}
+
 function submitSuggestion() {
   // Rate limit: 1 per minute
   const last = parseInt(localStorage.getItem('preppro-last-suggestion') || '0');
@@ -8951,18 +8542,20 @@ function submitSuggestion() {
   const whyInput = document.getElementById('suggestWhyInput');
   const catSelect = document.getElementById('suggestCatSelect');
   const role = roleInput.value.trim();
-  if (!catSelect.value) { alert('Please select a category.'); return; }
-  if (!role) { alert('Please enter a role name.'); return; }
+  clearInputError('suggestCatSelect', 'suggestCatError');
+  clearInputError('suggestRoleInput', 'suggestRoleError');
+  if (!catSelect.value) { showInputError('suggestCatSelect', 'suggestCatError', 'Please select a category.'); return; }
+  if (!role) { showInputError('suggestRoleInput', 'suggestRoleError', 'Please enter a role name.'); return; }
   const roleLower = role.toLowerCase().trim();
   // Check against existing roles in the app
   const catName = catSelect.value;
   if (catName !== 'Other' && DATA[catName]) {
     const existing = Object.keys(DATA[catName].roles).some(r => r.toLowerCase() === roleLower);
-    if (existing) { alert('This role already exists in the app.'); return; }
+    if (existing) { showInputError('suggestRoleInput', 'suggestRoleError', 'This role already exists in the app.'); return; }
   }
   // Check against previously suggested roles
   if (suggestedRoles.includes(roleLower)) {
-    alert('This role has already been suggested.');
+    showInputError('suggestRoleInput', 'suggestRoleError', 'This role has already been suggested.');
     return;
   }
   const entry = {
@@ -9008,7 +8601,8 @@ function submitFeedback() {
   if (Date.now() - last < 60000) { showToast('Please wait before submitting again'); return; }
   const input = document.getElementById('feedbackInput');
   const text = input.value.trim();
-  if (!text) { alert('Please enter your feedback.'); return; }
+  clearInputError('feedbackInput', 'feedbackError');
+  if (!text) { showInputError('feedbackInput', 'feedbackError', 'Please enter your feedback.'); return; }
   const entry = {
     type: 'feedback',
     timestamp: new Date().toISOString(),
@@ -9078,29 +8672,29 @@ function renderRequestedRoles() {
 init();</script>
 
 <!-- BOTTOM TAB BAR -->
-<div class="tab-bar" id="tabBar">
-  <button class="tab-btn active" data-tab="home" onclick="switchTab('home')">
-    <span class="tab-icon">&#127968;</span>
+<div class="tab-bar" id="tabBar" role="tablist" aria-label="Main navigation">
+  <button class="tab-btn active" data-tab="home" onclick="switchTab('home')" role="tab" aria-selected="true" aria-controls="screen-home">
+    <span class="tab-icon" aria-hidden="true">&#127968;</span>
     <span class="tab-label">Home</span>
   </button>
-  <button class="tab-btn" data-tab="roles-tab" onclick="switchTab('roles-tab')">
-    <span class="tab-icon">&#128218;</span>
+  <button class="tab-btn" data-tab="roles-tab" onclick="switchTab('roles-tab')" role="tab" aria-selected="false" aria-controls="screen-roles-tab">
+    <span class="tab-icon" aria-hidden="true">&#128218;</span>
     <span class="tab-label">Roles</span>
   </button>
-  <button class="tab-btn" data-tab="mock-tab" onclick="switchTab('mock-tab')">
-    <span class="tab-icon">&#9889;</span>
+  <button class="tab-btn" data-tab="mock-tab" onclick="switchTab('mock-tab')" role="tab" aria-selected="false" aria-controls="screen-mock-tab">
+    <span class="tab-icon" aria-hidden="true">&#9889;</span>
     <span class="tab-label">Mock</span>
   </button>
-  <button class="tab-btn" data-tab="updates-tab" onclick="switchTab('updates-tab')">
-    <span class="tab-icon">&#128227;</span>
+  <button class="tab-btn" data-tab="updates-tab" onclick="switchTab('updates-tab')" role="tab" aria-selected="false" aria-controls="screen-updates-tab">
+    <span class="tab-icon" aria-hidden="true">&#128227;</span>
     <span class="tab-label">Updates</span>
   </button>
-  <button class="tab-btn" data-tab="suggest-tab" onclick="switchTab('suggest-tab')">
-    <span class="tab-icon">&#128161;</span>
+  <button class="tab-btn" data-tab="suggest-tab" onclick="switchTab('suggest-tab')" role="tab" aria-selected="false" aria-controls="screen-suggest-tab">
+    <span class="tab-icon" aria-hidden="true">&#128161;</span>
     <span class="tab-label">Suggest</span>
   </button>
-  <button class="tab-btn" data-tab="more" onclick="switchTab('more')">
-    <span class="tab-icon">&#8942;</span>
+  <button class="tab-btn" data-tab="more" onclick="switchTab('more')" role="tab" aria-selected="false" aria-controls="screen-more">
+    <span class="tab-icon" aria-hidden="true">&#8942;</span>
     <span class="tab-label">More</span>
   </button>
 </div>
