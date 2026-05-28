@@ -260,6 +260,18 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .for-schools-feat-text strong{color:var(--text);font-weight:600}
 .for-schools-cta{display:block;width:100%;padding:14px;border-radius:var(--radius);border:none;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:15px;font-weight:700;cursor:pointer;text-align:center;transition:all var(--transition);text-decoration:none}
 .for-schools-cta:active{transform:scale(0.97);opacity:0.9}
+.for-alumni-card{margin:12px 20px;background:var(--card);border-radius:var(--radius);padding:24px 20px;border:1px solid var(--card-hover);position:relative;overflow:hidden}
+.for-alumni-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-light))}
+.for-alumni-badge{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:8px}
+.for-alumni-card h3{font-size:18px;font-weight:800;margin-bottom:6px}
+.for-alumni-card .for-alumni-sub{font-size:13px;color:var(--text-secondary);margin-bottom:16px;line-height:1.5}
+.for-alumni-features{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.for-alumni-feat{display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.4}
+.for-alumni-feat-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.for-alumni-feat-text{color:var(--text-secondary)}
+.for-alumni-feat-text strong{color:var(--text);font-weight:600}
+.for-alumni-cta{display:block;width:100%;padding:14px;border-radius:var(--radius);border:none;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:15px;font-weight:700;cursor:pointer;text-align:center;transition:all var(--transition);text-decoration:none}
+.for-alumni-cta:active{transform:scale(0.97);opacity:0.9}
 .role-desc-snippet{font-size:12px;color:var(--text-secondary);margin-top:3px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .role-about-card{margin:12px 16px;background:var(--card);border-radius:var(--radius);padding:16px;border-left:3px solid var(--accent)}
 .role-about-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--accent);margin-bottom:6px}
@@ -495,6 +507,32 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
       </div>
     </div>
     <a class="for-schools-cta" href="mailto:rollcallinterviewprep@outlook.com?subject=RoleCall%20for%20Schools%20%E2%80%94%20Inquiry">Get in Touch for Institutional Access</a>
+  </div>
+
+  <!-- FOR ALUMNI -->
+  <div class="for-alumni-card">
+    <div class="for-alumni-badge">For Alumni</div>
+    <h3>Your Career Journey Doesn't End at Graduation</h3>
+    <p class="for-alumni-sub">Whether you're changing careers, preparing for a promotion, or exploring new industries — RoleCall has you covered with 374+ careers across 9 industries.</p>
+    <div class="for-alumni-features">
+      <div class="for-alumni-feat">
+        <span class="for-alumni-feat-icon">&#128200;</span>
+        <span class="for-alumni-feat-text"><strong>Career switching made easier</strong> — explore new industries with guided interview prep and skill gap analysis</span>
+      </div>
+      <div class="for-alumni-feat">
+        <span class="for-alumni-feat-icon">&#127891;</span>
+        <span class="for-alumni-feat-text"><strong>Education & certification paths</strong> for every role — know exactly what credentials you need</span>
+      </div>
+      <div class="for-alumni-feat">
+        <span class="for-alumni-feat-icon">&#9889;</span>
+        <span class="for-alumni-feat-text"><strong>Mock interviews & expert tips</strong> — practice until you're confident, on any device</span>
+      </div>
+      <div class="for-alumni-feat">
+        <span class="for-alumni-feat-icon">&#128176;</span>
+        <span class="for-alumni-feat-text"><strong>Free first year for alumni</strong> — redeem your school's promo code for a full year of Pro at no cost</span>
+      </div>
+    </div>
+    <button class="for-alumni-cta" onclick="showPromoModal()">Redeem Your Alumni Code</button>
   </div>
 
   <div id="searchResults" style="display:none" aria-live="polite" aria-label="Search results">
@@ -733,6 +771,11 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
         <span class="more-label">Export Progress</span>
         <span class="more-arrow" aria-hidden="true">&#8594;</span>
       </div>
+      <div class="more-item" onclick="showPromoModal()" role="button" tabindex="0">
+        <span class="more-icon" aria-hidden="true">&#127915;</span>
+        <span class="more-label">Redeem Promo Code</span>
+        <span class="more-arrow" aria-hidden="true">&#8594;</span>
+      </div>
     </div>
     <div class="more-section">
       <div class="more-section-title">Settings</div>
@@ -777,6 +820,20 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
       <div class="onboarding-step"><span class="onboarding-num">4</span><span><strong>Star</strong> your favorite roles to save them</span></div>
     </div>
     <button class="suggest-submit" onclick="dismissOnboarding()" style="margin-top:20px">Get Started</button>
+  </div>
+</div>
+
+<!-- PROMO CODE MODAL -->
+<div class="onboarding-overlay hidden" id="promoOverlay" role="dialog" aria-modal="true" aria-label="Redeem promo code">
+  <div class="onboarding-content">
+    <div class="onboarding-icon">&#127915;</div>
+    <h2>Redeem Promo Code</h2>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;line-height:1.5">Enter a promo code from your school or organization to unlock Pro features for free.</p>
+    <input type="text" id="promoInput" placeholder="Enter code..." autocomplete="off" autocapitalize="characters" spellcheck="false" style="width:100%;padding:12px 16px;border-radius:var(--radius);border:1px solid var(--card-hover);background:var(--bg);color:var(--text);font-size:16px;text-align:center;letter-spacing:2px;text-transform:uppercase;outline:none;margin-bottom:12px" aria-label="Promo code">
+    <div id="promoError" style="font-size:13px;color:#e74c3c;margin-bottom:8px;display:none" role="alert"></div>
+    <div id="promoSuccess" style="font-size:13px;color:#2ecc71;margin-bottom:8px;display:none"></div>
+    <button class="suggest-submit" onclick="redeemPromoCode()" id="promoSubmitBtn" style="width:100%">Redeem</button>
+    <button onclick="hidePromoModal()" style="background:none;border:none;color:var(--text-secondary);font-size:13px;margin-top:12px;cursor:pointer">Cancel</button>
   </div>
 </div>
 
@@ -1032,6 +1089,15 @@ async function loadSubscriptionFromFirestore(uid) {
       const doc = subSnap.docs[0];
       userSubscription = { id: doc.id, ...doc.data() };
     } else {
+      // Check for promo code access
+      const custDoc = await db.collection('customers').doc(uid).get();
+      if (custDoc.exists && custDoc.data().promoCode) {
+        const promoExp = custDoc.data().promoExpiresAt;
+        if (!promoExp || promoExp.toDate() > new Date()) {
+          userSubscription = { status: 'active', promoCode: true };
+          return;
+        }
+      }
       userSubscription = null;
     }
   } catch (err) {
@@ -1051,6 +1117,120 @@ async function migrateLocalSubscription(uid) {
     showToast('Your subscription has been linked to your account.');
   } catch (err) {
     console.error('Migration error:', err);
+  }
+}
+
+// === PROMO CODES ===
+function showPromoModal() {
+  playClick('tap');
+  if (!currentUser) {
+    showAuthPrompt('Sign in to redeem a promo code');
+    return;
+  }
+  document.getElementById('promoInput').value = '';
+  document.getElementById('promoError').style.display = 'none';
+  document.getElementById('promoSuccess').style.display = 'none';
+  document.getElementById('promoOverlay').classList.remove('hidden');
+}
+
+function hidePromoModal() {
+  document.getElementById('promoOverlay').classList.add('hidden');
+}
+
+async function redeemPromoCode() {
+  const input = document.getElementById('promoInput');
+  const errorEl = document.getElementById('promoError');
+  const successEl = document.getElementById('promoSuccess');
+  const btn = document.getElementById('promoSubmitBtn');
+  const code = input.value.trim().toUpperCase();
+
+  errorEl.style.display = 'none';
+  successEl.style.display = 'none';
+
+  if (!code) {
+    errorEl.textContent = 'Please enter a promo code.';
+    errorEl.style.display = 'block';
+    return;
+  }
+  if (!currentUser) {
+    showAuthPrompt('Sign in to redeem a promo code');
+    return;
+  }
+
+  btn.textContent = 'Redeeming...';
+  btn.disabled = true;
+
+  try {
+    const codeDoc = await db.collection('promoCodes').doc(code).get();
+    if (!codeDoc.exists) {
+      errorEl.textContent = 'Invalid promo code. Please check and try again.';
+      errorEl.style.display = 'block';
+      btn.textContent = 'Redeem';
+      btn.disabled = false;
+      return;
+    }
+
+    const data = codeDoc.data();
+    if (!data.active) {
+      errorEl.textContent = 'This promo code is no longer active.';
+      errorEl.style.display = 'block';
+      btn.textContent = 'Redeem';
+      btn.disabled = false;
+      return;
+    }
+
+    if (data.expiresAt && data.expiresAt.toDate() < new Date()) {
+      errorEl.textContent = 'This promo code has expired.';
+      errorEl.style.display = 'block';
+      btn.textContent = 'Redeem';
+      btn.disabled = false;
+      return;
+    }
+
+    if (data.maxUses && data.usesCount >= data.maxUses) {
+      errorEl.textContent = 'This promo code has reached its usage limit.';
+      errorEl.style.display = 'block';
+      btn.textContent = 'Redeem';
+      btn.disabled = false;
+      return;
+    }
+
+    // Grant promo access
+    const expiry = data.expiresAt ? data.expiresAt.toDate() : null;
+    await db.collection('customers').doc(currentUser.uid).set({
+      promoCode: code,
+      promoGrantedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      promoExpiresAt: expiry ? firebase.firestore.Timestamp.fromDate(expiry) : null,
+      promoSource: data.source || code
+    }, { merge: true });
+
+    // Increment usage count
+    await db.collection('promoCodes').doc(code).update({
+      usesCount: firebase.firestore.FieldValue.increment(1)
+    });
+
+    // Update local state
+    userSubscription = { status: 'active', promoCode: true };
+    checkSubscription();
+
+    successEl.textContent = 'Pro unlocked! Enjoy all features.';
+    successEl.style.display = 'block';
+    btn.textContent = 'Redeemed!';
+    input.disabled = true;
+
+    setTimeout(() => {
+      hidePromoModal();
+      btn.textContent = 'Redeem';
+      btn.disabled = false;
+      input.disabled = false;
+    }, 2000);
+
+  } catch (err) {
+    console.error('Promo code error:', err);
+    errorEl.textContent = 'Something went wrong. Please try again.';
+    errorEl.style.display = 'block';
+    btn.textContent = 'Redeem';
+    btn.disabled = false;
   }
 }
 
