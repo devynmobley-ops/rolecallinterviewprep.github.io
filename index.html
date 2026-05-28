@@ -423,6 +423,7 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
     </button>
     <div class="theme-dropdown-menu" id="themeDropdownMenu"></div>
   </div>
+  <div id="homeContent">
   <div class="daily-card" id="dailyCard"></div>
   <div class="quick-practice-wrap"><button class="quick-practice-btn" onclick="quickPractice()">&#9889; Quick Practice</button></div>
   <div id="continueSection" style="display:none">
@@ -452,6 +453,7 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
       </div>
     </div>
     <div class="roles-explored" id="rolesExplored"></div>
+  </div>
   </div>
   <div id="searchResults" style="display:none" aria-live="polite" aria-label="Search results">
     <h2 class="section-title">Search Results</h2>
@@ -7589,9 +7591,11 @@ function setupSearch() {
 function performSearch(query) {
   const resultsDiv = document.getElementById('searchResults');
   const resultsList = document.getElementById('searchResultsList');
+  const homeContent = document.getElementById('homeContent');
 
   if (!query) {
     resultsDiv.style.display = 'none';
+    if (homeContent) homeContent.style.display = '';
     return;
   }
 
@@ -7611,6 +7615,7 @@ function performSearch(query) {
   });
 
   resultsDiv.style.display = '';
+  if (homeContent) homeContent.style.display = 'none';
   resultsList.innerHTML = '';
 
   if (matches.length === 0) {
