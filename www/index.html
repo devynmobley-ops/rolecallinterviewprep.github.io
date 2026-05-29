@@ -696,7 +696,7 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
     </div>
     <button class="paywall-subscribe-btn" onclick="subscribe()" id="paywallBtn">Start Free Trial</button>
     <p class="paywall-trial">7-day free trial, cancel anytime</p>
-    <p class="paywall-legal">Cancel in Settings anytime. Subscription renews automatically.</p>
+    <p class="paywall-legal">Cancel in Settings anytime. Subscription renews automatically. By subscribing you agree to our <a href="/terms.html" style="color:var(--text-secondary)">Terms of Use</a>.</p>
   </div>
 </div>
 
@@ -800,6 +800,11 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
       <div class="more-item" onclick="goPrivacy()" role="button" tabindex="0">
         <span class="more-icon" aria-hidden="true">&#128274;</span>
         <span class="more-label">Privacy Policy</span>
+        <span class="more-arrow" aria-hidden="true">&#8594;</span>
+      </div>
+      <div class="more-item" onclick="goTerms()" role="button" tabindex="0">
+        <span class="more-icon" aria-hidden="true">&#128220;</span>
+        <span class="more-label">Terms of Use</span>
         <span class="more-arrow" aria-hidden="true">&#8594;</span>
       </div>
     </div>
@@ -7560,6 +7565,7 @@ function goBack() {
 }
 function goHistory() { playClick('tap'); renderHistory(); showScreen('history'); }
 function goPrivacy() { playClick('tap'); showScreen('privacy'); }
+function goTerms() { playClick('tap'); window.location.href = '/terms.html'; }
 
 function dismissOnboarding() {
   var overlay = document.getElementById('onboardingOverlay');
