@@ -465,13 +465,6 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
     <span class="search-icon" aria-hidden="true">&#128269;</span>
     <input type="text" class="search-box" id="searchInput" placeholder="Search roles or questions..." autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" aria-label="Search roles or questions">
   </div>
-  <div class="theme-dropdown-wrap" id="themeDropdown">
-    <button class="theme-dropdown-btn" id="themeDropdownBtn" aria-label="Choose theme" aria-expanded="false" aria-haspopup="true">
-      <span class="theme-dropdown-label"><span style="font-size:12px;color:var(--text-secondary);font-weight:600">Theme:</span> <span class="theme-dot" id="themeDot"></span> <span id="themeDropdownName">Dark</span></span>
-      <span class="theme-dropdown-arrow">&#9662;</span>
-    </button>
-    <div class="theme-dropdown-menu" id="themeDropdownMenu"></div>
-  </div>
   <div id="homeContent">
   <div class="daily-card" id="dailyCard"></div>
   <div class="quick-practice-wrap"><button class="quick-practice-btn" onclick="quickPractice()">&#9889; Quick Practice</button></div>
@@ -504,76 +497,6 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
     <div class="roles-explored" id="rolesExplored"></div>
   </div>
   </div>
-  <!-- FOR SCHOOLS -->
-  <div class="for-schools-card">
-    <div class="for-schools-badge">For Schools & Universities</div>
-    <h3>Prepare Your Students for Every Career</h3>
-    <p class="for-schools-sub">RoleCall covers 374+ careers across 9 industries — from nursing to welding, software engineering to culinary arts.</p>
-    <div class="for-schools-features">
-      <div class="for-schools-feat">
-        <span class="for-schools-feat-icon">&#127891;</span>
-        <span class="for-schools-feat-text"><strong>Education & certification paths</strong> for every role — guide students from classroom to career</span>
-      </div>
-      <div class="for-schools-feat">
-        <span class="for-schools-feat-icon">&#128200;</span>
-        <span class="for-schools-feat-text"><strong>Track student progress</strong> with scores, session history, and skill gap analysis</span>
-      </div>
-      <div class="for-schools-feat">
-        <span class="for-schools-feat-icon">&#128241;</span>
-        <span class="for-schools-feat-text"><strong>Mobile-first</strong> — works on any device, no install required</span>
-      </div>
-      <div class="for-schools-feat">
-        <span class="for-schools-feat-icon">&#128176;</span>
-        <span class="for-schools-feat-text"><strong>Free to start</strong> — no credit card required for students or institutions</span>
-      </div>
-    </div>
-    <a class="for-schools-cta" href="mailto:rollcallinterviewprep@outlook.com?subject=RoleCall%20for%20Schools%20%E2%80%94%20Inquiry">Get in Touch for Institutional Access</a>
-  </div>
-
-  <!-- FOR ALUMNI -->
-  <div class="for-alumni-card">
-    <div class="for-alumni-badge">For Alumni</div>
-    <h3>Your Career Journey Doesn't End at Graduation</h3>
-    <p class="for-alumni-sub">Whether you're changing careers, preparing for a promotion, or exploring new industries — RoleCall has you covered with 374+ careers across 9 industries.</p>
-    <div class="for-alumni-features">
-      <div class="for-alumni-feat">
-        <span class="for-alumni-feat-icon">&#128200;</span>
-        <span class="for-alumni-feat-text"><strong>Career switching made easier</strong> — explore new industries with guided interview prep and skill gap analysis</span>
-      </div>
-      <div class="for-alumni-feat">
-        <span class="for-alumni-feat-icon">&#127891;</span>
-        <span class="for-alumni-feat-text"><strong>Education & certification paths</strong> for every role — know exactly what credentials you need</span>
-      </div>
-      <div class="for-alumni-feat">
-        <span class="for-alumni-feat-icon">&#9889;</span>
-        <span class="for-alumni-feat-text"><strong>Mock interviews & expert tips</strong> — practice until you're confident, on any device</span>
-      </div>
-      <div class="for-alumni-feat">
-        <span class="for-alumni-feat-icon">&#128176;</span>
-        <span class="for-alumni-feat-text"><strong>Free first year for alumni</strong> — redeem your school's promo code for a full year of Pro at no cost</span>
-      </div>
-    </div>
-    <button class="for-alumni-cta" onclick="showPromoModal()">Redeem Your Alumni Code</button>
-  </div>
-
-  <!-- TESTIMONIALS -->
-  <div class="testimonials-card">
-    <h3>What Users Are Saying</h3>
-    <p class="testimonials-sub">Join thousands of job seekers preparing with RoleCall</p>
-    <div class="testimonial-item">
-      <div class="testimonial-quote">I used RoleCall to prep for my nursing interview and got the job! The questions were exactly what I was asked.</div>
-      <div class="testimonial-author"><strong>Sarah M.</strong> &mdash; Registered Nurse</div>
-    </div>
-    <div class="testimonial-item">
-      <div class="testimonial-quote">The expert tips helped me understand what interviewers actually want to hear. Way better than just Googling questions.</div>
-      <div class="testimonial-author"><strong>Marcus T.</strong> &mdash; Software Engineer</div>
-    </div>
-    <div class="testimonial-item">
-      <div class="testimonial-quote">As a career changer, the education paths showed me exactly what certs I needed. Super helpful for planning my next steps.</div>
-      <div class="testimonial-author"><strong>Jessica L.</strong> &mdash; Career Switcher</div>
-    </div>
-  </div>
-
   <!-- NEWSLETTER -->
   <div class="newsletter-card">
     <h3>Stay Interview-Ready</h3>
@@ -632,6 +555,87 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
     <div class="roles-tab-title">What's New</div>
   </div>
   <div id="updatesList" style="padding:0 16px 80px"></div>
+</div>
+
+<!-- SCHOOLS TAB SCREEN -->
+<div id="screen-schools-tab" class="screen hidden tab-screen" role="tabpanel" aria-label="Schools and Alumni">
+  <div class="roles-tab-header">
+    <div class="roles-tab-title">Schools & Alumni</div>
+  </div>
+  <div style="padding:0 0 80px">
+  <!-- FOR SCHOOLS -->
+  <div class="for-schools-card">
+    <div class="for-schools-badge">For Schools & Universities</div>
+    <h3>Prepare Your Students for Every Career</h3>
+    <p class="for-schools-sub">RoleCall covers 374+ careers across 9 industries — from nursing to welding, software engineering to culinary arts.</p>
+    <div class="for-schools-features">
+      <div class="for-schools-feat">
+        <span class="for-schools-feat-icon">&#127891;</span>
+        <span class="for-schools-feat-text"><strong>Education & certification paths</strong> for every role — guide students from classroom to career</span>
+      </div>
+      <div class="for-schools-feat">
+        <span class="for-schools-feat-icon">&#128200;</span>
+        <span class="for-schools-feat-text"><strong>Track student progress</strong> with scores, session history, and skill gap analysis</span>
+      </div>
+      <div class="for-schools-feat">
+        <span class="for-schools-feat-icon">&#128241;</span>
+        <span class="for-schools-feat-text"><strong>Mobile-first</strong> — works on any device, no install required</span>
+      </div>
+      <div class="for-schools-feat">
+        <span class="for-schools-feat-icon">&#128176;</span>
+        <span class="for-schools-feat-text"><strong>Free to start</strong> — no credit card required for students or institutions</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <a class="for-schools-cta" href="/schools.html" style="flex:1;text-decoration:none;text-align:center">Learn More</a>
+      <a class="for-schools-cta" href="mailto:rollcallinterviewprep@outlook.com?subject=RoleCall%20for%20Schools" style="flex:1;text-decoration:none;text-align:center;background:var(--card-hover);color:var(--accent)">Contact Us</a>
+    </div>
+  </div>
+
+  <!-- FOR ALUMNI -->
+  <div class="for-alumni-card">
+    <div class="for-alumni-badge">For Alumni</div>
+    <h3>Your Career Journey Doesn't End at Graduation</h3>
+    <p class="for-alumni-sub">Whether you're changing careers, preparing for a promotion, or exploring new industries — RoleCall has you covered with 374+ careers across 9 industries.</p>
+    <div class="for-alumni-features">
+      <div class="for-alumni-feat">
+        <span class="for-alumni-feat-icon">&#128200;</span>
+        <span class="for-alumni-feat-text"><strong>Career switching made easier</strong> — explore new industries with guided interview prep and skill gap analysis</span>
+      </div>
+      <div class="for-alumni-feat">
+        <span class="for-alumni-feat-icon">&#127891;</span>
+        <span class="for-alumni-feat-text"><strong>Education & certification paths</strong> for every role — know exactly what credentials you need</span>
+      </div>
+      <div class="for-alumni-feat">
+        <span class="for-alumni-feat-icon">&#9889;</span>
+        <span class="for-alumni-feat-text"><strong>Mock interviews & expert tips</strong> — practice until you're confident, on any device</span>
+      </div>
+      <div class="for-alumni-feat">
+        <span class="for-alumni-feat-icon">&#128176;</span>
+        <span class="for-alumni-feat-text"><strong>Free first year for alumni</strong> — redeem your school's promo code for a full year of Pro at no cost</span>
+      </div>
+    </div>
+    <button class="for-alumni-cta" onclick="showPromoModal()">Redeem Your Alumni Code</button>
+  </div>
+
+  <!-- TESTIMONIALS -->
+  <div class="testimonials-card">
+    <h3>What Users Are Saying</h3>
+    <p class="testimonials-sub">Join thousands of job seekers preparing with RoleCall</p>
+    <div class="testimonial-item">
+      <div class="testimonial-quote">I used RoleCall to prep for my nursing interview and got the job! The questions were exactly what I was asked.</div>
+      <div class="testimonial-author"><strong>Sarah M.</strong> &mdash; Registered Nurse</div>
+    </div>
+    <div class="testimonial-item">
+      <div class="testimonial-quote">The expert tips helped me understand what interviewers actually want to hear. Way better than just Googling questions.</div>
+      <div class="testimonial-author"><strong>Marcus T.</strong> &mdash; Software Engineer</div>
+    </div>
+    <div class="testimonial-item">
+      <div class="testimonial-quote">As a career changer, the education paths showed me exactly what certs I needed. Super helpful for planning my next steps.</div>
+      <div class="testimonial-author"><strong>Jessica L.</strong> &mdash; Career Switcher</div>
+    </div>
+  </div>
+  </div>
 </div>
 
 <!-- SUGGESTIONS TAB SCREEN -->
@@ -842,6 +846,16 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
       <div class="more-item" onclick="window.open('https://rollcallinterviewprep.com/blog/', '_blank')" role="button" tabindex="0">
         <span class="more-icon" aria-hidden="true">&#128214;</span>
         <span class="more-label">Interview Tips Blog</span>
+        <span class="more-arrow" aria-hidden="true">&#8594;</span>
+      </div>
+      <div class="more-item" onclick="goSuggestions()" role="button" tabindex="0">
+        <span class="more-icon" aria-hidden="true">&#128161;</span>
+        <span class="more-label">Suggest a Role</span>
+        <span class="more-arrow" aria-hidden="true">&#8594;</span>
+      </div>
+      <div class="more-item" onclick="window.open('/faq.html', '_blank')" role="button" tabindex="0">
+        <span class="more-icon" aria-hidden="true">&#10067;</span>
+        <span class="more-label">FAQ</span>
         <span class="more-arrow" aria-hidden="true">&#8594;</span>
       </div>
     </div>
@@ -7151,6 +7165,7 @@ async function subscribe() {
 const APP_VERSION = '1.1.0';
 
 const UPDATES = [
+  { date: "Jun 2, 2026", title: "Schools Tab & Home Page Cleanup", desc: "New Schools tab in bottom nav for schools, alumni, and testimonials. Home page streamlined to focus on practice.", icon: "🎓" },
   { date: "Jun 2, 2026", title: "Schools Landing Page & FAQ", desc: "New dedicated page for schools with pricing info, plus an FAQ page answering 13 common questions.", icon: "🏫" },
   { date: "Jun 2, 2026", title: "Newsletter Signup & Testimonials", desc: "Subscribe to weekly interview tips on the home page, and see what other users are saying about RoleCall.", icon: "📬" },
   { date: "Jun 2, 2026", title: "4 New Blog Articles", desc: "Interview strategy guides: Why Do You Want to Work Here, Explaining Employment Gaps, Healthcare Interview Prep, and Tech Interview Questions 2026.", icon: "📝" },
@@ -7344,35 +7359,41 @@ const THEMES = [
 
 function updateThemeButton(key) {
   const t = THEMES.find(t => t.key === key) || THEMES[0];
-  document.getElementById('themeDot').style.background = t.accent;
-  document.getElementById('themeDropdownName').textContent = t.name;
+  var dot = document.getElementById('themeDot');
+  var name = document.getElementById('themeDropdownName');
+  if (dot) dot.style.background = t.accent;
+  if (name) name.textContent = t.name;
 }
 
 function renderThemeOptions() {
-  const menu = document.getElementById('themeDropdownMenu');
-  menu.innerHTML = '';
   const current = localStorage.getItem('preppro-theme') || 'dark';
+  const menu = document.getElementById('themeDropdownMenu');
+  const picker = document.getElementById('moreThemePicker');
   function applyTheme(key) {
     document.body.setAttribute('data-theme', key);
     localStorage.setItem('preppro-theme', key);
     updateThemeButton(key);
-    menu.querySelectorAll('.theme-option').forEach(o => o.classList.toggle('active', o.dataset.theme === key));
-    document.getElementById('themeDropdownBtn').classList.remove('open');
-    menu.classList.remove('open');
-    picker.querySelectorAll('.theme-pill').forEach(p => p.classList.toggle('active', p.dataset.theme === key));
+    if (menu) {
+      menu.querySelectorAll('.theme-option').forEach(o => o.classList.toggle('active', o.dataset.theme === key));
+      menu.classList.remove('open');
+    }
+    var btn = document.getElementById('themeDropdownBtn');
+    if (btn) btn.classList.remove('open');
+    if (picker) picker.querySelectorAll('.theme-pill').forEach(p => p.classList.toggle('active', p.dataset.theme === key));
     showThemeToast(key);
     playClick('select');
   }
-  THEMES.forEach(t => {
-    const opt = document.createElement('div');
-    opt.className = 'theme-option' + (t.key === current ? ' active' : '');
-    opt.dataset.theme = t.key;
-    opt.innerHTML = `<span class="theme-dot" style="background:${t.accent}"></span>${t.name}`;
-    opt.addEventListener('click', () => applyTheme(t.key));
-    menu.appendChild(opt);
-  });
-  // Also populate settings section theme picker
-  const picker = document.getElementById('moreThemePicker');
+  if (menu) {
+    menu.innerHTML = '';
+    THEMES.forEach(t => {
+      const opt = document.createElement('div');
+      opt.className = 'theme-option' + (t.key === current ? ' active' : '');
+      opt.dataset.theme = t.key;
+      opt.innerHTML = `<span class="theme-dot" style="background:${t.accent}"></span>${t.name}`;
+      opt.addEventListener('click', () => applyTheme(t.key));
+      menu.appendChild(opt);
+    });
+  }
   if (picker) {
     picker.innerHTML = '';
     const grid = document.createElement('div');
@@ -7391,21 +7412,24 @@ function renderThemeOptions() {
 }
 
 // === THEME DROPDOWN ===
-document.getElementById('themeDropdownBtn').addEventListener('click', e => {
-  e.stopPropagation();
-  const btn = document.getElementById('themeDropdownBtn');
-  const menu = document.getElementById('themeDropdownMenu');
-  btn.classList.toggle('open');
-  menu.classList.toggle('open');
-  btn.setAttribute('aria-expanded', btn.classList.contains('open'));
-});
-document.addEventListener('click', e => {
-  if (!e.target.closest('#themeDropdown')) {
-    document.getElementById('themeDropdownBtn').classList.remove('open');
-    document.getElementById('themeDropdownMenu').classList.remove('open');
-    document.getElementById('themeDropdownBtn').setAttribute('aria-expanded', 'false');
+(function() {
+  var dropdownBtn = document.getElementById('themeDropdownBtn');
+  var dropdownMenu = document.getElementById('themeDropdownMenu');
+  if (dropdownBtn) {
+    dropdownBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      dropdownBtn.classList.toggle('open');
+      if (dropdownMenu) dropdownMenu.classList.toggle('open');
+      dropdownBtn.setAttribute('aria-expanded', dropdownBtn.classList.contains('open'));
+    });
   }
-});
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#themeDropdown')) {
+      if (dropdownBtn) { dropdownBtn.classList.remove('open'); dropdownBtn.setAttribute('aria-expanded', 'false'); }
+      if (dropdownMenu) dropdownMenu.classList.remove('open');
+    }
+  });
+})();
 
 function showThemeToast(name) {
   const toast = document.getElementById('themeToast');
@@ -9023,9 +9047,9 @@ init();</script>
     <span class="tab-icon" aria-hidden="true">&#128227;</span>
     <span class="tab-label">Updates</span>
   </button>
-  <button class="tab-btn" data-tab="suggest-tab" onclick="switchTab('suggest-tab')" role="tab" aria-selected="false" aria-controls="screen-suggest-tab">
-    <span class="tab-icon" aria-hidden="true">&#128161;</span>
-    <span class="tab-label">Suggest</span>
+  <button class="tab-btn" data-tab="schools-tab" onclick="switchTab('schools-tab')" role="tab" aria-selected="false" aria-controls="screen-schools-tab">
+    <span class="tab-icon" aria-hidden="true">&#127891;</span>
+    <span class="tab-label">Schools</span>
   </button>
   <button class="tab-btn" data-tab="more" onclick="switchTab('more')" role="tab" aria-selected="false" aria-controls="screen-more">
     <span class="tab-icon" aria-hidden="true">&#8942;</span>
