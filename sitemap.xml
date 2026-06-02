@@ -1940,4 +1940,24 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  <url>
+    <loc>https://rollcallinterviewprep.com/blog/why-do-you-want-to-work-here.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://rollcallinterviewprep.com/blog/how-to-explain-employment-gaps.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://rollcallinterviewprep.com/blog/how-to-prepare-for-healthcare-interview.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://rollcallinterviewprep.com/blog/tech-interview-questions-2026.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>
