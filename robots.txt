@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /android/
+Disallow: /.firebase/
+Disallow: /outreach/
+
+Sitemap: https://rollcallinterviewprep.com/sitemap.xml
