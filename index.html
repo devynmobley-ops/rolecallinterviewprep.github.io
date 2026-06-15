@@ -778,15 +778,10 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
 </div>
 
 <!-- RESUME TAILORING SCREEN -->
-<div id="screen-resume" class="screen slide-left hidden">
-  <div class="header">
-    <div class="header-row">
-      <button class="back-btn" onclick="goBack()" aria-label="Go back">&#8592;</button>
-      <div>
-        <h1>Resume Tailor</h1>
-        <div class="subtitle">AI-powered resume optimization</div>
-      </div>
-    </div>
+<div id="screen-resume-tab" class="screen hidden tab-screen" role="tabpanel" aria-label="Resume Tailor">
+  <div class="roles-tab-header">
+    <div class="roles-tab-title">Resume Tailor</div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-top:2px">AI-powered resume optimization</div>
   </div>
   <div id="resumeBody" style="padding:0 20px 32px">
     <!-- Upload Section -->
@@ -1014,11 +1009,6 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
       <div class="more-item" onclick="showScreen('jobofferkit')" role="button" tabindex="0">
         <span class="more-icon" aria-hidden="true">&#128142;</span>
         <span class="more-label">The Job Offer Kit</span>
-        <span class="more-arrow" aria-hidden="true">&#8594;</span>
-      </div>
-      <div class="more-item" onclick="showScreen('resume')" role="button" tabindex="0">
-        <span class="more-icon" aria-hidden="true">&#128196;</span>
-        <span class="more-label">Resume Tailor</span>
         <span class="more-arrow" aria-hidden="true">&#8594;</span>
       </div>
     </div>
@@ -7736,7 +7726,7 @@ let navTimeout = null;
 let previousScreen = 'home';
 let currentTab = 'home';
 
-const TAB_SCREENS = ['home', 'roles-tab', 'mock-tab', 'updates-tab', 'suggest-tab', 'more'];
+const TAB_SCREENS = ['home', 'roles-tab', 'mock-tab', 'updates-tab', 'resume-tab', 'more'];
 
 function switchTab(tab) {
   playClick('tap');
@@ -9387,6 +9377,10 @@ init();</script>
   <button class="tab-btn" data-tab="schools-tab" onclick="switchTab('schools-tab')" role="tab" aria-selected="false" aria-controls="screen-schools-tab">
     <span class="tab-icon" aria-hidden="true">&#127891;</span>
     <span class="tab-label">Schools</span>
+  </button>
+  <button class="tab-btn" data-tab="resume-tab" onclick="switchTab('resume-tab')" role="tab" aria-selected="false" aria-controls="screen-resume-tab">
+    <span class="tab-icon" aria-hidden="true">&#128196;</span>
+    <span class="tab-label">Resume</span>
   </button>
   <button class="tab-btn" data-tab="more" onclick="switchTab('more')" role="tab" aria-selected="false" aria-controls="screen-more">
     <span class="tab-icon" aria-hidden="true">&#8942;</span>
