@@ -1237,6 +1237,7 @@ async function signInWithGoogle() {
   try {
     await auth.signInWithPopup(provider);
     showToast('Signed in successfully!');
+    switchTab('home');
   } catch (err) {
     if (err.code === 'auth/popup-closed-by-user') return;
     showToast('Sign-in failed. Please try again.');
@@ -1249,6 +1250,7 @@ async function signInWithEmail(email, password) {
   try {
     await auth.signInWithEmailAndPassword(email, password);
     showToast('Signed in!');
+    switchTab('home');
   } catch (err) {
     console.error('Sign-in failed, code:', err.code);
     // User not found or invalid credentials — try creating account
@@ -1258,6 +1260,7 @@ async function signInWithEmail(email, password) {
         await auth.createUserWithEmailAndPassword(email, password);
         console.log('Account created successfully');
         showToast('Account created!');
+        switchTab('home');
       } catch (createErr) {
         console.error('Create account failed:', createErr.code);
         showInputError('authPassword', 'authPasswordError', 'Error: ' + createErr.code);
