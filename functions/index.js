@@ -243,3 +243,41 @@ exports.checkSubscription = functions.https.onCall(async (data, context) => {
 
   return { isSubscribed: !subscriptionsSnap.empty };
 });
+
+// Newsletter signup — saves to Firestore + adds to Brevo mailing list
+exports.subscribeNewsletter = functions.https.onCall(async (data, context) => {
+  const { email } = data;
+  if (!email || typeof email !== 'string' || !email.includes('@')) {
+    throw new functions.https.HttpsError('invalid-argument', 'Valid email required');
+  }
+
+  // Save to Firestore
+  await admin.firestore().collection('newsletter').add({
+    email: email.toLowerCase().trim(),
+    subscribedAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  // Add to Brevo list
+  try {
+    const resp = await fetch('https://api.brevo.com/v3/contacts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'api-key': process.env.BREVO_API_KEY,
+      },
+      body: JSON.stringify({
+        email: email.toLowerCase().trim(),
+        listIds: [2],
+        updateEnabled: true,
+      }),
+    });
+    if (!resp.ok && resp.status !== 400) {
+      // 400 = contact already exists, which is fine
+      console.error('Brevo error:', resp.status, await resp.text());
+    }
+  } catch (err) {
+    console.error('Brevo request failed:', err.message);
+  }
+
+  return { success: true };
+});

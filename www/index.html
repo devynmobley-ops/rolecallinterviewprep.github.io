@@ -8888,11 +8888,8 @@ function subscribeNewsletter() {
   var btn = document.querySelector('.newsletter-form button');
   btn.textContent = '...';
   btn.disabled = true;
-  db.collection('newsletter').add({
-    email: email,
-    subscribedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    source: 'home-page'
-  }).then(function() {
+  var subscribe = firebase.functions().httpsCallable('subscribeNewsletter');
+  subscribe({ email: email }).then(function() {
     msg.className = 'newsletter-msg success';
     msg.textContent = 'You\'re subscribed! Check your inbox for tips.';
     document.getElementById('newsletterEmail').value = '';
