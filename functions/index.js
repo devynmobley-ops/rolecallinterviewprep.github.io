@@ -4,6 +4,26 @@ const Stripe = require('stripe');
 
 admin.initializeApp();
 
+// Helper: check if user has active subscription (Stripe or promo code)
+async function checkUserSubscription(uid) {
+  // Check Stripe subscriptions
+  const subSnap = await admin.firestore()
+    .collection('customers').doc(uid)
+    .collection('subscriptions')
+    .where('status', 'in', ['active', 'trialing'])
+    .get();
+  if (!subSnap.empty) return true;
+
+  // Check promo code access
+  const custDoc = await admin.firestore().collection('customers').doc(uid).get();
+  if (custDoc.exists && custDoc.data().promoCode) {
+    const promoExp = custDoc.data().promoExpiresAt;
+    if (!promoExp || promoExp.toDate() > new Date()) return true;
+  }
+
+  return false;
+}
+
 let _stripe = null;
 function getStripe() {
   if (!_stripe) {
@@ -288,15 +308,10 @@ exports.tailorResume = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
   }
 
-  // Check subscription
+  // Check subscription (Stripe or promo code)
   const uid = context.auth.uid;
-  const subscriptionsSnap = await admin.firestore()
-    .collection('customers').doc(uid)
-    .collection('subscriptions')
-    .where('status', 'in', ['active', 'trialing'])
-    .get();
-
-  if (subscriptionsSnap.empty) {
+  const hasSub = await checkUserSubscription(uid);
+  if (!hasSub) {
     throw new functions.https.HttpsError('permission-denied', 'Pro subscription required');
   }
 
@@ -415,15 +430,10 @@ exports.deepDive = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
   }
 
-  // Check subscription
+  // Check subscription (Stripe or promo code)
   const uid = context.auth.uid;
-  const subscriptionsSnap = await admin.firestore()
-    .collection('customers').doc(uid)
-    .collection('subscriptions')
-    .where('status', 'in', ['active', 'trialing'])
-    .get();
-
-  if (subscriptionsSnap.empty) {
+  const hasSub = await checkUserSubscription(uid);
+  if (!hasSub) {
     throw new functions.https.HttpsError('permission-denied', 'Pro subscription required');
   }
 
