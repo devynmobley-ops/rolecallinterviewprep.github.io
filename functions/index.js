@@ -303,7 +303,7 @@ exports.subscribeNewsletter = functions.https.onCall(async (data, context) => {
 });
 
 // Resume Tailoring — PDF + job description → Claude Haiku analysis
-exports.tailorResume = functions.https.onCall(async (data, context) => {
+exports.tailorResume = functions.runWith({ secrets: ['ANTHROPIC_API_KEY'] }).https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
   }
@@ -336,18 +336,16 @@ exports.tailorResume = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError('invalid-argument', 'Resume text is too short or empty. Please upload a text-based PDF.');
   }
 
-  // Call Claude Haiku
-  const Anthropic = require('@anthropic-ai/sdk');
-  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  // Call Claude Haiku via direct API
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    console.error('ANTHROPIC_API_KEY not set');
+    throw new functions.https.HttpsError('internal', 'API configuration error');
+  }
 
   let analysis;
   try {
-    const message = await anthropic.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 2048,
-      messages: [{
-        role: 'user',
-        content: `You are a professional resume consultant. Analyze this resume against the job description and provide actionable feedback.
+    const prompt = `You are a professional resume consultant. Analyze this resume against the job description and provide actionable feedback.
 
 RESUME:
 ${resumeText.substring(0, 8000)}
@@ -374,11 +372,30 @@ Focus on:
 3. Strengths that already align well
 4. Specific, actionable improvements
 
-Provide 3-5 items per category. Be specific and practical.`
-      }]
+Provide 3-5 items per category. Be specific and practical.`;
+
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 2048,
+        messages: [{ role: 'user', content: prompt }]
+      })
     });
 
-    const responseText = message.content[0].text.trim();
+    if (!resp.ok) {
+      const errText = await resp.text();
+      console.error('Claude API error:', resp.status, errText);
+      throw new Error('API returned ' + resp.status);
+    }
+
+    const result = await resp.json();
+    const responseText = result.content[0].text.trim();
     // Try to parse JSON from response
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
@@ -425,7 +442,7 @@ exports.getResumeHistory = functions.https.onCall(async (data, context) => {
 });
 
 // Deep Dive — AI-powered detailed question breakdown for Pro users
-exports.deepDive = functions.https.onCall(async (data, context) => {
+exports.deepDive = functions.runWith({ secrets: ['ANTHROPIC_API_KEY'] }).https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
   }
@@ -443,15 +460,16 @@ exports.deepDive = functions.https.onCall(async (data, context) => {
   }
 
   const Anthropic = require('@anthropic-ai/sdk');
-  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    console.error('ANTHROPIC_API_KEY not set');
+    throw new functions.https.HttpsError('internal', 'API configuration error');
+  }
+  const anthropic = new Anthropic({ apiKey });
 
   try {
-    const message = await anthropic.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1024,
-      messages: [{
-        role: 'user',
-        content: `You are an expert interview coach. Give a detailed breakdown of how to answer this interview question for a ${role || 'general'} role.
+    console.log('Calling Claude API with direct fetch...');
+    const prompt = `You are an expert interview coach. Give a detailed breakdown of how to answer this interview question for a ${role || 'general'} role.
 
 Question: "${question}"
 ${tip ? 'Basic tip: ' + tip : ''}
@@ -464,13 +482,58 @@ Provide a concise but detailed breakdown with these sections:
 4. COMMON MISTAKES — What to avoid
 5. PRO MOVE — One thing that separates great answers from good ones
 
-Keep it practical and specific. No fluff. Use bullet points for readability.`
-      }]
+Keep it practical and specific. No fluff. Use bullet points for readability.`;
+
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1024,
+        messages: [{ role: 'user', content: prompt }]
+      })
     });
 
-    return { content: message.content[0].text };
+    if (!resp.ok) {
+      const errText = await resp.text();
+      console.error('Claude API error:', resp.status, errText);
+      throw new Error('API returned ' + resp.status);
+    }
+
+    const result = await resp.json();
+    return { content: result.content[0].text };
   } catch (err) {
     console.error('Deep Dive error:', err.message);
-    throw new functions.https.HttpsError('internal', 'Analysis failed. Please try again.');
+    throw new functions.https.HttpsError('internal', 'Analysis failed: ' + err.message);
+  }
+});
+
+// Email notification when a problem report is submitted
+exports.onReportCreated = functions.firestore.document('reports/{reportId}').onCreate(async (snap, context) => {
+  const data = snap.data();
+  const brevoKey = process.env.BREVO_API_KEY;
+  if (!brevoKey) { console.log('No Brevo key, skipping email'); return; }
+
+  try {
+    await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'api-key': brevoKey,
+      },
+      body: JSON.stringify({
+        sender: { email: 'noreply@rollcallinterviewprep.com', name: 'RoleCall' },
+        to: [{ email: 'rollcallinterviewprep@outlook.com' }],
+        subject: `[RoleCall] Problem Report: ${data.category}`,
+        htmlContent: `<h2>New Problem Report</h2><p><strong>Category:</strong> ${data.category}</p><p><strong>Description:</strong> ${data.description}</p><p><strong>Email:</strong> ${data.email || 'Not provided'}</p><p><strong>User ID:</strong> ${data.userId || 'Anonymous'}</p><p><strong>URL:</strong> ${data.url || 'N/A'}</p><p><strong>User Agent:</strong> ${data.userAgent || 'N/A'}</p>`
+      })
+    });
+    console.log('Report notification sent');
+  } catch (err) {
+    console.error('Report email error:', err.message);
   }
 });

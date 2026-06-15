@@ -30,5 +30,12 @@ service cloud.firestore {
       allow read: if request.auth != null;
       allow write: if false;
     }
+
+    // Problem reports — authenticated write, server-only read
+    match /reports/{reportId} {
+      allow read: if false;
+      allow create: if request.auth != null;
+      allow update, delete: if false;
+    }
   }
 }

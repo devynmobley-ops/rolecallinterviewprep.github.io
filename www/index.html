@@ -1014,6 +1014,14 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
       </div>
     </div>
     <div class="more-section">
+      <div class="more-section-title">Support</div>
+      <div class="more-item" onclick="showReportModal()" role="button" tabindex="0">
+        <span class="more-icon" aria-hidden="true">&#128680;</span>
+        <span class="more-label">Report a Problem</span>
+        <span class="more-arrow" aria-hidden="true">&#8594;</span>
+      </div>
+    </div>
+    <div class="more-section">
       <div class="more-section-title">Legal</div>
       <div class="more-item" onclick="goPrivacy()" role="button" tabindex="0">
         <span class="more-icon" aria-hidden="true">&#128274;</span>
@@ -1058,6 +1066,29 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
     <div id="promoSuccess" style="font-size:13px;color:#2ecc71;margin-bottom:8px;display:none"></div>
     <button class="suggest-submit" onclick="redeemPromoCode()" id="promoSubmitBtn" style="width:100%">Redeem</button>
     <button onclick="hidePromoModal()" style="background:none;border:none;color:var(--text-secondary);font-size:13px;margin-top:12px;cursor:pointer">Cancel</button>
+  </div>
+</div>
+
+<!-- REPORT A PROBLEM MODAL -->
+<div class="onboarding-overlay hidden" id="reportOverlay" role="dialog" aria-modal="true" aria-label="Report a problem">
+  <div class="onboarding-content">
+    <div class="onboarding-icon">&#128680;</div>
+    <h2>Report a Problem</h2>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;line-height:1.5">Something not working? Let us know and we'll fix it.</p>
+    <select id="reportCategory" style="width:100%;padding:12px 16px;border-radius:var(--radius);border:1px solid var(--card-hover);background:var(--bg);color:var(--text);font-size:14px;outline:none;margin-bottom:12px" aria-label="Problem category">
+      <option value="">Select a category...</option>
+      <option value="bug">Bug or error</option>
+      <option value="login">Login / account issue</option>
+      <option value="payment">Payment / subscription issue</option>
+      <option value="feature">Feature not working</option>
+      <option value="other">Other</option>
+    </select>
+    <textarea id="reportDescription" placeholder="Describe what happened..." rows="4" style="width:100%;padding:12px 16px;border-radius:var(--radius);border:1px solid var(--card-hover);background:var(--bg);color:var(--text);font-size:14px;outline:none;resize:vertical;font-family:inherit;box-sizing:border-box;margin-bottom:12px" aria-label="Problem description"></textarea>
+    <input type="email" id="reportEmail" placeholder="Your email (optional)" autocomplete="email" style="width:100%;padding:12px 16px;border-radius:var(--radius);border:1px solid var(--card-hover);background:var(--bg);color:var(--text);font-size:14px;outline:none;margin-bottom:12px" aria-label="Your email">
+    <div id="reportError" style="font-size:13px;color:#e74c3c;margin-bottom:8px;display:none" role="alert"></div>
+    <div id="reportSuccess" style="font-size:13px;color:#2ecc71;margin-bottom:8px;display:none"></div>
+    <button class="suggest-submit" onclick="submitReport()" id="reportSubmitBtn" style="width:100%">Submit Report</button>
+    <button onclick="hideReportModal()" style="background:none;border:none;color:var(--text-secondary);font-size:13px;margin-top:12px;cursor:pointer">Cancel</button>
   </div>
 </div>
 
@@ -1369,6 +1400,60 @@ function showPromoModal() {
 
 function hidePromoModal() {
   document.getElementById('promoOverlay').classList.add('hidden');
+}
+
+// === REPORT A PROBLEM ===
+function showReportModal() {
+  document.getElementById('reportCategory').value = '';
+  document.getElementById('reportDescription').value = '';
+  document.getElementById('reportEmail').value = currentUser ? (currentUser.email || '') : '';
+  document.getElementById('reportError').style.display = 'none';
+  document.getElementById('reportSuccess').style.display = 'none';
+  document.getElementById('reportOverlay').classList.remove('hidden');
+}
+
+function hideReportModal() {
+  document.getElementById('reportOverlay').classList.add('hidden');
+}
+
+async function submitReport() {
+  var category = document.getElementById('reportCategory').value;
+  var description = document.getElementById('reportDescription').value.trim();
+  var email = document.getElementById('reportEmail').value.trim();
+  var errorEl = document.getElementById('reportError');
+  var successEl = document.getElementById('reportSuccess');
+  var btn = document.getElementById('reportSubmitBtn');
+
+  errorEl.style.display = 'none';
+  successEl.style.display = 'none';
+
+  if (!category) { errorEl.textContent = 'Please select a category.'; errorEl.style.display = 'block'; return; }
+  if (!description) { errorEl.textContent = 'Please describe the problem.'; errorEl.style.display = 'block'; return; }
+
+  btn.textContent = 'Submitting...';
+  btn.disabled = true;
+
+  try {
+    await db.collection('reports').add({
+      category: category,
+      description: description,
+      email: email || null,
+      userId: currentUser ? currentUser.uid : null,
+      userAgent: navigator.userAgent,
+      url: window.location.href,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    successEl.textContent = 'Report submitted! We\'ll look into it.';
+    successEl.style.display = 'block';
+    setTimeout(hideReportModal, 2000);
+  } catch (e) {
+    console.error('Report error:', e);
+    errorEl.textContent = 'Failed to submit. Please try again.';
+    errorEl.style.display = 'block';
+  } finally {
+    btn.textContent = 'Submit Report';
+    btn.disabled = false;
+  }
 }
 
 async function redeemPromoCode() {
@@ -7330,6 +7415,7 @@ async function subscribe() {
 const APP_VERSION = '1.1.0';
 
 const UPDATES = [
+  { date: "Jun 15, 2026", title: "Deep Dive — AI Question Breakdown", desc: "New Deep Dive button on every interview question. Pro users get a detailed breakdown: what they're really asking, how to structure your answer, example starters, common mistakes, and pro moves.", icon: "🔬" },
   { date: "Jun 14, 2026", title: "Resume Tailor — AI-Powered Resume Optimization", desc: "New tab lets Pro users upload a resume PDF and paste a job description. Claude AI analyzes the match, suggests keyword improvements, rewrites bullet points, and gives you a match score.", icon: "📄" },
   { date: "Jun 14, 2026", title: "Job Offer Kit Now on the Site", desc: "New screen showcasing The Job Offer Kit — 7 sections of interview scripts, resume formulas, salary negotiation guides, and bonus templates. Available under More → Resources.", icon: "💎" },
   { date: "Jun 14, 2026", title: "Newsletter Now Powered by Brevo", desc: "Newsletter signups are now connected to Brevo for automated email delivery. Weekly interview tips coming soon to your inbox.", icon: "📬" },
