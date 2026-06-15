@@ -1250,28 +1250,20 @@ async function signInWithEmail(email, password) {
     await auth.signInWithEmailAndPassword(email, password);
     showToast('Signed in!');
   } catch (err) {
-    console.error('Email sign-in error:', err.code, err.message);
+    console.error('Sign-in failed, code:', err.code);
     // User not found or invalid credentials — try creating account
     if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential' || err.code === 'auth/invalid-login-credentials') {
+      console.log('Attempting to create account...');
       try {
         await auth.createUserWithEmailAndPassword(email, password);
+        console.log('Account created successfully');
         showToast('Account created!');
       } catch (createErr) {
-        console.error('Email sign-up error:', createErr.code, createErr.message);
-        if (createErr.code === 'auth/weak-password') {
-          showInputError('authPassword', 'authPasswordError', 'Password must be at least 6 characters.');
-        } else if (createErr.code === 'auth/email-already-in-use') {
-          showInputError('authPassword', 'authPasswordError', 'Wrong password. Please try again.');
-        } else {
-          showInputError('authPassword', 'authPasswordError', 'Could not create account: ' + createErr.code);
-        }
+        console.error('Create account failed:', createErr.code);
+        showInputError('authPassword', 'authPasswordError', 'Error: ' + createErr.code);
       }
-    } else if (err.code === 'auth/invalid-email') {
-      showInputError('authEmail', 'authEmailError', 'Please enter a valid email address.');
-    } else if (err.code === 'auth/too-many-requests') {
-      showInputError('authPassword', 'authPasswordError', 'Too many attempts. Please try again later.');
     } else {
-      showInputError('authPassword', 'authPasswordError', 'Error: ' + (err.code || 'unknown'));
+      showInputError('authPassword', 'authPasswordError', 'Error: ' + err.code);
     }
   }
 }
