@@ -11,6 +11,12 @@ service cloud.firestore {
         allow read: if request.auth != null && request.auth.uid == uid;
         allow write: if false; // Only server-side (Cloud Functions) can write
       }
+
+      // Users can read their own resume analyses
+      match /resumes/{resumeId} {
+        allow read: if request.auth != null && request.auth.uid == uid;
+        allow write: if false; // Only server-side (Cloud Functions) can write
+      }
     }
 
     // Role scores for percentile comparison — read: authenticated, write: server-only

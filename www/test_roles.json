@@ -1,0 +1,152 @@
+{
+  "Mobile Developer": [
+    {
+      "q": "What is your experience with native vs cross-platform mobile development?",
+      "tip": "Compare React Native, Flutter, Swift/Kotlin. Discuss trade-offs in performance, developer experience, code sharing, and when to choose each approach."
+    },
+    {
+      "q": "How do you handle different screen sizes and device fragmentation?",
+      "tip": "Discuss responsive layouts, constraint-based design, adaptive components, testing on multiple devices, and platform-specific guidelines."
+    },
+    {
+      "q": "Describe your approach to mobile app performance optimization.",
+      "tip": "Mention profiling tools, memory management, lazy loading, image optimization, reducing network calls, and battery consumption."
+    },
+    {
+      "q": "How do you manage app state in a mobile application?",
+      "tip": "Discuss patterns like Redux, MobX, Provider, Riverpod, or platform-native solutions. Explain when local vs global state is appropriate."
+    },
+    {
+      "q": "What is your experience with push notifications and background processing?",
+      "tip": "Show knowledge of FCM, APNs, background fetch, work managers, notification channels, and handling notifications in various app states."
+    },
+    {
+      "q": "How do you handle offline functionality and data syncing?",
+      "tip": "Discuss local databases (SQLite, Realm, Core Data), conflict resolution strategies, sync queues, and presenting offline state to users."
+    },
+    {
+      "q": "Describe your approach to mobile app security.",
+      "tip": "Mention certificate pinning, secure storage, code obfuscation, API security, and OWASP Mobile Top 10."
+    },
+    {
+      "q": "How do you test mobile applications?",
+      "tip": "Discuss unit testing, UI testing frameworks (XCTest, Espresso, Detox), device farms, beta distribution, and crash reporting."
+    },
+    {
+      "q": "What is your experience with app store submission and release management?",
+      "tip": "Show knowledge of review guidelines, provisioning profiles, signing, staged rollouts, A/B testing, and handling rejections."
+    },
+    {
+      "q": "How do you handle deep linking and navigation in mobile apps?",
+      "tip": "Discuss URL schemes, universal links, app links, navigation libraries, and managing complex navigation stacks."
+    },
+    {
+      "q": "Describe a time you had to optimize an app that was crashing or running slowly.",
+      "tip": "Use STAR. Show profiling skills, root cause analysis, and measurable improvement in crash rates or performance metrics."
+    },
+    {
+      "q": "How do you stay current with mobile development trends and platform updates?",
+      "tip": "Mention WWDC, Google I/O, blogs, podcasts, community involvement, and how you evaluate new APIs and tools."
+    }
+  ],
+  "Machine Learning Engineer": [
+    {
+      "q": "Describe your experience building and deploying machine learning models.",
+      "tip": "Walk through your pipeline: data collection, feature engineering, model selection, training, evaluation, deployment, and monitoring."
+    },
+    {
+      "q": "How do you handle imbalanced datasets?",
+      "tip": "Discuss oversampling (SMOTE), undersampling, class weights, appropriate metrics (F1, AUC-PR), and when each technique is most effective."
+    },
+    {
+      "q": "What is your approach to feature engineering?",
+      "tip": "Show domain knowledge, feature selection techniques, handling missing values, encoding categorical variables, and automated feature generation."
+    },
+    {
+      "q": "How do you evaluate model performance beyond accuracy?",
+      "tip": "Discuss confusion matrices, precision, recall, F1, AUC-ROC, calibration, and choosing metrics aligned with business objectives."
+    },
+    {
+      "q": "Describe your experience with deep learning frameworks.",
+      "tip": "Compare TensorFlow, PyTorch, JAX. Discuss model architectures you have built, training strategies, and debugging approaches."
+    },
+    {
+      "q": "How do you handle model drift and monitoring in production?",
+      "tip": "Discuss data distribution monitoring, performance decay detection, retraining triggers, A/B testing new models, and rollback strategies."
+    },
+    {
+      "q": "What is your approach to hyperparameter tuning?",
+      "tip": "Discuss grid search, random search, Bayesian optimization, early stopping, and how you balance computational cost with model improvement."
+    },
+    {
+      "q": "How do you make models explainable to non-technical stakeholders?",
+      "tip": "Mention SHAP, LIME, feature importance, partial dependence plots, and translating model outputs into business narratives."
+    },
+    {
+      "q": "Describe your experience with NLP or computer vision projects.",
+      "tip": "Show depth in at least one domain: specific architectures (transformers, CNNs), datasets, preprocessing, and results achieved."
+    },
+    {
+      "q": "How do you manage ML experiment tracking and reproducibility?",
+      "tip": "Discuss MLflow, Weights & Biases, version control for data and models, random seeds, and documenting experiment configurations."
+    },
+    {
+      "q": "What is your experience with deploying models at scale?",
+      "tip": "Discuss model serving (TF Serving, TorchServe), containerization, latency optimization, batching, and infrastructure choices."
+    },
+    {
+      "q": "How do you ensure fairness and reduce bias in your models?",
+      "tip": "Discuss bias detection, fairness metrics, representative training data, adversarial debiasing, and organizational accountability."
+    }
+  ],
+  "QA Engineer": [
+    {
+      "q": "How do you design a comprehensive test strategy for a new feature?",
+      "tip": "Discuss risk-based testing, test levels (unit, integration, E2E), test data management, and aligning test scope with requirements."
+    },
+    {
+      "q": "Describe your experience with test automation frameworks.",
+      "tip": "Be specific about tools (Selenium, Cypress, Playwright, Appium), architecture patterns (Page Object), and maintenance strategies."
+    },
+    {
+      "q": "How do you decide what to automate vs test manually?",
+      "tip": "Show judgment: automate repetitive regression and data-driven tests; manually test exploratory, usability, and one-time scenarios."
+    },
+    {
+      "q": "What is your approach to API testing?",
+      "tip": "Discuss tools (Postman, REST Assured), contract testing, schema validation, error handling, and performance testing at the API level."
+    },
+    {
+      "q": "How do you handle flaky tests?",
+      "tip": "Discuss root cause analysis, common causes (timing, data dependencies, environment), quarantine strategies, and fixing vs removing flaky tests."
+    },
+    {
+      "q": "Describe your experience with performance and load testing.",
+      "tip": "Mention tools (JMeter, Gatling, k6), defining SLAs, identifying bottlenecks, and communicating results to development teams."
+    },
+    {
+      "q": "How do you ensure test coverage is adequate?",
+      "tip": "Discuss code coverage tools, requirement traceability matrices, risk coverage, mutation testing, and the difference between coverage and quality."
+    },
+    {
+      "q": "What is your approach to testing in CI/CD pipelines?",
+      "tip": "Discuss test pyramid, parallel execution, fast feedback loops, test tagging, and balancing speed with thoroughness."
+    },
+    {
+      "q": "How do you handle testing with incomplete or changing requirements?",
+      "tip": "Show collaboration with product owners, exploratory testing, risk assessment, and adapting test plans as requirements evolve."
+    },
+    {
+      "q": "Describe a critical bug you found and how you communicated it.",
+      "tip": "Use STAR. Show severity assessment, clear reproduction steps, impact analysis, and effective communication with stakeholders."
+    },
+    {
+      "q": "How do you approach accessibility testing?",
+      "tip": "Discuss WCAG guidelines, screen reader testing, keyboard navigation, color contrast tools, and integrating accessibility into test plans."
+    },
+    {
+      "q": "What metrics do you use to measure testing effectiveness?",
+      "tip": "Discuss defect escape rate, test coverage, mean time to detection, automation percentage, and how you use metrics to improve processes."
+    }
+  ]
+}

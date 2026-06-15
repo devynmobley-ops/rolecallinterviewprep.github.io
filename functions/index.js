@@ -281,3 +281,130 @@ exports.subscribeNewsletter = functions.https.onCall(async (data, context) => {
 
   return { success: true };
 });
+
+// Resume Tailoring — PDF + job description → Claude Haiku analysis
+exports.tailorResume = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  // Check subscription
+  const uid = context.auth.uid;
+  const subscriptionsSnap = await admin.firestore()
+    .collection('customers').doc(uid)
+    .collection('subscriptions')
+    .where('status', 'in', ['active', 'trialing'])
+    .get();
+
+  if (subscriptionsSnap.empty) {
+    throw new functions.https.HttpsError('permission-denied', 'Pro subscription required');
+  }
+
+  const { resumeBase64, jobDescription } = data;
+  if (!resumeBase64 || !jobDescription) {
+    throw new functions.https.HttpsError('invalid-argument', 'resumeBase64 and jobDescription required');
+  }
+
+  // Parse PDF
+  const pdfParse = require('pdf-parse');
+  const pdfBuffer = Buffer.from(resumeBase64, 'base64');
+  let resumeText;
+  try {
+    const pdfData = await pdfParse(pdfBuffer);
+    resumeText = pdfData.text;
+  } catch (err) {
+    console.error('PDF parse error:', err.message);
+    throw new functions.https.HttpsError('invalid-argument', 'Could not parse PDF. Please upload a valid resume.');
+  }
+
+  if (!resumeText || resumeText.trim().length < 50) {
+    throw new functions.https.HttpsError('invalid-argument', 'Resume text is too short or empty. Please upload a text-based PDF.');
+  }
+
+  // Call Claude Haiku
+  const Anthropic = require('@anthropic-ai/sdk');
+  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+  let analysis;
+  try {
+    const message = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 2048,
+      messages: [{
+        role: 'user',
+        content: `You are a professional resume consultant. Analyze this resume against the job description and provide actionable feedback.
+
+RESUME:
+${resumeText.substring(0, 8000)}
+
+JOB DESCRIPTION:
+${jobDescription.substring(0, 4000)}
+
+Respond in this exact JSON format (no markdown, just raw JSON):
+{
+  "matchScore": <number 0-100>,
+  "summary": "<2-3 sentence overall assessment>",
+  "missingKeywords": ["<skill or keyword from job description missing in resume>", "..."],
+  "strengths": ["<what aligns well between resume and job>", "..."],
+  "suggestedBullets": [
+    {"original": "<current bullet or section>", "improved": "<better version tailored to job>"},
+    ...
+  ],
+  "actionItems": ["<specific action to improve the resume>", "..."]
+}
+
+Focus on:
+1. Keywords/skills from the job description that are missing from the resume
+2. Bullet points that could be reworded to better match the job
+3. Strengths that already align well
+4. Specific, actionable improvements
+
+Provide 3-5 items per category. Be specific and practical.`
+      }]
+    });
+
+    const responseText = message.content[0].text.trim();
+    // Try to parse JSON from response
+    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error('Could not parse AI response as JSON');
+    }
+    analysis = JSON.parse(jsonMatch[0]);
+  } catch (err) {
+    console.error('Claude API error:', err.message);
+    throw new functions.https.HttpsError('internal', 'Analysis failed. Please try again.');
+  }
+
+  // Save to Firestore
+  const timestamp = admin.firestore.FieldValue.serverTimestamp();
+  await admin.firestore()
+    .collection('customers').doc(uid)
+    .collection('resumes').add({
+      ...analysis,
+      jobDescription: jobDescription.substring(0, 500),
+      createdAt: timestamp,
+    });
+
+  return analysis;
+});
+
+// Get resume analysis history for the current user
+exports.getResumeHistory = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const uid = context.auth.uid;
+  const snapshot = await admin.firestore()
+    .collection('customers').doc(uid)
+    .collection('resumes')
+    .orderBy('createdAt', 'desc')
+    .limit(10)
+    .get();
+
+  return snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data(),
+    createdAt: doc.data().createdAt?.toDate?.()?.toISOString() || null,
+  }));
+});
