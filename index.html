@@ -1099,6 +1099,8 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
         <div class="concept-pills" id="missedConcepts"></div>
         <button class="show-tip-btn" id="showTipBtn" onclick="toggleExpertTip()">Show Expert Tip</button>
         <div class="expert-tip" id="expertTip"><strong>Expert Tip:</strong> <span id="expertTipText"></span></div>
+        <button class="show-tip-btn" id="deepDiveBtn" onclick="deepDive()" style="margin-top:8px;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;display:none">&#128161; Deep Dive</button>
+        <div id="deepDiveContent" style="display:none;margin-top:12px;padding:16px;background:var(--card);border-radius:12px;border-left:3px solid var(--accent);font-size:13px;line-height:1.7;color:var(--text-secondary)"></div>
       </div>
     </div>
   </div>
@@ -7250,6 +7252,7 @@ let currentCategory = null;
 let currentRole = null;
 let mockQuestions = [];
 let mockIndex = 0;
+let currentMockRole = '';
 let mockTimerInterval = null;
 let mockSeconds = 0;
 let mockAnswers = []; // per-question: {answer, score, matched, missed}
@@ -8287,6 +8290,7 @@ function checkAnswer() {
     document.getElementById('expertTip').classList.remove('visible');
     document.getElementById('showTipBtn').style.display = '';
   }
+  showDeepDiveBtn();
 
   // Disable check button after checking
   document.getElementById('checkBtn').disabled = true;
@@ -8300,7 +8304,43 @@ function toggleExpertTip() {
   btn.textContent = tip.classList.contains('visible') ? 'Hide Expert Tip' : 'Show Expert Tip';
 }
 
+function showDeepDiveBtn() {
+  var btn = document.getElementById('deepDiveBtn');
+  if (btn) btn.style.display = isSubscribed ? 'block' : 'none';
+  var content = document.getElementById('deepDiveContent');
+  if (content) content.style.display = 'none';
+}
+
+async function deepDive() {
+  if (!currentUser) { showToast('Please sign in.'); return; }
+  if (!isSubscribed) { showPaywall(); return; }
+  var btn = document.getElementById('deepDiveBtn');
+  var content = document.getElementById('deepDiveContent');
+  btn.textContent = 'Analyzing...';
+  btn.disabled = true;
+  content.style.display = 'block';
+  content.innerHTML = '<div style="text-align:center;color:var(--text-secondary)">Loading deep dive...</div>';
+  try {
+    var currentQ = mockQuestions[mockIndex];
+    var fn = firebase.functions().httpsCallable('deepDive');
+    var result = await fn({ question: currentQ.q, tip: currentQ.tip, role: currentMockRole });
+    var text = result.data.content;
+    // Convert markdown-style formatting to HTML
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    text = text.replace(/\n/g, '<br>');
+    content.innerHTML = text;
+  } catch (e) {
+    console.error('Deep Dive error:', e);
+    if (e.code === 'permission-denied') { showPaywall(); return; }
+    content.innerHTML = '<div style="color:#ff4757">Failed to load. Please try again.</div>';
+  } finally {
+    btn.textContent = '💡 Deep Dive';
+    btn.disabled = false;
+  }
+}
+
 function startMock(roleName, questions) {
+  currentMockRole = roleName;
   const shuffled = [...questions].sort(() => Math.random() - 0.5);
   if (isSubscribed && shuffled.length > 1) {
     showMockCountPicker(roleName, shuffled);
@@ -8431,6 +8471,7 @@ function showMockCard() {
       document.getElementById('expertTip').classList.remove('visible');
       document.getElementById('showTipBtn').style.display = '';
     }
+    showDeepDiveBtn();
   } else {
     textarea.value = '';
     checkBtn.disabled = false;

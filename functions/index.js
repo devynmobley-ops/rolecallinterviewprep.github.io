@@ -408,3 +408,59 @@ exports.getResumeHistory = functions.https.onCall(async (data, context) => {
     createdAt: doc.data().createdAt?.toDate?.()?.toISOString() || null,
   }));
 });
+
+// Deep Dive — AI-powered detailed question breakdown for Pro users
+exports.deepDive = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  // Check subscription
+  const uid = context.auth.uid;
+  const subscriptionsSnap = await admin.firestore()
+    .collection('customers').doc(uid)
+    .collection('subscriptions')
+    .where('status', 'in', ['active', 'trialing'])
+    .get();
+
+  if (subscriptionsSnap.empty) {
+    throw new functions.https.HttpsError('permission-denied', 'Pro subscription required');
+  }
+
+  const { question, tip, role } = data;
+  if (!question) {
+    throw new functions.https.HttpsError('invalid-argument', 'question required');
+  }
+
+  const Anthropic = require('@anthropic-ai/sdk');
+  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+  try {
+    const message = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1024,
+      messages: [{
+        role: 'user',
+        content: `You are an expert interview coach. Give a detailed breakdown of how to answer this interview question for a ${role || 'general'} role.
+
+Question: "${question}"
+${tip ? 'Basic tip: ' + tip : ''}
+
+Provide a concise but detailed breakdown with these sections:
+
+1. WHAT THEY'RE REALLY ASKING — The hidden intent behind the question
+2. HOW TO STRUCTURE YOUR ANSWER — A clear framework to follow
+3. EXAMPLE STARTER — A strong opening sentence they can adapt
+4. COMMON MISTAKES — What to avoid
+5. PRO MOVE — One thing that separates great answers from good ones
+
+Keep it practical and specific. No fluff. Use bullet points for readability.`
+      }]
+    });
+
+    return { content: message.content[0].text };
+  } catch (err) {
+    console.error('Deep Dive error:', err.message);
+    throw new functions.https.HttpsError('internal', 'Analysis failed. Please try again.');
+  }
+});
