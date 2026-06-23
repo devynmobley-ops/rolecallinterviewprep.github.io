@@ -454,6 +454,7 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
   .then(function() { return loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-storage-compat.min.js'); })
   .then(function() { return loadScript('https://js.stripe.com/v3/'); });
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body data-theme="dark">
 <a href="#screen-home" class="skip-nav">Skip to main content</a>
@@ -804,33 +805,29 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
 
     <!-- Results Section (hidden until analysis completes) -->
     <div id="resumeResults" style="display:none">
-      <!-- Match Score -->
-      <div style="background:var(--card);border-radius:14px;padding:20px;text-align:center;margin-bottom:16px;border:1px solid var(--card-hover)">
-        <div style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Match Score</div>
-        <div id="resumeScore" style="font-size:48px;font-weight:800;color:var(--accent)"></div>
-        <div id="resumeSummary" style="font-size:13px;color:var(--text-secondary);margin-top:8px;line-height:1.5"></div>
+      <div style="background:#2ed573;color:#fff;padding:8px 14px;border-radius:8px;margin-bottom:12px;font-size:13px;font-weight:700;text-align:center">✅ NEW RESUME BUILDER v2 ACTIVE</div>
+      <!-- Score + Summary Bar -->
+      <div style="display:flex;align-items:center;gap:12px;background:var(--card);border-radius:14px;padding:14px 18px;margin-bottom:12px;border:1px solid var(--card-hover)">
+        <div id="resumeScorePill" style="font-size:20px;font-weight:800;color:var(--accent);min-width:56px;text-align:center"></div>
+        <div style="flex:1">
+          <div id="resumeSummary" style="font-size:13px;color:var(--text-secondary);line-height:1.5"></div>
+        </div>
       </div>
 
-      <!-- Missing Keywords -->
-      <div style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Missing Keywords</div>
-      <div id="resumeMissingKeywords" style="margin-bottom:18px"></div>
+      <!-- View Changes Toggle -->
+      <div id="resumeChangesToggle" onclick="toggleChanges()" style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--accent);cursor:pointer;margin-bottom:12px;padding:8px 0">
+        <span id="changesArrow">&#9654;</span> View Changes
+      </div>
+      <div id="resumeChangesPanel" style="display:none;margin-bottom:16px"></div>
 
-      <!-- Strengths -->
-      <div style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Strengths</div>
-      <div id="resumeStrengths" style="margin-bottom:18px"></div>
+      <!-- Rebuilt Resume Preview -->
+      <div id="resumePreview" style="background:#fff;border-radius:14px;padding:28px 24px;margin-bottom:16px;color:#1a1a1a;font-family:Georgia,'Times New Roman',serif;line-height:1.6;box-shadow:0 2px 12px rgba(0,0,0,0.08)"></div>
 
-      <!-- Suggested Bullets -->
-      <div style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Suggested Improvements</div>
-      <div id="resumeBullets" style="margin-bottom:18px"></div>
-
-      <!-- Action Items -->
-      <div style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Action Items</div>
-      <div id="resumeActions" style="margin-bottom:24px"></div>
-
-      <!-- Buttons -->
-      <div style="display:flex;gap:10px">
-        <button onclick="resetResumeForm()" style="flex:1;padding:14px;border:1px solid var(--card-hover);border-radius:14px;background:var(--card);color:var(--text);font-size:14px;font-weight:700;cursor:pointer">New Analysis</button>
-        <button onclick="showResumeHistory()" style="flex:1;padding:14px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:14px;font-weight:700;cursor:pointer">History</button>
+      <!-- Action Buttons -->
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button onclick="downloadResumePDF()" style="flex:1;min-width:140px;padding:14px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:14px;font-weight:700;cursor:pointer">&#128190; Download PDF</button>
+        <button onclick="resetResumeForm()" style="flex:1;min-width:140px;padding:14px;border:1px solid var(--card-hover);border-radius:14px;background:var(--card);color:var(--text);font-size:14px;font-weight:700;cursor:pointer">New Analysis</button>
+        <button onclick="showResumeHistory()" style="flex:1;min-width:140px;padding:14px;border:1px solid var(--card-hover);border-radius:14px;background:var(--card);color:var(--text);font-size:14px;font-weight:700;cursor:pointer">History</button>
       </div>
     </div>
 
@@ -9184,40 +9181,146 @@ function displayResumeResults(data) {
   document.getElementById('resumeUploadSection').style.display = 'none';
   document.getElementById('resumeResults').style.display = 'block';
   document.getElementById('resumeHistorySection').style.display = 'none';
-  // Score
+  document.getElementById('resumeChangesPanel').style.display = 'none';
+  document.getElementById('changesArrow').innerHTML = '&#9654;';
+
+  // Score pill
   var score = data.matchScore || 0;
-  var scoreEl = document.getElementById('resumeScore');
-  scoreEl.textContent = score + '%';
-  scoreEl.style.color = score >= 70 ? '#2ed573' : score >= 50 ? '#ffa502' : '#ff4757';
+  var pill = document.getElementById('resumeScorePill');
+  pill.textContent = score + '%';
+  pill.style.color = score >= 70 ? '#2ed573' : score >= 50 ? '#ffa502' : '#ff4757';
+
+  // Summary
   document.getElementById('resumeSummary').textContent = data.summary || '';
-  // Missing keywords
-  var mk = document.getElementById('resumeMissingKeywords');
-  mk.innerHTML = '';
-  (data.missingKeywords || []).forEach(function(kw) {
-    mk.innerHTML += '<div style="background:var(--card);border-radius:10px;padding:10px 14px;margin-bottom:6px;font-size:13px;color:var(--text);border-left:3px solid #ff4757">✖ ' + kw + '</div>';
+
+  // Changes summary
+  var changes = data.changesSummary || [];
+  var cp = document.getElementById('resumeChangesPanel');
+  cp.innerHTML = '';
+  changes.forEach(function(c) {
+    cp.innerHTML += '<div style="background:var(--card);border-radius:10px;padding:10px 14px;margin-bottom:6px;font-size:13px;color:var(--text);border-left:3px solid var(--accent)">' + c + '</div>';
   });
-  // Strengths
-  var st = document.getElementById('resumeStrengths');
-  st.innerHTML = '';
-  (data.strengths || []).forEach(function(s) {
-    st.innerHTML += '<div style="background:var(--card);border-radius:10px;padding:10px 14px;margin-bottom:6px;font-size:13px;color:var(--text);border-left:3px solid #2ed573">✔ ' + s + '</div>';
-  });
-  // Suggested bullets
-  var sb = document.getElementById('resumeBullets');
-  sb.innerHTML = '';
-  (data.suggestedBullets || []).forEach(function(b) {
-    sb.innerHTML += '<div style="background:var(--card);border-radius:10px;padding:12px 14px;margin-bottom:8px;border-left:3px solid var(--accent)">' +
-      '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px">Before:</div>' +
-      '<div style="font-size:13px;color:var(--text-secondary);text-decoration:line-through;margin-bottom:8px">' + (b.original || '') + '</div>' +
-      '<div style="font-size:12px;color:var(--accent);margin-bottom:4px">After:</div>' +
-      '<div style="font-size:13px;color:var(--text);font-weight:600">' + (b.improved || '') + '</div></div>';
-  });
-  // Action items
-  var ai = document.getElementById('resumeActions');
-  ai.innerHTML = '';
-  (data.actionItems || []).forEach(function(item, i) {
-    ai.innerHTML += '<div style="background:var(--card);border-radius:10px;padding:10px 14px;margin-bottom:6px;font-size:13px;color:var(--text)"><span style="color:var(--accent);font-weight:700">' + (i + 1) + '.</span> ' + item + '</div>';
-  });
+  document.getElementById('resumeChangesToggle').style.display = changes.length ? 'flex' : 'none';
+
+  // Render rebuilt resume
+  var r = data.resume;
+  if (!r) {
+    document.getElementById('resumePreview').innerHTML = '<div style="text-align:center;color:#999;padding:40px">No resume data available.</div>';
+    return;
+  }
+  var html = '';
+
+  // Header
+  if (r.header) {
+    html += '<div style="text-align:center;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid #e0e0e0">';
+    if (r.header.name) html += '<div style="font-size:22px;font-weight:700;color:#1a1a1a;letter-spacing:0.5px">' + escHtml(r.header.name) + '</div>';
+    if (r.header.title) html += '<div style="font-size:14px;color:#555;margin-top:4px;font-style:italic">' + escHtml(r.header.title) + '</div>';
+    if (r.header.contact && r.header.contact.length) {
+      html += '<div style="font-size:12px;color:#777;margin-top:8px">' + r.header.contact.filter(function(c){return c;}).map(escHtml).join(' &bull; ') + '</div>';
+    }
+    html += '</div>';
+  }
+
+  // Summary
+  if (r.summary) {
+    html += '<div style="margin-bottom:18px"><div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Professional Summary</div>';
+    html += '<div style="font-size:13px;color:#333">' + escHtml(r.summary) + '</div></div>';
+  }
+
+  // Experience
+  if (r.experience && r.experience.length) {
+    html += '<div style="margin-bottom:18px"><div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Experience</div>';
+    r.experience.forEach(function(exp) {
+      html += '<div style="margin-bottom:14px">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap">';
+      html += '<div style="font-size:14px;font-weight:700;color:#1a1a1a">' + escHtml(exp.title || '') + '</div>';
+      if (exp.dates) html += '<div style="font-size:12px;color:#777">' + escHtml(exp.dates) + '</div>';
+      html += '</div>';
+      if (exp.company) html += '<div style="font-size:13px;color:#555;margin-bottom:6px">' + escHtml(exp.company) + '</div>';
+      if (exp.bullets && exp.bullets.length) {
+        html += '<ul style="margin:6px 0 0 18px;padding:0">';
+        exp.bullets.forEach(function(b) {
+          html += '<li style="font-size:13px;color:#333;margin-bottom:4px;line-height:1.5">' + escHtml(b) + '</li>';
+        });
+        html += '</ul>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Education
+  if (r.education && r.education.length) {
+    html += '<div style="margin-bottom:18px"><div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Education</div>';
+    r.education.forEach(function(edu) {
+      html += '<div style="margin-bottom:8px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap">';
+      html += '<div><span style="font-size:14px;font-weight:700;color:#1a1a1a">' + escHtml(edu.degree || '') + '</span>';
+      if (edu.school) html += '<span style="font-size:13px;color:#555"> — ' + escHtml(edu.school) + '</span></div>';
+      if (edu.dates) html += '<div style="font-size:12px;color:#777">' + escHtml(edu.dates) + '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Skills
+  if (r.skills && r.skills.length) {
+    html += '<div style="margin-bottom:18px"><div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Skills</div>';
+    html += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
+    r.skills.forEach(function(s) {
+      html += '<span style="background:#f0f0f0;color:#333;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:500">' + escHtml(s) + '</span>';
+    });
+    html += '</div></div>';
+  }
+
+  // Certifications
+  if (r.certifications && r.certifications.length) {
+    html += '<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Certifications</div>';
+    r.certifications.forEach(function(c) {
+      html += '<div style="font-size:13px;color:#333;margin-bottom:4px">&#8226; ' + escHtml(c) + '</div>';
+    });
+    html += '</div>';
+  }
+
+  document.getElementById('resumePreview').innerHTML = html;
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toggleChanges() {
+  var panel = document.getElementById('resumeChangesPanel');
+  var arrow = document.getElementById('changesArrow');
+  if (panel.style.display === 'none') {
+    panel.style.display = 'block';
+    arrow.innerHTML = '&#9660;';
+  } else {
+    panel.style.display = 'none';
+    arrow.innerHTML = '&#9654;';
+  }
+}
+
+function downloadResumePDF() {
+  var el = document.getElementById('resumePreview');
+  if (!el || !el.innerHTML.trim()) {
+    alert('No resume to download.');
+    return;
+  }
+  var nameEl = el.querySelector('div');
+  var filename = 'tailored-resume.pdf';
+  if (nameEl) {
+    var nameText = nameEl.textContent.trim();
+    if (nameText) filename = nameText.replace(/[^a-zA-Z0-9\s-]/g, '').replace(/\s+/g, '_') + '_Resume.pdf';
+  }
+  var opt = {
+    margin: [0.5, 0.5, 0.5, 0.5],
+    filename: filename,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+  html2pdf().set(opt).from(el).save();
 }
 
 function resetResumeForm() {
@@ -9251,11 +9354,14 @@ function showResumeHistory() {
       var date = item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Unknown';
       var score = item.matchScore || 0;
       var color = score >= 70 ? '#2ed573' : score >= 50 ? '#ffa502' : '#ff4757';
-      list.innerHTML += '<div style="background:var(--card);border-radius:14px;padding:14px 16px;margin-bottom:8px;cursor:pointer" onclick="displayResumeResults(' + JSON.stringify(item).replace(/"/g, '&quot;') + ')">' +
+      var title = (item.resume && item.resume.header && item.resume.header.title) || '';
+      var jdPreview = (item.jobDescription || '').substring(0, 60);
+      list.innerHTML += '<div style="background:var(--card);border-radius:14px;padding:14px 16px;margin-bottom:8px;cursor:pointer" data-item=\'' + JSON.stringify(item).replace(/'/g, '&#39;') + '\' onclick="displayResumeResults(JSON.parse(this.getAttribute(\'data-item\')))">' +
         '<div style="display:flex;justify-content:space-between;align-items:center">' +
         '<div style="font-size:13px;color:var(--text)">' + date + '</div>' +
         '<div style="font-size:16px;font-weight:800;color:' + color + '">' + score + '%</div></div>' +
-        '<div style="font-size:12px;color:var(--text-secondary);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (item.jobDescription || '').substring(0, 80) + '...</div></div>';
+        (title ? '<div style="font-size:12px;color:var(--accent);margin-top:4px">' + escHtml(title) + '</div>' : '') +
+        '<div style="font-size:12px;color:var(--text-secondary);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escHtml(jdPreview) + '...</div></div>';
     });
   }).catch(function(e) {
     list.innerHTML = '<div style="text-align:center;padding:20px;color:#ff4757">Failed to load history.</div>';

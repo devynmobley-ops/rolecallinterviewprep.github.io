@@ -345,7 +345,7 @@ exports.tailorResume = functions.runWith({ secrets: ['ANTHROPIC_API_KEY'] }).htt
 
   let analysis;
   try {
-    const prompt = `You are a professional resume consultant. Analyze this resume against the job description and provide actionable feedback.
+    const prompt = `You are a professional resume writer. Given the user's existing resume and a job description, REWRITE the resume to be tailored for that specific job. Preserve all factual information — do not fabricate experience, degrees, or credentials. But reword, reorder, and restructure everything to align with the job description.
 
 RESUME:
 ${resumeText.substring(0, 8000)}
@@ -355,24 +355,48 @@ ${jobDescription.substring(0, 4000)}
 
 Respond in this exact JSON format (no markdown, just raw JSON):
 {
-  "matchScore": <number 0-100>,
-  "summary": "<2-3 sentence overall assessment>",
-  "missingKeywords": ["<skill or keyword from job description missing in resume>", "..."],
-  "strengths": ["<what aligns well between resume and job>", "..."],
-  "suggestedBullets": [
-    {"original": "<current bullet or section>", "improved": "<better version tailored to job>"},
-    ...
+  "matchScore": <number 0-100 representing how well the original resume matched>,
+  "summary": "<2-3 sentence assessment of the original fit>",
+  "changesSummary": [
+    "<key change 1 — e.g. 'Rewrote professional summary to emphasize project management experience'>",
+    "<key change 2>",
+    "<key change 3>"
   ],
-  "actionItems": ["<specific action to improve the resume>", "..."]
+  "resume": {
+    "header": {
+      "name": "<full name from resume>",
+      "title": "<professional title or headline, tailored to the job>",
+      "contact": ["<email>", "<phone>", "<location>", "<linkedin if present>"]
+    },
+    "summary": "<3-4 sentence professional summary rewritten to emphasize the most relevant qualifications for this specific job>",
+    "experience": [
+      {
+        "company": "<company name>",
+        "title": "<job title>",
+        "dates": "<date range>",
+        "bullets": ["<rewritten bullet emphasizing relevant skills/keywords from the job description>", "..."]
+      }
+    ],
+    "education": [
+      {
+        "school": "<school name>",
+        "degree": "<degree and major>",
+        "dates": "<date range or graduation year>"
+      }
+    ],
+    "skills": ["<most relevant skill for the job first>", "..."],
+    "certifications": ["<certification name>", "..."]
+  }
 }
 
-Focus on:
-1. Keywords/skills from the job description that are missing from the resume
-2. Bullet points that could be reworded to better match the job
-3. Strengths that already align well
-4. Specific, actionable improvements
-
-Provide 3-5 items per category. Be specific and practical.`;
+Rules:
+- Rewrite ALL bullet points to emphasize skills and keywords from the job description
+- Reorder skills so the most job-relevant ones appear first
+- Tailor the professional summary to the specific role
+- If the resume has sections not listed above (projects, volunteer work, awards), include them under "experience" or as a new field
+- Do NOT invent experience, degrees, certifications, or skills that aren't in the original resume
+- Keep dates, company names, and school names exactly as they appear in the original
+- If contact info is missing from the resume, leave that field empty rather than guessing`;
 
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -382,8 +406,8 @@ Provide 3-5 items per category. Be specific and practical.`;
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 2048,
+        model: 'claude-sonnet-4-6',
+        max_tokens: 4096,
         messages: [{ role: 'user', content: prompt }]
       })
     });
@@ -402,6 +426,8 @@ Provide 3-5 items per category. Be specific and practical.`;
       throw new Error('Could not parse AI response as JSON');
     }
     analysis = JSON.parse(jsonMatch[0]);
+    console.log('AI response keys:', Object.keys(analysis));
+    console.log('Has resume?', !!analysis.resume);
   } catch (err) {
     console.error('Claude API error:', err.message);
     throw new functions.https.HttpsError('internal', 'Analysis failed. Please try again.');
@@ -412,7 +438,10 @@ Provide 3-5 items per category. Be specific and practical.`;
   await admin.firestore()
     .collection('customers').doc(uid)
     .collection('resumes').add({
-      ...analysis,
+      matchScore: analysis.matchScore,
+      summary: analysis.summary,
+      changesSummary: analysis.changesSummary || [],
+      resume: analysis.resume || {},
       jobDescription: jobDescription.substring(0, 500),
       createdAt: timestamp,
     });
