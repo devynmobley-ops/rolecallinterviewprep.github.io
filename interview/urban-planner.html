@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,11 @@
           <ul><li>PAB-accredited planning degree (4-6 years)</li><li>AICP exam after 2+ years professional experience</li><li>LEED AP or GISP certification + planning practice</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Urban Planning</h3>
+          <ul><li>Urban Planning Theory</li><li>Land Use Planning</li><li>GIS</li><li>Environmental Planning</li><li>Transportation Planning</li><li>Community Development</li><li>Practicum</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

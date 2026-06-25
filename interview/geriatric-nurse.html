@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -285,17 +293,30 @@
       <div class="certs-grid">
         <div class="cert-block">
           <h3>Degrees</h3>
-          <ul><li>BSN (Bachelor of Science in Nursing)</li><li>MSN Gerontology</li><li>ADN + geriatric certification</li></ul>
+          <ul><li>BSN (Bachelor of Science in Nursing)</li><li>ADN + geriatric experience</li><li>MSN Gerontology (advanced practice)</li></ul>
         </div>
         <div class="cert-block">
           <h3>Certifications</h3>
-          <ul><li>RN License (NCLEX-RN)</li><li>Gerontological Nursing Certification (RN-BC)</li><li>Certified Gerontological Nurse Practitioner (CGNP)</li></ul>
+          <ul><li>RN License (NCLEX-RN)</li><li>Gerontological Nursing Certification (GERO-BC via ANCC)</li><li>BLS/CPR Certification</li></ul>
         </div>
         <div class="cert-block">
           <h3>Career Paths</h3>
-          <ul><li>BSN program + geriatric clinical rotations</li><li>ANCC Gerontological Nursing certification (after 2 years experience)</li><li>MSN Gerontology NP program + CGNP certification</li></ul>
+          <ul><li>BSN program + geriatric clinical rotations</li><li>ANCC Gerontological Nursing certification (after 2 years experience)</li><li>MSN Gerontology for advanced practice + GERO-BC certification</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BSN (Bachelor of Science in Nursing)</h3>
+          <ul><li>Anatomy &amp; Physiology</li><li>Microbiology</li><li>Pharmacology</li><li>Fundamentals of Nursing</li><li>Medical-Surgical Nursing</li><li>Pediatric Nursing</li><li>Obstetric Nursing</li><li>Psychiatric Nursing</li><li>Community Health</li><li>Clinical Practicums</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — ADN + geriatric experience</h3>
+          <ul><li>Anatomy &amp; Physiology</li><li>Microbiology</li><li>Pharmacology</li><li>Fundamentals of Nursing</li><li>Medical-Surgical Nursing</li><li>Clinical Practicums</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MSN Gerontology (advanced practice)</h3>
+          <ul><li>Advanced Pathophysiology</li><li>Advanced Pharmacology</li><li>Advanced Health Assessment</li><li>Evidence-Based Practice</li><li>Nursing Leadership</li><li>Specialty Clinical Practicum</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">
@@ -306,7 +327,7 @@
     <section class="related-section">
       <h2>Related Healthcare Roles</h2>
       <div class="related-grid">
-          <a href="/interview/nurse.html" class="related-role">Nurse</a>
+          <a href="/interview/registered-nurse.html" class="related-role">Registered Nurse</a>
           <a href="/interview/medical-assistant.html" class="related-role">Medical Assistant</a>
           <a href="/interview/pharmacy-technician.html" class="related-role">Pharmacy Technician</a>
           <a href="/interview/health-administrator.html" class="related-role">Health Administrator</a>

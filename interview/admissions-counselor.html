@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,15 @@
           <ul><li>Bachelor's degree + campus involvement or internship</li><li>Entry-level admissions role + professional development</li><li>NACAC conferences + enrollment management coursework</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Education</h3>
+          <ul><li>Foundations of Education</li><li>Child Development</li><li>Curriculum Design</li><li>Classroom Management</li><li>Educational Psychology</li><li>Assessment &amp; Evaluation</li><li>Teaching Methods</li><li>Student Teaching Practicum</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Communications</h3>
+          <ul><li>Mass Communication</li><li>Public Speaking</li><li>Interpersonal Communication</li><li>Media Studies</li><li>Organizational Communication</li><li>Digital Media</li><li>Research Methods</li><li>Senior Seminar</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

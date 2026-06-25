@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,19 @@
           <ul><li>CS or game dev degree + portfolio of shipped games</li><li>Unity/Unreal online courses + game jam projects</li><li>Self-taught + indie releases + portfolio building</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Computer Science</h3>
+          <ul><li>Intro to Programming</li><li>Data Structures &amp; Algorithms</li><li>Discrete Mathematics</li><li>Operating Systems</li><li>Databases</li><li>Computer Networks</li><li>Software Engineering</li><li>Calculus I &amp; II</li><li>Computer Architecture</li><li>Capstone Project</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Game Development</h3>
+          <ul><li>Game Design Fundamentals</li><li>Game Programming</li><li>3D Modeling &amp; Animation</li><li>Physics for Games</li><li>AI for Games</li><li>Graphics Programming</li><li>Multiplayer Networking</li><li>Level Design</li><li>Game Engine Architecture</li><li>Senior Game Project</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Interactive Media</h3>
+          <ul><li>Design Fundamentals</li><li>Interactive Storytelling</li><li>Web Development</li><li>UX/UI Design</li><li>Motion Graphics</li><li>3D Modeling</li><li>Audio/Video Production</li><li>Interactive Prototyping</li><li>Accessibility</li><li>Portfolio Capstone</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

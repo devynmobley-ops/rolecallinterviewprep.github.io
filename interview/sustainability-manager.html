@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,19 @@
           <ul><li>Environmental science or business degree + sustainability experience</li><li>ISSP-SA exam + corporate sustainability projects</li><li>LEED AP or GRI Academy courses + progressive experience</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Environmental Science</h3>
+          <ul><li>Environmental Science</li><li>Ecology</li><li>Chemistry</li><li>Biology</li><li>GIS</li><li>Statistics</li><li>Environmental Policy</li><li>Field Methods</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Sustainability</h3>
+          <ul><li>Environmental Science</li><li>Sustainable Business</li><li>Renewable Energy</li><li>Policy Analysis</li><li>Research Methods</li><li>Capstone</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MBA + sustainability focus</h3>
+          <ul><li>Financial Accounting</li><li>Sustainable Business</li><li>Environmental Policy</li><li>Corporate Finance</li><li>Operations Management</li><li>Business Strategy</li><li>ESG Reporting</li><li>Capstone</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

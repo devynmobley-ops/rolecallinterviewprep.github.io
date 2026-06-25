@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,15 @@
           <ul><li>Science degree + pharma company training program</li><li>NAPSRx CNPR online course + exam</li><li>PhRMA Code training + field shadowing</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Biology/Chemistry</h3>
+          <ul><li>General Biology</li><li>General Chemistry</li><li>Organic Chemistry</li><li>Biochemistry</li><li>Genetics</li><li>Physics</li><li>Research Methods</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Life Sciences</h3>
+          <ul><li>Biology</li><li>Chemistry</li><li>Biochemistry</li><li>Genetics</li><li>Microbiology</li><li>Research Methods</li><li>Statistics</li><li>Capstone</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

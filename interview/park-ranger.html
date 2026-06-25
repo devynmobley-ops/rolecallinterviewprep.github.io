@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,19 @@
           <ul><li>Environmental science or parks degree + internships</li><li>EMT certification course + seasonal ranger positions</li><li>NPS Type I/II law enforcement academy (if applicable)</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Environmental Science</h3>
+          <ul><li>Environmental Science</li><li>Ecology</li><li>Chemistry</li><li>Biology</li><li>GIS</li><li>Statistics</li><li>Environmental Policy</li><li>Field Methods</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Parks &amp; Recreation</h3>
+          <ul><li>Recreation Programming</li><li>Park Management</li><li>Natural Resource Conservation</li><li>Event Planning</li><li>Practicum</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Criminal Justice</h3>
+          <ul><li>Intro to Criminal Justice</li><li>Criminology</li><li>Criminal Law &amp; Procedure</li><li>Corrections</li><li>Policing</li><li>Juvenile Justice</li><li>Research Methods</li><li>Senior Seminar</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

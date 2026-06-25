@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,19 @@
           <ul><li>Google free technical writing courses (online)</li><li>STC membership + CPTC prep</li><li>Build a portfolio via open-source contributions</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BA English/Communications</h3>
+          <ul><li>English Composition</li><li>Literature Survey</li><li>Creative Writing</li><li>Public Speaking</li><li>Media Studies</li><li>Rhetoric &amp; Persuasion</li><li>Research Methods</li><li>Senior Seminar</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Technical Communication</h3>
+          <ul><li>Technical Writing</li><li>Document Design</li><li>Editing &amp; Style</li><li>UX Writing</li><li>API Documentation</li><li>Visual Communication</li><li>Content Strategy</li><li>Portfolio</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Computer Science + writing focus</h3>
+          <ul><li>Intro to Programming</li><li>Data Structures</li><li>Technical Writing</li><li>Documentation</li><li>Web Development</li><li>Capstone</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -289,13 +297,26 @@
         </div>
         <div class="cert-block">
           <h3>Certifications</h3>
-          <ul><li>Google Data Analytics Certificate</li><li>Microsoft Certified: Data Analyst</li><li>IBM Data Science Professional</li></ul>
+          <ul><li>Google Data Analytics Certificate</li><li>Microsoft Certified: Data Analyst (PL-300)</li><li>IBM Data Analyst Professional Certificate</li></ul>
         </div>
         <div class="cert-block">
           <h3>Career Paths</h3>
-          <ul><li>Google Career Certificates (6 months, online)</li><li>Microsoft Learn + practice datasets</li><li>Coursera IBM Professional Certificate</li></ul>
+          <ul><li>Google Career Certificates (6 months, online)</li><li>Microsoft Learn + practice datasets + Power BI</li><li>Coursera IBM Data Analyst Professional Certificate</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Statistics</h3>
+          <ul><li>Calculus I-III</li><li>Linear Algebra</li><li>Probability Theory</li><li>Statistical Inference</li><li>Regression Analysis</li><li>Experimental Design</li><li>Statistical Computing (R/SAS)</li><li>Bayesian Statistics</li><li>Capstone</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Mathematics</h3>
+          <ul><li>Calculus I-III</li><li>Linear Algebra</li><li>Differential Equations</li><li>Probability &amp; Statistics</li><li>Abstract Algebra</li><li>Real Analysis</li><li>Mathematical Modeling</li><li>Numerical Methods</li><li>Senior Seminar</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Data Science</h3>
+          <ul><li>Intro to Programming</li><li>Statistics &amp; Probability</li><li>Linear Algebra</li><li>Machine Learning</li><li>Data Visualization</li><li>Databases &amp; SQL</li><li>Big Data Technologies</li><li>Data Mining</li><li>Python for Data Science</li><li>Capstone Project</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

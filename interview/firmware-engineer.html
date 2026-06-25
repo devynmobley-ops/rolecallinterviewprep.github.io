@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,19 @@
           <ul><li>EE or CompE degree + embedded C/C++ projects</li><li>ARM online training + accreditation exam</li><li>Self-study with Arduino/Raspberry Pi + portfolio</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Computer Engineering</h3>
+          <ul><li>C/C++ Programming</li><li>Digital Logic Design</li><li>Computer Architecture</li><li>Embedded Systems</li><li>Operating Systems</li><li>Signals &amp; Systems</li><li>Electronics Circuits</li><li>Microprocessors</li><li>VLSI Design</li><li>Senior Design Project</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Electrical Engineering</h3>
+          <ul><li>Circuit Analysis</li><li>Electronics</li><li>Signals &amp; Systems</li><li>Electromagnetics</li><li>Control Systems</li><li>Digital Design</li><li>Senior Design</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MS Embedded Systems</h3>
+          <ul><li>Real-Time Operating Systems</li><li>Embedded C/C++</li><li>Hardware/Software Co-Design</li><li>Signal Processing</li><li>VLSI Design</li><li>IoT Protocols</li><li>Thesis/Capstone</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

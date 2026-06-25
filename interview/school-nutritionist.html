@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,15 @@
           <ul><li>ACEND-accredited nutrition degree + dietetic internship</li><li>SNS credential through SNA (after nutrition experience)</li><li>ServSafe certification + school food service experience</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Dietetics/Nutrition</h3>
+          <ul><li>General Chemistry</li><li>Biochemistry</li><li>Nutrition Science</li><li>Medical Nutrition Therapy</li><li>Food Science</li><li>Community Nutrition</li><li>Food Service Management</li><li>Clinical Practicum</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MS Nutrition</h3>
+          <ul><li>Advanced Nutrition Science</li><li>Medical Nutrition Therapy</li><li>Research Methods</li><li>Biochemistry</li><li>Community Nutrition</li><li>Thesis</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

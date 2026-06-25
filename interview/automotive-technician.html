@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,15 @@
           <ul><li>Community college auto tech program (2 years)</li><li>ASE exams after 2 years experience + prep guides</li><li>State inspector training + exam</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — Certificate program</h3>
+          <ul><li>Core coursework (varies by program)</li><li>Hands-on lab/clinical training</li><li>Safety &amp; compliance</li><li>Industry certification prep</li><li>Externship/Practicum</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — Trade school diploma</h3>
+          <ul><li>Safety &amp; OSHA Standards</li><li>Blueprint Reading</li><li>Tools &amp; Equipment</li><li>Hands-On Lab Training</li><li>Code &amp; Regulations</li><li>Specialty Techniques</li><li>Practicum/Externship</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

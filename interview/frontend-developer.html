@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,19 @@
           <ul><li>CS degree or coding bootcamp + portfolio</li><li>Coursera Meta certificate (7 months) + projects</li><li>freeCodeCamp + personal projects + open source contributions</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Computer Science</h3>
+          <ul><li>Intro to Programming</li><li>Data Structures &amp; Algorithms</li><li>Discrete Mathematics</li><li>Operating Systems</li><li>Databases</li><li>Computer Networks</li><li>Software Engineering</li><li>Calculus I &amp; II</li><li>Computer Architecture</li><li>Capstone Project</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Web Development</h3>
+          <ul><li>HTML/CSS Fundamentals</li><li>JavaScript Programming</li><li>Front-End Frameworks</li><li>Back-End Development</li><li>Databases</li><li>Responsive Design</li><li>Web Accessibility</li><li>Version Control (Git)</li><li>API Development</li><li>Portfolio Capstone</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — Bootcamp certificate</h3>
+          <ul><li>HTML/CSS/JavaScript</li><li>Front-End Framework (React/Vue)</li><li>Back-End (Node.js/Python)</li><li>Databases (SQL/NoSQL)</li><li>Git &amp; Version Control</li><li>APIs &amp; REST</li><li>Deployment &amp; DevOps Basics</li><li>Portfolio Projects</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,15 @@
           <ul><li>Teaching experience + graduate degree + leadership roles</li><li>National Board Certification + department leadership</li><li>Administrative license program + progressive school leadership</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MEd (Master of Education)</h3>
+          <ul><li>Advanced Curriculum Design</li><li>Educational Research</li><li>Instructional Technology</li><li>Differentiated Instruction</li><li>Educational Leadership</li><li>Action Research</li><li>Capstone</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — EdD/PhD (for higher ed)</h3>
+          <ul><li>Higher Education Administration</li><li>Research Methods</li><li>Policy Analysis</li><li>Dissertation</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

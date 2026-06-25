@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,19 @@
           <ul><li>MPH or MS Epi program (2 years) + practicum</li><li>NCBP CPH exam + applied experience</li><li>Fellowship (CDC EIS, state health dept) + field experience</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MPH (Master of Public Health)</h3>
+          <ul><li>Epidemiology</li><li>Biostatistics</li><li>Environmental Health</li><li>Health Policy</li><li>Social &amp; Behavioral Health</li><li>Practicum</li><li>Capstone</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MS Epidemiology</h3>
+          <ul><li>Epidemiological Methods</li><li>Biostatistics</li><li>Research Design</li><li>Data Analysis</li><li>Disease Surveillance</li><li>Thesis</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — PhD Epidemiology</h3>
+          <ul><li>Epidemiological Methods</li><li>Biostatistics</li><li>Research Design</li><li>Dissertation</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">
@@ -306,7 +327,7 @@
     <section class="related-section">
       <h2>Related Healthcare Roles</h2>
       <div class="related-grid">
-          <a href="/interview/nurse.html" class="related-role">Nurse</a>
+          <a href="/interview/registered-nurse.html" class="related-role">Registered Nurse</a>
           <a href="/interview/medical-assistant.html" class="related-role">Medical Assistant</a>
           <a href="/interview/pharmacy-technician.html" class="related-role">Pharmacy Technician</a>
           <a href="/interview/health-administrator.html" class="related-role">Health Administrator</a>

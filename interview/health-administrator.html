@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,19 @@
           <ul><li>University MHA or MBA program</li><li>ACHE membership + Board of Governors exam</li><li>On-the-job experience + professional development</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Health Administration</h3>
+          <ul><li>Healthcare Systems</li><li>Health Economics</li><li>Healthcare Law</li><li>Hospital Operations</li><li>Quality Improvement</li><li>Health Informatics</li><li>Practicum</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MHA (Master of Health Admin)</h3>
+          <ul><li>Healthcare Systems</li><li>Health Economics</li><li>Healthcare Law</li><li>Hospital Operations</li><li>Quality Improvement</li><li>Finance</li><li>Capstone</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MBA Healthcare</h3>
+          <ul><li>Financial Accounting</li><li>Healthcare Systems</li><li>Health Economics</li><li>Healthcare Law</li><li>Operations Management</li><li>Business Strategy</li><li>Leadership</li><li>Capstone</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">
@@ -306,7 +327,7 @@
     <section class="related-section">
       <h2>Related Healthcare Roles</h2>
       <div class="related-grid">
-          <a href="/interview/nurse.html" class="related-role">Nurse</a>
+          <a href="/interview/registered-nurse.html" class="related-role">Registered Nurse</a>
           <a href="/interview/medical-assistant.html" class="related-role">Medical Assistant</a>
           <a href="/interview/pharmacy-technician.html" class="related-role">Pharmacy Technician</a>
           <a href="/interview/physical-therapist.html" class="related-role">Physical Therapist</a>

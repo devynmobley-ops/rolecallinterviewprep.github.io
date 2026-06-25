@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -289,13 +297,26 @@
         </div>
         <div class="cert-block">
           <h3>Certifications</h3>
-          <ul><li>Google Ads Certification</li><li>HubSpot Inbound Marketing</li><li>AMA Professional Certified Marketer</li></ul>
+          <ul><li>Google Ads Certification + GA4 Certification</li><li>HubSpot Inbound Marketing</li><li>Meta Blueprint Digital Marketing Associate</li></ul>
         </div>
         <div class="cert-block">
           <h3>Career Paths</h3>
-          <ul><li>University marketing program or MBA</li><li>Google Skillshop (free) + HubSpot Academy</li><li>AMA PCM exam after marketing experience</li></ul>
+          <ul><li>University marketing program or MBA</li><li>Google Skillshop (free) + HubSpot Academy</li><li>Meta Blueprint + AMA PCM exam after marketing experience</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Marketing</h3>
+          <ul><li>Principles of Marketing</li><li>Consumer Behavior</li><li>Marketing Research</li><li>Digital Marketing</li><li>Brand Management</li><li>Advertising &amp; Promotion</li><li>Sales Management</li><li>Capstone</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BBA Marketing</h3>
+          <ul><li>Principles of Accounting</li><li>Microeconomics</li><li>Macroeconomics</li><li>Marketing Principles</li><li>Consumer Behavior</li><li>Digital Marketing</li><li>Brand Management</li><li>Business Statistics</li><li>Capstone</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MBA Marketing</h3>
+          <ul><li>Financial Accounting</li><li>Managerial Economics</li><li>Marketing Management</li><li>Consumer Behavior</li><li>Digital Marketing</li><li>Brand Strategy</li><li>Business Strategy</li><li>Capstone</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

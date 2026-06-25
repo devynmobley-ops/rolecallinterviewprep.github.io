@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,15 @@
           <ul><li>Music production school or self-taught with YouTube/courses</li><li>Avid Pro Tools certification + portfolio building</li><li>Collaborate with artists + release music + build credits</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Music Production</h3>
+          <ul><li>Music Theory</li><li>Recording Techniques</li><li>Music Production</li><li>Mixing &amp; Mastering</li><li>Sound Design</li><li>Portfolio</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — Self-taught + portfolio</h3>
+          <ul><li>Self-directed learning</li><li>Online courses (Udemy, Coursera)</li><li>Personal projects</li><li>Open-source contributions</li><li>Portfolio building</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,15 @@
           <ul><li>Puppetry degree + puppet building apprenticeship + portfolio</li><li>Art/fabrication background + puppet theater experience</li><li>Self-taught + community puppet theater + festival work</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BFA Puppetry</h3>
+          <ul><li>Puppet Construction</li><li>Puppet Performance</li><li>Stage Design</li><li>Scripting</li><li>Directing</li><li>Senior Production</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MFA Puppet Arts</h3>
+          <ul><li>Puppet Construction</li><li>Puppet Performance</li><li>Directing</li><li>Design</li><li>Teaching Practicum</li><li>Thesis Production</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

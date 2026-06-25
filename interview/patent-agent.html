@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,11 @@
           <ul><li>Technical degree + patent bar exam prep</li><li>USPTO registration exam (patent bar) + study course</li><li>Patent agent training at law firm or IP boutique</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — Technical degree required</h3>
+          <ul><li>Core technical coursework</li><li>Hands-on lab training</li><li>Safety &amp; compliance</li><li>Industry certification prep</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

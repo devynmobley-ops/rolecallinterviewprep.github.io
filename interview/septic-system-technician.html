@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,11 @@
           <ul><li>On-the-job training + state licensing exam</li><li>NOWRA certification program + field apprenticeship</li><li>Environmental science background + installer certification</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — No degree required</h3>
+          <ul><li>On-the-job training</li><li>Apprenticeship (if applicable)</li><li>OSHA safety certification</li><li>Trade-specific licensing exam prep</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,15 @@
           <ul><li>4-year OD program after undergraduate prerequisites</li><li>NBEO Parts I, II, III + state licensing exam</li><li>Residency for specialty (if pursuing) + state licensure</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — OD (Doctor of Optometry)</h3>
+          <ul><li>Anatomy of the Eye</li><li>Optics</li><li>Pharmacology</li><li>Clinical Diagnosis</li><li>Contact Lenses</li><li>Low Vision</li><li>Clinical Rotations</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Biology/Pre-Optometry</h3>
+          <ul><li>General Biology</li><li>General Chemistry</li><li>Organic Chemistry</li><li>Physics</li><li>Biochemistry</li><li>Anatomy</li><li>Calculus</li><li>OAT Prep</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">
@@ -306,7 +323,7 @@
     <section class="related-section">
       <h2>Related Healthcare Roles</h2>
       <div class="related-grid">
-          <a href="/interview/nurse.html" class="related-role">Nurse</a>
+          <a href="/interview/registered-nurse.html" class="related-role">Registered Nurse</a>
           <a href="/interview/medical-assistant.html" class="related-role">Medical Assistant</a>
           <a href="/interview/pharmacy-technician.html" class="related-role">Pharmacy Technician</a>
           <a href="/interview/health-administrator.html" class="related-role">Health Administrator</a>

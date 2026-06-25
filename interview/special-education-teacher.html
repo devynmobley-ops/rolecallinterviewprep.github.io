@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,15 @@
           <ul><li>University SPED program + student teaching</li><li>Praxis SPED exam + state licensure</li><li>BCBA coursework (verified) + 2000 hours supervised</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Special Education</h3>
+          <ul><li>Intro to Special Education</li><li>Behavior Management</li><li>Assistive Technology</li><li>Inclusive Classrooms</li><li>Learning Disabilities</li><li>Applied Behavior Analysis</li><li>IEP Development</li><li>Student Teaching</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MEd Special Education</h3>
+          <ul><li>Special Education Law</li><li>Inclusive Classrooms</li><li>Behavior Management</li><li>Assistive Technology</li><li>Assessment</li><li>Practicum</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

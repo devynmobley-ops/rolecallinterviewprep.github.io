@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,15 @@
           <ul><li>Accredited school counseling master's + practicum</li><li>State licensure exam + supervised hours</li><li>NBCC NCC/NCSC certification after experience</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MEd Counseling</h3>
+          <ul><li>Counseling Theories</li><li>Group Counseling</li><li>Career Counseling</li><li>Assessment</li><li>Multicultural Counseling</li><li>Practicum</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MS Counseling Psychology</h3>
+          <ul><li>Counseling Theories</li><li>Abnormal Psychology</li><li>Group Counseling</li><li>Career Counseling</li><li>Multicultural Counseling</li><li>Research Methods</li><li>Clinical Practicum</li><li>Internship</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

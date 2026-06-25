@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,19 @@
           <ul><li>CS or data science degree + database experience</li><li>Google Cloud training + practice exams</li><li>Progressive data engineering roles + architecture projects</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Computer Science</h3>
+          <ul><li>Intro to Programming</li><li>Data Structures &amp; Algorithms</li><li>Discrete Mathematics</li><li>Operating Systems</li><li>Databases</li><li>Computer Networks</li><li>Software Engineering</li><li>Calculus I &amp; II</li><li>Computer Architecture</li><li>Capstone Project</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MS Data Science</h3>
+          <ul><li>Advanced Statistics</li><li>Machine Learning</li><li>Deep Learning</li><li>Big Data Systems</li><li>Natural Language Processing</li><li>Data Engineering</li><li>Research Methods</li><li>Capstone Project</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Information Systems</h3>
+          <ul><li>Intro to Information Systems</li><li>Database Design</li><li>Systems Analysis &amp; Design</li><li>Business Programming</li><li>Networking</li><li>Enterprise Architecture</li><li>IT Project Management</li><li>Business Analytics</li><li>Cybersecurity</li><li>Capstone</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

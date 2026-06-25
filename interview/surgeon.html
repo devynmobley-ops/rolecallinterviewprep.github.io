@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -289,13 +297,26 @@
         </div>
         <div class="cert-block">
           <h3>Certifications</h3>
-          <ul><li>Board Certification (ABS, ABOS, etc.)</li><li>State Medical License</li><li>ATLS Certification</li></ul>
+          <ul><li>USMLE Step 1/2/3 or COMLEX Level 1/2/3</li><li>Board Certification (ABS, ABOS, etc.)</li><li>State Medical License + ATLS Certification</li></ul>
         </div>
         <div class="cert-block">
           <h3>Career Paths</h3>
-          <ul><li>Medical school (4 years) + surgical residency (5-7 years)</li><li>Board certification exam after residency</li><li>Fellowship for subspecialty + state licensure</li></ul>
+          <ul><li>Medical school (4 years) + USMLE/COMLEX licensing exams</li><li>ACGME-accredited surgical residency (5-7 years) + board certification (ABS QE/CE)</li><li>Fellowship for subspecialty (cardiothoracic, vascular, surgical oncology) + state licensure</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MD (Doctor of Medicine)</h3>
+          <ul><li>Anatomy</li><li>Biochemistry</li><li>Physiology</li><li>Pharmacology</li><li>Pathology</li><li>Microbiology</li><li>Clinical Rotations</li><li>Residency Training</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — DO (Doctor of Osteopathic Medicine)</h3>
+          <ul><li>Osteopathic Principles</li><li>Anatomy</li><li>Biochemistry</li><li>Physiology</li><li>Pharmacology</li><li>Pathology</li><li>Clinical Rotations</li><li>Residency</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MBBS</h3>
+          <ul><li>Anatomy</li><li>Physiology</li><li>Biochemistry</li><li>Pharmacology</li><li>Pathology</li><li>Microbiology</li><li>Clinical Rotations</li><li>Residency</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">
@@ -306,7 +327,7 @@
     <section class="related-section">
       <h2>Related Healthcare Roles</h2>
       <div class="related-grid">
-          <a href="/interview/nurse.html" class="related-role">Nurse</a>
+          <a href="/interview/registered-nurse.html" class="related-role">Registered Nurse</a>
           <a href="/interview/medical-assistant.html" class="related-role">Medical Assistant</a>
           <a href="/interview/pharmacy-technician.html" class="related-role">Pharmacy Technician</a>
           <a href="/interview/health-administrator.html" class="related-role">Health Administrator</a>

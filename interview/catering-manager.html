@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,15 @@
           <ul><li>Hospitality or culinary degree + catering experience</li><li>NACE CPCE certification + progressive catering roles</li><li>ServSafe certification + event management experience</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Hospitality Management</h3>
+          <ul><li>Intro to Hospitality</li><li>Food &amp; Beverage Management</li><li>Hotel Operations</li><li>Event Planning</li><li>Revenue Management</li><li>Hospitality Law</li><li>Customer Service</li><li>Practicum</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — AS Culinary Arts</h3>
+          <ul><li>Culinary Basics</li><li>Baking Fundamentals</li><li>Food Safety</li><li>Kitchen Management</li><li>Nutrition</li><li>Catering</li><li>Externship</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

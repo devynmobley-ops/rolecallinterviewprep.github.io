@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,19 @@
           <ul><li>Finance degree + treasury or corporate finance experience</li><li>AFP CTP exam + treasury work experience</li><li>CFA program + progressive treasury roles</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Finance</h3>
+          <ul><li>Principles of Finance</li><li>Corporate Finance</li><li>Investments</li><li>Financial Markets</li><li>Risk Management</li><li>Financial Modeling</li><li>International Finance</li><li>Capstone</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Accounting</h3>
+          <ul><li>Financial Accounting</li><li>Managerial Accounting</li><li>Intermediate Accounting I &amp; II</li><li>Cost Accounting</li><li>Auditing</li><li>Taxation</li><li>Accounting Information Systems</li><li>Capstone</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MBA + finance focus</h3>
+          <ul><li>Financial Accounting</li><li>Managerial Economics</li><li>Corporate Finance</li><li>Investments</li><li>Financial Modeling</li><li>Business Strategy</li><li>Risk Management</li><li>Capstone</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

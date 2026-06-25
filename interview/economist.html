@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,19 @@
           <ul><li>Economics degree + quantitative coursework (stats, econometrics)</li><li>NABE CBE certification + professional experience</li><li>CFA program (3 levels, 2-4 years) + finance focus</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Economics</h3>
+          <ul><li>Microeconomics</li><li>Macroeconomics</li><li>Econometrics</li><li>Game Theory</li><li>International Economics</li><li>Labor Economics</li><li>Public Finance</li><li>Senior Seminar</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MS Economics</h3>
+          <ul><li>Microeconomic Theory</li><li>Macroeconomic Theory</li><li>Econometrics</li><li>Game Theory</li><li>Research Methods</li><li>Thesis</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — PhD Economics</h3>
+          <ul><li>Microeconomic Theory</li><li>Macroeconomic Theory</li><li>Econometrics</li><li>Game Theory</li><li>Dissertation</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

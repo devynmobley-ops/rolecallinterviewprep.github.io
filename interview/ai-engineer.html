@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,19 @@
           <ul><li>Graduate program in AI/ML</li><li>Coursera / deeplearning.ai + Kaggle</li><li>Microsoft Learn AI + Azure labs</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MS Computer Science (AI/ML focus)</h3>
+          <ul><li>Advanced Algorithms</li><li>Machine Learning</li><li>Deep Learning</li><li>Natural Language Processing</li><li>Computer Vision</li><li>Research Methods</li><li>Thesis/Capstone</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MS Artificial Intelligence</h3>
+          <ul><li>Machine Learning Foundations</li><li>Deep Learning</li><li>Natural Language Processing</li><li>Computer Vision</li><li>Reinforcement Learning</li><li>AI Ethics</li><li>Robotics</li><li>Research/Thesis</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS CS with ML specialization</h3>
+          <ul><li>Intro to Programming</li><li>Data Structures &amp; Algorithms</li><li>Discrete Mathematics</li><li>Machine Learning</li><li>Databases</li><li>Software Engineering</li><li>Calculus I &amp; II</li><li>Capstone Project</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

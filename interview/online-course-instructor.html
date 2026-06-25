@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,11 @@
           <ul><li>Subject expertise + online teaching certification</li><li>University adjunct track + online pedagogy training</li><li>Industry professional + course creation on platforms (Udemy, Coursera)</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MEd Instructional Design</h3>
+          <ul><li>Instructional Design Models</li><li>Educational Technology</li><li>E-Learning Development</li><li>Assessment</li><li>Media Production</li><li>Capstone</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

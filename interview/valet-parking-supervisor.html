@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,19 @@
           <ul><li>Valet attendant experience + internal promotion</li><li>Hospitality management training + valet operations</li><li>Customer service background + supervisor training program</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — No degree required</h3>
+          <ul><li>On-the-job training</li><li>Apprenticeship (if applicable)</li><li>OSHA safety certification</li><li>Trade-specific licensing exam prep</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — AS Hospitality Management</h3>
+          <ul><li>Intro to Hospitality</li><li>Food &amp; Beverage Basics</li><li>Hotel Operations</li><li>Customer Service</li><li>Event Coordination</li><li>Revenue Management</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Business + hospitality focus</h3>
+          <ul><li>Principles of Accounting</li><li>Microeconomics</li><li>Hospitality Management</li><li>Food &amp; Beverage Operations</li><li>Marketing</li><li>Business Law</li><li>Revenue Management</li><li>Capstone</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

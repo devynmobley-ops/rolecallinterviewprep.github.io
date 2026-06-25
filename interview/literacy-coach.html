@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,11 @@
           <ul><li>Education degree + reading coursework + teaching experience</li><li>State reading specialist endorsement program</li><li>NBPTS certification (after 3 years teaching) + literacy focus</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MEd Reading/Literacy</h3>
+          <ul><li>Literacy Development</li><li>Reading Assessment</li><li>Instructional Strategies</li><li>Children's Literature</li><li>Research Methods</li><li>Practicum</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

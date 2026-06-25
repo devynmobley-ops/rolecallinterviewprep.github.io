@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,19 @@
           <ul><li>Business/law degree + compliance internship</li><li>SCCE CCEP online prep + exam</li><li>ACAMS CAMS certification + compliance experience</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Business/Law</h3>
+          <ul><li>Principles of Accounting</li><li>Microeconomics</li><li>Business Law</li><li>Marketing Principles</li><li>Finance</li><li>Management</li><li>Legal Environment</li><li>Capstone</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Finance</h3>
+          <ul><li>Principles of Finance</li><li>Corporate Finance</li><li>Investments</li><li>Financial Markets</li><li>Risk Management</li><li>Financial Modeling</li><li>International Finance</li><li>Capstone</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MBA + compliance focus</h3>
+          <ul><li>Financial Accounting</li><li>Managerial Economics</li><li>Marketing Management</li><li>Corporate Finance</li><li>Operations Management</li><li>Business Strategy</li><li>Compliance &amp; Ethics</li><li>Leadership</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

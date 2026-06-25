@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,15 @@
           <ul><li>Sports management degree + coaching/admin experience</li><li>NIAAA Leadership Training Courses + CAA certification</li><li>State admin license program (if school-based) + progressive roles</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Sports Management</h3>
+          <ul><li>Sport Marketing</li><li>Facility Management</li><li>Event Management</li><li>Sport Finance</li><li>Sport Law</li><li>Practicum</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MEd Educational Leadership</h3>
+          <ul><li>Educational Leadership Theory</li><li>School Law &amp; Policy</li><li>Curriculum Supervision</li><li>Data-Driven Decision Making</li><li>School Finance</li><li>Action Research</li><li>Capstone</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

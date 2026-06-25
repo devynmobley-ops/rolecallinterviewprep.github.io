@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,11 @@
           <ul><li>Business/analytics degree + sales operations entry role</li><li>Salesforce Admin cert + CRM management experience</li><li>Data analytics skills + sales team support experience</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Business Analytics</h3>
+          <ul><li>Business Statistics</li><li>Data Mining</li><li>Predictive Analytics</li><li>Database Management</li><li>Data Visualization</li><li>Machine Learning for Business</li><li>Decision Modeling</li><li>Capstone</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

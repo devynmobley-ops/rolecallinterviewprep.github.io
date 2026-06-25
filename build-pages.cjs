@@ -26,6 +26,7 @@ function extractObject(source, varName) {
 
 const DATA = extractObject(html, 'DATA');
 const CERTS = extractObject(html, 'CERTS');
+const COURSES = extractObject(html, 'COURSES');
 const DIFFICULTY = extractObject(html, 'DIFFICULTY');
 const CATEGORY_DEFAULT = extractObject(html, 'CATEGORY_DEFAULT_DIFFICULTY');
 
@@ -114,6 +115,18 @@ function generatePage(roleName, category) {
 
   let certsHtml = '';
   if (certs) {
+    // Build coursework blocks from COURSES lookup
+    let courseworkHtml = '';
+    certs.degrees.forEach(deg => {
+      const courses = COURSES[deg];
+      if (courses) {
+        courseworkHtml += `
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — ${escapeHtml(deg)}</h3>
+          <ul>${courses.map(c => `<li>${escapeHtml(c)}</li>`).join('')}</ul>
+        </div>`;
+      }
+    });
     certsHtml = `
     <section class="certs-section">
       <h2>Education & Certifications</h2>
@@ -131,6 +144,7 @@ function generatePage(roleName, category) {
           <ul>${certs.paths.map(p => `<li>${escapeHtml(p)}</li>`).join('')}</ul>
         </div>
       </div>
+      ${courseworkHtml ? '<h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">' + courseworkHtml + '</div>' : ''}
     </section>`;
   }
 
@@ -263,6 +277,14 @@ function generatePage(roleName, category) {
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }

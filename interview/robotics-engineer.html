@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,19 @@
           <ul><li>Robotics or ME degree + capstone projects</li><li>ROS online courses + hands-on robot builds</li><li>Manufacturer-specific training (FANUC, ABB, KUKA)</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Robotics Engineering</h3>
+          <ul><li>Intro to Robotics</li><li>Mechanical Design</li><li>Control Systems</li><li>Sensors &amp; Actuators</li><li>Robot Programming</li><li>Computer Vision</li><li>AI &amp; Machine Learning</li><li>Embedded Systems</li><li>Kinematics &amp; Dynamics</li><li>Senior Design</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Mechanical Engineering</h3>
+          <ul><li>Statics &amp; Dynamics</li><li>Thermodynamics</li><li>Fluid Mechanics</li><li>Heat Transfer</li><li>Machine Design</li><li>Senior Design</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MS Robotics</h3>
+          <ul><li>Robot Kinematics</li><li>Control Systems</li><li>Computer Vision</li><li>Machine Learning</li><li>Sensors &amp; Actuators</li><li>Thesis</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

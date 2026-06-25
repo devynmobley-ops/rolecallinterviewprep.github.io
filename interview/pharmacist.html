@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,11 @@
           <ul><li>Accredited PharmD program (4 years post-undergrad)</li><li>NAPLEX + MPJE exam prep + state licensure</li><li>BPS board certification after 3+ years experience</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — Doctor of Pharmacy (PharmD)</h3>
+          <ul><li>General Chemistry</li><li>Organic Chemistry</li><li>Biochemistry</li><li>Pharmacology</li><li>Medicinal Chemistry</li><li>Pharmaceutics</li><li>Pharmacotherapy</li><li>Clinical Rotations</li><li>Pharmacy Law &amp; Ethics</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">
@@ -306,7 +319,7 @@
     <section class="related-section">
       <h2>Related Healthcare Roles</h2>
       <div class="related-grid">
-          <a href="/interview/nurse.html" class="related-role">Nurse</a>
+          <a href="/interview/registered-nurse.html" class="related-role">Registered Nurse</a>
           <a href="/interview/medical-assistant.html" class="related-role">Medical Assistant</a>
           <a href="/interview/pharmacy-technician.html" class="related-role">Pharmacy Technician</a>
           <a href="/interview/health-administrator.html" class="related-role">Health Administrator</a>

@@ -331,7 +331,9 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .req-card-header .req-arrow{font-size:12px;color:var(--text-secondary);transition:transform 0.2s ease}
 .req-card.open .req-arrow{transform:rotate(180deg)}
 .req-card-body{max-height:0;overflow:hidden;opacity:0;transition:max-height 0.3s ease,opacity 0.25s ease,padding 0.3s ease;padding:0 14px}
-.req-card.open .req-card-body{max-height:600px;opacity:1;padding:0 14px 14px}
+.req-card.open .req-card-body{max-height:2000px;opacity:1;padding:0 14px 14px}
+.req-divider{height:1px;background:var(--card-hover);margin:10px 0}
+.req-course{padding-left:12px;font-size:12px;color:var(--text-secondary)}
 .req-section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-secondary);margin:8px 0 6px}
 .req-section-label:first-child{margin-top:0}
 .req-item{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;color:var(--text)}
@@ -878,7 +880,7 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
       <div class="paywall-feature">&#10003; Mock interviews up to 10 questions</div>
       <div class="paywall-feature">&#10003; Choose 3, 5, or 10 questions per session</div>
       <div class="paywall-feature">&#10003; Expert tips shown automatically</div>
-      <div class="paywall-feature">&#10003; Education & certification paths</div>
+      <div class="paywall-feature">&#10003; Education paths, coursework & certifications</div>
       <div class="paywall-feature">&#10003; Full practice history</div>
       <div class="paywall-feature">&#10003; Unlimited bookmarks</div>
     </div>
@@ -1989,6 +1991,435 @@ const CERTS = {
   "District Attorney": { degrees: ["JD (Juris Doctor)", "BA Political Science/Criminal Justice + JD", "MPA + JD"], certs: ["State Bar License", "NDAA (National District Attorneys Association) training", "Trial advocacy certification"], paths: ["Law school + prosecutor internship + bar passage", "Assistant DA entry + progressive trial experience", "Private practice or clerkship + prosecutor career transition"] },
   "Environmental Lawyer": { degrees: ["JD + environmental law focus", "BS Environmental Science + JD", "JD + LLM Environmental Law"], certs: ["State Bar License", "LEED Green Associate", "Environmental mediation certification"], paths: ["Law school + environmental law journal + clerkship", "EPA or state agency experience + private firm transition", "Environmental science background + law school + practice"] },
   "Immigration Attorney": { degrees: ["JD (Juris Doctor)", "BA International Relations + JD", "JD + LLM Immigration Law"], certs: ["State Bar License", "AILA (American Immigration Lawyers Association) membership", "Board Certification in Immigration Law (where available)"], paths: ["Law school + immigration clinic + bar passage", "AILA membership + immigration firm experience", "Bilingual skills + immigration law practice + nonprofit partnership"] }
+};
+
+const COURSES = {
+  // === TECH ===
+  "BS Computer Science": ["Intro to Programming", "Data Structures & Algorithms", "Discrete Mathematics", "Operating Systems", "Databases", "Computer Networks", "Software Engineering", "Calculus I & II", "Computer Architecture", "Capstone Project"],
+  "BS Software Engineering": ["Programming Fundamentals", "Software Design & Architecture", "Data Structures & Algorithms", "Software Testing & QA", "Databases", "Web Development", "Agile/Project Management", "Calculus & Linear Algebra", "Operating Systems", "Senior Capstone"],
+  "BS IT": ["Intro to IT", "Networking Fundamentals", "Database Management", "Systems Administration", "Cybersecurity Basics", "Web Technologies", "IT Project Management", "Operating Systems", "Help Desk & Support", "Capstone Project"],
+  "BS Information Systems": ["Intro to Information Systems", "Database Design", "Systems Analysis & Design", "Business Programming", "Networking", "Enterprise Architecture", "IT Project Management", "Business Analytics", "Cybersecurity", "Capstone"],
+  "BS Data Science": ["Intro to Programming", "Statistics & Probability", "Linear Algebra", "Machine Learning", "Data Visualization", "Databases & SQL", "Big Data Technologies", "Data Mining", "Python for Data Science", "Capstone Project"],
+  "BS Cybersecurity": ["Intro to Cybersecurity", "Network Security", "Cryptography", "Ethical Hacking", "Digital Forensics", "Security Operations", "Risk Management", "Operating Systems", "Incident Response", "Capstone Project"],
+  "BS Web Development": ["HTML/CSS Fundamentals", "JavaScript Programming", "Front-End Frameworks", "Back-End Development", "Databases", "Responsive Design", "Web Accessibility", "Version Control (Git)", "API Development", "Portfolio Capstone"],
+  "BS Network Engineering": ["Networking Fundamentals", "Routing & Switching", "Network Security", "Wireless Networks", "Cloud Networking", "Network Design", "Linux Administration", "Telecommunications", "Network Troubleshooting", "Capstone"],
+  "BS Cloud Computing": ["Cloud Fundamentals", "Linux Administration", "Networking", "Virtualization", "Cloud Architecture", "DevOps & CI/CD", "Security in the Cloud", "Containers & Kubernetes", "Cost Optimization", "Capstone Project"],
+  "BS Computer Engineering": ["C/C++ Programming", "Digital Logic Design", "Computer Architecture", "Embedded Systems", "Operating Systems", "Signals & Systems", "Electronics Circuits", "Microprocessors", "VLSI Design", "Senior Design Project"],
+  "BS Game Development": ["Game Design Fundamentals", "Game Programming", "3D Modeling & Animation", "Physics for Games", "AI for Games", "Graphics Programming", "Multiplayer Networking", "Level Design", "Game Engine Architecture", "Senior Game Project"],
+  "BS Robotics Engineering": ["Intro to Robotics", "Mechanical Design", "Control Systems", "Sensors & Actuators", "Robot Programming", "Computer Vision", "AI & Machine Learning", "Embedded Systems", "Kinematics & Dynamics", "Senior Design"],
+  "AS Information Technology": ["Intro to IT", "Networking Basics", "Operating Systems", "Hardware Support", "Intro to Databases", "Help Desk Skills", "Security Fundamentals", "Electives"],
+  "BS Interactive Media": ["Design Fundamentals", "Interactive Storytelling", "Web Development", "UX/UI Design", "Motion Graphics", "3D Modeling", "Audio/Video Production", "Interactive Prototyping", "Accessibility", "Portfolio Capstone"],
+  "Bootcamp certificate": ["HTML/CSS/JavaScript", "Front-End Framework (React/Vue)", "Back-End (Node.js/Python)", "Databases (SQL/NoSQL)", "Git & Version Control", "APIs & REST", "Deployment & DevOps Basics", "Portfolio Projects"],
+  "MS Computer Science": ["Advanced Algorithms", "Machine Learning", "Distributed Systems", "Advanced Operating Systems", "Research Methods", "Elective Specialization", "Thesis or Capstone"],
+  "MS Data Science": ["Advanced Statistics", "Machine Learning", "Deep Learning", "Big Data Systems", "Natural Language Processing", "Data Engineering", "Research Methods", "Capstone Project"],
+  "MS Artificial Intelligence": ["Machine Learning Foundations", "Deep Learning", "Natural Language Processing", "Computer Vision", "Reinforcement Learning", "AI Ethics", "Robotics", "Research/Thesis"],
+  "BS Mathematics": ["Calculus I-III", "Linear Algebra", "Differential Equations", "Probability & Statistics", "Abstract Algebra", "Real Analysis", "Mathematical Modeling", "Numerical Methods", "Senior Seminar"],
+  "BS Statistics": ["Calculus I-III", "Linear Algebra", "Probability Theory", "Statistical Inference", "Regression Analysis", "Experimental Design", "Statistical Computing (R/SAS)", "Bayesian Statistics", "Capstone"],
+  "BS Physics": ["Classical Mechanics", "Electromagnetism", "Quantum Mechanics", "Thermodynamics", "Mathematical Methods", "Lab Techniques", "Computational Physics", "Senior Thesis"],
+  "MS Cloud Computing": ["Cloud Architecture", "Distributed Systems", "Containers & Orchestration", "Cloud Security", "DevOps Engineering", "Serverless Computing", "Cost Management", "Capstone"],
+  "MS Embedded Systems": ["Real-Time Operating Systems", "Embedded C/C++", "Hardware/Software Co-Design", "Signal Processing", "VLSI Design", "IoT Protocols", "Thesis/Capstone"],
+  "MS Human-Computer Interaction": ["User Research Methods", "Interaction Design", "Prototyping", "Usability Testing", "Cognitive Psychology", "Accessibility", "Information Visualization", "Thesis/Capstone"],
+  "BS Management Information Systems": ["Intro to MIS", "Business Programming", "Database Management", "Systems Analysis", "Networking", "IT Project Management", "Business Analytics", "Enterprise Systems", "Capstone"],
+  "MBA": ["Financial Accounting", "Managerial Economics", "Organizational Behavior", "Marketing Management", "Corporate Finance", "Operations Management", "Business Strategy", "Leadership", "Electives/Capstone"],
+  "MS Information Security": ["Security Fundamentals", "Cryptography", "Network Security", "Application Security", "Incident Response", "Risk & Compliance", "Security Architecture", "Thesis/Capstone"],
+
+  // === HEALTHCARE ===
+  "BS Nursing (BSN)": ["Anatomy & Physiology", "Microbiology", "Pharmacology", "Fundamentals of Nursing", "Medical-Surgical Nursing", "Pediatric Nursing", "Obstetric Nursing", "Psychiatric Nursing", "Community Health", "Clinical Practicums"],
+  "Associate Degree in Nursing (ADN)": ["Anatomy & Physiology", "Microbiology", "Pharmacology", "Fundamentals of Nursing", "Medical-Surgical Nursing", "Clinical Practicums"],
+  "Doctor of Pharmacy (PharmD)": ["General Chemistry", "Organic Chemistry", "Biochemistry", "Pharmacology", "Medicinal Chemistry", "Pharmaceutics", "Pharmacotherapy", "Clinical Rotations", "Pharmacy Law & Ethics"],
+  "Doctor of Medicine (MD)": ["Anatomy", "Biochemistry", "Physiology", "Pharmacology", "Pathology", "Microbiology", "Clinical Rotations (Clerkships)", "Residency Training"],
+  "Doctor of Physical Therapy (DPT)": ["Anatomy & Physiology", "Kinesiology", "Biomechanics", "Physical Therapy Modalities", "Therapeutic Exercise", "Neurorehabilitation", "Orthopedic PT", "Clinical Rotations"],
+  "BS Dental Hygiene": ["Dental Anatomy", "Oral Pathology", "Periodontology", "Dental Radiology", "Preventive Dentistry", "Clinical Dental Hygiene", "Pharmacology", "Patient Management"],
+  "AS Radiologic Technology": ["Anatomy & Physiology", "Radiographic Positioning", "Radiation Physics", "Radiation Protection", "Patient Care", "Radiographic Imaging", "Clinical Practicums"],
+  "BS Health Information Management": ["Medical Terminology", "Health Data Management", "ICD/CPT Coding", "Healthcare Statistics", "Quality Management", "Health Informatics", "Legal Aspects of HIM", "Clinical Practicum"],
+  "BS Respiratory Therapy": ["Anatomy & Physiology", "Cardiopulmonary Anatomy", "Respiratory Pharmacology", "Mechanical Ventilation", "Neonatal/Pediatric RT", "Pulmonary Diagnostics", "Clinical Practicums"],
+  "BS Dietetics/Nutrition": ["General Chemistry", "Biochemistry", "Nutrition Science", "Medical Nutrition Therapy", "Food Science", "Community Nutrition", "Food Service Management", "Clinical Practicum"],
+  "Certificate in Medical Assisting": ["Medical Terminology", "Anatomy & Physiology", "Clinical Procedures", "Pharmacology", "Medical Office Administration", "Phlebotomy", "EKG", "Externship"],
+  "BS Speech-Language Pathology": ["Anatomy of Speech & Hearing", "Phonetics", "Speech Sound Disorders", "Language Development", "Neurogenic Communication Disorders", "Fluency Disorders", "Clinical Practicums"],
+  "BS Kinesiology": ["Anatomy & Physiology", "Biomechanics", "Exercise Physiology", "Motor Learning", "Sport Psychology", "Research Methods", "Fitness Assessment", "Practicum"],
+  "BS Athletic Training": ["Anatomy & Physiology", "Injury Evaluation", "Therapeutic Modalities", "Rehabilitation", "Emergency Care", "Sport Pharmacology", "Clinical Education"],
+  "BS Occupational Therapy": ["Anatomy & Physiology", "Kinesiology", "Occupational Science", "Mental Health OT", "Pediatric OT", "Physical Rehabilitation", "Assistive Technology", "Fieldwork"],
+  "BS Public Health": ["Epidemiology", "Biostatistics", "Environmental Health", "Health Policy", "Social & Behavioral Health", "Global Health", "Research Methods", "Practicum"],
+  "BS Health Sciences": ["Anatomy & Physiology", "Medical Terminology", "Healthcare Systems", "Pathophysiology", "Pharmacology", "Research Methods", "Health Ethics", "Capstone"],
+  "BS Psychology": ["Intro to Psychology", "Abnormal Psychology", "Developmental Psychology", "Research Methods & Statistics", "Cognitive Psychology", "Social Psychology", "Biological Psychology", "Senior Seminar"],
+  "BS Social Work": ["Intro to Social Work", "Human Behavior & Social Environment", "Social Welfare Policy", "Research Methods", "Practice with Individuals", "Practice with Groups", "Field Practicum"],
+  "BS Environmental Health": ["Environmental Science", "Toxicology", "Epidemiology", "Water/Air Quality", "Occupational Health", "Risk Assessment", "Environmental Law", "Practicum"],
+  "BS Biomedical Sciences": ["General Chemistry", "Organic Chemistry", "Biology", "Biochemistry", "Genetics", "Microbiology", "Physiology", "Research Methods"],
+  "MS Nursing (MSN)": ["Advanced Pathophysiology", "Advanced Pharmacology", "Advanced Health Assessment", "Evidence-Based Practice", "Nursing Leadership", "Specialty Clinical Practicum"],
+  "Nursing diploma": ["Anatomy & Physiology", "Pharmacology", "Fundamentals of Nursing", "Medical-Surgical Nursing", "Clinical Practicums"],
+
+  // === BUSINESS ===
+  "BS Business Administration": ["Principles of Accounting", "Microeconomics", "Macroeconomics", "Business Statistics", "Marketing Principles", "Management & Organizational Behavior", "Business Law", "Finance", "Strategic Management", "Capstone"],
+  "BS Accounting": ["Financial Accounting", "Managerial Accounting", "Intermediate Accounting I & II", "Cost Accounting", "Auditing", "Taxation", "Accounting Information Systems", "Capstone"],
+  "BS Finance": ["Principles of Finance", "Corporate Finance", "Investments", "Financial Markets", "Risk Management", "Financial Modeling", "International Finance", "Capstone"],
+  "BS Marketing": ["Principles of Marketing", "Consumer Behavior", "Marketing Research", "Digital Marketing", "Brand Management", "Advertising & Promotion", "Sales Management", "Capstone"],
+  "BS Economics": ["Microeconomics", "Macroeconomics", "Econometrics", "Game Theory", "International Economics", "Labor Economics", "Public Finance", "Senior Seminar"],
+  "BS Human Resources": ["Principles of Management", "Employment Law", "Compensation & Benefits", "Training & Development", "Recruitment & Selection", "Labor Relations", "HR Analytics", "Capstone"],
+  "BS Project Management": ["Project Management Fundamentals", "Risk Management", "Scheduling & Budgeting", "Quality Management", "Agile & Scrum", "Procurement", "Leadership", "Capstone"],
+  "BS Supply Chain Management": ["Intro to Supply Chain", "Logistics & Transportation", "Procurement & Sourcing", "Inventory Management", "Operations Management", "Global Supply Chain", "Analytics", "Capstone"],
+  "BS Operations Management": ["Operations Strategy", "Process Analysis", "Quality Control", "Supply Chain Management", "Lean & Six Sigma", "Project Management", "Data Analytics", "Capstone"],
+  "BS Business Analytics": ["Business Statistics", "Data Mining", "Predictive Analytics", "Database Management", "Data Visualization", "Machine Learning for Business", "Decision Modeling", "Capstone"],
+  "BS Entrepreneurship": ["New Venture Creation", "Business Plan Development", "Entrepreneurial Finance", "Marketing for Startups", "Innovation Management", "Legal Issues for Entrepreneurs", "Pitch & Launch", "Capstone"],
+  "BS International Business": ["International Trade", "Global Marketing", "Cross-Cultural Management", "International Finance", "Global Supply Chain", "Foreign Language", "Study Abroad", "Capstone"],
+  "BS Organizational Leadership": ["Leadership Theory", "Organizational Behavior", "Change Management", "Team Dynamics", "Ethics in Leadership", "Strategic Planning", "Conflict Resolution", "Capstone"],
+  "BS Healthcare Administration": ["Healthcare Systems", "Health Economics", "Healthcare Law & Ethics", "Hospital Operations", "Health Informatics", "Quality Improvement", "Financial Management in Healthcare", "Practicum"],
+
+  // === EDUCATION ===
+  "BS Education": ["Foundations of Education", "Child Development", "Curriculum Design", "Classroom Management", "Educational Psychology", "Assessment & Evaluation", "Teaching Methods", "Student Teaching Practicum"],
+  "MS Education": ["Advanced Curriculum Design", "Educational Research", "Instructional Technology", "Differentiated Instruction", "Educational Leadership", "Special Education Methods", "Action Research", "Thesis/Capstone"],
+  "BA English/Communications": ["English Composition", "Literature Survey", "Creative Writing", "Public Speaking", "Media Studies", "Rhetoric & Persuasion", "Research Methods", "Senior Seminar"],
+  "BS Special Education": ["Intro to Special Education", "Behavior Management", "Assistive Technology", "Inclusive Classrooms", "Learning Disabilities", "Applied Behavior Analysis", "IEP Development", "Student Teaching"],
+  "BS Early Childhood Education": ["Child Development", "Play-Based Learning", "Literacy Development", "Family Engagement", "Classroom Management", "Assessment of Young Children", "Curriculum for ECE", "Student Teaching"],
+  "BS Elementary Education": ["Foundations of Education", "Child Development", "Literacy Instruction", "Math Methods", "Science Methods", "Social Studies Methods", "Classroom Management", "Student Teaching"],
+  "BS Secondary Education": ["Adolescent Development", "Content Area Methods", "Classroom Management", "Assessment Strategies", "Educational Technology", "Diversity in Education", "Student Teaching"],
+  "BS Mathematics Education": ["Calculus I-III", "Linear Algebra", "Probability & Statistics", "Math Teaching Methods", "Classroom Management", "Educational Psychology", "Student Teaching"],
+  "BS Science Education": ["Biology", "Chemistry", "Physics", "Earth Science", "Science Teaching Methods", "Lab Safety", "Classroom Management", "Student Teaching"],
+  "MBA + tech background": ["Financial Accounting", "Managerial Economics", "Marketing Management", "Corporate Finance", "Operations Management", "Business Strategy", "IT Management", "Leadership"],
+  "BS Social Science Education": ["US History", "World History", "Government/Civics", "Economics", "Social Studies Teaching Methods", "Classroom Management", "Student Teaching"],
+  "BS Physical Education": ["Anatomy & Physiology", "Kinesiology", "Exercise Science", "Sport & Coaching Methods", "Adapted PE", "Health Education", "Student Teaching"],
+  "BS Music Education": ["Music Theory", "Music History", "Applied Instrument/Voice", "Conducting", "Music Teaching Methods", "Ensemble Performance", "Student Teaching"],
+  "BS Art Education": ["Drawing & Painting", "Art History", "Sculpture & 3D Design", "Art Teaching Methods", "Ceramics", "Digital Art", "Student Teaching"],
+
+  // === TRADES ===
+  "Trade school diploma": ["Safety & OSHA Standards", "Blueprint Reading", "Tools & Equipment", "Hands-On Lab Training", "Code & Regulations", "Specialty Techniques", "Practicum/Externship"],
+  "AS Electrical Technology": ["DC/AC Circuits", "Electrical Code (NEC)", "Motor Controls", "Programmable Logic Controllers", "Blueprint Reading", "Hands-On Lab", "Safety & OSHA"],
+  "AOS degree": ["Technical Math", "Blueprint Reading", "Shop Safety", "Core Trade Skills", "Code & Regulations", "Hands-On Lab", "Practicum"],
+  "No degree required": ["On-the-job training", "Apprenticeship (if applicable)", "OSHA safety certification", "Trade-specific licensing exam prep"],
+  "Apprenticeship certificate": ["Classroom instruction (144+ hrs/year)", "On-the-job training (2000+ hrs/year)", "Safety & OSHA standards", "Code & regulations", "Progressive skill development"],
+  "Certificate in Medical Assisting": ["Medical Terminology", "Anatomy & Physiology", "Clinical Procedures", "Pharmacology", "Medical Office Administration", "Phlebotomy", "EKG", "Externship"],
+
+  // === LEGAL ===
+  "JD (Juris Doctor)": ["Civil Procedure", "Constitutional Law", "Contracts", "Criminal Law", "Legal Writing & Research", "Property Law", "Torts", "Evidence", "Professional Responsibility"],
+  "ABA-approved Paralegal Certificate": ["Legal Research & Writing", "Civil Procedure", "Contract Law", "Torts", "Legal Ethics", "Litigation Support", "Specialty Electives", "Practicum"],
+  "BS Paralegal Studies": ["Intro to Law", "Legal Research & Writing", "Civil Litigation", "Criminal Law", "Family Law", "Real Estate Law", "Legal Ethics", "Internship"],
+  "BS Legal Studies": ["Legal Systems & Processes", "Legal Research", "Constitutional Law", "Administrative Law", "Business Law", "Legal Ethics", "Writing for Law", "Internship"],
+  "BS Criminal Justice": ["Intro to Criminal Justice", "Criminology", "Criminal Law & Procedure", "Corrections", "Policing", "Juvenile Justice", "Research Methods", "Senior Seminar"],
+  "BS Criminology": ["Intro to Criminology", "Criminal Behavior", "Research Methods", "Statistics", "Victimology", "White-Collar Crime", "Juvenile Delinquency", "Senior Seminar"],
+  "BS Forensic Science": ["General Chemistry", "Biology", "Forensic Chemistry", "Crime Scene Investigation", "Forensic Biology", "Legal Issues in Forensics", "Evidence Analysis", "Lab Practicum"],
+  "BS Court Reporting": ["Legal Terminology", "Machine Shorthand Theory", "Speed Building", "Court Reporting Procedures", "Legal & Medical Vocabulary", "Realtime Reporting", "Practicum"],
+
+  // === CREATIVE ===
+  "BA/BS Graphic Design": ["Design Fundamentals", "Typography", "Digital Illustration", "Layout & Composition", "Web Design", "Branding & Identity", "UX/UI Design", "Portfolio Capstone"],
+  "BA Film/Media": ["Film History & Theory", "Cinematography", "Screenwriting", "Editing & Post-Production", "Sound Design", "Directing", "Documentary Production", "Senior Film Project"],
+  "BS Architecture": ["Architectural Design Studio", "Building Technology", "Structural Systems", "Environmental Systems", "Architectural History", "Digital Modeling", "Professional Practice", "Thesis Design"],
+  "BA/BS Music": ["Music Theory", "Music History", "Applied Instrument/Voice", "Ensemble Performance", "Composition", "Music Technology", "Recital/Senior Performance"],
+  "BA/BS Fine Arts": ["Drawing", "Painting", "Sculpture", "Art History", "Printmaking", "Digital Art", "Contemporary Practices", "Senior Exhibition"],
+  "BA/BS Communications": ["Mass Communication", "Public Relations", "Journalism", "Media Ethics", "Digital Media", "Public Speaking", "Research Methods", "Senior Seminar"],
+  "BA/BS Journalism": ["News Writing & Reporting", "Investigative Journalism", "Digital Journalism", "Media Law & Ethics", "Photojournalism", "Data Journalism", "Internship"],
+  "BS Interior Design": ["Design Fundamentals", "Space Planning", "Materials & Finishes", "Lighting Design", "Building Codes", "CAD/3D Modeling", "Professional Practice", "Portfolio"],
+  "BS Fashion Design": ["Fashion Illustration", "Textiles", "Pattern Making", "Draping & Construction", "Fashion History", "CAD for Fashion", "Collection Development", "Portfolio"],
+  "BA/BS Photography": ["Camera & Exposure", "Lighting Techniques", "Digital Darkroom", "Composition & Visual Storytelling", "Studio Photography", "Photojournalism", "Portfolio Capstone"],
+  "BA/BS Animation": ["Drawing for Animation", "2D Animation", "3D Animation", "Character Design", "Storyboarding", "Motion Graphics", "Rigging", "Senior Film"],
+  "BA/BS Creative Writing": ["Intro to Creative Writing", "Fiction Workshop", "Poetry Workshop", "Creative Nonfiction", "Screenwriting", "Literary Theory", "Publishing", "Senior Thesis"],
+  "BA/BS Theater": ["Acting", "Directing", "Stagecraft", "Theater History", "Playwriting", "Voice & Movement", "Design for Theater", "Senior Production"],
+  "BS Industrial Design": ["Design Fundamentals", "Materials & Manufacturing", "Human Factors", "3D Modeling (CAD)", "Prototyping", "Design Research", "Professional Practice", "Senior Project"],
+  "BFA (Bachelor of Fine Arts)": ["Drawing", "Painting", "Art History", "Sculpture", "Mixed Media", "Contemporary Theory", "Professional Practices", "Senior Exhibition"],
+  "BA/BS UX Design": ["Human-Computer Interaction", "User Research Methods", "Interaction Design", "Prototyping & Wireframing", "Usability Testing", "Information Architecture", "Visual Design", "Portfolio Capstone"],
+  "BS Game Design": ["Game Design Theory", "Level Design", "Game Narrative", "Prototyping", "Player Psychology", "Game Analytics", "2D/3D Art for Games", "Senior Project"],
+  "BS Sound Design": ["Audio Fundamentals", "Recording Techniques", "Sound Design for Film", "Music Production", "Live Sound", "Interactive Audio", "Mixing & Mastering", "Portfolio"],
+  "BS Technical Communication": ["Technical Writing", "Document Design", "Editing & Style", "UX Writing", "API Documentation", "Visual Communication", "Content Strategy", "Portfolio"],
+
+  // === SERVICE ===
+  "BS Hospitality Management": ["Intro to Hospitality", "Food & Beverage Management", "Hotel Operations", "Event Planning", "Revenue Management", "Hospitality Law", "Customer Service", "Practicum"],
+  "Culinary Arts degree": ["Culinary Fundamentals", "Baking & Pastry", "Food Safety & Sanitation", "Garde Manger", "Saucier", "Menu Planning", "Cost Control", "Externship"],
+  "BS Hotel/Restaurant Management": ["Hospitality Accounting", "Food Service Operations", "Lodging Management", "Human Resources", "Marketing", "Revenue Management", "Practicum"],
+  "AS Culinary Arts": ["Culinary Basics", "Baking Fundamentals", "Food Safety", "Kitchen Management", "Nutrition", "Catering", "Externship"],
+  "Certificate in Hospitality": ["Guest Service", "Front Office Operations", "Food & Beverage Basics", "Housekeeping Management", "Event Coordination"],
+
+  // === SALES ===
+  "BS Business/CS": ["Principles of Accounting", "Marketing Principles", "Intro to Programming", "Database Fundamentals", "Business Communications", "Sales Management", "Data Analytics", "Capstone"],
+  "BS Communications": ["Mass Communication", "Public Speaking", "Interpersonal Communication", "Media Studies", "Organizational Communication", "Digital Media", "Research Methods", "Senior Seminar"],
+  "BS Advertising": ["Advertising Principles", "Copywriting", "Media Planning", "Consumer Behavior", "Digital Advertising", "Brand Strategy", "Creative Strategy", "Campaign Capstone"],
+  "BS Retail Management": ["Retail Operations", "Merchandising", "Consumer Behavior", "Supply Chain Basics", "Store Management", "Visual Merchandising", "Loss Prevention", "Practicum"],
+
+  // === DEGREE NAME ALIASES ===
+  // Healthcare aliases
+  "BSN (Bachelor of Science in Nursing)": ["Anatomy & Physiology", "Microbiology", "Pharmacology", "Fundamentals of Nursing", "Medical-Surgical Nursing", "Pediatric Nursing", "Obstetric Nursing", "Psychiatric Nursing", "Community Health", "Clinical Practicums"],
+  "BSN": ["Anatomy & Physiology", "Microbiology", "Pharmacology", "Fundamentals of Nursing", "Medical-Surgical Nursing", "Pediatric Nursing", "Obstetric Nursing", "Psychiatric Nursing", "Community Health", "Clinical Practicums"],
+  "ADN": ["Anatomy & Physiology", "Microbiology", "Pharmacology", "Fundamentals of Nursing", "Medical-Surgical Nursing", "Clinical Practicums"],
+  "ADN + geriatric experience": ["Anatomy & Physiology", "Microbiology", "Pharmacology", "Fundamentals of Nursing", "Medical-Surgical Nursing", "Clinical Practicums"],
+  "MSN Gerontology (advanced practice)": ["Advanced Pathophysiology", "Advanced Pharmacology", "Advanced Health Assessment", "Evidence-Based Practice", "Nursing Leadership", "Specialty Clinical Practicum"],
+  "BSN + DNP (Doctor of Nursing Practice)": ["Advanced Pathophysiology", "Advanced Pharmacology", "Advanced Health Assessment", "Evidence-Based Practice", "Nursing Leadership", "Specialty Clinical Practicum"],
+  "BSN + MSN (Master of Science in Nursing)": ["Advanced Pathophysiology", "Advanced Pharmacology", "Advanced Health Assessment", "Evidence-Based Practice", "Nursing Leadership", "Specialty Clinical Practicum"],
+  "Post-master's NP certificate": ["Advanced Pathophysiology", "Advanced Pharmacology", "Advanced Health Assessment", "Evidence-Based Practice", "Nursing Leadership", "Specialty Clinical Practicum"],
+  "BSN + MSN/DNP (neonatal focus)": ["Advanced Pathophysiology", "Advanced Pharmacology", "Advanced Health Assessment", "Evidence-Based Practice", "Nursing Leadership", "Specialty Clinical Practicum"],
+  "MSN Neonatal Nursing": ["Advanced Pathophysiology", "Advanced Pharmacology", "Advanced Health Assessment", "Evidence-Based Practice", "Nursing Leadership", "Specialty Clinical Practicum"],
+  "BS Nursing": ["Anatomy & Physiology", "Microbiology", "Pharmacology", "Fundamentals of Nursing", "Medical-Surgical Nursing", "Pediatric Nursing", "Obstetric Nursing", "Psychiatric Nursing", "Community Health", "Clinical Practicums"],
+  "MA/MS Clinical Mental Health Counseling": ["Counseling Theories", "Abnormal Psychology", "Group Counseling", "Career Counseling", "Multicultural Counseling", "Research Methods", "Clinical Practicum", "Internship"],
+  "MS Counseling Psychology": ["Counseling Theories", "Abnormal Psychology", "Group Counseling", "Career Counseling", "Multicultural Counseling", "Research Methods", "Clinical Practicum", "Internship"],
+  "MSW (Master of Social Work)": ["Social Work Practice", "Social Welfare Policy", "Human Behavior", "Research Methods", "Field Practicum"],
+  "MS Genetic Counseling": ["Genetics", "Counseling Techniques", "Medical Genetics", "Research Methods", "Clinical Rotations"],
+  "MS Human Genetics": ["Genetics", "Molecular Biology", "Bioinformatics", "Research Methods", "Thesis"],
+  "OD (Doctor of Optometry)": ["Anatomy of the Eye", "Optics", "Pharmacology", "Clinical Diagnosis", "Contact Lenses", "Low Vision", "Clinical Rotations"],
+  "DPM (Doctor of Podiatric Medicine)": ["Anatomy", "Biomechanics", "Pharmacology", "Podiatric Medicine", "Surgery", "Clinical Rotations"],
+  "AuD (Doctor of Audiology)": ["Anatomy & Physiology of Hearing", "Audiology Assessment", "Hearing Aids", "Aural Rehabilitation", "Clinical Rotations"],
+
+  // Tech aliases
+  "MS Computer Science (AI/ML focus)": ["Advanced Algorithms", "Machine Learning", "Deep Learning", "Natural Language Processing", "Computer Vision", "Research Methods", "Thesis/Capstone"],
+  "BS CS with ML focus": ["Intro to Programming", "Data Structures & Algorithms", "Discrete Mathematics", "Machine Learning", "Databases", "Software Engineering", "Calculus I & II", "Capstone Project"],
+  "BS CS with ML specialization": ["Intro to Programming", "Data Structures & Algorithms", "Discrete Mathematics", "Machine Learning", "Databases", "Software Engineering", "Calculus I & II", "Capstone Project"],
+  "Related technical degree": ["Intro to Programming", "Data Structures & Algorithms", "Discrete Mathematics", "Operating Systems", "Databases", "Computer Networks", "Software Engineering", "Calculus I & II"],
+  "BS IT or CS": ["Intro to IT", "Networking Fundamentals", "Database Management", "Systems Administration", "Cybersecurity Basics", "Web Technologies", "Operating Systems", "Capstone Project"],
+  "BS IT/Systems": ["Intro to IT", "Networking Fundamentals", "Database Management", "Systems Administration", "Cybersecurity Basics", "Operating Systems", "IT Project Management", "Capstone Project"],
+  "BS Software Engineering": ["Programming Fundamentals", "Software Design & Architecture", "Data Structures & Algorithms", "Software Testing & QA", "Databases", "Web Development", "Agile/Project Management", "Calculus & Linear Algebra", "Operating Systems", "Senior Capstone"],
+
+  // Business aliases
+  "BS Business/CS": ["Principles of Accounting", "Microeconomics", "Macroeconomics", "Business Statistics", "Marketing Principles", "Management & Organizational Behavior", "Business Law", "Finance", "Strategic Management", "Capstone"],
+  "BS Project Management": ["Project Management Fundamentals", "Risk Management", "Scheduling & Budgeting", "Quality Management", "Agile & Scrum", "Procurement", "Leadership", "Capstone"],
+  "MBA + tech background": ["Financial Accounting", "Managerial Economics", "Marketing Management", "Corporate Finance", "Operations Management", "Business Strategy", "IT Management", "Leadership"],
+  "MBA + IT focus": ["Financial Accounting", "Managerial Economics", "Marketing Management", "Corporate Finance", "Operations Management", "Business Strategy", "IT Management", "Leadership"],
+  "MBA + compliance focus": ["Financial Accounting", "Managerial Economics", "Marketing Management", "Corporate Finance", "Operations Management", "Business Strategy", "Compliance & Ethics", "Leadership"],
+  "MBA + legal focus": ["Financial Accounting", "Managerial Economics", "Marketing Management", "Corporate Finance", "Operations Management", "Business Strategy", "Legal Environment", "Leadership"],
+
+  // Education aliases
+  "BA/BS + law school": ["Civil Procedure", "Constitutional Law", "Contracts", "Criminal Law", "Legal Writing & Research", "Property Law", "Torts", "Evidence", "Professional Responsibility"],
+  "BS Criminal Justice + JD": ["Intro to Criminal Justice", "Criminology", "Criminal Law & Procedure", "Corrections", "Policing", "Juvenile Justice", "Research Methods", "Senior Seminar"],
+  "BA International Relations + JD": ["International Relations", "Comparative Politics", "International Law", "Diplomacy", "Legal Writing & Research", "Constitutional Law", "Senior Seminar"],
+  "BA Political Science/Criminal Justice + JD": ["American Government", "Political Theory", "Public Policy", "Criminal Law", "Legal Writing", "Constitutional Law", "Senior Seminar"],
+  "MPA + JD": ["Public Administration", "Public Policy Analysis", "Budgeting & Finance", "Legal Writing", "Constitutional Law", "Organizational Theory"],
+  "JD + environmental law focus": ["Civil Procedure", "Constitutional Law", "Contracts", "Criminal Law", "Legal Writing & Research", "Property Law", "Torts", "Environmental Law"],
+  "BS Environmental Science + JD": ["Environmental Science", "Ecology", "Chemistry", "Legal Writing", "Environmental Law", "Constitutional Law"],
+  "JD + LLM Environmental Law": ["Civil Procedure", "Constitutional Law", "Contracts", "Legal Writing & Research", "Environmental Law", "Administrative Law", "Land Use"],
+  "JD + LLM Immigration Law": ["Civil Procedure", "Constitutional Law", "Contracts", "Legal Writing & Research", "Immigration Law", "Administrative Law", "International Law"],
+
+  // Healthcare additional
+  "BS Life Sciences": ["Biology", "Chemistry", "Biochemistry", "Genetics", "Microbiology", "Research Methods", "Statistics", "Capstone"],
+  "MS Clinical Research": ["Clinical Trial Design", "Biostatistics", "Regulatory Affairs", "Pharmacology", "Research Ethics", "Data Management", "Thesis"],
+  "BS Nursing": ["Anatomy & Physiology", "Microbiology", "Pharmacology", "Fundamentals of Nursing", "Medical-Surgical Nursing", "Pediatric Nursing", "Obstetric Nursing", "Psychiatric Nursing", "Community Health", "Clinical Practicums"],
+  "BS Biomedical Engineering": ["Calculus & Physics", "Biology", "Biomechanics", "Biomaterials", "Medical Device Design", "Signals & Systems", "Senior Design"],
+  "MS Biomedical Engineering": ["Advanced Biomechanics", "Biomaterials", "Medical Imaging", "Tissue Engineering", "Regulatory Science", "Thesis"],
+  "BS Electrical/Mechanical Engineering": ["Calculus & Physics", "Circuits", "Thermodynamics", "Mechanics", "Control Systems", "Senior Design"],
+  "AS Health Information Technology": ["Medical Terminology", "Health Data Management", "ICD/CPT Coding", "Healthcare Statistics", "Legal Aspects of HIM", "Clinical Practicum"],
+  "Certificate in Medical Coding": ["Medical Terminology", "Anatomy & Physiology", "ICD-10-CM/PCS Coding", "CPT Coding", "Healthcare Reimbursement", "Externship"],
+  "DO (Doctor of Osteopathic Medicine)": ["Osteopathic Principles", "Anatomy", "Biochemistry", "Physiology", "Pharmacology", "Pathology", "Clinical Rotations", "Residency"],
+  "MBBS": ["Anatomy", "Physiology", "Biochemistry", "Pharmacology", "Pathology", "Microbiology", "Clinical Rotations", "Residency"],
+  "BSN + NNP certificate program": ["Advanced Pathophysiology", "Advanced Pharmacology", "Advanced Health Assessment", "Evidence-Based Practice", "Nursing Leadership", "Specialty Clinical Practicum"],
+
+  // Trades aliases
+  "AS Electrical Technology": ["DC/AC Circuits", "Electrical Code (NEC)", "Motor Controls", "Programmable Logic Controllers", "Blueprint Reading", "Hands-On Lab", "Safety & OSHA"],
+
+  // === GENERIC / CATCH-ALL ALIASES ===
+  "Certificate program": ["Core coursework (varies by program)", "Hands-on lab/clinical training", "Safety & compliance", "Industry certification prep", "Externship/Practicum"],
+  "Certificate program (12-24 months)": ["Core coursework (varies by program)", "Hands-on lab/clinical training", "Safety & compliance", "Industry certification prep", "Externship/Practicum"],
+  "Apprenticeship": ["Classroom instruction (144+ hrs/year)", "On-the-job training (2000+ hrs/year)", "Safety & OSHA standards", "Code & regulations", "Progressive skill development"],
+  "Apprenticeship program": ["Classroom instruction (144+ hrs/year)", "On-the-job training (2000+ hrs/year)", "Safety & OSHA standards", "Code & regulations", "Progressive skill development"],
+  "On-the-job training": ["Employer-provided training", "Safety & compliance", "Industry-specific skills", "Mentorship & supervision"],
+  "HS diploma": ["General education coursework", "Electives in area of interest"],
+  "High school diploma": ["General education coursework", "Electives in area of interest"],
+  "High school diploma + training": ["General education coursework", "Vocational/technical training", "Safety certification"],
+  "Self-taught / bootcamp": ["HTML/CSS/JavaScript", "Front-End Framework (React/Vue)", "Back-End (Node.js/Python)", "Databases (SQL/NoSQL)", "Git & Version Control", "Portfolio Projects"],
+  "Self-taught + portfolio": ["Self-directed learning", "Online courses (Udemy, Coursera)", "Personal projects", "Open-source contributions", "Portfolio building"],
+  "Self-taught/portfolio": ["Self-directed learning", "Online courses (Udemy, Coursera)", "Personal projects", "Open-source contributions", "Portfolio building"],
+  "Digital marketing bootcamp": ["SEO & SEM", "Social Media Marketing", "Content Marketing", "Email Marketing", "Analytics (Google Analytics)", "Paid Advertising", "Portfolio Projects"],
+  "Technical diploma": ["Core technical coursework", "Hands-on lab training", "Safety & compliance", "Industry certification prep"],
+  "Technical degree required": ["Core technical coursework", "Hands-on lab training", "Safety & compliance", "Industry certification prep"],
+
+  // Business degree variants
+  "BS Business/Marketing": ["Principles of Accounting", "Microeconomics", "Macroeconomics", "Business Statistics", "Marketing Principles", "Consumer Behavior", "Digital Marketing", "Business Law", "Strategic Management", "Capstone"],
+  "BS Business": ["Principles of Accounting", "Microeconomics", "Macroeconomics", "Business Statistics", "Marketing Principles", "Management & Organizational Behavior", "Business Law", "Finance", "Strategic Management", "Capstone"],
+  "BS Business (helpful)": ["Principles of Accounting", "Microeconomics", "Macroeconomics", "Business Statistics", "Marketing Principles", "Management & Organizational Behavior", "Business Law", "Finance"],
+  "BS Business/Law": ["Principles of Accounting", "Microeconomics", "Business Law", "Marketing Principles", "Finance", "Management", "Legal Environment", "Capstone"],
+  "BS Business/Finance": ["Principles of Accounting", "Microeconomics", "Macroeconomics", "Corporate Finance", "Investments", "Business Statistics", "Business Law", "Capstone"],
+  "BS Business/Economics": ["Principles of Accounting", "Microeconomics", "Macroeconomics", "Econometrics", "Business Statistics", "Finance", "Business Law", "Capstone"],
+  "BS Business/Statistics": ["Principles of Accounting", "Microeconomics", "Business Statistics", "Data Analytics", "Finance", "Marketing", "Operations Management", "Capstone"],
+  "BS Business/Psychology": ["Principles of Accounting", "Microeconomics", "Intro to Psychology", "Organizational Behavior", "HR Management", "Marketing", "Business Law", "Capstone"],
+  "BS Business/HR": ["Principles of Accounting", "Microeconomics", "Employment Law", "Compensation & Benefits", "Training & Development", "Organizational Behavior", "Business Statistics", "Capstone"],
+  "BS Business/Real Estate": ["Principles of Accounting", "Microeconomics", "Real Estate Principles", "Property Management", "Real Estate Finance", "Business Law", "Marketing", "Capstone"],
+  "BS Business/Engineering": ["Principles of Accounting", "Engineering Fundamentals", "Operations Management", "Supply Chain", "Project Management", "Business Statistics", "Quality Control", "Capstone"],
+  "BS Business Administration": ["Principles of Accounting", "Microeconomics", "Macroeconomics", "Business Statistics", "Marketing Principles", "Management & Organizational Behavior", "Business Law", "Finance", "Strategic Management", "Capstone"],
+  "AS Business Administration": ["Principles of Accounting", "Microeconomics", "Business Communications", "Marketing Principles", "Business Law", "Intro to Management"],
+  "AS Business": ["Principles of Accounting", "Microeconomics", "Business Communications", "Marketing Principles", "Business Law", "Intro to Management"],
+  "BS Business + hospitality focus": ["Principles of Accounting", "Microeconomics", "Hospitality Management", "Food & Beverage Operations", "Marketing", "Business Law", "Revenue Management", "Capstone"],
+  "BS Business + paralegal certificate": ["Principles of Accounting", "Business Law", "Legal Research & Writing", "Contracts", "Torts", "Marketing", "Management", "Capstone"],
+  "BBA Marketing": ["Principles of Accounting", "Microeconomics", "Macroeconomics", "Marketing Principles", "Consumer Behavior", "Digital Marketing", "Brand Management", "Business Statistics", "Capstone"],
+  "BS/BA Business": ["Principles of Accounting", "Microeconomics", "Macroeconomics", "Business Statistics", "Marketing Principles", "Management", "Business Law", "Finance", "Capstone"],
+  "BS/BA in relevant field": ["Core coursework in major", "General education requirements", "Electives", "Capstone/Senior project"],
+
+  // MBA variants
+  "MBA + marketing focus": ["Financial Accounting", "Managerial Economics", "Marketing Management", "Consumer Behavior", "Digital Marketing Strategy", "Corporate Finance", "Business Strategy", "Capstone"],
+  "MBA + finance focus": ["Financial Accounting", "Managerial Economics", "Corporate Finance", "Investments", "Financial Modeling", "Business Strategy", "Risk Management", "Capstone"],
+  "MBA + accounting focus": ["Financial Accounting", "Managerial Accounting", "Auditing", "Taxation", "Corporate Finance", "Business Strategy", "Accounting Information Systems", "Capstone"],
+  "MBA + real estate focus": ["Financial Accounting", "Real Estate Finance", "Property Management", "Investment Analysis", "Business Strategy", "Urban Economics", "Capstone"],
+  "MBA + international focus": ["Financial Accounting", "International Trade", "Global Marketing", "International Finance", "Cross-Cultural Management", "Business Strategy", "Capstone"],
+  "MBA + hospitality focus": ["Financial Accounting", "Hospitality Management", "Food & Beverage Operations", "Revenue Management", "Marketing", "Business Strategy", "Capstone"],
+  "MBA + engineering background": ["Financial Accounting", "Managerial Economics", "Operations Management", "Technology Strategy", "Corporate Finance", "Business Strategy", "Leadership", "Capstone"],
+  "MBA + sustainability focus": ["Financial Accounting", "Sustainable Business", "Environmental Policy", "Corporate Finance", "Operations Management", "Business Strategy", "ESG Reporting", "Capstone"],
+  "MBA + DEI concentration": ["Financial Accounting", "Organizational Behavior", "Diversity & Inclusion Strategy", "Change Management", "Business Strategy", "Leadership", "Capstone"],
+  "MBA + OD focus": ["Financial Accounting", "Organizational Development", "Change Management", "Leadership", "Business Strategy", "HR Management", "Capstone"],
+  "MBA + fitness focus": ["Financial Accounting", "Health & Wellness Management", "Marketing", "Business Strategy", "Operations Management", "Leadership", "Capstone"],
+  "MBA + registrar experience": ["Financial Accounting", "Higher Education Administration", "Enrollment Management", "Business Strategy", "Data Analytics", "Leadership", "Capstone"],
+  "MBA Healthcare": ["Financial Accounting", "Healthcare Systems", "Health Economics", "Healthcare Law", "Operations Management", "Business Strategy", "Leadership", "Capstone"],
+  "MBA Marketing": ["Financial Accounting", "Managerial Economics", "Marketing Management", "Consumer Behavior", "Digital Marketing", "Brand Strategy", "Business Strategy", "Capstone"],
+
+  // Hospitality
+  "BS Hospitality": ["Intro to Hospitality", "Food & Beverage Management", "Hotel Operations", "Event Planning", "Revenue Management", "Hospitality Law", "Customer Service", "Practicum"],
+  "BS Hospitality/Tourism": ["Intro to Hospitality", "Tourism Management", "Food & Beverage Management", "Event Planning", "Revenue Management", "Marketing", "Customer Service", "Practicum"],
+  "BS Hospitality/Communications": ["Intro to Hospitality", "Public Relations", "Event Planning", "Food & Beverage Management", "Marketing", "Customer Service", "Business Communications", "Practicum"],
+  "BS Hospitality/Food & Beverage": ["Intro to Hospitality", "Food & Beverage Management", "Culinary Fundamentals", "Menu Planning", "Cost Control", "Hospitality Law", "Customer Service", "Practicum"],
+  "BS Hotel Administration": ["Intro to Hospitality", "Hotel Operations", "Food & Beverage Management", "Revenue Management", "Hospitality Law", "Marketing", "Human Resources", "Practicum"],
+  "BS Event Management": ["Event Planning", "Meeting & Convention Management", "Wedding Planning", "Catering Management", "Marketing", "Budgeting", "Hospitality Law", "Practicum"],
+  "AS Hospitality": ["Intro to Hospitality", "Food & Beverage Basics", "Hotel Operations", "Customer Service", "Event Coordination", "Front Office Management"],
+  "AS Hospitality Management": ["Intro to Hospitality", "Food & Beverage Basics", "Hotel Operations", "Customer Service", "Event Coordination", "Revenue Management"],
+  "AS/BS Hospitality Management": ["Intro to Hospitality", "Food & Beverage Management", "Hotel Operations", "Event Planning", "Revenue Management", "Customer Service", "Practicum"],
+  "Certificate in Event Management": ["Event Planning Fundamentals", "Meeting & Convention Management", "Catering Management", "Budgeting", "Marketing", "Practicum"],
+  "Hospitality certificate (optional)": ["Guest Service", "Front Office Operations", "Food & Beverage Basics", "Housekeeping Management", "Event Coordination"],
+
+  // Criminal Justice / Legal
+  "AS Criminal Justice": ["Intro to Criminal Justice", "Criminology", "Criminal Law", "Corrections", "Policing", "Juvenile Justice"],
+  "AS Legal Studies": ["Intro to Law", "Legal Research & Writing", "Civil Litigation", "Criminal Law", "Legal Ethics", "Internship"],
+  "Paralegal certificate": ["Legal Research & Writing", "Civil Procedure", "Contract Law", "Torts", "Legal Ethics", "Litigation Support", "Practicum"],
+  "JD": ["Civil Procedure", "Constitutional Law", "Contracts", "Criminal Law", "Legal Writing & Research", "Property Law", "Torts", "Evidence", "Professional Responsibility"],
+  "JD (helpful)": ["Civil Procedure", "Constitutional Law", "Contracts", "Criminal Law", "Legal Writing & Research", "Property Law", "Torts"],
+  "JD (preferred)": ["Civil Procedure", "Constitutional Law", "Contracts", "Criminal Law", "Legal Writing & Research", "Property Law", "Torts"],
+  "JD/MBA": ["Civil Procedure", "Constitutional Law", "Contracts", "Legal Writing & Research", "Financial Accounting", "Corporate Finance", "Business Strategy"],
+  "JD + science background": ["Civil Procedure", "Constitutional Law", "Contracts", "Legal Writing & Research", "Patent Law", "Intellectual Property", "Science electives"],
+  "JD + tech focus": ["Civil Procedure", "Constitutional Law", "Contracts", "Legal Writing & Research", "Cyberlaw", "Intellectual Property", "Technology Law"],
+  "LLM (Master of Laws)": ["Advanced Legal Research", "Specialized legal coursework", "Thesis/Paper"],
+  "LLM Real Estate Law": ["Real Estate Transactions", "Property Law", "Land Use Planning", "Environmental Law", "Tax Law", "Thesis"],
+
+  // Education variants
+  "MEd": ["Advanced Curriculum Design", "Educational Research", "Instructional Technology", "Differentiated Instruction", "Educational Leadership", "Action Research", "Capstone"],
+  "MEd (Master of Education)": ["Advanced Curriculum Design", "Educational Research", "Instructional Technology", "Differentiated Instruction", "Educational Leadership", "Action Research", "Capstone"],
+  "MEd Educational Leadership": ["Educational Leadership Theory", "School Law & Policy", "Curriculum Supervision", "Data-Driven Decision Making", "School Finance", "Action Research", "Capstone"],
+  "MEd Administration": ["Educational Leadership", "School Law", "Finance & Budgeting", "Human Resources", "Curriculum Supervision", "Action Research"],
+  "MEd Counseling": ["Counseling Theories", "Group Counseling", "Career Counseling", "Assessment", "Multicultural Counseling", "Practicum"],
+  "MEd Special Education": ["Special Education Law", "Inclusive Classrooms", "Behavior Management", "Assistive Technology", "Assessment", "Practicum"],
+  "MEd Curriculum & Instruction": ["Curriculum Design", "Instructional Strategies", "Assessment & Evaluation", "Educational Technology", "Research Methods", "Capstone"],
+  "MEd Higher Education": ["Higher Education History", "Student Development Theory", "College Student Services", "Higher Ed Law", "Finance", "Practicum"],
+  "MEd Instructional Design": ["Instructional Design Models", "Educational Technology", "E-Learning Development", "Assessment", "Media Production", "Capstone"],
+  "MEd Reading/Literacy": ["Literacy Development", "Reading Assessment", "Instructional Strategies", "Children's Literature", "Research Methods", "Practicum"],
+  "MEd Adult Education": ["Adult Learning Theory", "Program Development", "Instructional Strategies", "Assessment", "Workforce Education", "Practicum"],
+  "MEd STEM Education": ["STEM Pedagogy", "Curriculum Design", "Educational Technology", "Research Methods", "Action Research", "Capstone"],
+  "MEd Policy/Leadership": ["Education Policy Analysis", "Leadership Theory", "School Law", "Data Analysis", "Advocacy", "Capstone"],
+  "EdD Education": ["Educational Leadership", "Research Methods", "Organizational Theory", "Policy Analysis", "Dissertation"],
+  "EdD Educational Leadership": ["Educational Leadership", "School Law", "Finance & Budgeting", "Research Methods", "Dissertation"],
+  "EdD/PhD": ["Advanced Research Methods", "Theory Seminar", "Specialized coursework", "Dissertation"],
+  "EdD/PhD (for higher ed)": ["Higher Education Administration", "Research Methods", "Policy Analysis", "Dissertation"],
+  "EdD/PhD Education": ["Educational Leadership", "Research Methods", "Policy Analysis", "Dissertation"],
+  "EdS (Education Specialist)": ["Advanced coursework in specialization", "Research Methods", "Practicum"],
+  "EdS Reading": ["Advanced Literacy Instruction", "Reading Assessment", "Research Methods", "Practicum"],
+  "EdS School Counseling": ["Advanced Counseling", "School Counseling Programs", "Assessment", "Research Methods", "Practicum"],
+  "PhD or PsyD in Clinical Psychology": ["Advanced Psychopathology", "Psychological Assessment", "Psychotherapy", "Research Methods", "Statistics", "Dissertation", "Clinical Practicum"],
+  "PhD/PsyD in School Psychology": ["School Psychology Practice", "Psychological Assessment", "Intervention", "Research Methods", "Dissertation", "Practicum"],
+  "Master in Teaching (MIT)": ["Foundations of Education", "Curriculum Design", "Classroom Management", "Teaching Methods", "Assessment", "Student Teaching"],
+  "BA in subject area + teaching credential": ["Subject area coursework", "Foundations of Education", "Classroom Management", "Teaching Methods", "Student Teaching"],
+  "BA/BS + Montessori credential": ["Montessori Philosophy", "Child Development", "Prepared Environment", "Didactic Materials", "Observation & Assessment", "Student Teaching"],
+  "BA/BS + teaching experience": ["Subject area coursework", "Foundations of Education", "Classroom Management", "Teaching Methods"],
+
+  // Science/Health variants
+  "BS Biology/Pre-Med": ["General Biology", "General Chemistry", "Organic Chemistry", "Physics", "Biochemistry", "Genetics", "Calculus", "MCAT Prep"],
+  "BS Biology/Pre-Optometry": ["General Biology", "General Chemistry", "Organic Chemistry", "Physics", "Biochemistry", "Anatomy", "Calculus", "OAT Prep"],
+  "BS Biology/Pre-Chiro": ["General Biology", "General Chemistry", "Organic Chemistry", "Physics", "Anatomy", "Physiology", "Biochemistry"],
+  "BS Biology/Kinesiology": ["General Biology", "Anatomy & Physiology", "Kinesiology", "Exercise Physiology", "Chemistry", "Biomechanics", "Research Methods"],
+  "BS Biology/Chemistry": ["General Biology", "General Chemistry", "Organic Chemistry", "Biochemistry", "Genetics", "Physics", "Research Methods"],
+  "BS Environmental Science": ["Environmental Science", "Ecology", "Chemistry", "Biology", "GIS", "Statistics", "Environmental Policy", "Field Methods"],
+  "BS Exercise Science": ["Anatomy & Physiology", "Exercise Physiology", "Kinesiology", "Biomechanics", "Sport Psychology", "Research Methods", "Fitness Assessment", "Practicum"],
+  "BS Kinesiology": ["Anatomy & Physiology", "Biomechanics", "Exercise Physiology", "Motor Learning", "Sport Psychology", "Research Methods", "Fitness Assessment", "Practicum"],
+  "BS Kinesiology/Exercise Science": ["Anatomy & Physiology", "Exercise Physiology", "Kinesiology", "Biomechanics", "Sport Psychology", "Research Methods", "Fitness Assessment", "Practicum"],
+  "DVM (Doctor of Veterinary Medicine)": ["Anatomy", "Physiology", "Pharmacology", "Pathology", "Microbiology", "Surgery", "Clinical Rotations"],
+  "BS + DVM program": ["Biology", "Chemistry", "Organic Chemistry", "Physics", "Biochemistry", "Animal Science", "Genetics"],
+  "MD (Doctor of Medicine)": ["Anatomy", "Biochemistry", "Physiology", "Pharmacology", "Pathology", "Microbiology", "Clinical Rotations", "Residency Training"],
+  "MD or DO degree": ["Anatomy", "Biochemistry", "Physiology", "Pharmacology", "Pathology", "Microbiology", "Clinical Rotations", "Residency Training"],
+  "MS Nutrition": ["Advanced Nutrition Science", "Medical Nutrition Therapy", "Research Methods", "Biochemistry", "Community Nutrition", "Thesis"],
+  "MS Epidemiology": ["Epidemiological Methods", "Biostatistics", "Research Design", "Data Analysis", "Disease Surveillance", "Thesis"],
+  "MPH (Master of Public Health)": ["Epidemiology", "Biostatistics", "Environmental Health", "Health Policy", "Social & Behavioral Health", "Practicum", "Capstone"],
+  "MHA (Master of Health Admin)": ["Healthcare Systems", "Health Economics", "Healthcare Law", "Hospital Operations", "Quality Improvement", "Finance", "Capstone"],
+  "BS Health Administration": ["Healthcare Systems", "Health Economics", "Healthcare Law", "Hospital Operations", "Quality Improvement", "Health Informatics", "Practicum"],
+  "BS Health Informatics": ["Healthcare Systems", "Health Data Management", "Database Systems", "Health IT Standards", "Privacy & Security", "Analytics", "Practicum"],
+  "MS Health Informatics": ["Advanced Health Informatics", "Health Data Analytics", "IT Project Management", "Privacy & Security", "Research Methods", "Capstone"],
+  "BS Radiologic Science": ["Anatomy & Physiology", "Radiographic Positioning", "Radiation Physics", "Radiation Protection", "Patient Care", "Clinical Practicums"],
+  "AS Diagnostic Medical Sonography": ["Anatomy & Physiology", "Sonographic Physics", "Abdominal Sonography", "OB/GYN Sonography", "Vascular Sonography", "Clinical Practicums"],
+  "BS Respiratory Care": ["Anatomy & Physiology", "Cardiopulmonary Anatomy", "Respiratory Pharmacology", "Mechanical Ventilation", "Neonatal/Pediatric RT", "Clinical Practicums"],
+  "AS Respiratory Therapy": ["Anatomy & Physiology", "Cardiopulmonary Anatomy", "Respiratory Pharmacology", "Mechanical Ventilation", "Clinical Practicums"],
+  "AS Clinical Laboratory Science": ["Anatomy & Physiology", "Clinical Chemistry", "Hematology", "Microbiology", "Immunology", "Clinical Practicums"],
+  "BS Medical Lab Science": ["Anatomy & Physiology", "Clinical Chemistry", "Hematology", "Microbiology", "Immunology", "Molecular Diagnostics", "Clinical Practicums"],
+  "BS Communication Sciences": ["Anatomy of Speech & Hearing", "Phonetics", "Language Development", "Audiology", "Speech Sound Disorders", "Research Methods"],
+  "BS Communication Sciences + AuD": ["Anatomy of Speech & Hearing", "Audiology Assessment", "Hearing Aids", "Aural Rehabilitation", "Research Methods"],
+  "MS Audiology + clinical doctorate": ["Advanced Audiology", "Hearing Aids", "Vestibular Assessment", "Research Methods", "Clinical Rotations"],
+  "Master of Science in PA Studies": ["Anatomy", "Physiology", "Pharmacology", "Clinical Medicine", "Diagnostics", "Clinical Rotations"],
+  "BS + PA program": ["Biology", "Chemistry", "Organic Chemistry", "Anatomy", "Physiology", "Medical Terminology"],
+
+  // Trades / Technical
+  "Construction certificate": ["Construction Safety", "Blueprint Reading", "Building Codes", "Tools & Equipment", "Hands-On Training"],
+  "Construction technology certificate": ["Construction Safety", "Blueprint Reading", "Building Codes", "Project Management", "Hands-On Training"],
+  "CDL training program": ["Vehicle Inspection", "Basic Control Skills", "Road Driving", "Safety Regulations", "Hazmat Awareness"],
+  "CNA training program": ["Patient Care Skills", "Vital Signs", "Infection Control", "Safety & Mobility", "Clinical Practicum"],
+  "Cosmetology license": ["Hair Cutting & Styling", "Color Theory", "Skin Care", "Nail Technology", "Sanitation & Safety", "State Exam Prep"],
+  "Welding certificate": ["Welding Safety", "SMAW/GMAW/TIG Welding", "Blueprint Reading", "Metallurgy", "Hands-On Lab"],
+  "Heavy equipment certificate": ["Equipment Safety", "Operating Techniques", "Maintenance & Inspection", "Site Work", "Hands-On Training"],
+  "Real estate courses": ["Real Estate Principles", "Real Estate Law", "Finance", "Appraisal", "State Exam Prep"],
+  "Law enforcement training": ["Criminal Law", "Defensive Tactics", "Firearms Training", "Patrol Procedures", "Report Writing", "Field Training"],
+  "Security training program": ["Security Fundamentals", "Patrol Techniques", "Report Writing", "Emergency Response", "Legal Issues"],
+
+  // Engineering
+  "BS Electrical Engineering": ["Circuit Analysis", "Electronics", "Signals & Systems", "Electromagnetics", "Control Systems", "Digital Design", "Senior Design"],
+  "BS Mechanical Engineering": ["Statics & Dynamics", "Thermodynamics", "Fluid Mechanics", "Heat Transfer", "Machine Design", "Senior Design"],
+  "BS Civil Engineering": ["Statics & Dynamics", "Structural Analysis", "Geotechnical Engineering", "Transportation Engineering", "Hydraulics", "Senior Design"],
+  "BS Industrial Engineering": ["Operations Research", "Quality Control", "Ergonomics", "Supply Chain", "Statistics", "Systems Design", "Senior Design"],
+  "BS Engineering": ["Calculus & Physics", "Engineering Fundamentals", "Design & Manufacturing", "Systems Engineering", "Senior Design"],
+  "BS Engineering + business focus": ["Calculus & Physics", "Engineering Fundamentals", "Operations Management", "Business Strategy", "Project Management", "Senior Design"],
+  "MS Robotics": ["Robot Kinematics", "Control Systems", "Computer Vision", "Machine Learning", "Sensors & Actuators", "Thesis"],
+  "BS Computer Science/Math": ["Data Structures & Algorithms", "Discrete Mathematics", "Calculus", "Linear Algebra", "Operating Systems", "Databases", "Senior Capstone"],
+  "BS Mathematics + CS": ["Calculus I-III", "Linear Algebra", "Data Structures", "Algorithms", "Discrete Math", "Probability", "Senior Seminar"],
+
+  // Communications / Media
+  "BA Communications": ["Mass Communication", "Public Speaking", "Interpersonal Communication", "Media Studies", "Organizational Communication", "Research Methods", "Senior Seminar"],
+  "BA Journalism": ["News Writing & Reporting", "Investigative Journalism", "Media Law & Ethics", "Digital Journalism", "Photojournalism", "Internship"],
+  "BA Journalism/Digital Media": ["News Writing & Reporting", "Digital Journalism", "Social Media", "Media Law & Ethics", "Data Journalism", "Internship"],
+  "BA Political Science": ["American Government", "Political Theory", "International Relations", "Comparative Politics", "Research Methods", "Senior Seminar"],
+  "BA International Relations": ["International Relations", "Comparative Politics", "International Law", "Diplomacy", "Foreign Language", "Research Methods", "Senior Seminar"],
+  "BS Political Science": ["American Government", "Political Theory", "Public Policy", "Research Methods", "Statistics", "Senior Seminar"],
+  "BS Urban Planning": ["Urban Planning Theory", "Land Use Planning", "GIS", "Environmental Planning", "Transportation Planning", "Community Development", "Practicum"],
+  "BS Geography": ["Physical Geography", "Human Geography", "GIS", "Cartography", "Remote Sensing", "Research Methods", "Senior Seminar"],
+  "BS Logistics": ["Supply Chain Management", "Transportation", "Warehousing", "Inventory Management", "Procurement", "Analytics", "Capstone"],
+  "BS Real Estate": ["Real Estate Principles", "Real Estate Finance", "Property Management", "Real Estate Law", "Appraisal", "Investment Analysis", "Capstone"],
+  "BS Sports Management": ["Sport Marketing", "Facility Management", "Event Management", "Sport Finance", "Sport Law", "Practicum"],
+  "BS Parks & Recreation": ["Recreation Programming", "Park Management", "Natural Resource Conservation", "Event Planning", "Practicum"],
+  "BS Sustainability": ["Environmental Science", "Sustainable Business", "Renewable Energy", "Policy Analysis", "Research Methods", "Capstone"],
+  "MS Finance": ["Corporate Finance", "Investments", "Financial Modeling", "Derivatives", "Risk Management", "Research Methods", "Capstone"],
+  "MS Economics": ["Microeconomic Theory", "Macroeconomic Theory", "Econometrics", "Game Theory", "Research Methods", "Thesis"],
+  "MS Statistics": ["Statistical Theory", "Regression Analysis", "Experimental Design", "Statistical Computing", "Bayesian Statistics", "Thesis"],
+  "PhD Economics": ["Microeconomic Theory", "Macroeconomic Theory", "Econometrics", "Game Theory", "Dissertation"],
+  "PhD Epidemiology": ["Epidemiological Methods", "Biostatistics", "Research Design", "Dissertation"],
+
+  // Arts variants
+  "BFA Graphic Design": ["Design Fundamentals", "Typography", "Digital Illustration", "Layout & Composition", "Web Design", "Branding", "UX/UI Design", "Portfolio"],
+  "BFA Fine Arts": ["Drawing", "Painting", "Sculpture", "Art History", "Mixed Media", "Contemporary Theory", "Professional Practices", "Senior Exhibition"],
+  "BFA Animation": ["Drawing for Animation", "2D Animation", "3D Animation", "Character Design", "Storyboarding", "Motion Graphics", "Senior Film"],
+  "BFA Film/Television": ["Film History & Theory", "Cinematography", "Screenwriting", "Editing", "Sound Design", "Directing", "Senior Film Project"],
+  "BFA Photography": ["Camera & Exposure", "Lighting Techniques", "Digital Darkroom", "Composition", "Studio Photography", "Portfolio Capstone"],
+  "BFA Acting/Drama": ["Acting Techniques", "Voice & Movement", "Script Analysis", "Theater History", "Directing", "Stage Performance"],
+  "BFA Music Technology": ["Music Theory", "Recording Techniques", "Sound Design", "Music Production", "Audio Engineering", "Portfolio"],
+  "BFA Fashion Design": ["Fashion Illustration", "Textiles", "Pattern Making", "Draping & Construction", "Fashion History", "Collection Development", "Portfolio"],
+  "BFA Interior Design": ["Design Fundamentals", "Space Planning", "Materials & Finishes", "Lighting Design", "CAD/3D Modeling", "Professional Practice", "Portfolio"],
+  "BFA Ceramics": ["Ceramic Techniques", "Wheel Throwing", "Glaze Chemistry", "Kiln Firing", "Art History", "Senior Exhibition"],
+  "BFA Illustration": ["Drawing", "Digital Illustration", "Narrative Illustration", "Character Design", "Art History", "Portfolio"],
+  "BFA Interactive Media": ["Interactive Design", "Web Development", "UX/UI", "Motion Graphics", "Game Design", "Portfolio"],
+  "BFA Puppetry": ["Puppet Construction", "Puppet Performance", "Stage Design", "Scripting", "Directing", "Senior Production"],
+  "BA Studio Art": ["Drawing", "Painting", "Sculpture", "Art History", "Printmaking", "Senior Exhibition"],
+  "BA Art History": ["Art History Survey", "Contemporary Art", "Museum Studies", "Research Methods", "Curatorial Practice", "Senior Thesis"],
+  "MA Art History": ["Advanced Art History", "Curatorial Methods", "Research Methods", "Thesis"],
+  "MFA Fine Arts": ["Advanced Studio Practice", "Critique & Theory", "Professional Practices", "Teaching Practicum", "Thesis Exhibition"],
+  "MFA Acting/Voice": ["Advanced Acting", "Voice & Speech", "Movement", "Directing", "Teaching Practicum", "Thesis Production"],
+  "MFA Directing": ["Advanced Directing", "Dramaturgy", "Production Management", "Teaching Practicum", "Thesis Production"],
+  "MFA Scenic Design": ["Scenic Design", "Drafting", "Model Building", "Technical Direction", "Teaching Practicum", "Thesis Design"],
+  "MFA Lighting Design": ["Lighting Design", "Electrics", "Programming", "Technical Direction", "Teaching Practicum", "Thesis Design"],
+  "MFA Stage Management": ["Stage Management", "Production Management", "Technical Direction", "Leadership", "Teaching Practicum"],
+  "MFA Puppet Arts": ["Puppet Construction", "Puppet Performance", "Directing", "Design", "Teaching Practicum", "Thesis Production"],
+  "MS Geospatial Science": ["GIS", "Remote Sensing", "Spatial Analysis", "Cartography", "Programming", "Thesis"],
+  "BS GIS/Cartography": ["GIS", "Cartography", "Remote Sensing", "Spatial Analysis", "Programming", "Field Methods", "Capstone"],
+  "BS Computer Animation": ["Drawing", "3D Modeling", "Animation", "Texturing", "Lighting", "Rigging", "Portfolio"],
+  "BS Digital Media": ["Digital Media Production", "Graphic Design", "Web Development", "Video Production", "UX Design", "Portfolio"],
+  "BS Digital Arts": ["Digital Media Production", "Graphic Design", "Animation", "Web Design", "Video Production", "Portfolio"],
+  "BS Graphic Design": ["Design Fundamentals", "Typography", "Digital Illustration", "Layout & Composition", "Web Design", "Branding", "Portfolio"],
+  "BS Graphic Design + UX focus": ["Design Fundamentals", "Typography", "UX Research", "Interaction Design", "Prototyping", "Web Design", "Portfolio"],
+  "BS Graphic Design + web focus": ["Design Fundamentals", "Typography", "HTML/CSS", "Web Design", "Responsive Design", "Portfolio"],
+  "BS Web Design/Development": ["HTML/CSS", "JavaScript", "Web Design", "Front-End Frameworks", "Back-End Development", "Databases", "Portfolio"],
+  "BS Audio Engineering": ["Audio Fundamentals", "Recording Techniques", "Mixing & Mastering", "Sound Design", "Music Production", "Portfolio"],
+  "BS Music Production": ["Music Theory", "Recording Techniques", "Music Production", "Mixing & Mastering", "Sound Design", "Portfolio"],
+  "BS Computer Science + writing focus": ["Intro to Programming", "Data Structures", "Technical Writing", "Documentation", "Web Development", "Capstone"],
+  "BA English + science coursework": ["English Composition", "Literature", "Technical Writing", "Science electives", "Research Methods", "Senior Seminar"],
+  "BS Sustainability": ["Environmental Science", "Sustainable Business", "Renewable Energy", "Policy Analysis", "Research Methods", "Capstone"]
 };
 
 const DATA = {
@@ -8070,6 +8501,17 @@ function openRole(roleName, questions) {
     let degItems = certData.degrees.map(d => `<div class="req-item"><span class="req-bullet">\u{1F393}</span>${d}</div>`).join('');
     let certItems = certData.certs.map(c => `<div class="req-item"><span class="req-bullet">\u{1F4AC}</span>${c}</div>`).join('');
     let pathItems = certData.paths ? certData.paths.map(p => `<div class="req-item"><span class="req-bullet">\u{1F9ED}</span>${p}</div>`).join('') : '';
+    // Build coursework section from COURSES lookup
+    let courseHtml = '';
+    if (typeof COURSES !== 'undefined') {
+      certData.degrees.forEach(deg => {
+        const courses = COURSES[deg];
+        if (courses) {
+          courseHtml += `<div class="req-section-label">\u{1F4D6} ${deg}</div>`;
+          courses.forEach(c => { courseHtml += `<div class="req-item req-course"><span class="req-bullet">\u{1F4DA}</span>${c}</div>`; });
+        }
+      });
+    }
     reqCard.innerHTML = `
       <div class="req-card">
         <div class="req-card-header" onclick="toggleReqCard(this)">
@@ -8083,6 +8525,7 @@ function openRole(roleName, questions) {
           <div class="req-section-label">Certifications & Licenses</div>
           ${certItems}
           ${pathItems ? '<div class="req-section-label">Recommended Paths</div>' + pathItems : ''}
+          ${courseHtml ? '<div class="req-divider"></div><div class="req-section-label">\u{1F393} Typical Coursework</div>' + courseHtml : ''}
         </div>
       </div>`;
     reqCard.style.display = '';

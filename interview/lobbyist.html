@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,15 @@
           <ul><li>Political science or policy degree + legislative internship</li><li>Government relations experience + issue expertise</li><li>State registration + building legislative relationships</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BA Political Science</h3>
+          <ul><li>American Government</li><li>Political Theory</li><li>International Relations</li><li>Comparative Politics</li><li>Research Methods</li><li>Senior Seminar</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — JD</h3>
+          <ul><li>Civil Procedure</li><li>Constitutional Law</li><li>Contracts</li><li>Criminal Law</li><li>Legal Writing &amp; Research</li><li>Property Law</li><li>Torts</li><li>Evidence</li><li>Professional Responsibility</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

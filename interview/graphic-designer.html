@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,11 @@
           <ul><li>Art school or university design program</li><li>Adobe certification prep + portfolio building</li><li>Google UX Certificate on Coursera (6 months)</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BFA Graphic Design</h3>
+          <ul><li>Design Fundamentals</li><li>Typography</li><li>Digital Illustration</li><li>Layout &amp; Composition</li><li>Web Design</li><li>Branding</li><li>UX/UI Design</li><li>Portfolio</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

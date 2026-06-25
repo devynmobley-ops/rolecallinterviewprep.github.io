@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,15 @@
           <ul><li>Accredited dental hygiene program (2-4 years)</li><li>NDHCE exam prep + clinical training</li><li>State dental board application + CPR class</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Dental Hygiene</h3>
+          <ul><li>Dental Anatomy</li><li>Oral Pathology</li><li>Periodontology</li><li>Dental Radiology</li><li>Preventive Dentistry</li><li>Clinical Dental Hygiene</li><li>Pharmacology</li><li>Patient Management</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — Certificate program</h3>
+          <ul><li>Core coursework (varies by program)</li><li>Hands-on lab/clinical training</li><li>Safety &amp; compliance</li><li>Industry certification prep</li><li>Externship/Practicum</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">
@@ -306,7 +323,7 @@
     <section class="related-section">
       <h2>Related Healthcare Roles</h2>
       <div class="related-grid">
-          <a href="/interview/nurse.html" class="related-role">Nurse</a>
+          <a href="/interview/registered-nurse.html" class="related-role">Registered Nurse</a>
           <a href="/interview/medical-assistant.html" class="related-role">Medical Assistant</a>
           <a href="/interview/pharmacy-technician.html" class="related-role">Pharmacy Technician</a>
           <a href="/interview/health-administrator.html" class="related-role">Health Administrator</a>

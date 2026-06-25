@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,15 @@
           <ul><li>Title company training + state licensing exam</li><li>State insurance license course + background check</li><li>ALTA professional development + progressive title experience</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — No degree required</h3>
+          <ul><li>On-the-job training</li><li>Apprenticeship (if applicable)</li><li>OSHA safety certification</li><li>Trade-specific licensing exam prep</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Real Estate</h3>
+          <ul><li>Real Estate Principles</li><li>Real Estate Finance</li><li>Property Management</li><li>Real Estate Law</li><li>Appraisal</li><li>Investment Analysis</li><li>Capstone</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

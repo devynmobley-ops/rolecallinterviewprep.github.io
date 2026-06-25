@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,11 @@
           <ul><li>Fashion school (Parsons, FIT, or equivalent)</li><li>CFDA emerging designer programs + internships</li><li>Adobe certification + sustainable fashion courses</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BFA Fashion Design</h3>
+          <ul><li>Fashion Illustration</li><li>Textiles</li><li>Pattern Making</li><li>Draping &amp; Construction</li><li>Fashion History</li><li>Collection Development</li><li>Portfolio</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

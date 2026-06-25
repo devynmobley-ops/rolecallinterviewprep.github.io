@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -289,13 +297,22 @@
         </div>
         <div class="cert-block">
           <h3>Certifications</h3>
-          <ul><li>CMA (Certified Medical Assistant)</li><li>RMA (Registered Medical Assistant)</li><li>BLS Certification</li></ul>
+          <ul><li>CMA (Certified Medical Assistant — AAMA)</li><li>CCMA (Certified Clinical Medical Assistant — NHA)</li><li>RMA (Registered Medical Assistant — AMT)</li></ul>
         </div>
         <div class="cert-block">
           <h3>Career Paths</h3>
-          <ul><li>Vocational school or community college (9-12 months)</li><li>On-the-job training + AAMA exam prep</li><li>American Heart Association BLS class</li></ul>
+          <ul><li>Vocational school or community college (9-12 months)</li><li>AAMA, NHA, or AMT exam prep + clinical hours</li><li>American Heart Association BLS class</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — Certificate in Medical Assisting</h3>
+          <ul><li>Medical Terminology</li><li>Anatomy &amp; Physiology</li><li>Clinical Procedures</li><li>Pharmacology</li><li>Medical Office Administration</li><li>Phlebotomy</li><li>EKG</li><li>Externship</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — On-the-job training</h3>
+          <ul><li>Employer-provided training</li><li>Safety &amp; compliance</li><li>Industry-specific skills</li><li>Mentorship &amp; supervision</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">
@@ -306,7 +323,7 @@
     <section class="related-section">
       <h2>Related Healthcare Roles</h2>
       <div class="related-grid">
-          <a href="/interview/nurse.html" class="related-role">Nurse</a>
+          <a href="/interview/registered-nurse.html" class="related-role">Registered Nurse</a>
           <a href="/interview/pharmacy-technician.html" class="related-role">Pharmacy Technician</a>
           <a href="/interview/health-administrator.html" class="related-role">Health Administrator</a>
           <a href="/interview/physical-therapist.html" class="related-role">Physical Therapist</a>

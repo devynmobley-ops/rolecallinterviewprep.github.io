@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,15 @@
           <ul><li>Design bootcamp (3-6 months) + portfolio building</li><li>IDF membership + courses + design challenges</li><li>Google UX Certificate + freelance projects for portfolio</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Graphic Design</h3>
+          <ul><li>Design Fundamentals</li><li>Typography</li><li>Digital Illustration</li><li>Layout &amp; Composition</li><li>Web Design</li><li>Branding</li><li>Portfolio</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — Bootcamp certificate</h3>
+          <ul><li>HTML/CSS/JavaScript</li><li>Front-End Framework (React/Vue)</li><li>Back-End (Node.js/Python)</li><li>Databases (SQL/NoSQL)</li><li>Git &amp; Version Control</li><li>APIs &amp; REST</li><li>Deployment &amp; DevOps Basics</li><li>Portfolio Projects</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

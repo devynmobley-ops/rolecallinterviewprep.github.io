@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -289,13 +297,22 @@
         </div>
         <div class="cert-block">
           <h3>Certifications</h3>
-          <ul><li>EPA Section 608 Certification</li><li>NATE Certification</li><li>HVAC Excellence Certification</li></ul>
+          <ul><li>EPA Section 608 Certification</li><li>NATE Core + Specialty Certification</li><li>EPA 608 Universal + A2L Refrigerant Handling</li></ul>
         </div>
         <div class="cert-block">
           <h3>Career Paths</h3>
-          <ul><li>Trade school or community college (6-24 months)</li><li>EPA 608 exam prep + hands-on training</li><li>NATE exam after field experience</li></ul>
+          <ul><li>Trade school or community college (6-24 months)</li><li>EPA 608 exam prep + hands-on training</li><li>NATE certification pathway (Ready-to-Work → Core + Specialty)</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — Trade school diploma</h3>
+          <ul><li>Safety &amp; OSHA Standards</li><li>Blueprint Reading</li><li>Tools &amp; Equipment</li><li>Hands-On Lab Training</li><li>Code &amp; Regulations</li><li>Specialty Techniques</li><li>Practicum/Externship</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — Certificate program</h3>
+          <ul><li>Core coursework (varies by program)</li><li>Hands-on lab/clinical training</li><li>Safety &amp; compliance</li><li>Industry certification prep</li><li>Externship/Practicum</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

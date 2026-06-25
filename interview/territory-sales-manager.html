@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,19 @@
           <ul><li>Sales experience + promotion to management</li><li>Sales leadership certification + territory management</li><li>Salesforce certification + progressive sales management</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Business Administration</h3>
+          <ul><li>Principles of Accounting</li><li>Microeconomics</li><li>Macroeconomics</li><li>Business Statistics</li><li>Marketing Principles</li><li>Management &amp; Organizational Behavior</li><li>Business Law</li><li>Finance</li><li>Strategic Management</li><li>Capstone</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Marketing</h3>
+          <ul><li>Principles of Marketing</li><li>Consumer Behavior</li><li>Marketing Research</li><li>Digital Marketing</li><li>Brand Management</li><li>Advertising &amp; Promotion</li><li>Sales Management</li><li>Capstone</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MBA</h3>
+          <ul><li>Financial Accounting</li><li>Managerial Economics</li><li>Organizational Behavior</li><li>Marketing Management</li><li>Corporate Finance</li><li>Operations Management</li><li>Business Strategy</li><li>Leadership</li><li>Electives/Capstone</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">

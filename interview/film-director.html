@@ -127,6 +127,14 @@
       border-bottom: 1px solid var(--card-hover);
     }
     .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
     .cta-bottom {
       text-align: center; padding: 40px 0 32px;
     }
@@ -296,6 +304,19 @@
           <ul><li>Film school (4 years) + short films</li><li>Self-taught + independent film projects + festival submissions</li><li>DGA Trainee program + assistant directing experience</li></ul>
         </div>
       </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BFA Film/Television</h3>
+          <ul><li>Film History &amp; Theory</li><li>Cinematography</li><li>Screenwriting</li><li>Editing</li><li>Sound Design</li><li>Directing</li><li>Senior Film Project</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MFA Directing</h3>
+          <ul><li>Advanced Directing</li><li>Dramaturgy</li><li>Production Management</li><li>Teaching Practicum</li><li>Thesis Production</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — Self-taught + portfolio</h3>
+          <ul><li>Self-directed learning</li><li>Online courses (Udemy, Coursera)</li><li>Personal projects</li><li>Open-source contributions</li><li>Portfolio building</li></ul>
+        </div></div>
     </section>
 
     <div class="cta-bottom">
