@@ -287,6 +287,15 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .testimonial-quote::after{content:'\201D';color:var(--accent);font-size:20px;font-style:normal;margin-left:2px}
 .testimonial-author{font-size:12px;color:var(--text-secondary);font-weight:600}
 .testimonial-author strong{color:var(--text)}
+.jok-promo{margin:12px 20px 20px;background:linear-gradient(135deg,var(--card),var(--card-hover));border-radius:18px;padding:20px;display:flex;align-items:center;gap:14px;cursor:pointer;border:1px solid var(--card-hover);transition:all 0.3s ease;position:relative;overflow:hidden}
+.jok-promo:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(108,92,231,0.2)}
+.jok-promo:active{transform:scale(0.98)}
+.jok-promo::before{content:'';position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:radial-gradient(circle,var(--accent) 0%,transparent 70%);opacity:0.08;pointer-events:none}
+.jok-promo-icon{font-size:32px;flex-shrink:0}
+.jok-promo-content{flex:1;min-width:0}
+.jok-promo-title{font-size:15px;font-weight:800;margin-bottom:3px}
+.jok-promo-desc{font-size:12px;color:var(--text-secondary);line-height:1.4}
+.jok-promo-price{font-size:16px;font-weight:800;color:var(--accent);flex-shrink:0;background:var(--card);padding:6px 14px;border-radius:10px}
 .newsletter-card{margin:12px 20px 20px;background:var(--card);border-radius:var(--radius);padding:24px 20px;border:1px solid var(--card-hover);text-align:center}
 .newsletter-card h3{font-size:18px;font-weight:800;margin-bottom:4px}
 .newsletter-sub{font-size:13px;color:var(--text-secondary);margin-bottom:16px;line-height:1.5}
@@ -505,6 +514,15 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
     </div>
     <div class="roles-explored" id="rolesExplored"></div>
   </div>
+  </div>
+  <!-- JOB OFFER KIT PROMO -->
+  <div class="jok-promo" onclick="showScreen('jobofferkit')" role="button" tabindex="0" aria-label="View The Job Offer Kit">
+    <div class="jok-promo-icon">&#128142;</div>
+    <div class="jok-promo-content">
+      <div class="jok-promo-title">The Job Offer Kit</div>
+      <div class="jok-promo-desc">Interview scripts, resume formulas & salary negotiation — everything except the handshake.</div>
+    </div>
+    <div class="jok-promo-price">$20</div>
   </div>
   <!-- NEWSLETTER -->
   <div class="newsletter-card">
@@ -7842,6 +7860,8 @@ async function subscribe() {
 const APP_VERSION = '1.1.0';
 
 const UPDATES = [
+  { date: "Jun 25, 2026", title: "Degree Coursework Mapping", desc: "Every role now shows typical courses for each required degree — 166 degree mappings across 374+ roles. Acts as a mini academic advisor for students planning their path.", icon: "🎓" },
+  { date: "Jun 25, 2026", title: "Job Offer Kit — Now a Landing Page", desc: "The Job Offer Kit now has its own dedicated landing page (rolecallinterviewprep.com/job-offer-kit) for easy sharing, plus a prominent promo card on the home screen.", icon: "💎" },
   { date: "Jun 15, 2026", title: "Deep Dive — AI Question Breakdown", desc: "New Deep Dive button on every interview question. Pro users get a detailed breakdown: what they're really asking, how to structure your answer, example starters, common mistakes, and pro moves.", icon: "🔬" },
   { date: "Jun 14, 2026", title: "Resume Tailor — AI-Powered Resume Optimization", desc: "New tab lets Pro users upload a resume PDF and paste a job description. Claude AI analyzes the match, suggests keyword improvements, rewrites bullet points, and gives you a match score.", icon: "📄" },
   { date: "Jun 14, 2026", title: "Job Offer Kit Now on the Site", desc: "New screen showcasing The Job Offer Kit — 7 sections of interview scripts, resume formulas, salary negotiation guides, and bonus templates. Available under More → Resources.", icon: "💎" },
