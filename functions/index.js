@@ -426,8 +426,6 @@ Rules:
       throw new Error('Could not parse AI response as JSON');
     }
     analysis = JSON.parse(jsonMatch[0]);
-    console.log('AI response keys:', Object.keys(analysis));
-    console.log('Has resume?', !!analysis.resume);
   } catch (err) {
     console.error('Claude API error:', err.message);
     throw new functions.https.HttpsError('internal', 'Analysis failed. Please try again.');
