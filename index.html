@@ -7888,6 +7888,12 @@ function init() {
     window.history.replaceState({}, '', window.location.pathname);
   }
 
+  // Handle direct tab linking (e.g. /?tab=more)
+  const tabParam = urlParams.get('tab');
+  if (tabParam) {
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+
   loadTheme();
   loadScrollbarPref();
   renderThemeOptions();
@@ -7921,7 +7927,8 @@ function init() {
   if (verElMore) verElMore.textContent = 'v' + APP_VERSION;
   // Analytics - increment app opens
   trackEvent('app_opens');
-  switchTab('home');
+  // Switch to requested tab or default to home
+  switchTab(tabParam || 'home');
 }
 
 // === ANALYTICS ===
