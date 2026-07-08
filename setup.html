@@ -116,9 +116,9 @@ html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI
       </div>
 
       <div class="field">
-        <label>Admin Email (career services contact)</label>
-        <input type="email" id="adminEmail" placeholder="e.g. careerservices@hacc.edu">
-        <div class="hint">They'll use this email to log into the admin dashboard.</div>
+        <label>Admin Email(s) — career services contacts</label>
+        <textarea id="adminEmail" placeholder="careerservices@hacc.edu&#10;advisor@hacc.edu&#10;director@hacc.edu" style="width:100%;min-height:80px;padding:12px 14px;border-radius:10px;border:1px solid var(--card-hover);background:var(--bg);color:var(--text);font-size:14px;font-family:inherit;resize:vertical;outline:none;transition:border var(--transition)" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--card-hover)'"></textarea>
+        <div class="hint">One email per line. Each person gets their own admin account for the dashboard.</div>
       </div>
 
       <div class="field-row">
@@ -312,7 +312,7 @@ async function createSchool() {
   var name = document.getElementById('schoolName').value.trim();
   var code = document.getElementById('promoCode').value.trim().toUpperCase();
   var slug = document.getElementById('instSlug').value.trim().toLowerCase();
-  var email = document.getElementById('adminEmail').value.trim();
+  var emailRaw = document.getElementById('adminEmail').value.trim();
   var expiryDays = document.getElementById('expirySelect').value;
   var maxUses = document.getElementById('maxUses').value;
 
@@ -323,11 +323,24 @@ async function createSchool() {
   errorEl.style.display = 'none';
   successEl.style.display = 'none';
 
+  // Parse emails (one per line, or comma-separated)
+  var emails = emailRaw.split(/[\n,]+/).map(function(e) { return e.trim(); }).filter(function(e) { return e.length > 0; });
+  var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  var validEmails = [];
+  var invalidEmails = [];
+  emails.forEach(function(e) {
+    if (emailRegex.test(e)) {
+      validEmails.push(e.toLowerCase());
+    } else if (e.length > 0) {
+      invalidEmails.push(e);
+    }
+  });
+
   // Validate
   if (!name) { errorEl.textContent = 'Institution name required.'; errorEl.style.display = 'block'; return; }
   if (!code) { errorEl.textContent = 'Promo code required.'; errorEl.style.display = 'block'; return; }
   if (!slug) { errorEl.textContent = 'Institution slug required.'; errorEl.style.display = 'block'; return; }
-  if (!email) { errorEl.textContent = 'Admin email required.'; errorEl.style.display = 'block'; return; }
+  if (validEmails.length === 0) { errorEl.textContent = 'At least one valid admin email required.'; errorEl.style.display = 'block'; return; }
   if (code.length < 4) { errorEl.textContent = 'Promo code must be at least 4 characters.'; errorEl.style.display = 'block'; return; }
 
   btn.disabled = true;
@@ -363,22 +376,25 @@ async function createSchool() {
       createdBy: auth.currentUser.uid,
     });
 
-    // Create admin document (by email — the UID will be set when they first log in)
-    // We store by a deterministic ID based on email for now
-    var adminId = 'admin_' + slug;
-    await db.collection('institution_admins').doc(adminId).set({
-      institutionId: slug,
-      institutionName: name,
-      email: email,
-      pendingActivation: true,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-    });
+    // Create a pending admin doc for each email
+    var createdAdmins = [];
+    for (var i = 0; i < validEmails.length; i++) {
+      var adminId = 'admin_' + slug + '_' + (i + 1);
+      await db.collection('institution_admins').doc(adminId).set({
+        institutionId: slug,
+        institutionName: name,
+        email: validEmails[i],
+        pendingActivation: true,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      createdAdmins.push(validEmails[i]);
+    }
 
     // Show result
     document.getElementById('resultCode').textContent = code;
     document.getElementById('resultName').textContent = name;
     document.getElementById('resultSlug').textContent = slug;
-    document.getElementById('resultAdmin').textContent = email;
+    document.getElementById('resultAdmin').textContent = createdAdmins.join(', ');
     document.getElementById('resultExpiry').textContent = expiryDays ? expiryDays + ' days' : 'No expiration';
 
     // Build email template
@@ -399,10 +415,9 @@ async function createSchool() {
       + '- Education and certification paths\n'
       + '- Job Offer Kit (salary negotiation scripts)\n\n'
       + 'Admin Dashboard: https://rollcallinterviewprep.com/admin.html\n'
-      + 'Use ' + email + ' to log in and view aggregate student usage.\n\n'
+      + 'Use your school email (' + createdAdmins[0] + ') to log in and view aggregate student usage.\n\n'
       + 'Questions? Reply to this email.\n\n'
       + 'Best,\nDevyn Mobley\nRoleCall';
-    document.getElementById('emailTemplate').querySelector('.copy-btn').nextSibling
     document.getElementById('emailTemplate').innerHTML = '<button class="copy-btn" onclick="copyEmail()">Copy</button>' + escapeHtml(emailText);
 
     document.getElementById('resultCard').style.display = 'block';

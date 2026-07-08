@@ -37,9 +37,11 @@ service cloud.firestore {
       allow read, update, delete: if false; // Only Cloud Functions read these
     }
 
-    // Institution stats — admin read, server-only write
+    // Institution stats — admin read, restricted to their own institution
     match /institution_stats/{institutionId} {
-      allow read: if request.auth != null && exists(/databases/$(database)/documents/institution_admins/$(request.auth.uid));
+      allow read: if request.auth != null
+        && exists(/databases/$(database)/documents/institution_admins/$(request.auth.uid))
+        && get(/databases/$(database)/documents/institution_admins/$(request.auth.uid)).data.institutionId == institutionId;
       allow write: if false; // Only Cloud Functions write
     }
 
