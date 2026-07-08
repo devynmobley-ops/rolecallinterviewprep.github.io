@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>School Setup — RoleCall Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0f0f14;--card:#1a1a24;--accent:#6c5ce7;--accent-light:#a29bfe;
+  --accent-text:#8b7cf7;--text:#f0f0f5;--text-secondary:#8e8ea0;--card-hover:#22222f;
+  --radius:14px;--transition:0.3s cubic-bezier(.4,0,.2,1);
+  --success:#2ecc71;--success-bg:rgba(46,204,113,0.12);
+  --error:#e74c3c;--error-bg:rgba(231,76,60,0.12);
+}
+html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+
+.container{max-width:520px;margin:0 auto;padding:32px 20px}
+
+.logo{text-align:center;margin-bottom:32px}
+.logo h1{font-size:24px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo p{font-size:13px;color:var(--text-secondary);margin-top:4px}
+
+.card{background:var(--card);border-radius:var(--radius);padding:24px;margin-bottom:16px;border:1px solid var(--card-hover)}
+.card h2{font-size:18px;font-weight:800;margin-bottom:16px}
+
+.field{margin-bottom:16px}
+.field label{display:block;font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px}
+.field input,.field select{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--card-hover);background:var(--bg);color:var(--text);font-size:15px;outline:none;transition:border var(--transition)}
+.field input:focus,.field select:focus{border-color:var(--accent)}
+.field .hint{font-size:11px;color:var(--text-secondary);margin-top:4px}
+.field-row{display:flex;gap:12px}
+.field-row .field{flex:1}
+
+.btn{width:100%;padding:14px;border:none;border-radius:var(--radius);background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:all var(--transition);margin-top:8px}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(108,92,231,0.3)}
+.btn:active{transform:scale(0.98)}
+.btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.btn.secondary{background:var(--card);border:1px solid var(--card-hover);margin-top:8px}
+.btn.secondary:hover{border-color:var(--accent)}
+
+.msg{padding:12px 16px;border-radius:10px;font-size:13px;margin-top:12px;display:none;line-height:1.5}
+.msg.success{background:var(--success-bg);border:1px solid var(--success);color:var(--success)}
+.msg.error{background:var(--error-bg);border:1px solid var(--error);color:var(--error)}
+
+.result{background:var(--card);border-radius:var(--radius);padding:20px;margin-top:16px;border:1px solid var(--success);display:none}
+.result h3{font-size:15px;font-weight:700;color:var(--success);margin-bottom:12px}
+.result-item{margin-bottom:8px;font-size:13px;color:var(--text-secondary)}
+.result-item strong{color:var(--text)}
+
+.copy-block{background:var(--bg);border-radius:8px;padding:12px;font-family:monospace;font-size:12px;color:var(--text-secondary);line-height:1.6;white-space:pre-wrap;margin-top:8px;position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:var(--card);border:1px solid var(--card-hover);color:var(--text-secondary);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent-text)}
+
+.schools-list{margin-top:16px}
+.school-row{display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg);border-radius:10px;margin-bottom:8px;border:1px solid var(--card-hover)}
+.school-row .school-info{flex:1}
+.school-row .school-name{font-size:14px;font-weight:700}
+.school-row .school-code{font-size:12px;color:var(--accent-text);font-family:monospace}
+.school-row .school-meta{font-size:11px;color:var(--text-secondary);margin-top:2px}
+
+.footer{text-align:center;padding:24px;font-size:12px;color:var(--text-secondary)}
+.footer a{color:var(--accent-text);text-decoration:none}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="logo">
+    <h1>RoleCall School Setup</h1>
+    <p>Create promo codes and admin accounts for institutional pilots</p>
+  </div>
+
+  <!-- Login -->
+  <div id="loginCard" class="card">
+    <h2>&#128274; Admin Login</h2>
+    <div class="field">
+      <input type="email" id="loginEmail" placeholder="Your admin email" autocomplete="email">
+    </div>
+    <div class="field">
+      <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
+    </div>
+    <button class="btn" id="loginBtn" onclick="doLogin()">Sign In</button>
+    <div class="msg error" id="loginError"></div>
+  </div>
+
+  <!-- Setup Form -->
+  <div id="setupForm" style="display:none">
+
+    <div class="card">
+      <h2>&#127891; New School Setup</h2>
+
+      <div class="field">
+        <label>Institution Name</label>
+        <input type="text" id="schoolName" placeholder="e.g. Harrisburg Area Community College">
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Promo Code</label>
+          <input type="text" id="promoCode" placeholder="e.g. HACC2026" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()">
+          <div class="hint">Uppercase, no spaces. Students enter this to unlock Pro.</div>
+        </div>
+        <div class="field">
+          <label>Institution Slug</label>
+          <input type="text" id="instSlug" placeholder="e.g. hacc">
+          <div class="hint">Short ID for analytics. Lowercase, no spaces.</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Admin Email (career services contact)</label>
+        <input type="email" id="adminEmail" placeholder="e.g. careerservices@hacc.edu">
+        <div class="hint">They'll use this email to log into the admin dashboard.</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Expiration</label>
+          <select id="expirySelect">
+            <option value="">No expiration</option>
+            <option value="30">30 days</option>
+            <option value="60">60 days</option>
+            <option value="90">90 days</option>
+            <option value="180">6 months</option>
+            <option value="365">1 year</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Max Uses</label>
+          <input type="number" id="maxUses" placeholder="Unlimited" min="1">
+          <div class="hint">Leave blank for unlimited.</div>
+        </div>
+      </div>
+
+      <button class="btn" id="createBtn" onclick="createSchool()">&#10004; Create Promo Code + Admin Account</button>
+      <div class="msg success" id="createSuccess"></div>
+      <div class="msg error" id="createError"></div>
+    </div>
+
+    <!-- Result -->
+    <div class="result" id="resultCard">
+      <h3>&#9989; School Created Successfully</h3>
+      <div class="result-item"><strong>Promo Code:</strong> <span id="resultCode"></span></div>
+      <div class="result-item"><strong>Institution:</strong> <span id="resultName"></span></div>
+      <div class="result-item"><strong>Institution ID:</strong> <span id="resultSlug"></span></div>
+      <div class="result-item"><strong>Admin Email:</strong> <span id="resultAdmin"></span></div>
+      <div class="result-item"><strong>Expires:</strong> <span id="resultExpiry"></span></div>
+
+      <div style="margin-top:16px">
+        <label style="font-size:12px;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:8px">EMAIL TO SEND TO THE SCHOOL:</label>
+        <div class="copy-block" id="emailTemplate">
+          <button class="copy-btn" onclick="copyEmail()">Copy</button>
+        </div>
+      </div>
+
+      <button class="btn secondary" onclick="resetForm()">Create Another School</button>
+    </div>
+
+    <!-- Existing Schools -->
+    <div class="card" style="margin-top:16px">
+      <h2>&#128203; Existing Schools</h2>
+      <div class="schools-list" id="schoolsList">
+        <div style="color:var(--text-secondary);font-size:13px">Loading...</div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:16px">
+      <a href="/admin.html" style="color:var(--accent-text);font-size:13px;text-decoration:none">&#8592; Back to Admin Dashboard</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- Firebase -->
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-app-compat.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-auth-compat.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-firestore-compat.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-functions-compat.min.js"></script>
+
+<script>
+var firebaseConfig = {
+  apiKey: "AIzaSyD_placeholder",
+  authDomain: "rolecall-interview-prep-a49a3.firebaseapp.com",
+  projectId: "rolecall-interview-prep-a49a3",
+  storageBucket: "rolecall-interview-prep-a49a3.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:placeholder"
+};
+firebase.initializeApp(firebaseConfig);
+var auth = firebase.auth();
+var db = firebase.firestore();
+
+// Auth state
+auth.onAuthStateChanged(function(user) {
+  if (user) {
+    document.getElementById('loginCard').style.display = 'none';
+    document.getElementById('setupForm').style.display = '';
+    loadExistingSchools();
+  }
+});
+
+function doLogin() {
+  var email = document.getElementById('loginEmail').value;
+  var password = document.getElementById('loginPassword').value;
+  var errorEl = document.getElementById('loginError');
+  var btn = document.getElementById('loginBtn');
+
+  if (!email || !password) {
+    errorEl.textContent = 'Enter both fields.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Signing in...';
+  errorEl.style.display = 'none';
+
+  auth.signInWithEmailAndPassword(email, password)
+    .catch(function(err) {
+      btn.disabled = false;
+      btn.textContent = 'Sign In';
+      errorEl.textContent = err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password'
+        ? 'Invalid credentials.' : 'Sign in failed.';
+      errorEl.style.display = 'block';
+    });
+}
+
+// Enter key
+document.getElementById('loginPassword').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') doLogin();
+});
+
+// Auto-generate slug from name
+document.getElementById('schoolName').addEventListener('input', function() {
+  var slug = this.value.toLowerCase()
+    .replace(/university|college|community|institute|school|center|of|the|and|&/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+    .substring(0, 20);
+  document.getElementById('instSlug').value = slug;
+});
+
+async function createSchool() {
+  var name = document.getElementById('schoolName').value.trim();
+  var code = document.getElementById('promoCode').value.trim().toUpperCase();
+  var slug = document.getElementById('instSlug').value.trim().toLowerCase();
+  var email = document.getElementById('adminEmail').value.trim();
+  var expiryDays = document.getElementById('expirySelect').value;
+  var maxUses = document.getElementById('maxUses').value;
+
+  var errorEl = document.getElementById('createError');
+  var successEl = document.getElementById('createSuccess');
+  var btn = document.getElementById('createBtn');
+
+  errorEl.style.display = 'none';
+  successEl.style.display = 'none';
+
+  // Validate
+  if (!name) { errorEl.textContent = 'Institution name required.'; errorEl.style.display = 'block'; return; }
+  if (!code) { errorEl.textContent = 'Promo code required.'; errorEl.style.display = 'block'; return; }
+  if (!slug) { errorEl.textContent = 'Institution slug required.'; errorEl.style.display = 'block'; return; }
+  if (!email) { errorEl.textContent = 'Admin email required.'; errorEl.style.display = 'block'; return; }
+  if (code.length < 4) { errorEl.textContent = 'Promo code must be at least 4 characters.'; errorEl.style.display = 'block'; return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Creating...';
+
+  try {
+    // Check if promo code already exists
+    var existingCode = await db.collection('promoCodes').doc(code).get();
+    if (existingCode.exists) {
+      errorEl.textContent = 'Promo code "' + code + '" already exists. Choose a different code.';
+      errorEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = '\u2714 Create Promo Code + Admin Account';
+      return;
+    }
+
+    // Calculate expiry
+    var expiresAt = null;
+    if (expiryDays) {
+      expiresAt = new Date(Date.now() + parseInt(expiryDays) * 24 * 60 * 60 * 1000);
+    }
+
+    // Create promo code document
+    await db.collection('promoCodes').doc(code).set({
+      active: true,
+      isPro: true,
+      institutionId: slug,
+      institutionName: name,
+      expiresAt: expiresAt ? firebase.firestore.Timestamp.fromDate(expiresAt) : null,
+      maxUses: maxUses ? parseInt(maxUses) : null,
+      currentUses: 0,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      createdBy: auth.currentUser.uid,
+    });
+
+    // Create admin document (by email — the UID will be set when they first log in)
+    // We store by a deterministic ID based on email for now
+    var adminId = 'admin_' + slug;
+    await db.collection('institution_admins').doc(adminId).set({
+      institutionId: slug,
+      institutionName: name,
+      email: email,
+      pendingActivation: true,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+
+    // Show result
+    document.getElementById('resultCode').textContent = code;
+    document.getElementById('resultName').textContent = name;
+    document.getElementById('resultSlug').textContent = slug;
+    document.getElementById('resultAdmin').textContent = email;
+    document.getElementById('resultExpiry').textContent = expiryDays ? expiryDays + ' days' : 'No expiration';
+
+    // Build email template
+    var expiryText = expiryDays ? ' The code expires in ' + expiryDays + ' days.' : '';
+    var emailText = 'Hi,\n\n'
+      + 'Here\'s your RoleCall access code for ' + name + ':\n\n'
+      + 'Promo Code: ' + code + '\n'
+      + 'Website: https://rollcallinterviewprep.com\n\n'
+      + 'How to use:\n'
+      + '1. Visit rollcallinterviewprep.com\n'
+      + '2. Click "Sign In" (top right) and create a free account\n'
+      + '3. Go to the More tab and enter code: ' + code + '\n'
+      + '4. You now have full Pro access!' + expiryText + '\n\n'
+      + 'What\'s included:\n'
+      + '- 374+ career-specific mock interview questions\n'
+      + '- AI Resume Tailor (upload your resume + job description)\n'
+      + '- Expert tips and answer frameworks\n'
+      + '- Education and certification paths\n'
+      + '- Job Offer Kit (salary negotiation scripts)\n\n'
+      + 'Admin Dashboard: https://rollcallinterviewprep.com/admin.html\n'
+      + 'Use ' + email + ' to log in and view aggregate student usage.\n\n'
+      + 'Questions? Reply to this email.\n\n'
+      + 'Best,\nDevyn Mobley\nRoleCall';
+    document.getElementById('emailTemplate').querySelector('.copy-btn').nextSibling
+    document.getElementById('emailTemplate').innerHTML = '<button class="copy-btn" onclick="copyEmail()">Copy</button>' + escapeHtml(emailText);
+
+    document.getElementById('resultCard').style.display = 'block';
+    successEl.textContent = 'Promo code and admin account created!';
+    successEl.style.display = 'block';
+
+    // Refresh the list
+    loadExistingSchools();
+
+  } catch (err) {
+    console.error('Create error:', err);
+    errorEl.textContent = 'Error: ' + err.message;
+    errorEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '\u2714 Create Promo Code + Admin Account';
+  }
+}
+
+function escapeHtml(text) {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function copyEmail() {
+  var block = document.getElementById('emailTemplate');
+  var text = block.textContent.replace('Copy', '').trim();
+  navigator.clipboard.writeText(text).then(function() {
+    var btn = block.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+  });
+}
+
+function resetForm() {
+  document.getElementById('schoolName').value = '';
+  document.getElementById('promoCode').value = '';
+  document.getElementById('instSlug').value = '';
+  document.getElementById('adminEmail').value = '';
+  document.getElementById('expirySelect').value = '';
+  document.getElementById('maxUses').value = '';
+  document.getElementById('resultCard').style.display = 'none';
+  document.getElementById('createSuccess').style.display = 'none';
+  document.getElementById('createError').style.display = 'none';
+  document.getElementById('schoolName').focus();
+}
+
+async function loadExistingSchools() {
+  var list = document.getElementById('schoolsList');
+  try {
+    var snap = await db.collection('promoCodes').orderBy('createdAt', 'desc').limit(50).get();
+    if (snap.empty) {
+      list.innerHTML = '<div style="color:var(--text-secondary);font-size:13px">No schools set up yet.</div>';
+      return;
+    }
+    var html = '';
+    snap.forEach(function(doc) {
+      var d = doc.data();
+      var uses = d.currentUses || 0;
+      var max = d.maxUses || '∞';
+      var exp = d.expiresAt ? new Date(d.expiresAt.toDate()).toLocaleDateString() : 'Never';
+      html += '<div class="school-row">'
+        + '<div class="school-info">'
+        + '<div class="school-name">' + (d.institutionName || doc.id) + '</div>'
+        + '<div class="school-code">' + doc.id + '</div>'
+        + '<div class="school-meta">' + uses + '/' + max + ' uses &bull; Expires: ' + exp + '</div>'
+        + '</div>'
+        + '</div>';
+    });
+    list.innerHTML = html;
+  } catch (err) {
+    list.innerHTML = '<div style="color:var(--error);font-size:13px">Error loading schools: ' + err.message + '</div>';
+  }
+}
+</script>
+
+</body>
+</html>
