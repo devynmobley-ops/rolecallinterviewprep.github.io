@@ -292,6 +292,7 @@ var db = firebase.firestore();
 var currentRange = '7d';
 var isAdmin = false;
 var institutionId = null;
+var cachedStats = null;
 
 // Auth state listener
 auth.onAuthStateChanged(function(user) {
@@ -333,13 +334,14 @@ function adminLogin() {
 }
 
 function checkAdminAccess(user) {
-  // Check if user has admin role in Firestore
-  db.collection('admins').doc(user.uid).get()
+  // Check if user has admin role in institution_admins collection
+  db.collection('institution_admins').doc(user.uid).get()
     .then(function(doc) {
-      if (doc.exists && doc.data().role === 'admin') {
+      if (doc.exists) {
         isAdmin = true;
-        institutionId = doc.data().institutionId || 'demo';
+        institutionId = doc.data().institutionId;
         document.getElementById('schoolName').textContent = doc.data().institutionName || 'Your Institution';
+        document.getElementById('dashboardSubtitle').textContent = 'Aggregate usage data for ' + (doc.data().institutionName || 'your institution') + ' — no individual student data is shown';
         showDashboard();
         loadDashboardData();
       } else {
@@ -367,6 +369,7 @@ function adminLogout() {
   auth.signOut().then(function() {
     isAdmin = false;
     institutionId = null;
+    cachedStats = null;
     document.getElementById('loginScreen').style.display = '';
     document.getElementById('dashboardScreen').style.display = 'none';
     document.getElementById('adminEmail').value = '';
@@ -381,7 +384,9 @@ function setRange(range, btn) {
   currentRange = range;
   document.querySelectorAll('.date-pill').forEach(function(p) { p.classList.remove('active'); });
   btn.classList.add('active');
-  if (isAdmin) {
+  if (isAdmin && cachedStats) {
+    renderStats(cachedStats);
+  } else if (isAdmin) {
     loadDashboardData();
   } else {
     loadDemoData();
@@ -389,21 +394,29 @@ function setRange(range, btn) {
 }
 
 function loadDashboardData() {
-  // Load real aggregate data from Firestore
-  // This reads from an 'institution_stats' collection where aggregate data is stored
-  var statsRef = db.collection('institution_stats').doc(institutionId);
-
-  statsRef.get().then(function(doc) {
-    if (doc.exists) {
-      var data = doc.data();
-      renderStats(data);
-      document.getElementById('noDataBanner').style.display = 'none';
-    } else {
-      loadDemoData();
-    }
-  }).catch(function() {
+  if (!institutionId || institutionId === 'demo') {
     loadDemoData();
-  });
+    return;
+  }
+
+  // Read real aggregated stats from Firestore
+  db.collection('institution_stats').doc(institutionId).get()
+    .then(function(doc) {
+      if (doc.exists) {
+        var data = doc.data();
+        cachedStats = data;
+        renderStats(data);
+        document.getElementById('noDataBanner').style.display = 'none';
+      } else {
+        // No stats yet — show demo with banner
+        document.getElementById('noDataBanner').style.display = 'flex';
+        loadDemoData();
+      }
+    })
+    .catch(function(err) {
+      console.error('Error loading stats:', err);
+      loadDemoData();
+    });
 }
 
 function loadDemoData() {
@@ -454,57 +467,68 @@ function loadDemoData() {
 
 function renderStats(data) {
   // Key stats
-  animateValue('statStudents', data.activeStudents);
-  animateValue('statSessions', data.totalSessions);
-  animateValue('statQuestions', data.questionsAnswered);
-  document.getElementById('statAvgScore').textContent = data.avgScore.toFixed(1) + '/5';
+  animateValue('statStudents', data.activeStudents || 0);
+  animateValue('statSessions', data.totalSessions || 0);
+  animateValue('statQuestions', data.questionsAnswered || 0);
+  document.getElementById('statAvgScore').textContent = (data.avgScore || 0).toFixed(1) + '/5';
 
   // Top roles chart
+  var topRoles = data.topRoles || [];
   var rolesHtml = '';
-  var maxRole = data.topRoles[0].count;
-  data.topRoles.forEach(function(r) {
+  var maxRole = topRoles.length > 0 ? topRoles[0].count : 1;
+  topRoles.forEach(function(r) {
     var pct = Math.round((r.count / maxRole) * 100);
     rolesHtml += '<div class="bar-row">' +
       '<div class="bar-label">' + r.name + '</div>' +
       '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%"><span class="bar-val">' + r.count + '</span></div></div>' +
       '</div>';
   });
-  document.getElementById('topRolesChart').innerHTML = rolesHtml;
+  document.getElementById('topRolesChart').innerHTML = rolesHtml || '<div style="color:var(--text-secondary);font-size:14px;padding:12px">No data yet</div>';
 
   // Industry chart
+  var industries = data.industries || [];
   var indHtml = '';
-  var maxInd = data.industries[0].count;
-  data.industries.forEach(function(ind) {
+  var maxInd = industries.length > 0 ? industries[0].count : 1;
+  industries.forEach(function(ind) {
     var pct = Math.round((ind.count / maxInd) * 100);
     indHtml += '<div class="bar-row">' +
       '<div class="bar-label">' + ind.name + '</div>' +
       '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%"><span class="bar-val">' + ind.count + '</span></div></div>' +
       '</div>';
   });
-  document.getElementById('industryChart').innerHTML = indHtml;
+  document.getElementById('industryChart').innerHTML = indHtml || '<div style="color:var(--text-secondary);font-size:14px;padding:12px">No data yet</div>';
 
   // Weekly table
+  var weekly = data.weekly || [];
   var weekHtml = '';
-  data.weekly.forEach(function(w) {
+  weekly.forEach(function(w, i) {
+    // Handle both demo format (w.week as label) and real format (w.weekStart as ISO)
+    var label = w.week || 'Week ' + (i + 1);
+    if (w.weekStart && !w.week) {
+      var d = new Date(w.weekStart);
+      label = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' - ' +
+              new Date(w.weekEnd).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
     weekHtml += '<tr>' +
-      '<td style="font-weight:600">' + w.week + '</td>' +
-      '<td>' + w.sessions + '</td>' +
-      '<td>' + w.avgScore.toFixed(1) + '/5</td>' +
-      '<td>' + w.topRole + '</td>' +
+      '<td style="font-weight:600">' + label + '</td>' +
+      '<td>' + (w.sessions || 0) + '</td>' +
+      '<td>' + (w.avgScore || 0).toFixed(1) + '/5</td>' +
+      '<td>' + (w.topRole || 'N/A') + '</td>' +
       '</tr>';
   });
-  document.getElementById('weeklyTable').innerHTML = weekHtml;
+  document.getElementById('weeklyTable').innerHTML = weekHtml || '<tr><td colspan="4" style="text-align:center;color:var(--text-secondary)">No data yet</td></tr>';
 
   // Feature usage
+  var features = data.features || { mock: 0, resume: 0, browse: 0, jok: 0 };
   var totalStudents = data.activeStudents || 1;
-  document.getElementById('featMock').textContent = data.features.mock;
-  document.getElementById('featMockPct').textContent = Math.round((data.features.mock / totalStudents) * 100) + '% of students';
-  document.getElementById('featResume').textContent = data.features.resume;
-  document.getElementById('featResumePct').textContent = Math.round((data.features.resume / totalStudents) * 100) + '% of students';
-  document.getElementById('featBrowse').textContent = data.features.browse;
-  document.getElementById('featBrowsePct').textContent = Math.round(data.features.browse / totalStudents) + ' per student';
-  document.getElementById('featJOK').textContent = data.features.jok;
-  document.getElementById('featJOKPct').textContent = Math.round((data.features.jok / totalStudents) * 100) + '% of students';
+  document.getElementById('featMock').textContent = features.mock || 0;
+  document.getElementById('featMockPct').textContent = Math.round(((features.mock || 0) / totalStudents) * 100) + '% of students';
+  document.getElementById('featResume').textContent = features.resume || 0;
+  document.getElementById('featResumePct').textContent = Math.round(((features.resume || 0) / totalStudents) * 100) + '% of students';
+  document.getElementById('featBrowse').textContent = features.browse || 0;
+  document.getElementById('featBrowsePct').textContent = Math.round((features.browse || 0) / totalStudents) + ' per student';
+  document.getElementById('featJOK').textContent = features.jok || 0;
+  document.getElementById('featJOKPct').textContent = Math.round(((features.jok || 0) / totalStudents) * 100) + '% of students';
 }
 
 function animateValue(id, target) {

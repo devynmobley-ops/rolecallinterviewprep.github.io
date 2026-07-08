@@ -31,6 +31,24 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Student practice sessions — authenticated write, server-only read
+    match /student_sessions/{sessionId} {
+      allow create: if request.auth != null;
+      allow read, update, delete: if false; // Only Cloud Functions read these
+    }
+
+    // Institution stats — admin read, server-only write
+    match /institution_stats/{institutionId} {
+      allow read: if request.auth != null && exists(/databases/$(database)/documents/institution_admins/$(request.auth.uid));
+      allow write: if false; // Only Cloud Functions write
+    }
+
+    // Institution admins — server-managed
+    match /institution_admins/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
     // Problem reports — authenticated write, server-only read
     match /reports/{reportId} {
       allow read: if false;

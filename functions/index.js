@@ -564,3 +564,269 @@ exports.onReportCreated = functions.firestore.document('reports/{reportId}').onC
     console.error('Report email error:', err.message);
   }
 });
+
+// ============================================================
+// INSTITUTIONAL ANALYTICS PIPELINE
+// ============================================================
+
+// Record a practice session — called by students after completing a mock interview
+exports.recordSession = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const { role, category, score, questionCount, feature } = data;
+  if (!role || typeof score !== 'number') {
+    throw new functions.https.HttpsError('invalid-argument', 'role and score required');
+  }
+
+  const uid = context.auth.uid;
+
+  // Look up the student's institution from their customer record
+  let institutionId = null;
+  try {
+    const custDoc = await admin.firestore().collection('customers').doc(uid).get();
+    if (custDoc.exists) {
+      institutionId = custDoc.data().institutionId || null;
+    }
+  } catch (err) {
+    console.error('Error looking up customer:', err.message);
+  }
+
+  // Write the session record
+  const session = {
+    uid: uid,
+    role: role,
+    category: category || 'Unknown',
+    score: Math.max(0, Math.min(5, score)), // Clamp 0-5
+    questionCount: questionCount || 0,
+    feature: feature || 'mock', // 'mock', 'browse', 'resume', 'jok'
+    institutionId: institutionId,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  };
+
+  await admin.firestore().collection('student_sessions').add(session);
+
+  return { recorded: true, institutionId: institutionId };
+});
+
+// Redeem a promo code — tags the customer with institutionId
+exports.redeemPromoCode = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const { code } = data;
+  if (!code || typeof code !== 'string') {
+    throw new functions.https.HttpsError('invalid-argument', 'Promo code required');
+  }
+
+  const uid = context.auth.uid;
+  const normalizedCode = code.toUpperCase().trim();
+
+  // Look up the promo code
+  const promoDoc = await admin.firestore().collection('promoCodes').doc(normalizedCode).get();
+  if (!promoDoc.exists) {
+    throw new functions.https.HttpsError('not-found', 'Invalid promo code');
+  }
+
+  const promo = promoDoc.data();
+
+  // Check if expired
+  if (promo.expiresAt && promo.expiresAt.toDate() < new Date()) {
+    throw new functions.https.HttpsError('failed-precondition', 'Promo code has expired');
+  }
+
+  // Check usage limit
+  if (promo.maxUses && promo.currentUses >= promo.maxUses) {
+    throw new functions.https.HttpsError('resource-exhausted', 'Promo code has reached its usage limit');
+  }
+
+  // Apply the promo code to the customer
+  const updateData = {
+    promoCode: normalizedCode,
+    promoExpiresAt: promo.expiresAt || null,
+  };
+
+  // Tag with institutionId if the promo code has one
+  if (promo.institutionId) {
+    updateData.institutionId = promo.institutionId;
+  }
+
+  await admin.firestore().collection('customers').doc(uid).set(updateData, { merge: true });
+
+  // Increment usage count
+  await admin.firestore().collection('promoCodes').doc(normalizedCode).update({
+    currentUses: admin.firestore.FieldValue.increment(1),
+  });
+
+  return {
+    success: true,
+    institutionId: promo.institutionId || null,
+    institutionName: promo.institutionName || null,
+  };
+});
+
+// Scheduled function: aggregate student sessions into institution stats
+// Runs daily at midnight UTC via Google Cloud Scheduler
+exports.aggregateInstitutionStats = functions.pubsub
+  .schedule('0 0 * * *')
+  .timeZone('UTC')
+  .onRun(async (context) => {
+    const db = admin.firestore();
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    // Get all sessions from the last 30 days
+    const sessionsSnap = await db.collection('student_sessions')
+      .where('createdAt', '>=', admin.firestore.Timestamp.fromDate(thirtyDaysAgo))
+      .get();
+
+    // Group by institutionId
+    const institutions = {};
+    sessionsSnap.forEach(doc => {
+      const s = doc.data();
+      const instId = s.institutionId;
+      if (!instId) return; // Skip sessions without institution
+
+      if (!institutions[instId]) {
+        institutions[instId] = {
+          sessions: [],
+          uids: new Set(),
+          uidsLast7d: new Set(),
+        };
+      }
+      institutions[instId].sessions.push(s);
+      institutions[instId].uids.add(s.uid);
+      if (s.createdAt && s.createdAt.toDate() >= sevenDaysAgo) {
+        institutions[instId].uidsLast7d.add(s.uid);
+      }
+    });
+
+    // Build stats for each institution
+    for (const [instId, data] of Object.entries(institutions)) {
+      const sessions = data.sessions;
+      const totalSessions = sessions.length;
+      const activeStudents = data.uids.size;
+      const activeStudentsLast7d = data.uidsLast7d.size;
+
+      // Questions answered
+      const questionsAnswered = sessions.reduce((sum, s) => sum + (s.questionCount || 0), 0);
+
+      // Average score
+      const scores = sessions.filter(s => s.score > 0).map(s => s.score);
+      const avgScore = scores.length > 0
+        ? Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 10) / 10
+        : 0;
+
+      // Top roles
+      const roleCounts = {};
+      sessions.forEach(s => {
+        roleCounts[s.role] = (roleCounts[s.role] || 0) + 1;
+      });
+      const topRoles = Object.entries(roleCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10)
+        .map(([name, count]) => ({ name, count }));
+
+      // Industry breakdown
+      const industryCounts = {};
+      sessions.forEach(s => {
+        const cat = s.category || 'Unknown';
+        industryCounts[cat] = (industryCounts[cat] || 0) + 1;
+      });
+      const industries = Object.entries(industryCounts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([name, count]) => ({ name, count }));
+
+      // Feature usage
+      const featureCounts = { mock: 0, resume: 0, browse: 0, jok: 0 };
+      sessions.forEach(s => {
+        const f = s.feature || 'mock';
+        if (featureCounts.hasOwnProperty(f)) featureCounts[f]++;
+      });
+
+      // Weekly breakdown (last 4 weeks)
+      const weekly = [];
+      for (let i = 0; i < 4; i++) {
+        const weekStart = new Date(now.getTime() - (i + 1) * 7 * 24 * 60 * 60 * 1000);
+        const weekEnd = new Date(now.getTime() - i * 7 * 24 * 60 * 60 * 1000);
+        const weekSessions = sessions.filter(s => {
+          const d = s.createdAt?.toDate?.();
+          return d && d >= weekStart && d < weekEnd;
+        });
+        const weekScores = weekSessions.filter(s => s.score > 0).map(s => s.score);
+        const weekAvg = weekScores.length > 0
+          ? Math.round((weekScores.reduce((a, b) => a + b, 0) / weekScores.length) * 10) / 10
+          : 0;
+        const weekRoles = {};
+        weekSessions.forEach(s => { weekRoles[s.role] = (weekRoles[s.role] || 0) + 1; });
+        const topRole = Object.entries(weekRoles).sort((a, b) => b[1] - a[1])[0];
+
+        weekly.push({
+          weekStart: weekStart.toISOString(),
+          weekEnd: weekEnd.toISOString(),
+          sessions: weekSessions.length,
+          avgScore: weekAvg,
+          topRole: topRole ? topRole[0] : 'N/A',
+        });
+      }
+
+      // Score progression (avg score by session number per student)
+      const studentSessions = {};
+      sessions.forEach(s => {
+        if (!studentSessions[s.uid]) studentSessions[s.uid] = [];
+        studentSessions[s.uid].push(s.score);
+      });
+      const scoreProgression = [];
+      for (let i = 0; i < 5; i++) {
+        const scoresAtN = Object.values(studentSessions)
+          .filter(arr => arr.length > i)
+          .map(arr => arr[i]);
+        if (scoresAtN.length > 0) {
+          scoreProgression.push({
+            sessionNum: i + 1,
+            avgScore: Math.round((scoresAtN.reduce((a, b) => a + b, 0) / scoresAtN.length) * 10) / 10,
+            count: scoresAtN.length,
+          });
+        }
+      }
+
+      // Write aggregated stats
+      await db.collection('institution_stats').doc(instId).set({
+        institutionId: instId,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        periodStart: admin.firestore.Timestamp.fromDate(thirtyDaysAgo),
+        periodEnd: admin.firestore.Timestamp.fromDate(now),
+        activeStudents: activeStudents,
+        activeStudentsLast7d: activeStudentsLast7d,
+        totalSessions: totalSessions,
+        questionsAnswered: questionsAnswered,
+        avgScore: avgScore,
+        topRoles: topRoles,
+        industries: industries,
+        features: featureCounts,
+        weekly: weekly,
+        scoreProgression: scoreProgression,
+      }, { merge: true });
+
+      console.log(`Aggregated stats for ${instId}: ${activeStudents} students, ${totalSessions} sessions`);
+    }
+
+    // Clean up sessions older than 90 days
+    const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+    const oldSnap = await db.collection('student_sessions')
+      .where('createdAt', '<', admin.firestore.Timestamp.fromDate(ninetyDaysAgo))
+      .limit(500)
+      .get();
+
+    const batch = db.batch();
+    oldSnap.forEach(doc => batch.delete(doc.ref));
+    if (!oldSnap.empty) {
+      await batch.commit();
+      console.log(`Cleaned up ${oldSnap.size} old sessions`);
+    }
+
+    return null;
+  });
