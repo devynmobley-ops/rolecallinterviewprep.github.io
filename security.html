@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EDPB7FVZDV"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-EDPB7FVZDV');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Security & Compliance — RoleCall Interview Prep</title>
+<meta name="description" content="RoleCall's security and compliance overview. FERPA compliant, no PII required, device-local data storage, HTTPS encryption. For IT departments and procurement teams reviewing RoleCall for institutional use.">
+<link rel="canonical" href="https://rollcallinterviewprep.com/security.html">
+<meta property="og:title" content="Security & Compliance — RoleCall">
+<meta property="og:description" content="FERPA compliant. No PII required. Device-local data storage. HTTPS encryption. Security overview for institutional review.">
+<meta property="og:url" content="https://rollcallinterviewprep.com/security.html">
+<meta property="og:type" content="website">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+*:focus:not(:focus-visible){outline:none}
+:root{
+  --bg:#0f0f14;--card:#1a1a24;--accent:#6c5ce7;--accent-light:#a29bfe;
+  --accent-text:#8b7cf7;--text:#f0f0f5;--text-secondary:#8e8ea0;--card-hover:#22222f;
+  --safe-top:env(safe-area-inset-top,0px);
+  --radius:14px;--transition:0.3s cubic-bezier(.4,0,.2,1);
+  --success:#2ecc71;--success-bg:rgba(46,204,113,0.12);
+  --info:#3498db;--info-bg:rgba(52,152,219,0.12);
+  --warning:#f39c12;--warning-bg:rgba(243,156,18,0.12);
+}
+html{scroll-behavior:smooth}
+html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.7}
+
+.header{position:sticky;top:0;z-index:10;background:var(--bg);padding:calc(16px + var(--safe-top)) 20px 12px;border-bottom:1px solid var(--card-hover);backdrop-filter:blur(12px)}
+.header-row{display:flex;align-items:center;gap:12px}
+.header h1{font-size:20px;font-weight:800}
+.subtitle{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.back-btn{background:none;border:none;color:var(--accent-text);font-size:22px;cursor:pointer;padding:4px 8px;border-radius:8px;display:flex;align-items:center;justify-content:center;min-width:40px;min-height:40px}
+.back-btn:active{background:var(--card)}
+
+.container{max-width:720px;margin:0 auto;padding:32px 24px}
+.container h2{font-size:clamp(22px,4vw,26px);font-weight:800;margin:32px 0 12px;line-height:1.25}
+.container h2:first-child{margin-top:0}
+.container h3{font-size:17px;font-weight:700;margin:24px 0 8px;color:var(--accent-light)}
+.container p{color:var(--text-secondary);margin-bottom:14px;font-size:15px}
+.container strong{color:var(--text)}
+.container ul,ol{margin:0 0 14px 20px;color:var(--text-secondary);font-size:15px}
+.container li{margin-bottom:6px}
+.container li strong{color:var(--text)}
+.container a{color:var(--accent-text);text-decoration:none}
+.container a:hover{text-decoration:underline}
+
+.label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:10px}
+.divider{border:none;border-top:1px solid var(--card-hover);margin:28px 0}
+
+.summary-card{background:var(--card);border-radius:var(--radius);padding:20px;border:1px solid var(--card-hover);margin:16px 0}
+.summary-card h4{font-size:14px;font-weight:700;margin-bottom:8px;color:var(--accent-text)}
+.summary-card table{width:100%;border-collapse:collapse}
+.summary-card td{padding:8px 0;font-size:14px;border-bottom:1px solid var(--card-hover);vertical-align:top}
+.summary-card td:last-child{color:var(--text-secondary);text-align:right;padding-left:16px}
+.summary-card tr:last-child td{border-bottom:none}
+
+.check-item{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--card-hover)}
+.check-item:last-child{border-bottom:none}
+.check-icon{font-size:18px;flex-shrink:0;margin-top:2px}
+.check-text{font-size:14px;line-height:1.5}
+.check-text strong{color:var(--text)}
+
+.info-box{background:var(--info-bg);border:1px solid var(--info);border-radius:var(--radius);padding:16px 20px;margin:16px 0;font-size:14px;color:var(--text-secondary);line-height:1.6}
+.info-box strong{color:var(--info)}
+
+.success-box{background:var(--success-bg);border:1px solid var(--success);border-radius:var(--radius);padding:16px 20px;margin:16px 0;font-size:14px;color:var(--text-secondary);line-height:1.6}
+.success-box strong{color:var(--success)}
+
+.warning-box{background:var(--warning-bg);border:1px solid var(--warning);border-radius:var(--radius);padding:16px 20px;margin:16px 0;font-size:14px;color:var(--text-secondary);line-height:1.6}
+.warning-box strong{color:var(--warning)}
+
+.footer{text-align:center;padding:24px 20px 32px;font-size:13px;color:var(--text-secondary);border-top:1px solid var(--card-hover);margin-top:16px}
+.footer a{color:var(--accent-text);text-decoration:none;margin:0 8px}
+.footer a:hover{text-decoration:underline}
+.footer-links{margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-row">
+    <a class="back-btn" href="/schools.html" aria-label="Back">&#8592;</a>
+    <div>
+      <h1>Security & Compliance</h1>
+      <div class="subtitle">For IT departments and procurement teams</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="label">Overview</div>
+  <h2>RoleCall Security & Data Handling</h2>
+  <p>This page provides a technical overview of how RoleCall handles data, privacy, and security. It is intended for IT departments, procurement teams, and compliance officers reviewing RoleCall for institutional use.</p>
+  <p><strong>Last updated:</strong> July 2026</p>
+
+  <hr class="divider">
+
+  <div class="label">Quick Summary</div>
+  <h2>At a Glance</h2>
+
+  <div class="summary-card">
+    <table>
+      <tr><td><strong>FERPA Compliant</strong></td><td>&#9989; Yes</td></tr>
+      <tr><td><strong>PII Required</strong></td><td>None</td></tr>
+      <tr><td><strong>Data Storage</strong></td><td>Device-local (browser/app)</td></tr>
+      <tr><td><strong>Encryption in Transit</strong></td><td>TLS 1.2+ (HTTPS)</td></tr>
+      <tr><td><strong>Encryption at Rest</strong></td><td>N/A (no server-side user data)</td></tr>
+      <tr><td><strong>Third-Party Trackers</strong></td><td>Google Analytics only</td></tr>
+      <tr><td><strong>Authentication</strong></td><td>Optional (Google SSO or email)</td></tr>
+      <tr><td><strong>Data Retention</strong></td><td>User-controlled (local storage)</td></tr>
+      <tr><td><strong>DPA Available</strong></td><td>&#9989; Yes, upon request</td></tr>
+      <tr><td><strong>SOC 2</strong></td><td>Not yet (startup stage)</td></tr>
+    </table>
+  </div>
+
+  <hr class="divider">
+
+  <div class="label">FERPA</div>
+  <h2>Family Educational Rights and Privacy Act</h2>
+
+  <p>RoleCall is designed to be FERPA-compliant by architecture, not just by policy. Here's why:</p>
+
+  <div class="success-box">
+    <strong>Key Point:</strong> RoleCall does not collect, process, or store education records as defined by FERPA (20 U.S.C. &sect; 1232g). No grades, enrollment status, student IDs, or academic history are collected or transmitted.
+  </div>
+
+  <h3>Why RoleCall does not trigger FERPA</h3>
+  <ul>
+    <li><strong>No student PII required.</strong> Students can use the entire platform without providing their name, email, student ID, or any identifying information.</li>
+    <li><strong>Optional account creation.</strong> If a student chooses to create an account (for cross-device sync), only an email address is collected. This is not linked to any institutional student information system.</li>
+    <li><strong>Practice data is device-local.</strong> Interview practice scores, session history, bookmarks, and streak data are stored in the browser's localStorage or the mobile app's local storage. This data never leaves the device.</li>
+    <li><strong>No institutional data integration.</strong> RoleCall does not connect to any SIS, LMS, or institutional database. There is no data exchange between RoleCall and the institution.</li>
+    <li><strong>No student-level reporting to institutions.</strong> Institutional partners receive only aggregate, anonymized usage statistics (e.g., "47 students practiced 312 sessions in March"). No individual student data is shared.</li>
+  </ul>
+
+  <h3>What if a student creates an account?</h3>
+  <p>If a student optionally creates an account using Google SSO or email/password, the following data is stored in Firebase Authentication and Firestore:</p>
+  <ul>
+    <li>Email address (from Google SSO or entered manually)</li>
+    <li>Display name (from Google profile, if using SSO)</li>
+    <li>Subscription status (if applicable)</li>
+    <li>Practice data (synced from device-local storage, if the student opts in)</li>
+  </ul>
+  <p>This data is controlled by the student, not the institution. RoleCall acts as a <strong>school official</strong> only if a signed DPA is in place. Otherwise, RoleCall operates as an independent third-party service that the student chooses to use.</p>
+
+  <div class="info-box">
+    <strong>Recommendation:</strong> For strictest FERPA compliance, advise students to use RoleCall without creating an account. All core functionality works without authentication. If account creation is desired, a DPA should be executed.
+  </div>
+
+  <hr class="divider">
+
+  <div class="label">Data Architecture</div>
+  <h2>How Data Flows</h2>
+
+  <h3>Without an account (default)</h3>
+  <ol>
+    <li>Student visits rollcallinterviewprep.com</li>
+    <li>All role data, questions, and tips are loaded from the static site (no user-specific data transmitted)</li>
+    <li>Practice sessions run entirely in the browser</li>
+    <li>Scores, history, and bookmarks are saved to <code>localStorage</code></li>
+    <li>No data is sent to any server</li>
+  </ol>
+
+  <h3>With an optional account</h3>
+  <ol>
+    <li>Student creates an account via Google SSO or email/password</li>
+    <li>Firebase Authentication stores: email, display name, UID</li>
+    <li>Student can optionally sync practice data to Firestore</li>
+    <li>Firestore stores: practice sessions, bookmarks, subscription status</li>
+    <li>Data is associated with the student's Firebase UID, not a student ID</li>
+  </ol>
+
+  <h3>Infrastructure</h3>
+  <ul>
+    <li><strong>Hosting:</strong> Firebase Hosting (Google Cloud Platform)</li>
+    <li><strong>Authentication:</strong> Firebase Authentication</li>
+    <li><strong>Database:</strong> Cloud Firestore (when accounts are used)</li>
+    <li><strong>Payments:</strong> Stripe (PCI DSS Level 1 compliant)</li>
+    <li><strong>Analytics:</strong> Google Analytics (anonymized page views)</li>
+    <li><strong>Domain:</strong> rollcallinterviewprep.com (HTTPS enforced)</li>
+  </ul>
+
+  <hr class="divider">
+
+  <div class="label">Encryption</div>
+  <h2>Encryption & Transport Security</h2>
+
+  <div class="check-item">
+    <span class="check-icon">&#9989;</span>
+    <div class="check-text"><strong>HTTPS Everywhere.</strong> All pages are served over TLS 1.2+ via Firebase Hosting. HTTP requests are automatically redirected to HTTPS. HSTS headers are enabled.</div>
+  </div>
+  <div class="check-item">
+    <span class="check-icon">&#9989;</span>
+    <div class="check-text"><strong>Firebase Security Rules.</strong> Firestore access is restricted by security rules. Each user can only read/write their own data. No public read access.</div>
+  </div>
+  <div class="check-item">
+    <span class="check-icon">&#9989;</span>
+    <div class="check-text"><strong>Stripe PCI Compliance.</strong> All payment processing is handled by Stripe (PCI DSS Level 1). RoleCall never stores or transmits credit card numbers.</div>
+  </div>
+  <div class="check-item">
+    <span class="check-icon">&#9989;</span>
+    <div class="check-text"><strong>No plain-text secrets.</strong> API keys for Firebase and Stripe are client-side SDK keys (designed for public use with security rules). Server-side secrets (Stripe webhook keys, admin credentials) are stored in environment variables, never in code.</div>
+  </div>
+  <div class="check-item">
+    <span class="check-icon">&#9989;</span>
+    <div class="check-text"><strong>Content Security Policy.</strong> CSP headers restrict script sources to known CDN providers (Firebase, Stripe, Google Analytics). Inline scripts are minimized.</div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="label">Third Parties</div>
+  <h2>Third-Party Services</h2>
+
+  <p>RoleCall uses the following third-party services. None of them receive student PII unless the student voluntarily creates an account.</p>
+
+  <div class="summary-card">
+    <table>
+      <tr><td><strong>Google Analytics</strong></td><td>Anonymized page views, no PII</td></tr>
+      <tr><td><strong>Firebase (Google)</strong></td><td>Auth, hosting, database</td></tr>
+      <tr><td><strong>Stripe</strong></td><td>Payment processing</td></tr>
+      <tr><td><strong>Stability AI</strong></td><td>Card art generation (internal only)</td></tr>
+      <tr><td><strong>OpenAI</strong></td><td>Resume Tailor analysis (no PII stored)</td></tr>
+    </table>
+  </div>
+
+  <div class="info-box">
+    <strong>Note on AI features:</strong> The Resume Tailor feature sends resume text and job descriptions to OpenAI's API for analysis. This text is processed in-memory and is not stored by OpenAI or RoleCall. Students should be advised not to include sensitive personal information (SSN, full address) in resumes submitted to the tool.
+  </div>
+
+  <hr class="divider">
+
+  <div class="label">Cookies & Tracking</div>
+  <h2>Cookies & Local Storage</h2>
+
+  <div class="check-item">
+    <span class="check-icon">&#127937;</span>
+    <div class="check-text"><strong>Google Analytics cookies.</strong> Standard GA4 cookies (_ga, _ga_*) for anonymized usage analytics. No advertising cookies. No cross-site tracking.</div>
+  </div>
+  <div class="check-item">
+    <span class="check-icon">&#128190;</span>
+    <div class="check-text"><strong>localStorage.</strong> Stores practice data, theme preferences, bookmarks, and streak counts. All on-device. No transmission to servers.</div>
+  </div>
+  <div class="check-item">
+    <span class="check-icon">&#9989;</span>
+    <div class="check-text"><strong>No advertising trackers.</strong> RoleCall does not use Facebook Pixel, Google Ads remarketing, or any advertising SDKs.</div>
+  </div>
+  <div class="check-item">
+    <span class="check-icon">&#9989;</span>
+    <div class="check-text"><strong>No fingerprinting.</strong> RoleCall does not use browser fingerprinting, device fingerprinting, or cross-site tracking techniques.</div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="label">Access Controls</div>
+  <h2>Authentication & Authorization</h2>
+
+  <h3>For students (optional)</h3>
+  <ul>
+    <li>Google SSO (OAuth 2.0) or email/password</li>
+    <li>Email verification required for email/password accounts</li>
+    <li>Password requirements: minimum 6 characters (Firebase default)</li>
+    <li>Students can delete their account and all associated data at any time</li>
+  </ul>
+
+  <h3>For institutions (admin dashboard, when available)</h3>
+  <ul>
+    <li>Separate admin authentication (not the same as student accounts)</li>
+    <li>Read-only access to aggregate usage data</li>
+    <li>No access to individual student data or practice sessions</li>
+    <li>Admin access is granted manually by RoleCall staff</li>
+  </ul>
+
+  <hr class="divider">
+
+  <div class="label">Data Deletion</div>
+  <h2>Data Retention & Deletion</h2>
+
+  <ul>
+    <li><strong>Local data:</strong> Students can clear all local data by clearing their browser storage or uninstalling the app. No request needed.</li>
+    <li><strong>Account data:</strong> Students can delete their account from the app's Settings page. This permanently removes their authentication record and all synced Firestore data.</li>
+    <li><strong>Institutional data:</strong> Aggregate usage reports are retained for 1 year after the pilot/license ends, then deleted.</li>
+    <li><strong>Google Analytics:</strong> Data retention is set to 14 months (Google's default).</li>
+  </ul>
+
+  <div class="warning-box">
+    <strong>Important:</strong> RoleCall does not currently support bulk data deletion requests (e.g., a school requesting deletion of all student data). Since student data is device-local and not linked to institutions, this is not applicable in most cases. For students with accounts, individual deletion requests can be sent to <a href="mailto:rollcallinterviewprep@outlook.com">rollcallinterviewprep@outlook.com</a> and will be processed within 30 days.
+  </div>
+
+  <hr class="divider">
+
+  <div class="label">Compliance</div>
+  <h2>Compliance Status</h2>
+
+  <div class="check-item">
+    <span class="check-icon">&#9989;</span>
+    <div class="check-text"><strong>FERPA.</strong> Compliant by design. No education records collected. DPA available upon request.</div>
+  </div>
+  <div class="check-item">
+    <span class="check-icon">&#9989;</span>
+    <div class="check-text"><strong>COPPA.</strong> RoleCall is designed for users 13+. No knowingly collecting data from children under 13.</div>
+  </div>
+  <div class="check-item">
+    <span class="check-icon">&#9989;</span>
+    <div class="check-text"><strong>CCPA.</strong> No sale of personal information. Users can request data deletion.</div>
+  </div>
+  <div class="check-item">
+    <span class="check-icon">&#9989;</span>
+    <div class="check-text"><strong>GDPR.</strong> Minimal data collection. Users can request data export or deletion. No EU-specific data processing (all data in US regions).</div>
+  </div>
+  <div class="check-item">
+    <span class="check-icon">&#128311;</span>
+    <div class="check-text"><strong>SOC 2.</strong> Not yet pursued. As a bootstrapped startup, we have not completed a SOC 2 audit. We follow SOC 2-aligned practices (encryption, access controls, incident response) and can provide a security questionnaire response upon request.</div>
+  </div>
+  <div class="check-item">
+    <span class="check-icon">&#128311;</span>
+    <div class="check-text"><strong>VPAT / Section 508.</strong> Not yet completed. RoleCall follows WCAG 2.1 AA guidelines (keyboard navigation, screen reader support, high contrast theme, reduced motion support) but has not completed a formal accessibility audit.</div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="label">Contact</div>
+  <h2>Questions?</h2>
+  <p>For security inquiries, DPA requests, or compliance questions:</p>
+  <ul>
+    <li><strong>Email:</strong> <a href="mailto:rollcallinterviewprep@outlook.com">rollcallinterviewprep@outlook.com</a></li>
+    <li><strong>Response time:</strong> Within 24 hours for security-related inquiries</li>
+    <li><strong>DPA turnaround:</strong> 3-5 business days</li>
+  </ul>
+
+  <p style="margin-top:24px"><a href="/schools.html">&larr; Back to Schools page</a> &bull; <a href="/privacy.html">Privacy Policy</a> &bull; <a href="/terms.html">Terms of Use</a></p>
+
+</div>
+
+<div class="footer">
+  <div class="footer-links">
+    <a href="/">Home</a>
+    <a href="/schools.html">Schools</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="/terms.html">Terms</a>
+  </div>
+  <div>&copy; 2026 RoleCall. All rights reserved.</div>
+</div>
+
+</body>
+</html>

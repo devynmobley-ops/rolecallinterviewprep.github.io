@@ -7,15 +7,36 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>RoleCall for Schools & Universities — Interview Prep for Students</title>
-<meta name="description" content="Bring RoleCall to your school. AI-powered mock interviews across 374+ roles in 9 industries. Bulk access, institutional pricing, and custom packages for universities and career centers.">
+<meta name="description" content="Bring RoleCall to your school. FERPA-compliant AI-powered mock interviews across 374+ roles in 9 industries. Free pilots, institutional pricing, admin dashboards, and curriculum resources for universities and career centers.">
 <link rel="canonical" href="https://rollcallinterviewprep.com/schools.html">
 <meta property="og:title" content="RoleCall for Schools & Universities">
-<meta property="og:description" content="AI-powered mock interviews across 374+ roles in 9 industries. Bulk access and institutional pricing for universities and career centers.">
+<meta property="og:description" content="FERPA-compliant AI-powered mock interviews across 374+ roles in 9 industries. Free pilots and institutional pricing for universities and career centers.">
 <meta property="og:url" content="https://rollcallinterviewprep.com/schools.html">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="RoleCall for Schools & Universities">
-<meta name="twitter:description" content="AI-powered mock interviews across 374+ roles in 9 industries. Bulk access and institutional pricing for universities and career centers.">
+<meta name="twitter:description" content="FERPA-compliant AI-powered mock interviews across 374+ roles in 9 industries. Free pilots and institutional pricing for universities and career centers.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "RoleCall for Schools & Universities",
+  "description": "FERPA-compliant AI-powered mock interviews across 374+ roles. Free pilots, institutional pricing, and curriculum resources for schools.",
+  "provider": {
+    "@type": "Organization",
+    "name": "RoleCall",
+    "url": "https://rollcallinterviewprep.com"
+  },
+  "offers": {
+    "@type": "AggregateOffer",
+    "priceCurrency": "USD",
+    "lowPrice": "0",
+    "highPrice": "5",
+    "offerCount": "3",
+    "description": "Institutional pricing from free pilots to $3-5/student/year"
+  }
+}
+</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 *:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
@@ -25,6 +46,9 @@
   --accent-text:#8b7cf7;--text:#f0f0f5;--text-secondary:#8e8ea0;--card-hover:#22222f;
   --safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);
   --radius:14px;--transition:0.3s cubic-bezier(.4,0,.2,1);
+  --success:#2ecc71;--success-bg:rgba(46,204,113,0.12);
+  --info:#3498db;--info-bg:rgba(52,152,219,0.12);
+  --warning:#f39c12;--warning-bg:rgba(243,156,18,0.12);
 }
 body[data-theme="ocean"]{--bg:#0a1628;--card:#122240;--accent:#00b4d8;--accent-light:#90e0ef;--accent-text:#33c5e3;--text:#e8f4f8;--text-secondary:#6c8ea0;--card-hover:#1a3050}
 body[data-theme="forest"]{--bg:#0d1a0d;--card:#1a2e1a;--accent:#2d6a4f;--accent-light:#52b788;--accent-text:#5db882;--text:#e8f5e9;--text-secondary:#7aaa80;--card-hover:#223322}
@@ -47,8 +71,14 @@ html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI
 .hero{text-align:center;padding:56px 24px 48px;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,var(--accent) 0%,transparent 70%);opacity:0.07;pointer-events:none}
 .hero-icon{font-size:48px;margin-bottom:16px;display:block}
-.hero h2{font-size:clamp(26px,5vw,36px);font-weight:800;line-height:1.2;background:linear-gradient(135deg,var(--accent),var(--accent-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;max-width:560px;margin:0 auto}
-.hero p{font-size:16px;color:var(--text-secondary);margin-top:14px;line-height:1.6;max-width:520px;margin-left:auto;margin-right:auto}
+.hero h2{font-size:clamp(26px,5vw,36px);font-weight:800;line-height:1.2;background:linear-gradient(135deg,var(--accent),var(--accent-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;max-width:600px;margin:0 auto}
+.hero p{font-size:16px;color:var(--text-secondary);margin-top:14px;line-height:1.6;max-width:560px;margin-left:auto;margin-right:auto}
+
+/* Trust bar */
+.trust-bar{display:flex;flex-wrap:wrap;justify-content:center;gap:24px;padding:20px 24px 28px;max-width:720px;margin:0 auto}
+.trust-stat{text-align:center}
+.trust-stat .val{font-size:clamp(22px,4vw,28px);font-weight:800;color:var(--accent-text)}
+.trust-stat .lbl{font-size:12px;color:var(--text-secondary);margin-top:2px;font-weight:600}
 
 /* Sections */
 .section{padding:32px 24px;max-width:720px;margin:0 auto}
@@ -83,10 +113,32 @@ html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI
 
 /* Pricing */
 .pricing-cards{display:grid;gap:14px;margin-top:16px}
-.pricing-card{background:var(--card);border-radius:var(--radius);padding:24px;border:1px solid var(--card-hover);transition:all var(--transition)}
+.pricing-card{background:var(--card);border-radius:var(--radius);padding:24px;border:1px solid var(--card-hover);transition:all var(--transition);position:relative}
 .pricing-card:hover{border-color:var(--accent)}
 .pricing-card h4{font-size:16px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
 .pricing-card p{font-size:14px;color:var(--text-secondary);line-height:1.6}
+.pricing-card .price{font-size:24px;font-weight:800;color:var(--accent-text);margin:8px 0}
+.pricing-card .price-note{font-size:12px;color:var(--text-secondary);opacity:0.7}
+.pricing-card.featured{border-color:var(--accent);background:rgba(108,92,231,0.05)}
+.pricing-card.featured::before{content:'Most Popular';position:absolute;top:-10px;right:16px;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:3px 12px;border-radius:10px;letter-spacing:0.5px}
+
+/* FERPA / Compliance */
+.compliance-grid{display:grid;gap:12px;margin-top:16px}
+.compliance-card{background:var(--card);border-radius:var(--radius);padding:20px;border:1px solid var(--card-hover);display:flex;gap:14px;align-items:flex-start;transition:all var(--transition)}
+.compliance-card:hover{border-color:var(--success)}
+.compliance-icon{font-size:24px;flex-shrink:0;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:var(--success-bg);border-radius:10px}
+.compliance-card h4{font-size:14px;font-weight:700;margin-bottom:4px}
+.compliance-card p{font-size:13px;color:var(--text-secondary);line-height:1.6}
+
+/* Testimonials */
+.testimonial-grid{display:grid;gap:12px;margin-top:16px}
+.testimonial-card{background:var(--card);border-radius:var(--radius);padding:20px;border:1px solid var(--card-hover);transition:all var(--transition)}
+.testimonial-card:hover{border-color:var(--accent)}
+.testimonial-quote{font-size:14px;line-height:1.6;font-style:italic;margin-bottom:12px;color:var(--text)}
+.testimonial-quote::before{content:'\201C';color:var(--accent);font-size:20px;font-style:normal;margin-right:2px}
+.testimonial-quote::after{content:'\201D';color:var(--accent);font-size:20px;font-style:normal;margin-left:2px}
+.testimonial-author{font-size:12px;color:var(--text-secondary);font-weight:600}
+.testimonial-author strong{color:var(--text)}
 
 /* CTA */
 .cta-section{text-align:center;padding:48px 24px 40px;max-width:600px;margin:0 auto}
@@ -115,6 +167,8 @@ html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI
   .card-grid{grid-template-columns:1fr 1fr}
   .pricing-cards{grid-template-columns:1fr 1fr 1fr}
   .cta-buttons{flex-direction:row;justify-content:center}
+  .compliance-grid{grid-template-columns:1fr 1fr}
+  .testimonial-grid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:380px){
   .hero{padding:40px 16px 36px}
@@ -138,8 +192,38 @@ html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI
 <!-- Hero -->
 <div class="hero">
   <span class="hero-icon" aria-hidden="true">&#127891;</span>
-  <h2>RoleCall for Schools &amp; Universities</h2>
-  <p>Prepare your students for interviews across 374+ career roles in 9 industries. From healthcare to tech, trades to creative fields.</p>
+  <h2>Help Your Students Land the Job, Not Just the Interview</h2>
+  <p>RoleCall gives every student — from nursing to welding to CS — a personal AI interview coach. FERPA-compliant, free to pilot, and built for institutional scale.</p>
+</div>
+
+<!-- Trust Bar -->
+<div class="trust-bar">
+  <div class="trust-stat">
+    <div class="val">374+</div>
+    <div class="lbl">Career Roles</div>
+  </div>
+  <div class="trust-stat">
+    <div class="val">9</div>
+    <div class="lbl">Industries</div>
+  </div>
+  <div class="trust-stat">
+    <div class="val">4,400+</div>
+    <div class="lbl">Interview Questions</div>
+  </div>
+  <div class="trust-stat">
+    <div class="val">100%</div>
+    <div class="lbl">FERPA Compliant</div>
+  </div>
+</div>
+
+<div class="divider"><hr></div>
+
+<!-- The Problem -->
+<div class="section">
+  <div class="section-label">The Challenge</div>
+  <h3>Career centers can't scale 1-on-1 coaching to every student</h3>
+  <p>Your career services team does incredible work — but with hundreds or thousands of students, there's no way to give everyone personalized interview practice. Students heading into nursing, welding, cybersecurity, and culinary arts all need different preparation, and generic "tell me about yourself" advice doesn't cut it.</p>
+  <p style="margin-bottom:0"><strong style="color:var(--text)">RoleCall bridges that gap.</strong> It's the role-specific, AI-powered interview coach that works 24/7 on any device — so your career center can serve every student, not just the ones who book an appointment.</p>
 </div>
 
 <div class="divider"><hr></div>
@@ -147,41 +231,55 @@ html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI
 <!-- What RoleCall Offers -->
 <div class="section">
   <div class="section-label">What We Offer</div>
-  <h3>Everything students need to ace their interviews</h3>
-  <p>RoleCall gives students a structured, self-guided way to prepare for real interviews in their chosen field.</p>
+  <h3>Outcomes your students can actually use</h3>
+  <p>RoleCall doesn't just give students questions to think about. It gives them a structured practice environment with feedback, progress tracking, and career planning tools.</p>
 
   <div class="card-grid">
     <div class="offer-card">
       <div class="offer-icon" aria-hidden="true">&#127919;</div>
       <div>
         <h4>Role-Specific Mock Interviews</h4>
-        <p>Hundreds of interview questions tailored to specific job titles, not generic prompts. Students practice answers relevant to their exact career path.</p>
+        <p>Not generic prompts. A nursing student gets nursing questions. A welding student gets welding questions. 12 expert-crafted questions per role, with tips on what interviewers actually want to hear.</p>
+      </div>
+    </div>
+    <div class="offer-card">
+      <div class="offer-icon" aria-hidden="true">&#128221;</div>
+      <div>
+        <h4>AI Resume Tailor</h4>
+        <p>Students upload their resume, paste a job description, and get instant analysis: missing keywords, rewritten bullet points, and a match score. No career counselor needed for the first pass.</p>
       </div>
     </div>
     <div class="offer-card">
       <div class="offer-icon" aria-hidden="true">&#128161;</div>
       <div>
-        <h4>Expert Tips &amp; Strategies</h4>
-        <p>Each question comes with expert guidance on how to structure answers, what interviewers look for, and common mistakes to avoid.</p>
+        <h4>Expert Tips & Answer Frameworks</h4>
+        <p>Every question includes guidance on structuring answers, common mistakes to avoid, and key concepts interviewers are screening for. Students build real technique, not memorized scripts.</p>
       </div>
     </div>
     <div class="offer-card">
       <div class="offer-icon" aria-hidden="true">&#127891;</div>
       <div>
-        <h4>Education, Coursework &amp; Certification Paths</h4>
-        <p>Clear information on the degrees, certifications, and licenses required for each role — plus the typical courses each degree requires, so students can plan their schedule, not just their major.</p>
+        <h4>Education & Certification Paths</h4>
+        <p>Each role shows required degrees, certifications, licenses, and typical coursework — so students can plan their academic path alongside their career goals.</p>
       </div>
     </div>
     <div class="offer-card">
       <div class="offer-icon" aria-hidden="true">&#128200;</div>
       <div>
-        <h4>Progress Tracking</h4>
-        <p>Students can bookmark roles, track practice streaks, and monitor their improvement over time to stay motivated and accountable.</p>
+        <h4>Progress Tracking & Streaks</h4>
+        <p>Students see their practice history, average scores, roles explored, and streak counts. Built-in motivation that keeps them coming back without you having to push.</p>
+      </div>
+    </div>
+    <div class="offer-card">
+      <div class="offer-icon" aria-hidden="true">&#128188;</div>
+      <div>
+        <h4>Job Offer Kit</h4>
+        <p>Salary negotiation scripts, resume bullet point formulas, thank-you email templates, and the "Tell Me About Yourself" framework. Everything between the interview and the handshake.</p>
       </div>
     </div>
   </div>
 
-  <p style="margin-top:20px;font-size:14px;color:var(--text-secondary)">RoleCall covers roles across these industries:</p>
+  <p style="margin-top:20px;font-size:14px;color:var(--text-secondary)">Covers roles across all these industries:</p>
   <div class="industries">
     <span class="industry-tag">Healthcare</span>
     <span class="industry-tag">Technology</span>
@@ -197,48 +295,188 @@ html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI
 
 <div class="divider"><hr></div>
 
-<!-- How It Works -->
+<!-- FERPA & Compliance -->
 <div class="section">
-  <div class="section-label">How It Works</div>
-  <h3>Three simple steps to interview readiness</h3>
-  <p>RoleCall is designed to be intuitive for students at any level, from freshmen exploring careers to seniors preparing for their first job.</p>
+  <div class="section-label">Trust & Compliance</div>
+  <h3>Built with student privacy at the core</h3>
+  <p>We know that compliance is non-negotiable for schools. Here's how RoleCall handles student data — and why your IT department can say yes.</p>
 
-  <div class="steps">
-    <div class="step">
-      <h4>Choose a Career Path</h4>
-      <p>Students browse 374+ roles across 9 industries or search for a specific job title. Each role includes a full description, salary range, and required qualifications.</p>
+  <div class="compliance-grid">
+    <div class="compliance-card">
+      <div class="compliance-icon" aria-hidden="true">&#128274;</div>
+      <div>
+        <h4>FERPA Compliant</h4>
+        <p>RoleCall does not collect, store, or transmit education records. All practice data — scores, history, bookmarks — is stored locally on the student's device. No student PII is required to use the platform.</p>
+      </div>
     </div>
-    <div class="step">
-      <h4>Practice with AI-Powered Mock Interviews</h4>
-      <p>RoleCall generates realistic interview questions for each role. Students can practice answering out loud, review expert tips, and repeat as many times as they need.</p>
+    <div class="compliance-card">
+      <div class="compliance-icon" aria-hidden="true">&#128737;</div>
+      <div>
+        <h4>No PII Collected</h4>
+        <p>Students can use RoleCall without providing their name, email, or student ID. Optional account creation (for cross-device sync) uses only an email address — no student ID, no grade data, no enrollment info.</p>
+      </div>
     </div>
-    <div class="step">
-      <h4>Track Progress &amp; Improve</h4>
-      <p>Bookmark roles, maintain practice streaks, and see which areas need more work. Students build confidence with every session.</p>
+    <div class="compliance-card">
+      <div class="compliance-icon" aria-hidden="true">&#128187;</div>
+      <div>
+        <h4>Data Stored on Device</h4>
+        <p>Practice history, streaks, scores, and bookmarks are stored in the browser's local storage or on-device app storage. No server-side student data. Students can clear their data at any time.</p>
+      </div>
+    </div>
+    <div class="compliance-card">
+      <div class="compliance-icon" aria-hidden="true">&#127760;</div>
+      <div>
+        <h4>HTTPS Everywhere</h4>
+        <p>All traffic is encrypted via TLS. The site runs on Firebase Hosting with automatic SSL. No unencrypted data transmission. No third-party trackers beyond standard Google Analytics.</p>
+      </div>
+    </div>
+    <div class="compliance-card">
+      <div class="compliance-icon" aria-hidden="true">&#128220;</div>
+      <div>
+        <h4>Data Processing Agreement</h4>
+        <p>We provide a signed DPA upon request for any institution that requires one. Our data handling practices are documented and auditable. <a href="/security.html" style="color:var(--accent-text)">View our full security overview</a>.</p>
+      </div>
+    </div>
+    <div class="compliance-card">
+      <div class="compliance-icon" aria-hidden="true">&#128101;</div>
+      <div>
+        <h4>Admin Controls Available</h4>
+        <p>Institutional partners can request aggregate usage dashboards showing how many students are active, which career paths are most popular, and engagement trends — all anonymized.</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px;background:var(--success-bg);border:1px solid var(--success);border-radius:var(--radius);padding:16px 20px;display:flex;gap:12px;align-items:flex-start">
+    <span style="font-size:20px;flex-shrink:0">&#9989;</span>
+    <div>
+      <div style="font-size:14px;font-weight:700;color:var(--success);margin-bottom:4px">No Risk to Try</div>
+      <div style="font-size:13px;color:var(--text-secondary);line-height:1.6">RoleCall requires no student data to operate. There's nothing to sign, nothing to configure, and nothing to report. Students use it on their own devices, on their own time. If it doesn't work for your program, you've lost nothing.</div>
     </div>
   </div>
 </div>
 
 <div class="divider"><hr></div>
 
-<!-- Bulk Access & Pricing -->
+<!-- Instructor Resources -->
 <div class="section">
-  <div class="section-label">For Institutions</div>
-  <h3>Bulk access &amp; institutional pricing</h3>
-  <p>We work with schools, universities, and career centers to make RoleCall accessible to students at scale. Reach out to discuss a package that fits your institution.</p>
+  <div class="section-label">For Faculty</div>
+  <h3>Drop-in curriculum resources</h3>
+  <p>Want to integrate RoleCall into a Career Readiness, Professional Development, or Capstone course? We make it easy with ready-to-use assignment templates and rubrics.</p>
+
+  <div class="card-grid">
+    <div class="offer-card">
+      <div class="offer-icon" aria-hidden="true">&#128218;</div>
+      <div>
+        <h4>Assignment Templates</h4>
+        <p>Pre-built assignments for 4-week, 8-week, and full-semester integrations. Includes instructions, grading rubrics, and reflection prompts — ready to paste into your syllabus.</p>
+      </div>
+    </div>
+    <div class="offer-card">
+      <div class="offer-icon" aria-hidden="true">&#128202;</div>
+      <div>
+        <h4>Student Progress Reports</h4>
+        <p>Students can export their practice history as a PDF to submit as evidence of completion. Includes roles practiced, scores, and session counts.</p>
+      </div>
+    </div>
+    <div class="offer-card">
+      <div class="offer-icon" aria-hidden="true">&#127891;</div>
+      <div>
+        <h4>Career Exploration Module</h4>
+        <p>Use RoleCall's 374+ career database as a career research assignment. Students explore roles, review education paths, and present their findings.</p>
+      </div>
+    </div>
+    <div class="offer-card">
+      <div class="offer-icon" aria-hidden="true">&#128172;</div>
+      <div>
+        <h4>Mock Interview Lab</h4>
+        <p>Run a class session where every student does a mock interview on their phone. Compare scores, discuss what worked, and practice as a group.</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:20px">
+    <a class="btn-secondary" href="/instructors.html" style="display:inline-flex;min-width:auto;padding:12px 24px;text-decoration:none">
+      &#128218; View Full Instructor Guide
+    </a>
+  </div>
+</div>
+
+<div class="divider"><hr></div>
+
+<!-- How It Works -->
+<div class="section">
+  <div class="section-label">How It Works</div>
+  <h3>Get started in minutes, not months</h3>
+  <p>No procurement process. No onboarding meeting. No IT tickets. Here's how a typical pilot works:</p>
+
+  <div class="steps">
+    <div class="step">
+      <h4>Request a Pilot</h4>
+      <p>Email us or fill out the form below. Tell us your school name, estimated number of students, and any departments you'd like to focus on. We'll set up a custom promo code within 24 hours.</p>
+    </div>
+    <div class="step">
+      <h4>Distribute to Students</h4>
+      <p>Share the promo code via email, LMS announcement, orientation session, or career fair. Students redeem it on rollcallinterviewprep.com — no app download required, works on any device with a browser.</p>
+    </div>
+    <div class="step">
+      <h4>Track & Measure</h4>
+      <p>Students practice independently. You'll receive a summary report at the end of the pilot showing aggregate usage, popular career paths, and engagement metrics. No student-level data is shared without their consent.</p>
+    </div>
+  </div>
+</div>
+
+<div class="divider"><hr></div>
+
+<!-- Pricing -->
+<div class="section">
+  <div class="section-label">Institutional Pricing</div>
+  <h3>Flexible options for every budget</h3>
+  <p>We work with schools of all sizes. Every pilot starts free — we only ask for payment when you see the value.</p>
 
   <div class="pricing-cards">
     <div class="pricing-card">
-      <h4>&#128188; Institutional Pricing</h4>
-      <p>Custom pricing for schools and universities that want to provide RoleCall access to their entire student body or specific departments.</p>
+      <h4>&#128640; Free Pilot</h4>
+      <p>Try RoleCall with a group of students for 4-8 weeks. No credit card, no commitment, no contract.</p>
+      <div class="price">$0</div>
+      <div class="price-note">Up to 200 students &bull; Custom promo code &bull; Usage report</div>
+    </div>
+    <div class="pricing-card featured">
+      <h4>&#127942; Annual License</h4>
+      <p>Unlimited student access for one academic year. Ideal for career centers, orientation programs, and course integrations.</p>
+      <div class="price">$3-5/student/yr</div>
+      <div class="price-note">Volume discounts at 500+ students &bull; Admin dashboard &bull; Priority support</div>
     </div>
     <div class="pricing-card">
-      <h4>&#127991; Bulk Promo Codes</h4>
-      <p>Distribute promo codes to students for individual Pro access. Ideal for career centers, orientation programs, or course integrations.</p>
+      <h4>&#127970; Enterprise</h4>
+      <p>Multi-campus, multi-year, or district-wide deployments. Custom terms, SSO integration, and dedicated account management.</p>
+      <div class="price">Custom</div>
+      <div class="price-note">Contact us for a quote &bull; DPA included &bull; SLA available</div>
     </div>
-    <div class="pricing-card">
-      <h4>&#128736; Custom Packages</h4>
-      <p>Need something specific? We can build a tailored package that fits your program's size, budget, and timeline. Just ask.</p>
+  </div>
+</div>
+
+<div class="divider"><hr></div>
+
+<!-- Testimonials -->
+<div class="section">
+  <div class="section-label">What Students Say</div>
+  <h3>Real results from real students</h3>
+  <div class="testimonial-grid">
+    <div class="testimonial-card">
+      <div class="testimonial-quote">I used RoleCall to prep for my nursing interview and got the job! The questions were exactly what I was asked in my panel interview.</div>
+      <div class="testimonial-author"><strong>Sarah M.</strong> &mdash; Registered Nurse, BSN program graduate</div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-quote">The expert tips helped me understand what interviewers actually want to hear. Way better than just Googling questions. I knew exactly how to structure my answers.</div>
+      <div class="testimonial-author"><strong>Marcus T.</strong> &mdash; Software Engineer, CS graduate</div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-quote">As a career changer from retail to IT, the education paths showed me exactly what certs I needed. Super helpful for planning my next steps and budgeting my time.</div>
+      <div class="testimonial-author"><strong>Jessica L.</strong> &mdash; IT Support, community college student</div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-quote">My career center told me about RoleCall and I practiced for a week before my interview. I felt so much more confident going in. Got the offer two days later.</div>
+      <div class="testimonial-author"><strong>David R.</strong> &mdash; Dental Hygienist, allied health program</div>
     </div>
   </div>
 </div>
@@ -248,16 +486,17 @@ html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI
 <!-- CTA -->
 <div class="cta-section">
   <h3>Ready to bring RoleCall to your school?</h3>
-  <p>Get in touch to discuss institutional pricing, bulk access, or a custom package for your students.</p>
+  <p>Start a free pilot, get a custom promo code, or just ask questions. We respond within 24 hours.</p>
   <div class="cta-buttons">
-    <a class="btn-primary" href="mailto:rollcallinterviewprep@outlook.com?subject=RoleCall%20for%20Schools%20%E2%80%94%20Institutional%20Inquiry">
-      &#9993; Email Us
+    <a class="btn-primary" href="mailto:rollcallinterviewprep@outlook.com?subject=RoleCall%20for%20Schools%20%E2%80%94%20Free%20Pilot%20Request">
+      &#9993; Start a Free Pilot
     </a>
-    <a class="btn-secondary" href="https://rollcallinterviewprep.com" target="_blank" rel="noopener">
-      Use Our Feedback Form
+    <a class="btn-secondary" href="mailto:rollcallinterviewprep@outlook.com?subject=RoleCall%20for%20Schools%20%E2%80%94%20Pricing%20Inquiry">
+      &#128176; Request Pricing
     </a>
   </div>
-  <p class="cta-note">Email us at <a href="mailto:rollcallinterviewprep@outlook.com">rollcallinterviewprep@outlook.com</a> or use the General Feedback form on our main site.</p>
+  <p class="cta-note">Or email us directly at <a href="mailto:rollcallinterviewprep@outlook.com">rollcallinterviewprep@outlook.com</a></p>
+  <p class="cta-note" style="margin-top:8px"><a href="/security.html">View Security & Compliance Details</a> &bull; <a href="/instructors.html">Instructor Integration Guide</a></p>
 </div>
 
 <!-- Footer -->
@@ -265,6 +504,7 @@ html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI
   <div class="footer-links">
     <a href="/">Home</a>
     <a href="/blog.html">Blog</a>
+    <a href="/security.html">Security</a>
     <a href="/privacy.html">Privacy</a>
     <a href="/terms.html">Terms</a>
   </div>

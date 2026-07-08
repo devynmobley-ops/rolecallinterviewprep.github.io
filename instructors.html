@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EDPB7FVZDV"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-EDPB7FVZDV');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Instructor Guide — RoleCall Interview Prep</title>
+<meta name="description" content="Ready-to-use curriculum resources for integrating RoleCall into Career Readiness, Professional Development, and Capstone courses. Assignment templates, rubrics, and lesson plans included.">
+<link rel="canonical" href="https://rollcallinterviewprep.com/instructors.html">
+<meta property="og:title" content="Instructor Guide — RoleCall">
+<meta property="og:description" content="Ready-to-use assignment templates and rubrics for integrating RoleCall into your Career Readiness or Professional Development course.">
+<meta property="og:url" content="https://rollcallinterviewprep.com/instructors.html">
+<meta property="og:type" content="website">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+*:focus:not(:focus-visible){outline:none}
+:root{
+  --bg:#0f0f14;--card:#1a1a24;--accent:#6c5ce7;--accent-light:#a29bfe;
+  --accent-text:#8b7cf7;--text:#f0f0f5;--text-secondary:#8e8ea0;--card-hover:#22222f;
+  --safe-top:env(safe-area-inset-top,0px);
+  --radius:14px;--transition:0.3s cubic-bezier(.4,0,.2,1);
+  --success:#2ecc71;--success-bg:rgba(46,204,113,0.12);
+  --info:#3498db;--info-bg:rgba(52,152,219,0.12);
+}
+html{scroll-behavior:smooth}
+html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.7}
+
+.header{position:sticky;top:0;z-index:10;background:var(--bg);padding:calc(16px + var(--safe-top)) 20px 12px;border-bottom:1px solid var(--card-hover);backdrop-filter:blur(12px)}
+.header-row{display:flex;align-items:center;gap:12px}
+.header h1{font-size:20px;font-weight:800}
+.subtitle{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.back-btn{background:none;border:none;color:var(--accent-text);font-size:22px;cursor:pointer;padding:4px 8px;border-radius:8px;display:flex;align-items:center;justify-content:center;min-width:40px;min-height:40px}
+.back-btn:active{background:var(--card)}
+
+.container{max-width:720px;margin:0 auto;padding:32px 24px}
+.container h2{font-size:clamp(22px,4vw,26px);font-weight:800;margin:32px 0 12px;line-height:1.25}
+.container h2:first-child{margin-top:0}
+.container h3{font-size:17px;font-weight:700;margin:24px 0 8px;color:var(--accent-light)}
+.container p{color:var(--text-secondary);margin-bottom:14px;font-size:15px}
+.container strong{color:var(--text)}
+.container ul,ol{margin:0 0 14px 20px;color:var(--text-secondary);font-size:15px}
+.container li{margin-bottom:8px}
+.container li strong{color:var(--text)}
+.container a{color:var(--accent-text);text-decoration:none}
+.container a:hover{text-decoration:underline}
+
+.label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:10px}
+.divider{border:none;border-top:1px solid var(--card-hover);margin:28px 0}
+
+.assignment-card{background:var(--card);border-radius:var(--radius);padding:20px;border:1px solid var(--card-hover);margin:16px 0;transition:all var(--transition)}
+.assignment-card:hover{border-color:var(--accent)}
+.assignment-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.assignment-icon{font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:var(--card-hover);border-radius:12px;flex-shrink:0}
+.assignment-title{font-size:16px;font-weight:700}
+.assignment-meta{font-size:12px;color:var(--text-secondary);margin-top:2px}
+.assignment-body{font-size:14px;color:var(--text-secondary);line-height:1.6}
+.assignment-body h4{font-size:14px;font-weight:700;color:var(--text);margin:16px 0 6px}
+.assignment-body h4:first-child{margin-top:0}
+.assignment-body ul{margin:8px 0 12px 20px}
+.assignment-body li{margin-bottom:4px}
+
+.rubric-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+.rubric-table th{text-align:left;padding:8px 10px;background:var(--card-hover);color:var(--text);font-weight:700;border-radius:6px 6px 0 0}
+.rubric-table td{padding:8px 10px;border-bottom:1px solid var(--card-hover);color:var(--text-secondary);vertical-align:top}
+.rubric-table tr:last-child td{border-bottom:none}
+
+.tip-box{background:var(--info-bg);border:1px solid var(--info);border-radius:var(--radius);padding:14px 18px;margin:12px 0;font-size:13px;color:var(--text-secondary);line-height:1.6}
+.tip-box strong{color:var(--info)}
+
+.syllabus-block{background:var(--card);border-radius:var(--radius);padding:16px 20px;border-left:3px solid var(--accent);margin:12px 0;font-size:14px;color:var(--text-secondary);line-height:1.7;font-family:'Courier New',monospace;white-space:pre-wrap;overflow-x:auto}
+
+.download-btn{display:inline-flex;align-items:center;gap:8px;background:var(--card);color:var(--text);font-size:14px;font-weight:600;padding:12px 20px;border-radius:var(--radius);border:1px solid var(--card-hover);cursor:pointer;transition:all var(--transition);text-decoration:none;margin:8px 8px 8px 0}
+.download-btn:hover{border-color:var(--accent);color:var(--accent-text)}
+.download-btn:active{transform:scale(0.97)}
+
+.footer{text-align:center;padding:24px 20px 32px;font-size:13px;color:var(--text-secondary);border-top:1px solid var(--card-hover);margin-top:16px}
+.footer a{color:var(--accent-text);text-decoration:none;margin:0 8px}
+.footer a:hover{text-decoration:underline}
+.footer-links{margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-row">
+    <a class="back-btn" href="/schools.html" aria-label="Back">&#8592;</a>
+    <div>
+      <h1>Instructor Guide</h1>
+      <div class="subtitle">Curriculum Integration Resources</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="label">Overview</div>
+  <h2>Integrating RoleCall Into Your Course</h2>
+  <p>This guide provides ready-to-use assignment templates, rubrics, and lesson plans for integrating RoleCall into Career Readiness, Professional Development, First-Year Experience, Capstone, and Co-op/Internship courses.</p>
+  <p>Every assignment below can be dropped directly into your syllabus. They're designed to work with RoleCall's existing features — no custom integration or IT support required.</p>
+
+  <div class="tip-box">
+    <strong>Getting Started:</strong> If your school has a promo code, share it with students at the start of the semester. Students visit <strong>rollcallinterviewprep.com</strong>, enter the code in the More tab, and get instant Pro access. If you need a promo code, email <a href="mailto:rollcallinterviewprep@outlook.com">rollcallinterviewprep@outlook.com</a>.
+  </div>
+
+  <hr class="divider">
+
+  <!-- Assignment 1 -->
+  <div class="label">Assignment 1</div>
+  <h2>Career Exploration & Research</h2>
+  <p><strong>Best for:</strong> First-Year Experience, Career Exploration, undecided students<br>
+  <strong>Time:</strong> 1-2 weeks &bull; <strong>Points:</strong> 50-100</p>
+
+  <div class="assignment-card">
+    <div class="assignment-header">
+      <div class="assignment-icon">&#128269;</div>
+      <div>
+        <div class="assignment-title">Explore 5 Career Paths</div>
+        <div class="assignment-meta">Research + Reflection Paper</div>
+      </div>
+    </div>
+    <div class="assignment-body">
+      <h4>Instructions for Students</h4>
+      <ol>
+        <li>Go to <strong>rollcallinterviewprep.com</strong> and browse the career categories (Tech, Healthcare, Business, Trades, etc.)</li>
+        <li>Choose <strong>5 roles</strong> that interest you — at least 2 from different industries</li>
+        <li>For each role, review: the job description, salary range, required education, certifications, and typical coursework</li>
+        <li>Complete <strong>one mock interview</strong> for your top choice role</li>
+        <li>Write a <strong>2-page reflection</strong> covering:
+          <ul>
+            <li>Which roles surprised you and why</li>
+            <li>What education/certifications each path requires</li>
+            <li>How your current skills and coursework align with your top choice</li>
+            <li>What you learned from the mock interview experience</li>
+          </ul>
+        </li>
+      </ol>
+
+      <h4>Deliverable</h4>
+      <p>Submit your reflection paper along with a <strong>screenshot of your RoleCall practice history</strong> (found in the More tab &rarr; History) showing the mock interview you completed.</p>
+
+      <h4>Grading Rubric</h4>
+      <table class="rubric-table">
+        <tr><th>Criteria</th><th>Points</th><th>Description</th></tr>
+        <tr><td>Career Research</td><td>25</td><td>Thoroughly explored 5 roles across 2+ industries with specific details</td></tr>
+        <tr><td>Mock Interview</td><td>15</td><td>Completed at least 1 mock interview (screenshot provided)</td></tr>
+        <tr><td>Self-Assessment</td><td>20</td><td>Thoughtful reflection on skills, gaps, and alignment with chosen paths</td></tr>
+        <tr><td>Writing Quality</td><td>10</td><td>Clear, organized, and well-written</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Assignment 2 -->
+  <div class="label">Assignment 2</div>
+  <h2>Interview Preparation Portfolio</h2>
+  <p><strong>Best for:</strong> Career Readiness, Professional Development, Co-op Prep<br>
+  <strong>Time:</strong> 3-4 weeks &bull; <strong>Points:</strong> 100-150</p>
+
+  <div class="assignment-card">
+    <div class="assignment-header">
+      <div class="assignment-icon">&#128188;</div>
+      <div>
+        <div class="assignment-title">Build Your Interview Toolkit</div>
+        <div class="assignment-meta">Multi-part portfolio project</div>
+      </div>
+    </div>
+    <div class="assignment-body">
+      <h4>Part 1: Target Role Analysis (Week 1)</h4>
+      <ul>
+        <li>Identify your target role on RoleCall</li>
+        <li>Review all 12 interview questions and expert tips</li>
+        <li>Document the required education, certifications, and career path</li>
+        <li>Identify 3 skills you already have and 3 you need to develop</li>
+      </ul>
+
+      <h4>Part 2: Mock Interview Practice (Weeks 2-3)</h4>
+      <ul>
+        <li>Complete <strong>3 full mock interviews</strong> for your target role</li>
+        <li>After each session, review your score and identify areas for improvement</li>
+        <li>Practice answering questions out loud (RoleCall is designed for verbal practice)</li>
+        <li>Track your improvement across all 3 sessions</li>
+      </ul>
+
+      <h4>Part 3: Resume Tailoring (Week 3)</h4>
+      <ul>
+        <li>Find a real job posting for your target role</li>
+        <li>Use RoleCall's <strong>Resume Tailor</strong> to analyze your resume against the job description</li>
+        <li>Implement the suggested changes</li>
+        <li>Save both the "before" and "after" versions</li>
+      </ul>
+
+      <h4>Part 4: Final Reflection (Week 4)</h4>
+      <ul>
+        <li>Write a 3-page reflection covering your journey from Week 1 to now</li>
+        <li>Include your score progression across the 3 mock interviews</li>
+        <li>Discuss what you learned about yourself and your career readiness</li>
+        <li>Outline a 6-month plan for closing your remaining skill gaps</li>
+      </ul>
+
+      <h4>Deliverable</h4>
+      <p>Submit a portfolio PDF containing: target role analysis, practice history screenshots (all 3 sessions), before/after resume, and final reflection.</p>
+
+      <h4>Grading Rubric</h4>
+      <table class="rubric-table">
+        <tr><th>Criteria</th><th>Points</th><th>Description</th></tr>
+        <tr><td>Role Analysis</td><td>25</td><td>Thorough analysis of target role with specific details on skills and qualifications</td></tr>
+        <tr><td>Mock Interview Practice</td><td>30</td><td>Completed 3 sessions with evidence of score improvement</td></tr>
+        <tr><td>Resume Tailoring</td><td>25</td><td>Used Resume Tailor, implemented changes, provided before/after comparison</td></tr>
+        <tr><td>Final Reflection</td><td>30</td><td>Thoughtful self-assessment with actionable improvement plan</td></tr>
+        <tr><td>Portfolio Quality</td><td>15</td><td>Well-organized, professional presentation</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Assignment 3 -->
+  <div class="label">Assignment 3</div>
+  <h2>Mock Interview Lab (In-Class)</h2>
+  <p><strong>Best for:</strong> Any career course, workshop, or orientation session<br>
+  <strong>Time:</strong> One class period (50-75 min) &bull; <strong>Points:</strong> 25-50 (participation)</p>
+
+  <div class="assignment-card">
+    <div class="assignment-header">
+      <div class="assignment-icon">&#127942;</div>
+      <div>
+        <div class="assignment-title">Live Mock Interview Session</div>
+        <div class="assignment-meta">In-class activity + group discussion</div>
+      </div>
+    </div>
+    <div class="assignment-body">
+      <h4>Setup (5 minutes)</h4>
+      <ul>
+        <li>Students open <strong>rollcallinterviewprep.com</strong> on their phones or laptops</li>
+        <li>Each student navigates to their target role (or a role you assign)</li>
+        <li>If you have a promo code, students redeem it now</li>
+      </ul>
+
+      <h4>Practice Round 1 (10 minutes)</h4>
+      <ul>
+        <li>Every student starts a <strong>3-question mock interview</strong> for their role</li>
+        <li>Students answer each question out loud (whispered or in their head if in a shared space)</li>
+        <li>After each question, they review the expert tip</li>
+      </ul>
+
+      <h4>Partner Practice (15 minutes)</h4>
+      <ul>
+        <li>Pair students up. Partner A asks Partner B one question from their RoleCall session</li>
+        <li>Partner B answers out loud while Partner A listens</li>
+        <li>Partner A gives feedback based on the expert tip they see on screen</li>
+        <li>Switch roles and repeat</li>
+      </ul>
+
+      <h4>Group Discussion (15 minutes)</h4>
+      <ul>
+        <li>Ask the class: "What was the hardest question you encountered?"</li>
+        <li>Discuss: "What did the expert tips tell you that you wouldn't have known?"</li>
+        <li>Share: "What's one thing you'll do differently in your next real interview?"</li>
+      </ul>
+
+      <h4>Wrap-Up (5 minutes)</h4>
+      <ul>
+        <li>Students screenshot their practice history as proof of completion</li>
+        <li>Assign homework: Complete 2 more mock interviews before next class</li>
+      </ul>
+
+      <div class="tip-box">
+        <strong>Instructor Tip:</strong> This works especially well as a mid-semester check-in or the week before career fairs. Students are often surprised by how different it feels to answer out loud vs. in their head.
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Assignment 4 -->
+  <div class="label">Assignment 4</div>
+  <h2>Job Offer Negotiation Simulation</h2>
+  <p><strong>Best for:</strong> Advanced career courses, MBA programs, senior capstone<br>
+  <strong>Time:</strong> 2 weeks &bull; <strong>Points:</strong> 100</p>
+
+  <div class="assignment-card">
+    <div class="assignment-header">
+      <div class="assignment-icon">&#128176;</div>
+      <div>
+        <div class="assignment-title">Negotiate Like a Pro</div>
+        <div class="assignment-meta">Research + Role-play + Reflection</div>
+      </div>
+    </div>
+    <div class="assignment-body">
+      <h4>Part 1: Salary Research (Week 1)</h4>
+      <ul>
+        <li>Using RoleCall's career data (salary ranges shown on each role), research the market rate for your target role in your geographic area</li>
+        <li>Use 2 additional sources (Glassdoor, BLS, Payscale) to cross-reference</li>
+        <li>Document your findings: low, mid, and high salary ranges</li>
+      </ul>
+
+      <h4>Part 2: Negotiation Script (Week 1-2)</h4>
+      <ul>
+        <li>Review the <strong>Job Offer Kit</strong> (available on RoleCall) for salary negotiation scripts</li>
+        <li>Write a custom negotiation script for a hypothetical offer at the mid-range salary</li>
+        <li>Include: how you'd counter, what benefits you'd negotiate, and how you'd handle a "no"</li>
+      </ul>
+
+      <h4>Part 3: Role-Play (Week 2)</h4>
+      <ul>
+        <li>In pairs, one student plays the hiring manager, the other the candidate</li>
+        <li>The "hiring manager" offers a salary at the low end of the range</li>
+        <li>The candidate uses their script to negotiate</li>
+        <li>Switch roles and repeat with a different scenario</li>
+      </ul>
+
+      <h4>Deliverable</h4>
+      <p>Submit: salary research document, negotiation script, and a 1-page reflection on what you learned about negotiation and what you'd do differently in a real scenario.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Syllabus Language -->
+  <div class="label">Syllabus</div>
+  <h2>Ready-to-Paste Syllabus Language</h2>
+  <p>Copy and adapt this section for your course syllabus:</p>
+
+  <div class="syllabus-block">INTERVIEW PREPARATION (RoleCall)
+
+All students will use RoleCall (rollcallinterviewprep.com), a free AI-powered
+interview preparation platform, throughout this semester. RoleCall provides
+role-specific mock interview questions, expert tips, resume tailoring, and
+career path information for 374+ careers.
+
+REQUIREMENTS:
+- Create a free account at rollcallinterviewprep.com
+- Complete at least [X] mock interviews for your target career role
+- Submit screenshots of your practice history as evidence of completion
+- [Optional: Enter promo code XXXXX for Pro access]
+
+GRADING:
+Interview preparation assignments account for [X]% of your final grade.
+See individual assignment descriptions for rubrics and point values.
+
+TECHNICAL REQUIREMENTS:
+RoleCall works on any device with a web browser (phone, tablet, laptop).
+No app download required. If you have questions, contact [instructor email].</div>
+
+  <div class="tip-box">
+    <strong>Customize the bracketed values</strong> ([X]) to match your course. If your school has a promo code, include it so students get Pro access automatically.
+  </div>
+
+  <hr class="divider">
+
+  <!-- Course Integration Examples -->
+  <div class="label">Examples</div>
+  <h2>Course Integration Examples</h2>
+  <p>Here's how different types of courses can use RoleCall:</p>
+
+  <div class="assignment-card">
+    <div class="assignment-body">
+      <h4>&#127891; First-Year Experience / Orientation</h4>
+      <p><strong>Assignment:</strong> Career Exploration (Assignment 1 above)<br>
+      <strong>Goal:</strong> Help undecided students explore career paths early<br>
+      <strong>Timing:</strong> Weeks 3-4 of the semester</p>
+
+      <h4>&#128188; Career Readiness / Professional Development</h4>
+      <p><strong>Assignment:</strong> Interview Preparation Portfolio (Assignment 2 above)<br>
+      <strong>Goal:</strong> Build complete interview skills over 4 weeks<br>
+      <strong>Timing:</strong> Weeks 6-10 of the semester</p>
+
+      <h4>&#127891; Capstone / Senior Seminar</h4>
+      <p><strong>Assignment:</strong> Job Offer Negotiation Simulation (Assignment 4 above)<br>
+      <strong>Goal:</strong> Prepare graduating students for real offers<br>
+      <strong>Timing:</strong> Weeks 12-14 of the semester</p>
+
+      <h4>&#128187; Any Course with a Career Component</h4>
+      <p><strong>Assignment:</strong> Mock Interview Lab (Assignment 3 above)<br>
+      <strong>Goal:</strong> One-day experiential activity<br>
+      <strong>Timing:</strong> Anytime — great before career fairs</p>
+
+      <h4>&#128214; Co-op / Internship Prep</h4>
+      <p><strong>Assignment:</strong> Role-specific mock interviews + Resume Tailor<br>
+      <strong>Goal:</strong> Prepare students for co-op interviews<br>
+      <strong>Timing:</strong> 2 weeks before co-op interview cycle</p>
+
+      <h4>&#128736; CTE / Vocational Programs</h4>
+      <p><strong>Assignment:</strong> Trade-specific interview practice (welding, HVAC, electrical, etc.)<br>
+      <strong>Goal:</strong> Practice industry-specific interview questions<br>
+      <strong>Timing:</strong> Final weeks of program, before job placement</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="label">Support</div>
+  <h2>Need Help?</h2>
+  <p>We're happy to support your integration. Reach out for:</p>
+  <ul>
+    <li><strong>Custom promo codes</strong> for your class or department</li>
+    <li><strong>Assignment customization</strong> — we can tailor assignments to your specific course outcomes</li>
+    <li><strong>Guest speaker / demo</strong> — we can join a class session (virtually) to walk students through the platform</li>
+    <li><strong>Bulk student onboarding</strong> — if you need to set up 50+ students at once</li>
+    <li><strong>Progress reports</strong> — aggregate usage data for your class (anonymized)</li>
+  </ul>
+  <p><strong>Email:</strong> <a href="mailto:rollcallinterviewprep@outlook.com">rollcallinterviewprep@outlook.com</a></p>
+  <p><strong>Response time:</strong> Within 24 hours</p>
+
+  <p style="margin-top:24px"><a href="/schools.html">&larr; Back to Schools page</a> &bull; <a href="/security.html">Security & Compliance</a></p>
+
+</div>
+
+<div class="footer">
+  <div class="footer-links">
+    <a href="/">Home</a>
+    <a href="/schools.html">Schools</a>
+    <a href="/security.html">Security</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="/terms.html">Terms</a>
+  </div>
+  <div>&copy; 2026 RoleCall. All rights reserved.</div>
+</div>
+
+</body>
+</html>

@@ -26,7 +26,19 @@
   </url>
   <url>
     <loc>https://rollcallinterviewprep.com/schools.html</loc>
-    <lastmod>2026-06-25</lastmod>
+    <lastmod>2026-07-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://rollcallinterviewprep.com/security.html</loc>
+    <lastmod>2026-07-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://rollcallinterviewprep.com/instructors.html</loc>
+    <lastmod>2026-07-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
