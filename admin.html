@@ -335,6 +335,7 @@ function adminLogin() {
 
 function checkAdminAccess(user) {
   // Check if user has admin role in institution_admins collection
+  // First try direct UID lookup
   db.collection('institution_admins').doc(user.uid).get()
     .then(function(doc) {
       if (doc.exists) {
@@ -345,16 +346,48 @@ function checkAdminAccess(user) {
         showDashboard();
         loadDashboardData();
       } else {
-        // Not an admin — show demo mode
-        isAdmin = false;
-        institutionId = 'demo';
-        document.getElementById('loginError').textContent = 'This account does not have admin access. Showing demo data.';
-        showDashboard();
-        loadDemoData();
+        // Try to find by email (for pending admins who haven't activated yet)
+        db.collection('institution_admins')
+          .where('email', '==', user.email)
+          .where('pendingActivation', '==', true)
+          .limit(1)
+          .get()
+          .then(function(snap) {
+            if (!snap.empty) {
+              var pendingDoc = snap.docs[0];
+              var pendingData = pendingDoc.data();
+              // Activate: create a doc with the real UID and delete the pending one
+              db.collection('institution_admins').doc(user.uid).set({
+                institutionId: pendingData.institutionId,
+                institutionName: pendingData.institutionName,
+                email: user.email,
+                activatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+              }).then(function() {
+                // Delete the pending doc
+                pendingDoc.ref.delete().catch(function(){});
+                isAdmin = true;
+                institutionId = pendingData.institutionId;
+                document.getElementById('schoolName').textContent = pendingData.institutionName || 'Your Institution';
+                document.getElementById('dashboardSubtitle').textContent = 'Aggregate usage data for ' + (pendingData.institutionName || 'your institution') + ' — no individual student data is shown';
+                showDashboard();
+                loadDashboardData();
+              });
+            } else {
+              // Not an admin — show demo mode
+              isAdmin = false;
+              institutionId = 'demo';
+              document.getElementById('loginError').textContent = 'This account does not have admin access. Showing demo data.';
+              showDashboard();
+              loadDemoData();
+            }
+          })
+          .catch(function() {
+            showDashboard();
+            loadDemoData();
+          });
       }
     })
     .catch(function() {
-      // Firestore error — show demo mode
       showDashboard();
       loadDemoData();
     });

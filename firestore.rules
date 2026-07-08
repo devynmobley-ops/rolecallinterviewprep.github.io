@@ -49,6 +49,12 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Super admins — read own doc, write via Cloud Function only
+    match /super_admins/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
     // Problem reports — authenticated write, server-only read
     match /reports/{reportId} {
       allow read: if false;

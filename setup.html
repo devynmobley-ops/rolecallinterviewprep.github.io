@@ -196,11 +196,30 @@ var db = firebase.firestore();
 // Auth state
 auth.onAuthStateChanged(function(user) {
   if (user) {
+    tryInitSuperAdmin(user);
+  }
+});
+
+async function tryInitSuperAdmin(user) {
+  try {
+    var initFn = firebaseFunctions.httpsCallable('initSuperAdmin');
+    await initFn();
+  } catch(e) {
+    // Not a super admin or already initialized — that's fine
+    console.log('initSuperAdmin:', e.code || e.message);
+  }
+  // Check access
+  var doc = await db.collection('super_admins').doc(user.uid).get();
+  if (doc.exists) {
     document.getElementById('loginCard').style.display = 'none';
     document.getElementById('setupForm').style.display = '';
     loadExistingSchools();
+  } else {
+    var errorEl = document.getElementById('loginError');
+    errorEl.textContent = 'This account does not have super admin access.';
+    errorEl.style.display = 'block';
   }
-});
+}
 
 function doLogin() {
   var email = document.getElementById('loginEmail').value;

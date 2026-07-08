@@ -569,6 +569,42 @@ exports.onReportCreated = functions.firestore.document('reports/{reportId}').onC
 // INSTITUTIONAL ANALYTICS PIPELINE
 // ============================================================
 
+// One-time super admin initialization
+// Hardcoded UIDs for the owner — only these can become super admins
+const SUPER_ADMIN_UIDS = {
+  'CuWoLXy3vxXWG0JfELPwCxGC8Nh2': 'devyn.mobley@yahoo.com',
+  'lPX2wUEJ1uN9K69et1XkhrYqhEW2': 'devyn.mobley@gmail.com',
+};
+
+exports.initSuperAdmin = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const uid = context.auth.uid;
+  const email = context.auth.token.email;
+
+  // Check if this UID is in the allowed list
+  if (!SUPER_ADMIN_UIDS[uid]) {
+    throw new functions.https.HttpsError('permission-denied', 'Not authorized for super admin access');
+  }
+
+  // Check if already exists
+  const existing = await admin.firestore().collection('super_admins').doc(uid).get();
+  if (existing.exists) {
+    return { success: true, message: 'Already a super admin', isNew: false };
+  }
+
+  // Create the super admin doc
+  await admin.firestore().collection('super_admins').doc(uid).set({
+    email: email || SUPER_ADMIN_UIDS[uid],
+    role: 'owner',
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  return { success: true, message: 'Super admin created', isNew: true };
+});
+
 // Record a practice session — called by students after completing a mock interview
 exports.recordSession = functions.https.onCall(async (data, context) => {
   if (!context.auth) {
