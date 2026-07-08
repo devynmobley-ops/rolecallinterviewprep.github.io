@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EDPB7FVZDV"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-EDPB7FVZDV');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>SSO & Bulk Onboarding — RoleCall Interview Prep</title>
+<meta name="description" content="Onboard your entire student body to RoleCall. Google Workspace SSO, CSV bulk enrollment, promo codes, and LMS integration for schools and universities.">
+<link rel="canonical" href="https://rollcallinterviewprep.com/onboarding.html">
+<meta property="og:title" content="SSO & Bulk Onboarding — RoleCall">
+<meta property="og:description" content="Onboard your entire student body to RoleCall. Google Workspace SSO, CSV bulk enrollment, and promo codes for institutions.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+*:focus:not(:focus-visible){outline:none}
+:root{
+  --bg:#0f0f14;--card:#1a1a24;--accent:#6c5ce7;--accent-light:#a29bfe;
+  --accent-text:#8b7cf7;--text:#f0f0f5;--text-secondary:#8e8ea0;--card-hover:#22222f;
+  --safe-top:env(safe-area-inset-top,0px);
+  --radius:14px;--transition:0.3s cubic-bezier(.4,0,.2,1);
+  --success:#2ecc71;--success-bg:rgba(46,204,113,0.12);
+  --info:#3498db;--info-bg:rgba(52,152,219,0.12);
+  --warning:#f39c12;--warning-bg:rgba(243,156,18,0.12);
+}
+html{scroll-behavior:smooth}
+html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.7}
+
+.header{position:sticky;top:0;z-index:10;background:var(--bg);padding:calc(16px + var(--safe-top)) 20px 12px;border-bottom:1px solid var(--card-hover);backdrop-filter:blur(12px)}
+.header-row{display:flex;align-items:center;gap:12px}
+.header h1{font-size:20px;font-weight:800}
+.subtitle{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.back-btn{background:none;border:none;color:var(--accent-text);font-size:22px;cursor:pointer;padding:4px 8px;border-radius:8px;display:flex;align-items:center;justify-content:center;min-width:40px;min-height:40px}
+.back-btn:active{background:var(--card)}
+
+.container{max-width:720px;margin:0 auto;padding:32px 24px}
+
+.label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:10px}
+h2{font-size:clamp(22px,4vw,28px);font-weight:800;margin:32px 0 12px;line-height:1.25}
+h2:first-child{margin-top:0}
+h3{font-size:17px;font-weight:700;margin:24px 0 8px;color:var(--accent-light)}
+p{color:var(--text-secondary);margin-bottom:14px;font-size:15px}
+strong{color:var(--text)}
+ul,ol{margin:0 0 14px 20px;color:var(--text-secondary);font-size:15px}
+li{margin-bottom:8px}
+a{color:var(--accent-text);text-decoration:none}
+a:hover{text-decoration:underline}
+
+.divider{border:none;border-top:1px solid var(--card-hover);margin:28px 0}
+
+/* Method cards */
+.method-card{background:var(--card);border-radius:var(--radius);padding:24px;border:1px solid var(--card-hover);margin:16px 0;transition:all var(--transition)}
+.method-card:hover{border-color:var(--accent)}
+.method-header{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.method-icon{font-size:28px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;flex-shrink:0}
+.method-title{font-size:18px;font-weight:800}
+.method-subtitle{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.method-body{font-size:14px;color:var(--text-secondary);line-height:1.6}
+.method-body h4{font-size:14px;font-weight:700;color:var(--text);margin:16px 0 6px}
+.method-body h4:first-child{margin-top:0}
+.method-body ul{margin:8px 0 12px 20px}
+.method-body li{margin-bottom:4px}
+.method-tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px;margin-top:4px}
+.tag-easy{background:var(--success-bg);color:var(--success)}
+.tag-medium{background:var(--warning-bg);color:var(--warning)}
+.tag-advanced{background:var(--info-bg);color:var(--info)}
+
+/* Steps */
+.steps{display:grid;gap:14px;margin:16px 0;counter-reset:step}
+.step{background:var(--card);border-radius:var(--radius);padding:20px;position:relative;padding-left:64px;border:1px solid var(--card-hover)}
+.step::before{counter-increment:step;content:counter(step);position:absolute;left:20px;top:20px;width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent-light));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;line-height:32px;text-align:center}
+.step h4{font-size:15px;font-weight:700;margin-bottom:4px}
+.step p{font-size:13px;color:var(--text-secondary);line-height:1.5;margin-bottom:0}
+
+/* CSV tool */
+.csv-tool{background:var(--card);border-radius:var(--radius);padding:24px;border:1px solid var(--card-hover);margin:16px 0}
+.csv-tool h3{margin-top:0}
+.csv-dropzone{border:2px dashed var(--card-hover);border-radius:var(--radius);padding:32px;text-align:center;cursor:pointer;transition:all var(--transition);margin:16px 0}
+.csv-dropzone:hover{border-color:var(--accent)}
+.csv-dropzone.dragover{border-color:var(--accent);background:rgba(108,92,231,0.05)}
+.csv-dropzone .drop-icon{font-size:36px;margin-bottom:8px}
+.csv-dropzone p{margin-bottom:0;font-size:14px}
+.csv-dropzone .drop-hint{font-size:12px;color:var(--text-secondary);margin-top:4px}
+
+.csv-preview{margin:16px 0;max-height:200px;overflow-y:auto;border-radius:var(--radius);border:1px solid var(--card-hover)}
+.csv-preview table{width:100%;border-collapse:collapse;font-size:13px}
+.csv-preview th{padding:8px 12px;text-align:left;background:var(--card-hover);font-weight:700;position:sticky;top:0}
+.csv-preview td{padding:6px 12px;border-bottom:1px solid var(--card-hover);color:var(--text-secondary)}
+
+.csv-result{background:var(--success-bg);border:1px solid var(--success);border-radius:var(--radius);padding:16px;margin:16px 0;font-size:14px;display:none}
+.csv-result.error{background:rgba(231,76,60,0.12);border-color:#e74c3c}
+.csv-result strong{color:var(--success)}
+.csv-result.error strong{color:#e74c3c}
+
+/* Info box */
+.info-box{background:var(--info-bg);border:1px solid var(--info);border-radius:var(--radius);padding:14px 18px;margin:16px 0;font-size:13px;color:var(--text-secondary);line-height:1.6}
+.info-box strong{color:var(--info)}
+
+.success-box{background:var(--success-bg);border:1px solid var(--success);border-radius:var(--radius);padding:14px 18px;margin:16px 0;font-size:13px;color:var(--text-secondary);line-height:1.6}
+.success-box strong{color:var(--success)}
+
+/* Comparison table */
+.compare-table{width:100%;border-collapse:collapse;margin:16px 0}
+.compare-table th{padding:12px;text-align:left;font-size:13px;font-weight:700;color:var(--text);background:var(--card);border-bottom:2px solid var(--card-hover)}
+.compare-table td{padding:12px;font-size:13px;color:var(--text-secondary);border-bottom:1px solid var(--card-hover);vertical-align:top}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-check{color:var(--success);font-weight:700}
+.compare-x{color:var(--text-secondary);opacity:0.5}
+
+/* Buttons */
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:15px;font-weight:700;padding:14px 28px;border-radius:var(--radius);text-decoration:none;transition:all var(--transition);border:none;cursor:pointer}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(108,92,231,0.3)}
+.btn-primary:active{transform:scale(0.97)}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;background:var(--card);color:var(--text);font-size:14px;font-weight:600;padding:12px 24px;border-radius:var(--radius);text-decoration:none;transition:all var(--transition);border:1px solid var(--card-hover);cursor:pointer}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent-text)}
+
+/* Footer */
+.footer{text-align:center;padding:24px 20px 32px;font-size:13px;color:var(--text-secondary);border-top:1px solid var(--card-hover);margin-top:16px}
+.footer a{color:var(--accent-text);text-decoration:none;margin:0 8px}
+.footer a:hover{text-decoration:underline}
+.footer-links{margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-row">
+    <a class="back-btn" href="/schools.html" aria-label="Back">&#8592;</a>
+    <div>
+      <h1>SSO & Bulk Onboarding</h1>
+      <div class="subtitle">Get your entire student body set up in minutes</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="label">Overview</div>
+  <h2>Three Ways to Onboard Students</h2>
+  <p>Choose the method that fits your institution's size and technical setup. All methods give students the same full access — the difference is how they sign up.</p>
+
+  <hr class="divider">
+
+  <!-- Method 1: Promo Codes -->
+  <div class="method-card">
+    <div class="method-header">
+      <div class="method-icon" style="background:var(--success-bg)">&#127915;</div>
+      <div>
+        <div class="method-title">Promo Codes</div>
+        <div class="method-subtitle">Best for: any size institution</div>
+      </div>
+    </div>
+    <div class="method-body">
+      <p>The simplest option. We generate a custom promo code for your institution. Students visit rollcallinterviewprep.com, create a free account, and enter the code to unlock Pro access.</p>
+
+      <h4>How it works</h4>
+      <ol>
+        <li>Email us your institution name and estimated student count</li>
+        <li>We generate a unique promo code (e.g., <code style="background:var(--card-hover);padding:2px 6px;border-radius:4px;font-size:13px">HACC2026</code>)</li>
+        <li>You share the code via email, LMS, orientation, or flyers</li>
+        <li>Students visit the site, sign up, and enter the code</li>
+      </ol>
+
+      <h4>Pros</h4>
+      <ul>
+        <li>No technical setup required</li>
+        <li>Works immediately — code ready within 24 hours</li>
+        <li>Students can use it on any device</li>
+        <li>Easy to distribute via any channel</li>
+      </ul>
+
+      <div class="method-tag tag-easy">&#9989; Easiest setup</div>
+    </div>
+  </div>
+
+  <!-- Method 2: CSV Bulk Enrollment -->
+  <div class="method-card">
+    <div class="method-header">
+      <div class="method-icon" style="background:var(--warning-bg)">&#128230;</div>
+      <div>
+        <div class="method-title">CSV Bulk Enrollment</div>
+        <div class="method-subtitle">Best for: 100+ students, department-wide rollouts</div>
+      </div>
+    </div>
+    <div class="method-body">
+      <p>Upload a CSV of student emails and we'll pre-create accounts with Pro access. Students receive an email with their login credentials — no promo code entry needed.</p>
+
+      <h4>How it works</h4>
+      <ol>
+        <li>Prepare a CSV with student email addresses (one per line)</li>
+        <li>Upload it using the tool below, or email it to us directly</li>
+        <li>We create accounts and send welcome emails to each student</li>
+        <li>Students click the link in their email and start practicing</li>
+      </ol>
+
+      <h4>CSV format</h4>
+      <p>Your CSV file should have a single column with email addresses:</p>
+      <div style="background:var(--card-hover);border-radius:8px;padding:12px;font-family:monospace;font-size:13px;color:var(--text);margin:8px 0;overflow-x:auto">
+        email<br>
+        student1@school.edu<br>
+        student2@school.edu<br>
+        student3@school.edu
+      </div>
+
+      <h4>Pros</h4>
+      <ul>
+        <li>Students don't need to enter a promo code</li>
+        <li>Accounts are pre-created — lower friction</li>
+        <li>You can track which students have accounts</li>
+        <li>Works well for course-specific enrollment</li>
+      </ul>
+
+      <div class="method-tag tag-medium">&#9888; Requires email list</div>
+    </div>
+  </div>
+
+  <!-- Method 3: Google Workspace SSO -->
+  <div class="method-card">
+    <div class="method-header">
+      <div class="method-icon" style="background:var(--info-bg)">&#128274;</div>
+      <div>
+        <div class="method-title">Google Workspace SSO</div>
+        <div class="method-subtitle">Best for: Google Workspace schools (most colleges)</div>
+      </div>
+    </div>
+    <div class="method-body">
+      <p>If your school uses Google Workspace (Gmail, Google Classroom, etc.), students can sign in with their school Google account. No separate RoleCall account needed — they use the same credentials they already have.</p>
+
+      <h4>How it works</h4>
+      <ol>
+        <li>We configure RoleCall to accept sign-ins from your school's Google Workspace domain</li>
+        <li>Students visit rollcallinterviewprep.com and click "Sign in with Google"</li>
+        <li>They authenticate with their school email (e.g., student@school.edu)</li>
+        <li>Pro access is automatically granted based on their email domain</li>
+      </ol>
+
+      <h4>Pros</h4>
+      <ul>
+        <li>Zero friction — students use existing credentials</li>
+        <li>No promo codes to manage</li>
+        <li>Automatic Pro access for anyone with a school email</li>
+        <li>Familiar sign-in flow (Google SSO)</li>
+      </ul>
+
+      <h4>Requirements</h4>
+      <ul>
+        <li>Your school must use Google Workspace (not Microsoft 365 or other email providers)</li>
+        <li>We need your school's Google Workspace domain (e.g., school.edu)</li>
+        <li>Setup takes 1-2 business days</li>
+      </ul>
+
+      <div class="method-tag tag-advanced">&#128736; Requires domain config</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Comparison -->
+  <div class="label">Comparison</div>
+  <h2>Which method is right for you?</h2>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Promo Code</th>
+        <th>CSV Upload</th>
+        <th>Google SSO</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Setup time</strong></td>
+        <td>24 hours</td>
+        <td>24-48 hours</td>
+        <td>1-2 business days</td>
+      </tr>
+      <tr>
+        <td><strong>Technical effort</strong></td>
+        <td>None</td>
+        <td>Prepare CSV</td>
+        <td>Domain verification</td>
+      </tr>
+      <tr>
+        <td><strong>Student friction</strong></td>
+        <td>Enter code</td>
+        <td>Click email link</td>
+        <td>Google sign-in</td>
+      </tr>
+      <tr>
+        <td><strong>Account creation</strong></td>
+        <td>Student creates</td>
+        <td>Pre-created</td>
+        <td>Automatic</td>
+      </tr>
+      <tr>
+        <td><strong>Scalability</strong></td>
+        <td>Any size</td>
+        <td>Best for 100+</td>
+        <td>Unlimited</td>
+      </tr>
+      <tr>
+        <td><strong>Works with any email</strong></td>
+        <td><span class="compare-check">&#9989; Yes</span></td>
+        <td><span class="compare-check">&#9989; Yes</span></td>
+        <td><span class="compare-x">Google only</span></td>
+      </tr>
+      <tr>
+        <td><strong>Domain-restricted access</strong></td>
+        <td><span class="compare-x">No</span></td>
+        <td><span class="compare-x">No</span></td>
+        <td><span class="compare-check">&#9989; Yes</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr class="divider">
+
+  <!-- CSV Upload Tool -->
+  <div class="label">Tool</div>
+  <h2>CSV Upload Tool</h2>
+  <p>Upload a CSV of student emails to generate a bulk enrollment request. We'll process it and send you confirmation within 24-48 hours.</p>
+
+  <div class="csv-tool">
+    <h3>&#128230; Upload Student Emails</h3>
+    <p style="font-size:13px;color:var(--text-secondary)">Upload a CSV file with student email addresses. We'll create accounts and send welcome emails to each student.</p>
+
+    <div class="csv-dropzone" id="csvDropzone" onclick="document.getElementById('csvFileInput').click()">
+      <div class="drop-icon">&#128230;</div>
+      <p><strong>Drop your CSV file here</strong> or tap to browse</p>
+      <div class="drop-hint">CSV format: one email address per line</div>
+    </div>
+    <input type="file" id="csvFileInput" accept=".csv" style="display:none" onchange="handleCSVFile(this)">
+
+    <div class="csv-preview" id="csvPreview" style="display:none">
+      <table>
+        <thead><tr><th>#</th><th>Email</th><th>Status</th></tr></thead>
+        <tbody id="csvPreviewBody"></tbody>
+      </table>
+    </div>
+
+    <div class="csv-result" id="csvResult"></div>
+
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn-primary" id="csvSubmitBtn" onclick="submitCSV()" style="display:none;font-size:14px;padding:12px 20px">&#9993; Submit Enrollment Request</button>
+      <button class="btn-secondary" id="csvClearBtn" onclick="clearCSV()" style="display:none;font-size:14px;padding:12px 20px">Clear</button>
+    </div>
+
+    <div class="info-box" style="margin-top:16px">
+      <strong>Privacy note:</strong> Email addresses are used solely for account creation and are not shared with third parties. Students can delete their accounts at any time. See our <a href="/security.html">Security & Compliance</a> page for details.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- LMS Integration -->
+  <div class="label">LMS</div>
+  <h2>LMS Integration</h2>
+  <p>Want to add RoleCall directly to your Canvas, Blackboard, or Moodle course? Here are the options:</p>
+
+  <div class="method-card">
+    <div class="method-body">
+      <h4>Option 1: Direct Link (Simplest)</h4>
+      <p>Add a link to rollcallinterviewprep.com in your LMS course module or assignment. Students click the link, sign in, and practice. No LTI configuration needed.</p>
+
+      <h4>Option 2: Embed via iframe</h4>
+      <p>Embed RoleCall directly in your LMS page using an iframe. Students never leave the LMS. Add this to your course page:</p>
+      <div style="background:var(--card-hover);border-radius:8px;padding:12px;font-family:monospace;font-size:12px;color:var(--text);margin:8px 0;overflow-x:auto">
+        &lt;iframe src="https://rollcallinterviewprep.com" width="100%" height="600" style="border:none;border-radius:12px"&gt;&lt;/iframe&gt;
+      </div>
+
+      <h4>Option 3: LTI Integration (Coming Soon)</h4>
+      <p>We're building full LTI 1.3 support for Canvas, Blackboard, and Moodle. This will allow grade passback, assignment linking, and deep linking. <a href="mailto:rollcallinterviewprep@outlook.com?subject=LTI%20Integration%20Interest">Contact us</a> to get early access.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- FAQ -->
+  <div class="label">FAQ</div>
+  <h2>Common Questions</h2>
+
+  <div class="method-card">
+    <div class="method-body">
+      <h4>Can students use RoleCall without creating an account?</h4>
+      <p>Yes. All core functionality (browsing roles, viewing questions, reading expert tips) works without an account. Accounts are only needed for progress tracking, bookmarks, streaks, and cross-device sync.</p>
+
+      <h4>What if a student already has a RoleCall account?</h4>
+      <p>If they used a personal email before, they can enter the promo code on their existing account. If we're doing CSV enrollment with their school email, we'll link it to their existing account if one exists.</p>
+
+      <h4>Can we restrict access to only our students?</h4>
+      <p>With Google Workspace SSO, yes — only students with your school's email domain can sign in. With promo codes, anyone with the code can use it, so keep it within your institution.</p>
+
+      <h4>How do we revoke access after a semester ends?</h4>
+      <p>Promo codes can be deactivated at any time. CSV-enrolled accounts can be deactivated in bulk. Google SSO access is revoked when we remove your domain from the allowed list. Just let us know when you want to end access.</p>
+
+      <h4>Is there a limit to how many students we can enroll?</h4>
+      <p>No hard limit. Free pilots support up to 200 students. For larger deployments, we'll set up institutional pricing. The platform handles thousands of concurrent users without issues.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- CTA -->
+  <div style="text-align:center;padding:32px 0">
+    <h3 style="font-size:22px;font-weight:800;margin-bottom:12px">Ready to get started?</h3>
+    <p style="color:var(--text-secondary);margin-bottom:20px">Tell us your institution name, estimated student count, and preferred onboarding method.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a class="btn-primary" href="mailto:rollcallinterviewprep@outlook.com?subject=Student%20Onboarding%20%E2%80%94%20RoleCall">Request Onboarding</a>
+      <a class="btn-secondary" href="/schools.html">Back to Schools</a>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="footer-links">
+    <a href="/">Home</a>
+    <a href="/schools.html">Schools</a>
+    <a href="/security.html">Security</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="/terms.html">Terms</a>
+  </div>
+  <div>&copy; 2026 RoleCall. All rights reserved.</div>
+</div>
+
+<script>
+// CSV drag and drop
+var dropzone = document.getElementById('csvDropzone');
+dropzone.addEventListener('dragover', function(e) {
+  e.preventDefault();
+  dropzone.classList.add('dragover');
+});
+dropzone.addEventListener('dragleave', function() {
+  dropzone.classList.remove('dragover');
+});
+dropzone.addEventListener('drop', function(e) {
+  e.preventDefault();
+  dropzone.classList.remove('dragover');
+  var file = e.dataTransfer.files[0];
+  if (file && file.name.endsWith('.csv')) {
+    processCSVFile(file);
+  }
+});
+
+function handleCSVFile(input) {
+  if (input.files && input.files[0]) {
+    processCSVFile(input.files[0]);
+  }
+}
+
+function processCSVFile(file) {
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var text = e.target.result;
+    var lines = text.split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l.length > 0; });
+
+    // Skip header if it looks like one
+    if (lines[0].toLowerCase().includes('email') || lines[0].toLowerCase().includes('address')) {
+      lines = lines.slice(1);
+    }
+
+    // Validate emails
+    var valid = [];
+    var invalid = [];
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    lines.forEach(function(line) {
+      var email = line.replace(/^["']|["']$/g, '').trim();
+      if (emailRegex.test(email)) {
+        valid.push(email);
+      } else if (email.length > 0) {
+        invalid.push(email);
+      }
+    });
+
+    // Show preview
+    var previewBody = document.getElementById('csvPreviewBody');
+    var html = '';
+    valid.forEach(function(email, i) {
+      html += '<tr><td>' + (i + 1) + '</td><td>' + email + '</td><td style="color:var(--success)">&#9989; Valid</td></tr>';
+    });
+    invalid.forEach(function(email, i) {
+      html += '<tr><td>' + (valid.length + i + 1) + '</td><td>' + email + '</td><td style="color:#e74c3c">&#10060; Invalid</td></tr>';
+    });
+    previewBody.innerHTML = html;
+    document.getElementById('csvPreview').style.display = '';
+
+    // Show result
+    var result = document.getElementById('csvResult');
+    result.style.display = '';
+    if (valid.length > 0) {
+      result.className = 'csv-result';
+      result.innerHTML = '<strong>' + valid.length + ' valid email' + (valid.length !== 1 ? 's' : '') + ' found.</strong> ' +
+        (invalid.length > 0 ? invalid.length + ' invalid email' + (invalid.length !== 1 ? 's' : '') + ' skipped. ' : '') +
+        'Click "Submit Enrollment Request" to proceed.';
+      document.getElementById('csvSubmitBtn').style.display = '';
+      document.getElementById('csvClearBtn').style.display = '';
+    } else {
+      result.className = 'csv-result error';
+      result.innerHTML = '<strong>No valid emails found.</strong> Please check your CSV format. Expected: one email address per line.';
+      document.getElementById('csvSubmitBtn').style.display = 'none';
+      document.getElementById('csvClearBtn').style.display = '';
+    }
+
+    // Store for submission
+    window._csvEmails = valid;
+  };
+  reader.readAsText(file);
+}
+
+function submitCSV() {
+  if (!window._csvEmails || window._csvEmails.length === 0) return;
+
+  var btn = document.getElementById('csvSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  // Build mailto link with the emails
+  var subject = encodeURIComponent('Bulk Student Enrollment — ' + window._csvEmails.length + ' students');
+  var body = encodeURIComponent('Please create accounts for the following ' + window._csvEmails.length + ' students:\n\n' + window._csvEmails.join('\n') + '\n\nInstitution: [your school name]\nPromo code requested: [yes/no]\n\nThank you!');
+  var mailto = 'mailto:rollcallinterviewprep@outlook.com?subject=' + subject + '&body=' + body;
+
+  window.location.href = mailto;
+
+  var result = document.getElementById('csvResult');
+  result.className = 'csv-result';
+  result.innerHTML = '<strong>Request prepared!</strong> Your email client should open with the student list. Send the email to complete your enrollment request. We\'ll process it within 24-48 hours.';
+
+  btn.textContent = 'Request Sent';
+}
+
+function clearCSV() {
+  document.getElementById('csvPreview').style.display = 'none';
+  document.getElementById('csvResult').style.display = 'none';
+  document.getElementById('csvSubmitBtn').style.display = 'none';
+  document.getElementById('csvClearBtn').style.display = 'none';
+  document.getElementById('csvFileInput').value = '';
+  window._csvEmails = null;
+}
+</script>
+
+</body>
+</html>

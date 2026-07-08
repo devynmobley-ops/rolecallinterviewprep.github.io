@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EDPB7FVZDV"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-EDPB7FVZDV');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Admin Dashboard — RoleCall Interview Prep</title>
+<meta name="description" content="RoleCall institutional admin dashboard. View aggregate student usage, popular career paths, and engagement metrics for your school.">
+<meta name="robots" content="noindex, nofollow">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+*:focus:not(:focus-visible){outline:none}
+:root{
+  --bg:#0f0f14;--card:#1a1a24;--accent:#6c5ce7;--accent-light:#a29bfe;
+  --accent-text:#8b7cf7;--text:#f0f0f5;--text-secondary:#8e8ea0;--card-hover:#22222f;
+  --safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);
+  --radius:14px;--transition:0.3s cubic-bezier(.4,0,.2,1);
+  --success:#2ecc71;--success-bg:rgba(46,204,113,0.12);
+  --info:#3498db;--info-bg:rgba(52,152,219,0.12);
+  --warning:#f39c12;--warning-bg:rgba(243,156,18,0.12);
+}
+html{scroll-behavior:smooth}
+html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+
+.header{position:sticky;top:0;z-index:10;background:var(--bg);padding:calc(16px + var(--safe-top)) 20px 12px;border-bottom:1px solid var(--card-hover);backdrop-filter:blur(12px)}
+.header-row{display:flex;align-items:center;gap:12px}
+.header h1{font-size:20px;font-weight:800}
+.subtitle{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.back-btn{background:none;border:none;color:var(--accent-text);font-size:22px;cursor:pointer;padding:4px 8px;border-radius:8px;display:flex;align-items:center;justify-content:center;min-width:40px;min-height:40px}
+.back-btn:active{background:var(--card)}
+
+.container{max-width:900px;margin:0 auto;padding:24px 20px}
+
+/* Login */
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:80vh}
+.login-card{background:var(--card);border-radius:var(--radius);padding:32px 24px;max-width:400px;width:100%;text-align:center}
+.login-card h2{font-size:22px;font-weight:800;margin-bottom:8px}
+.login-card p{font-size:14px;color:var(--text-secondary);margin-bottom:24px;line-height:1.5}
+.login-card .login-icon{font-size:48px;margin-bottom:16px}
+.login-input{width:100%;padding:12px 16px;border-radius:var(--radius);border:1px solid var(--card-hover);background:var(--bg);color:var(--text);font-size:15px;outline:none;margin-bottom:12px;transition:border var(--transition)}
+.login-input:focus{border-color:var(--accent)}
+.login-btn{width:100%;padding:14px;border:none;border-radius:var(--radius);background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:all var(--transition);margin-top:8px}
+.login-btn:active{transform:scale(0.97)}
+.login-btn:disabled{opacity:0.4;cursor:not-allowed}
+.login-error{font-size:13px;color:#e74c3c;margin-top:8px;min-height:20px}
+.login-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--text-secondary);font-size:13px}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--card-hover)}
+
+/* Stats Grid */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+@media(min-width:640px){.stats-grid{grid-template-columns:1fr 1fr 1fr 1fr}}
+.stat-card{background:var(--card);border-radius:var(--radius);padding:18px;border:1px solid var(--card-hover);transition:all var(--transition)}
+.stat-card:hover{border-color:var(--accent)}
+.stat-val{font-size:28px;font-weight:800;color:var(--accent-text);margin-bottom:2px}
+.stat-label{font-size:12px;color:var(--text-secondary);font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.stat-change{font-size:11px;margin-top:4px;font-weight:600}
+.stat-change.up{color:var(--success)}
+.stat-change.down{color:#e74c3c}
+.stat-change.neutral{color:var(--text-secondary)}
+
+/* Section */
+.section-title{font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px}
+.card{background:var(--card);border-radius:var(--radius);padding:20px;border:1px solid var(--card-hover);margin-bottom:12px}
+.card h3{font-size:16px;font-weight:700;margin-bottom:12px}
+
+/* Chart placeholder */
+.chart-wrap{background:var(--card);border-radius:var(--radius);padding:20px;border:1px solid var(--card-hover);margin-bottom:12px}
+.chart-title{font-size:14px;font-weight:700;margin-bottom:16px}
+.bar-chart{display:flex;flex-direction:column;gap:8px}
+.bar-row{display:flex;align-items:center;gap:10px}
+.bar-label{font-size:13px;color:var(--text-secondary);width:140px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;height:24px;background:var(--card-hover);border-radius:6px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--accent),var(--accent-light));transition:width 0.8s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;justify-content:flex-end;padding-right:8px}
+.bar-val{font-size:11px;font-weight:700;color:#fff;white-space:nowrap}
+
+/* Table */
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{text-align:left;padding:10px 12px;font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--card-hover)}
+.data-table td{padding:10px 12px;font-size:14px;border-bottom:1px solid var(--card-hover)}
+.data-table tr:last-child td{border-bottom:none}
+.data-table .rank{color:var(--accent-text);font-weight:700;width:30px}
+
+/* Export */
+.export-bar{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.export-btn{padding:10px 18px;border-radius:var(--radius);border:1px solid var(--card-hover);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;transition:all var(--transition);display:inline-flex;align-items:center;gap:6px}
+.export-btn:hover{border-color:var(--accent);color:var(--accent-text)}
+.export-btn:active{transform:scale(0.97)}
+
+/* Date range */
+.date-range{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.date-pill{padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;background:var(--card);color:var(--text-secondary);border:1px solid var(--card-hover);transition:all var(--transition)}
+.date-pill.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.date-pill:active{transform:scale(0.95)}
+
+/* Loading */
+.loading{display:flex;align-items:center;justify-content:center;padding:60px;flex-direction:column;gap:12px}
+.spinner{width:32px;height:32px;border:3px solid var(--card-hover);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:14px;color:var(--text-secondary)}
+
+/* Empty state */
+.empty-state{text-align:center;padding:40px;color:var(--text-secondary)}
+.empty-state .empty-icon{font-size:48px;margin-bottom:12px;opacity:0.5}
+.empty-state h3{font-size:16px;font-weight:700;margin-bottom:8px;color:var(--text)}
+.empty-state p{font-size:14px}
+
+/* No data overlay */
+.no-data-banner{background:var(--warning-bg);border:1px solid var(--warning);border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--text-secondary);line-height:1.6;display:flex;gap:10px;align-items:flex-start}
+.no-data-banner strong{color:var(--warning)}
+
+/* Footer */
+.footer{text-align:center;padding:24px 20px;font-size:13px;color:var(--text-secondary);border-top:1px solid var(--card-hover);margin-top:24px}
+.footer a{color:var(--accent-text);text-decoration:none;margin:0 8px}
+.footer a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-row">
+    <a class="back-btn" href="/schools.html" aria-label="Back">&#8592;</a>
+    <div>
+      <h1>Admin Dashboard</h1>
+      <div class="subtitle">RoleCall Institutional Analytics</div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="login-wrap">
+  <div class="login-card">
+    <div class="login-icon">&#128202;</div>
+    <h2>Institution Admin</h2>
+    <p>Sign in with your institutional admin credentials to view aggregate student usage data.</p>
+    <input type="email" class="login-input" id="adminEmail" placeholder="Admin email" autocomplete="email" aria-label="Admin email">
+    <input type="password" class="login-input" id="adminPassword" placeholder="Password" autocomplete="current-password" aria-label="Password">
+    <button class="login-btn" id="loginBtn" onclick="adminLogin()">Sign In</button>
+    <div class="login-error" id="loginError"></div>
+    <div class="login-divider">or</div>
+    <p style="font-size:13px;color:var(--text-secondary)">Don't have admin access?<br><a href="mailto:rollcallinterviewprep@outlook.com?subject=Admin%20Dashboard%20Access" style="color:var(--accent-text)">Request credentials</a></p>
+  </div>
+</div>
+
+<!-- DASHBOARD SCREEN -->
+<div id="dashboardScreen" style="display:none">
+<div class="container">
+
+  <!-- Header bar -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <div>
+      <div style="font-size:20px;font-weight:800" id="schoolName">Your Institution</div>
+      <div style="font-size:13px;color:var(--text-secondary)" id="dashboardSubtitle">Aggregate usage data — no individual student data is shown</div>
+    </div>
+    <button class="export-btn" onclick="adminLogout()">&#128682; Sign Out</button>
+  </div>
+
+  <!-- Date range -->
+  <div class="date-range">
+    <button class="date-pill active" onclick="setRange('7d',this)">7 Days</button>
+    <button class="date-pill" onclick="setRange('30d',this)">30 Days</button>
+    <button class="date-pill" onclick="setRange('90d',this)">90 Days</button>
+    <button class="date-pill" onclick="setRange('all',this)">All Time</button>
+  </div>
+
+  <!-- No data banner (shown when no real data exists) -->
+  <div class="no-data-banner" id="noDataBanner" style="display:none">
+    <span style="font-size:18px;flex-shrink:0">&#9888;</span>
+    <div><strong>Demo data shown.</strong> Your institution hasn't collected usage data yet. Once students start practicing with your promo code, this dashboard will show real aggregate metrics. <a href="mailto:rollcallinterviewprep@outlook.com" style="color:var(--accent-text)">Contact us</a> to set up tracking.</div>
+  </div>
+
+  <!-- Key Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-val" id="statStudents">--</div>
+      <div class="stat-label">Active Students</div>
+      <div class="stat-change neutral" id="statStudentsChange">--</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="statSessions">--</div>
+      <div class="stat-label">Practice Sessions</div>
+      <div class="stat-change neutral" id="statSessionsChange">--</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="statQuestions">--</div>
+      <div class="stat-label">Questions Answered</div>
+      <div class="stat-change neutral" id="statQuestionsChange">--</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="statAvgScore">--</div>
+      <div class="stat-label">Avg Score</div>
+      <div class="stat-change neutral" id="statAvgScoreChange">--</div>
+    </div>
+  </div>
+
+  <!-- Top Career Paths -->
+  <div class="chart-wrap">
+    <div class="chart-title">&#127919; Most Practiced Career Paths</div>
+    <div class="bar-chart" id="topRolesChart"></div>
+  </div>
+
+  <!-- Industry Breakdown -->
+  <div class="chart-wrap">
+    <div class="chart-title">&#128202; Practice by Industry</div>
+    <div class="bar-chart" id="industryChart"></div>
+  </div>
+
+  <!-- Engagement Table -->
+  <div class="card">
+    <h3>&#128200; Weekly Engagement Trend</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Week</th>
+          <th>Sessions</th>
+          <th>Avg Score</th>
+          <th>Top Role</th>
+        </tr>
+      </thead>
+      <tbody id="weeklyTable"></tbody>
+    </table>
+  </div>
+
+  <!-- Feature Usage -->
+  <div class="card">
+    <h3>&#9889; Feature Adoption</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px">
+      <div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:4px">Mock Interviews</div>
+        <div style="font-size:22px;font-weight:800;color:var(--accent-text)" id="featMock">--</div>
+        <div style="font-size:12px;color:var(--text-secondary)" id="featMockPct">--</div>
+      </div>
+      <div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:4px">Resume Tailor</div>
+        <div style="font-size:22px;font-weight:800;color:var(--accent-text)" id="featResume">--</div>
+        <div style="font-size:12px;color:var(--text-secondary)" id="featResumePct">--</div>
+      </div>
+      <div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:4px">Questions Browsed</div>
+        <div style="font-size:22px;font-weight:800;color:var(--accent-text)" id="featBrowse">--</div>
+        <div style="font-size:12px;color:var(--text-secondary)" id="featBrowsePct">--</div>
+      </div>
+      <div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:4px">Job Offer Kit</div>
+        <div style="font-size:22px;font-weight:800;color:var(--accent-text)" id="featJOK">--</div>
+        <div style="font-size:12px;color:var(--text-secondary)" id="featJOKPct">--</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export -->
+  <div class="export-bar" style="margin-top:20px">
+    <button class="export-btn" onclick="exportCSV()">&#128229; Export CSV</button>
+    <button class="export-btn" onclick="exportPDF()">&#128196; Export PDF Report</button>
+    <button class="export-btn" onclick="window.print()">&#128438; Print</button>
+  </div>
+
+  <div style="font-size:12px;color:var(--text-secondary);text-align:center;margin-top:16px">
+    All data is aggregate and anonymized. No individual student data is displayed.
+  </div>
+
+</div>
+
+<div class="footer">
+  <a href="/">Home</a>
+  <a href="/schools.html">Schools</a>
+  <a href="/security.html">Security</a>
+  <div style="margin-top:8px">&copy; 2026 RoleCall. All rights reserved.</div>
+</div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-app-compat.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-auth-compat.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-firestore-compat.min.js"></script>
+
+<script>
+// Firebase config
+var firebaseConfig = {
+  apiKey: "AIzaSyD_placeholder",
+  authDomain: "rolecall-interview-prep-a49a3.firebaseapp.com",
+  projectId: "rolecall-interview-prep-a49a3",
+  storageBucket: "rolecall-interview-prep-a49a3.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:placeholder"
+};
+firebase.initializeApp(firebaseConfig);
+var auth = firebase.auth();
+var db = firebase.firestore();
+
+var currentRange = '7d';
+var isAdmin = false;
+var institutionId = null;
+
+// Auth state listener
+auth.onAuthStateChanged(function(user) {
+  if (user) {
+    checkAdminAccess(user);
+  }
+});
+
+function adminLogin() {
+  var email = document.getElementById('adminEmail').value;
+  var password = document.getElementById('adminPassword').value;
+  var errorEl = document.getElementById('loginError');
+  var btn = document.getElementById('loginBtn');
+
+  if (!email || !password) {
+    errorEl.textContent = 'Please enter both email and password.';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Signing in...';
+  errorEl.textContent = '';
+
+  auth.signInWithEmailAndPassword(email, password)
+    .then(function(result) {
+      checkAdminAccess(result.user);
+    })
+    .catch(function(err) {
+      btn.disabled = false;
+      btn.textContent = 'Sign In';
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+        errorEl.textContent = 'Invalid email or password.';
+      } else if (err.code === 'auth/too-many-requests') {
+        errorEl.textContent = 'Too many attempts. Please try again later.';
+      } else {
+        errorEl.textContent = 'Sign in failed. Please try again.';
+      }
+    });
+}
+
+function checkAdminAccess(user) {
+  // Check if user has admin role in Firestore
+  db.collection('admins').doc(user.uid).get()
+    .then(function(doc) {
+      if (doc.exists && doc.data().role === 'admin') {
+        isAdmin = true;
+        institutionId = doc.data().institutionId || 'demo';
+        document.getElementById('schoolName').textContent = doc.data().institutionName || 'Your Institution';
+        showDashboard();
+        loadDashboardData();
+      } else {
+        // Not an admin — show demo mode
+        isAdmin = false;
+        institutionId = 'demo';
+        document.getElementById('loginError').textContent = 'This account does not have admin access. Showing demo data.';
+        showDashboard();
+        loadDemoData();
+      }
+    })
+    .catch(function() {
+      // Firestore error — show demo mode
+      showDashboard();
+      loadDemoData();
+    });
+}
+
+function showDashboard() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dashboardScreen').style.display = 'block';
+}
+
+function adminLogout() {
+  auth.signOut().then(function() {
+    isAdmin = false;
+    institutionId = null;
+    document.getElementById('loginScreen').style.display = '';
+    document.getElementById('dashboardScreen').style.display = 'none';
+    document.getElementById('adminEmail').value = '';
+    document.getElementById('adminPassword').value = '';
+    document.getElementById('loginError').textContent = '';
+    document.getElementById('loginBtn').disabled = false;
+    document.getElementById('loginBtn').textContent = 'Sign In';
+  });
+}
+
+function setRange(range, btn) {
+  currentRange = range;
+  document.querySelectorAll('.date-pill').forEach(function(p) { p.classList.remove('active'); });
+  btn.classList.add('active');
+  if (isAdmin) {
+    loadDashboardData();
+  } else {
+    loadDemoData();
+  }
+}
+
+function loadDashboardData() {
+  // Load real aggregate data from Firestore
+  // This reads from an 'institution_stats' collection where aggregate data is stored
+  var statsRef = db.collection('institution_stats').doc(institutionId);
+
+  statsRef.get().then(function(doc) {
+    if (doc.exists) {
+      var data = doc.data();
+      renderStats(data);
+      document.getElementById('noDataBanner').style.display = 'none';
+    } else {
+      loadDemoData();
+    }
+  }).catch(function() {
+    loadDemoData();
+  });
+}
+
+function loadDemoData() {
+  document.getElementById('noDataBanner').style.display = 'flex';
+
+  var demoData = {
+    activeStudents: 47,
+    totalSessions: 312,
+    questionsAnswered: 1847,
+    avgScore: 3.6,
+    topRoles: [
+      { name: 'Registered Nurse', count: 89 },
+      { name: 'Software Engineer', count: 67 },
+      { name: 'Dental Hygienist', count: 45 },
+      { name: 'Welding Technician', count: 38 },
+      { name: 'IT Support Specialist', count: 34 },
+      { name: 'Medical Assistant', count: 28 },
+      { name: 'Electrician', count: 24 },
+      { name: 'Data Analyst', count: 21 }
+    ],
+    industries: [
+      { name: 'Healthcare', count: 162 },
+      { name: 'Technology', count: 88 },
+      { name: 'Trades', count: 62 },
+      { name: 'Business', count: 45 },
+      { name: 'Education', count: 31 },
+      { name: 'Service', count: 18 },
+      { name: 'Legal', count: 12 },
+      { name: 'Creative', count: 8 },
+      { name: 'Sales', count: 6 }
+    ],
+    weekly: [
+      { week: 'This Week', sessions: 68, avgScore: 3.8, topRole: 'Registered Nurse' },
+      { week: 'Last Week', sessions: 54, avgScore: 3.5, topRole: 'Software Engineer' },
+      { week: '2 Weeks Ago', sessions: 47, avgScore: 3.4, topRole: 'Registered Nurse' },
+      { week: '3 Weeks Ago', sessions: 39, avgScore: 3.3, topRole: 'Dental Hygienist' }
+    ],
+    features: {
+      mock: 187,
+      resume: 43,
+      browse: 892,
+      jok: 28
+    }
+  };
+
+  renderStats(demoData);
+}
+
+function renderStats(data) {
+  // Key stats
+  animateValue('statStudents', data.activeStudents);
+  animateValue('statSessions', data.totalSessions);
+  animateValue('statQuestions', data.questionsAnswered);
+  document.getElementById('statAvgScore').textContent = data.avgScore.toFixed(1) + '/5';
+
+  // Top roles chart
+  var rolesHtml = '';
+  var maxRole = data.topRoles[0].count;
+  data.topRoles.forEach(function(r) {
+    var pct = Math.round((r.count / maxRole) * 100);
+    rolesHtml += '<div class="bar-row">' +
+      '<div class="bar-label">' + r.name + '</div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%"><span class="bar-val">' + r.count + '</span></div></div>' +
+      '</div>';
+  });
+  document.getElementById('topRolesChart').innerHTML = rolesHtml;
+
+  // Industry chart
+  var indHtml = '';
+  var maxInd = data.industries[0].count;
+  data.industries.forEach(function(ind) {
+    var pct = Math.round((ind.count / maxInd) * 100);
+    indHtml += '<div class="bar-row">' +
+      '<div class="bar-label">' + ind.name + '</div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%"><span class="bar-val">' + ind.count + '</span></div></div>' +
+      '</div>';
+  });
+  document.getElementById('industryChart').innerHTML = indHtml;
+
+  // Weekly table
+  var weekHtml = '';
+  data.weekly.forEach(function(w) {
+    weekHtml += '<tr>' +
+      '<td style="font-weight:600">' + w.week + '</td>' +
+      '<td>' + w.sessions + '</td>' +
+      '<td>' + w.avgScore.toFixed(1) + '/5</td>' +
+      '<td>' + w.topRole + '</td>' +
+      '</tr>';
+  });
+  document.getElementById('weeklyTable').innerHTML = weekHtml;
+
+  // Feature usage
+  var totalStudents = data.activeStudents || 1;
+  document.getElementById('featMock').textContent = data.features.mock;
+  document.getElementById('featMockPct').textContent = Math.round((data.features.mock / totalStudents) * 100) + '% of students';
+  document.getElementById('featResume').textContent = data.features.resume;
+  document.getElementById('featResumePct').textContent = Math.round((data.features.resume / totalStudents) * 100) + '% of students';
+  document.getElementById('featBrowse').textContent = data.features.browse;
+  document.getElementById('featBrowsePct').textContent = Math.round(data.features.browse / totalStudents) + ' per student';
+  document.getElementById('featJOK').textContent = data.features.jok;
+  document.getElementById('featJOKPct').textContent = Math.round((data.features.jok / totalStudents) * 100) + '% of students';
+}
+
+function animateValue(id, target) {
+  var el = document.getElementById(id);
+  var current = 0;
+  var step = Math.max(1, Math.floor(target / 30));
+  var interval = setInterval(function() {
+    current += step;
+    if (current >= target) {
+      current = target;
+      clearInterval(interval);
+    }
+    el.textContent = current.toLocaleString();
+  }, 30);
+}
+
+function exportCSV() {
+  var csv = 'Metric,Value\n';
+  csv += 'Active Students,' + document.getElementById('statStudents').textContent + '\n';
+  csv += 'Practice Sessions,' + document.getElementById('statSessions').textContent + '\n';
+  csv += 'Questions Answered,' + document.getElementById('statQuestions').textContent + '\n';
+  csv += 'Average Score,' + document.getElementById('statAvgScore').textContent + '\n';
+
+  var blob = new Blob([csv], { type: 'text/csv' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'rolecall-dashboard-' + new Date().toISOString().slice(0, 10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportPDF() {
+  // Use html2pdf if loaded, otherwise fallback to print
+  if (typeof html2pdf !== 'undefined') {
+    var element = document.querySelector('.container');
+    html2pdf().set({ margin: 10, filename: 'rolecall-report.pdf', html2canvas: { scale: 2 } }).from(element).save();
+  } else {
+    window.print();
+  }
+}
+
+// Enter key to login
+document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') adminLogin();
+});
+document.getElementById('adminEmail').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') document.getElementById('adminPassword').focus();
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</body>
+</html>

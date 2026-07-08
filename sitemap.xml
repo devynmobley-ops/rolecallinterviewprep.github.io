@@ -43,6 +43,24 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://rollcallinterviewprep.com/admin.html</loc>
+    <lastmod>2026-07-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://rollcallinterviewprep.com/pilot-results.html</loc>
+    <lastmod>2026-07-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://rollcallinterviewprep.com/onboarding.html</loc>
+    <lastmod>2026-07-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://rollcallinterviewprep.com/job-offer-kit.html</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
