@@ -525,6 +525,23 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
     </div>
     <div class="jok-promo-price">$20</div>
   </div>
+  <!-- TESTIMONIALS -->
+  <div class="testimonials-card">
+    <h3>What People Are Saying</h3>
+    <p class="testimonials-sub">Real results from real job seekers</p>
+    <div class="testimonial-item">
+      <div class="testimonial-quote">I used RoleCall to prep for my nursing interview and got the job! The questions were exactly what I was asked in my panel interview.</div>
+      <div class="testimonial-author"><strong>Sarah M.</strong> &mdash; Registered Nurse</div>
+    </div>
+    <div class="testimonial-item">
+      <div class="testimonial-quote">The expert tips helped me understand what interviewers actually want to hear. Way better than just Googling questions.</div>
+      <div class="testimonial-author"><strong>Marcus T.</strong> &mdash; Software Engineer</div>
+    </div>
+    <div class="testimonial-item">
+      <div class="testimonial-quote">As a career changer from retail to IT, the education paths showed me exactly what certs I needed. Landed my first help desk role within 2 months.</div>
+      <div class="testimonial-author"><strong>Jessica L.</strong> &mdash; IT Support Specialist</div>
+    </div>
+  </div>
   <!-- NEWSLETTER -->
   <div class="newsletter-card">
     <h3>Stay Interview-Ready</h3>
@@ -573,6 +590,7 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
     </div>
   </div>
   <div id="reqCard"></div>
+  <div id="salaryCard"></div>
   <div class="question-list" id="questionList"></div>
   <div class="fab-mock" onclick="startMockFromQuestions()" role="button" tabindex="0" aria-label="Start mock interview">&#9889; Mock Interview</div>
 </div>
@@ -2001,6 +2019,412 @@ const CERTS = {
   "District Attorney": { degrees: ["JD (Juris Doctor)", "BA Political Science/Criminal Justice + JD", "MPA + JD"], certs: ["State Bar License", "NDAA (National District Attorneys Association) training", "Trial advocacy certification"], paths: ["Law school + prosecutor internship + bar passage", "Assistant DA entry + progressive trial experience", "Private practice or clerkship + prosecutor career transition"] },
   "Environmental Lawyer": { degrees: ["JD + environmental law focus", "BS Environmental Science + JD", "JD + LLM Environmental Law"], certs: ["State Bar License", "LEED Green Associate", "Environmental mediation certification"], paths: ["Law school + environmental law journal + clerkship", "EPA or state agency experience + private firm transition", "Environmental science background + law school + practice"] },
   "Immigration Attorney": { degrees: ["JD (Juris Doctor)", "BA International Relations + JD", "JD + LLM Immigration Law"], certs: ["State Bar License", "AILA (American Immigration Lawyers Association) membership", "Board Certification in Immigration Law (where available)"], paths: ["Law school + immigration clinic + bar passage", "AILA membership + immigration firm experience", "Bilingual skills + immigration law practice + nonprofit partnership"] }
+};
+
+const SALARIES = {
+  // === TECH ===
+  "Software Engineer": { entry: "$75,000", mid: "$110,000", senior: "$150,000+" },
+  "Data Analyst": { entry: "$55,000", mid: "$80,000", senior: "$110,000+" },
+  "IT Support": { entry: "$40,000", mid: "$55,000", senior: "$75,000+" },
+  "DevOps Engineer": { entry: "$70,000", mid: "$105,000", senior: "$145,000+" },
+  "Product Manager": { entry: "$80,000", mid: "$120,000", senior: "$160,000+" },
+  "Cybersecurity Analyst": { entry: "$65,000", mid: "$95,000", senior: "$135,000+" },
+  "Cloud Architect": { entry: "$90,000", mid: "$130,000", senior: "$170,000+" },
+  "Web Developer": { entry: "$55,000", mid: "$80,000", senior: "$115,000+" },
+  "Database Administrator": { entry: "$60,000", mid: "$90,000", senior: "$125,000+" },
+  "Mobile Developer": { entry: "$70,000", mid: "$105,000", senior: "$145,000+" },
+  "Machine Learning Engineer": { entry: "$90,000", mid: "$135,000", senior: "$175,000+" },
+  "QA Engineer": { entry: "$55,000", mid: "$85,000", senior: "$120,000+" },
+  "AI Engineer": { entry: "$95,000", mid: "$140,000", senior: "$180,000+" },
+  "Site Reliability Engineer": { entry: "$80,000", mid: "$120,000", senior: "$160,000+" },
+  "Blockchain Developer": { entry: "$75,000", mid: "$115,000", senior: "$160,000+" },
+  "Technical Writer": { entry: "$50,000", mid: "$75,000", senior: "$105,000+" },
+  "Systems Administrator": { entry: "$55,000", mid: "$80,000", senior: "$110,000+" },
+  "Network Engineer": { entry: "$60,000", mid: "$90,000", senior: "$125,000+" },
+  "Full Stack Developer": { entry: "$65,000", mid: "$100,000", senior: "$140,000+" },
+  "Scrum Master": { entry: "$70,000", mid: "$100,000", senior: "$135,000+" },
+  "Firmware Engineer": { entry: "$75,000", mid: "$110,000", senior: "$150,000+" },
+  "Data Engineer": { entry: "$75,000", mid: "$115,000", senior: "$155,000+" },
+  "Penetration Tester": { entry: "$70,000", mid: "$105,000", senior: "$145,000+" },
+  "Solutions Architect": { entry: "$90,000", mid: "$135,000", senior: "$175,000+" },
+  "Robotics Engineer": { entry: "$75,000", mid: "$110,000", senior: "$150,000+" },
+  "Game Developer": { entry: "$60,000", mid: "$95,000", senior: "$135,000+" },
+  "IT Auditor": { entry: "$60,000", mid: "$90,000", senior: "$125,000+" },
+  "GIS Analyst": { entry: "$50,000", mid: "$75,000", senior: "$105,000+" },
+  "AR/VR Developer": { entry: "$70,000", mid: "$105,000", senior: "$145,000+" },
+  "Embedded Systems Engineer": { entry: "$75,000", mid: "$110,000", senior: "$150,000+" },
+  "Frontend Developer": { entry: "$60,000", mid: "$95,000", senior: "$135,000+" },
+  "Backend Developer": { entry: "$70,000", mid: "$105,000", senior: "$145,000+" },
+  "Security Engineer": { entry: "$75,000", mid: "$115,000", senior: "$155,000+" },
+  "Data Architect": { entry: "$90,000", mid: "$130,000", senior: "$170,000+" },
+  "IT Manager": { entry: "$80,000", mid: "$120,000", senior: "$160,000+" },
+  "Platform Engineer": { entry: "$80,000", mid: "$120,000", senior: "$160,000+" },
+  "Release Engineer": { entry: "$70,000", mid: "$105,000", senior: "$145,000+" },
+  "Compiler Engineer": { entry: "$90,000", mid: "$135,000", senior: "$175,000+" },
+  "API Developer": { entry: "$65,000", mid: "$100,000", senior: "$140,000+" },
+  "Cloud Engineer": { entry: "$75,000", mid: "$110,000", senior: "$150,000+" },
+
+  // === HEALTHCARE ===
+  "Registered Nurse": { entry: "$60,000", mid: "$80,000", senior: "$105,000+" },
+  "Medical Assistant": { entry: "$35,000", mid: "$42,000", senior: "$50,000+" },
+  "Pharmacy Technician": { entry: "$35,000", mid: "$42,000", senior: "$50,000+" },
+  "Physical Therapist": { entry: "$70,000", mid: "$90,000", senior: "$115,000+" },
+  "Dental Hygienist": { entry: "$60,000", mid: "$80,000", senior: "$100,000+" },
+  "Radiologic Technologist": { entry: "$55,000", mid: "$70,000", senior: "$90,000+" },
+  "Medical Laboratory Technician": { entry: "$45,000", mid: "$60,000", senior: "$80,000+" },
+  "Respiratory Therapist": { entry: "$55,000", mid: "$70,000", senior: "$90,000+" },
+  "Occupational Therapist": { entry: "$65,000", mid: "$85,000", senior: "$110,000+" },
+  "Speech-Language Pathologist": { entry: "$60,000", mid: "$85,000", senior: "$110,000+" },
+  "Physician Assistant": { entry: "$95,000", mid: "$120,000", senior: "$150,000+" },
+  "Nurse Practitioner": { entry: "$90,000", mid: "$115,000", senior: "$145,000+" },
+  "Paramedic": { entry: "$40,000", mid: "$55,000", senior: "$70,000+" },
+  "Health Information Technician": { entry: "$42,000", mid: "$58,000", senior: "$75,000+" },
+  "Clinical Research Coordinator": { entry: "$50,000", mid: "$70,000", senior: "$90,000+" },
+  "Surgical Technologist": { entry: "$45,000", mid: "$60,000", senior: "$80,000+" },
+  "Dietitian/Nutritionist": { entry: "$50,000", mid: "$65,000", senior: "$85,000+" },
+  "Medical Social Worker": { entry: "$50,000", mid: "$65,000", senior: "$85,000+" },
+  "Audiologist": { entry: "$70,000", mid: "$90,000", senior: "$115,000+" },
+  "Optometrist": { entry: "$100,000", mid: "$130,000", senior: "$160,000+" },
+  "Physician (General)": { entry: "$180,000", mid: "$250,000", senior: "$350,000+" },
+  "Surgeon": { entry: "$250,000", mid: "$400,000", senior: "$600,000+" },
+  "Psychiatrist": { entry: "$200,000", mid: "$280,000", senior: "$350,000+" },
+  "Dentist": { entry: "$130,000", mid: "$180,000", senior: "$250,000+" },
+  "Pharmacist": { entry: "$120,000", mid: "$140,000", senior: "$165,000+" },
+  "Veterinarian": { entry: "$90,000", mid: "$120,000", senior: "$160,000+" },
+  "Biomedical Engineer": { entry: "$65,000", mid: "$95,000", senior: "$130,000+" },
+  "Chiropractor": { entry: "$60,000", mid: "$85,000", senior: "$120,000+" },
+  "Podiatrist": { entry: "$120,000", mid: "$170,000", senior: "$230,000+" },
+  "Anesthesiologist": { entry: "$300,000", mid: "$400,000", senior: "$500,000+" },
+  "Cardiologist": { entry: "$350,000", mid: "$500,000", senior: "$700,000+" },
+  "Dermatologist": { entry: "$300,000", mid: "$450,000", senior: "$600,000+" },
+  "Neurologist": { entry: "$250,000", mid: "$350,000", senior: "$500,000+" },
+  "Orthopedic Surgeon": { entry: "$400,000", mid: "$600,000", senior: "$800,000+" },
+  "Pediatrician": { entry: "$180,000", mid: "$250,000", senior: "$350,000+" },
+  "Psychologist": { entry: "$70,000", mid: "$100,000", senior: "$140,000+" },
+  "Radiologist": { entry: "$300,000", mid: "$450,000", senior: "$600,000+" },
+  "Urologist": { entry: "$300,000", mid: "$450,000", senior: "$600,000+" },
+  "Oncologist": { entry: "$300,000", mid: "$450,000", senior: "$600,000+" },
+  "Gastroenterologist": { entry: "$350,000", mid: "$500,000", senior: "$700,000+" },
+  "Emergency Medicine Physician": { entry: "$250,000", mid: "$350,000", senior: "$450,000+" },
+  "OB/GYN": { entry: "$250,000", mid: "$350,000", senior: "$450,000+" },
+  "Anesthesiologist Assistant": { entry: "$120,000", mid: "$160,000", senior: "$200,000+" },
+  "Perfusionist": { entry: "$100,000", mid: "$140,000", senior: "$180,000+" },
+
+  // === BUSINESS ===
+  "Accountant": { entry: "$50,000", mid: "$75,000", senior: "$110,000+" },
+  "Financial Analyst": { entry: "$60,000", mid: "$90,000", senior: "$130,000+" },
+  "Human Resources Manager": { entry: "$65,000", mid: "$100,000", senior: "$140,000+" },
+  "Business Analyst": { entry: "$60,000", mid: "$90,000", senior: "$130,000+" },
+  "Marketing Manager": { entry: "$60,000", mid: "$95,000", senior: "$140,000+" },
+  "Project Manager": { entry: "$65,000", mid: "$100,000", senior: "$140,000+" },
+  "Operations Manager": { entry: "$60,000", mid: "$95,000", senior: "$140,000+" },
+  "Management Consultant": { entry: "$75,000", mid: "$120,000", senior: "$175,000+" },
+  "Supply Chain Manager": { entry: "$65,000", mid: "$100,000", senior: "$140,000+" },
+  "Financial Advisor": { entry: "$50,000", mid: "$90,000", senior: "$150,000+" },
+  "Risk Manager": { entry: "$70,000", mid: "$110,000", senior: "$155,000+" },
+  "Budget Analyst": { entry: "$55,000", mid: "$80,000", senior: "$110,000+" },
+  "Compliance Officer": { entry: "$60,000", mid: "$90,000", senior: "$130,000+" },
+  "Executive Assistant": { entry: "$45,000", mid: "$65,000", senior: "$90,000+" },
+  "Office Manager": { entry: "$42,000", mid: "$60,000", senior: "$80,000+" },
+  "Management Analyst": { entry: "$65,000", mid: "$100,000", senior: "$145,000+" },
+  "Chief Financial Officer": { entry: "$130,000", mid: "$200,000", senior: "$300,000+" },
+  "Chief Operating Officer": { entry: "$130,000", mid: "$200,000", senior: "$300,000+" },
+  "Chief Marketing Officer": { entry: "$120,000", mid: "$190,000", senior: "$280,000+" },
+  "Chief Human Resources Officer": { entry: "$120,000", mid: "$190,000", senior: "$280,000+" },
+  "Venture Capital Analyst": { entry: "$80,000", mid: "$130,000", senior: "$200,000+" },
+  "Investment Banker": { entry: "$85,000", mid: "$150,000", senior: "$250,000+" },
+  "Private Equity Associate": { entry: "$90,000", mid: "$160,000", senior: "$300,000+" },
+  "Actuary": { entry: "$65,000", mid: "$110,000", senior: "$170,000+" },
+  "Economist": { entry: "$60,000", mid: "$100,000", senior: "$150,000+" },
+  "Market Research Analyst": { entry: "$50,000", mid: "$75,000", senior: "$110,000+" },
+  "Tax Preparer": { entry: "$35,000", mid: "$55,000", senior: "$80,000+" },
+  "Bookkeeper": { entry: "$38,000", mid: "$50,000", senior: "$65,000+" },
+  "Auditor": { entry: "$55,000", mid: "$85,000", senior: "$125,000+" },
+  "Loan Officer": { entry: "$45,000", mid: "$75,000", senior: "$120,000+" },
+  "Insurance Underwriter": { entry: "$50,000", mid: "$80,000", senior: "$115,000+" },
+  "Real Estate Appraiser": { entry: "$50,000", mid: "$75,000", senior: "$110,000+" },
+  "Compensation and Benefits Manager": { entry: "$75,000", mid: "$120,000", senior: "$170,000+" },
+  "Training and Development Manager": { entry: "$65,000", mid: "$100,000", senior: "$145,000+" },
+  "Customer Success Manager": { entry: "$55,000", mid: "$85,000", senior: "$125,000+" },
+  "Procurement Manager": { entry: "$65,000", mid: "$100,000", senior: "$140,000+" },
+  "Business Development Manager": { entry: "$60,000", mid: "$100,000", senior: "$150,000+" },
+  "Statistician": { entry: "$60,000", mid: "$95,000", senior: "$140,000+" },
+  "Fundraiser": { entry: "$40,000", mid: "$65,000", senior: "$100,000+" },
+  "Grant Writer": { entry: "$42,000", mid: "$65,000", senior: "$95,000+" },
+  "Urban Planner": { entry: "$55,000", mid: "$80,000", senior: "$110,000+" },
+  "Economic Development Specialist": { entry: "$50,000", mid: "$75,000", senior: "$105,000+" },
+  "Compliance Analyst": { entry: "$55,000", mid: "$85,000", senior: "$120,000+" },
+
+  // === SALES ===
+  "Sales Representative": { entry: "$45,000", mid: "$70,000", senior: "$110,000+" },
+  "Account Executive": { entry: "$55,000", mid: "$90,000", senior: "$140,000+" },
+  "Sales Manager": { entry: "$65,000", mid: "$100,000", senior: "$150,000+" },
+  "Business Development Rep": { entry: "$45,000", mid: "$70,000", senior: "$100,000+" },
+  "Inside Sales Rep": { entry: "$40,000", mid: "$65,000", senior: "$100,000+" },
+  "Outside Sales Rep": { entry: "$50,000", mid: "$80,000", senior: "$130,000+" },
+  "Technical Sales Engineer": { entry: "$70,000", mid: "$110,000", senior: "$160,000+" },
+  "Real Estate Agent": { entry: "$40,000", mid: "$80,000", senior: "$150,000+" },
+  "Insurance Agent": { entry: "$40,000", mid: "$65,000", senior: "$120,000+" },
+  "Pharmaceutical Sales Rep": { entry: "$60,000", mid: "$100,000", senior: "$150,000+" },
+  "Retail Sales Associate": { entry: "$30,000", mid: "$38,000", senior: "$50,000+" },
+  "Sales Operations Analyst": { entry: "$55,000", mid: "$85,000", senior: "$120,000+" },
+  "Territory Manager": { entry: "$55,000", mid: "$90,000", senior: "$140,000+" },
+  "Key Account Manager": { entry: "$60,000", mid: "$95,000", senior: "$145,000+" },
+  "Sales Director": { entry: "$90,000", mid: "$140,000", senior: "$200,000+" },
+  "VP of Sales": { entry: "$120,000", mid: "$180,000", senior: "$250,000+" },
+  "Advertising Sales Rep": { entry: "$45,000", mid: "$70,000", senior: "$110,000+" },
+  "Media Sales Rep": { entry: "$45,000", mid: "$75,000", senior: "$120,000+" },
+  "Medical Device Sales Rep": { entry: "$65,000", mid: "$110,000", senior: "$170,000+" },
+  "SaaS Sales Rep": { entry: "$55,000", mid: "$95,000", senior: "$150,000+" },
+  "Car Salesperson": { entry: "$35,000", mid: "$65,000", senior: "$120,000+" },
+  "Wholesale Sales Rep": { entry: "$45,000", mid: "$75,000", senior: "$120,000+" },
+  "Manufacturing Sales Rep": { entry: "$50,000", mid: "$85,000", senior: "$130,000+" },
+  "Construction Sales Rep": { entry: "$50,000", mid: "$85,000", senior: "$130,000+" },
+  "Food Service Sales Rep": { entry: "$40,000", mid: "$65,000", senior: "$100,000+" },
+  "Hotel Sales Manager": { entry: "$50,000", mid: "$80,000", senior: "$120,000+" },
+  "Travel Agent": { entry: "$35,000", mid: "$50,000", senior: "$75,000+" },
+  "Fundraising Sales": { entry: "$40,000", mid: "$65,000", senior: "$100,000+" },
+  "Event Sales Manager": { entry: "$45,000", mid: "$75,000", senior: "$115,000+" },
+  "Digital Advertising Sales": { entry: "$50,000", mid: "$85,000", senior: "$130,000+" },
+  "Recruitment Sales": { entry: "$45,000", mid: "$75,000", senior: "$120,000+" },
+  "Staffing Sales": { entry: "$42,000", mid: "$70,000", senior: "$110,000+" },
+  "Consultative Sales": { entry: "$60,000", mid: "$100,000", senior: "$155,000+" },
+  "Enterprise Sales": { entry: "$75,000", mid: "$130,000", senior: "$200,000+" },
+  "Channel Sales Manager": { entry: "$65,000", mid: "$105,000", senior: "$155,000+" },
+  "Partnership Manager": { entry: "$60,000", mid: "$100,000", senior: "$150,000+" },
+  "Affiliate Sales Manager": { entry: "$50,000", mid: "$85,000", senior: "$130,000+" },
+  "E-commerce Sales Manager": { entry: "$55,000", mid: "$90,000", senior: "$140,000+" },
+  "Inside Sales Manager": { entry: "$60,000", mid: "$95,000", senior: "$140,000+" },
+  "Sales Engineer": { entry: "$70,000", mid: "$110,000", senior: "$160,000+" },
+  "Customer Success Manager": { entry: "$55,000", mid: "$85,000", senior: "$125,000+" },
+  "Account Manager": { entry: "$50,000", mid: "$80,000", senior: "$120,000+" },
+  "Renewals Manager": { entry: "$55,000", mid: "$85,000", senior: "$125,000+" },
+  "Client Relations Manager": { entry: "$50,000", mid: "$80,000", senior: "$120,000+" },
+  "Sales Training Manager": { entry: "$60,000", mid: "$95,000", senior: "$140,000+" },
+
+  // === EDUCATION ===
+  "Teacher (K-12)": { entry: "$42,000", mid: "$60,000", senior: "$85,000+" },
+  "College Professor": { entry: "$60,000", mid: "$90,000", senior: "$140,000+" },
+  "School Counselor": { entry: "$50,000", mid: "$70,000", senior: "$95,000+" },
+  "Principal": { entry: "$80,000", mid: "$110,000", senior: "$150,000+" },
+  "Special Education Teacher": { entry: "$45,000", mid: "$65,000", senior: "$90,000+" },
+  "ESL Teacher": { entry: "$42,000", mid: "$60,000", adult: "$85,000+" },
+  "Librarian": { entry: "$50,000", mid: "$70,000", senior: "$95,000+" },
+  "Instructional Designer": { entry: "$55,000", mid: "$80,000", senior: "$115,000+" },
+  "Curriculum Developer": { entry: "$55,000", mid: "$80,000", senior: "$115,000+" },
+  "Education Administrator": { entry: "$60,000", mid: "$90,000", senior: "$130,000+" },
+  "College Advisor": { entry: "$42,000", mid: "$60,000", senior: "$85,000+" },
+  "Admissions Counselor": { entry: "$40,000", mid: "$58,000", senior: "$80,000+" },
+  "Academic Advisor": { entry: "$42,000", mid: "$60,000", senior: "$85,000+" },
+  "Student Affairs Specialist": { entry: "$42,000", mid: "$62,000", senior: "$85,000+" },
+  "Registrar": { entry: "$50,000", mid: "$75,000", senior: "$105,000+" },
+  "Superintendent": { entry: "$100,000", mid: "$150,000", senior: "$200,000+" },
+  "Daycare Provider": { entry: "$28,000", mid: "$38,000", senior: "$50,000+" },
+  "Preschool Teacher": { entry: "$32,000", mid: "$42,000", senior: "$55,000+" },
+  "Teaching Assistant": { entry: "$28,000", mid: "$35,000", senior: "$45,000+" },
+  "School Psychologist": { entry: "$60,000", mid: "$85,000", senior: "$115,000+" },
+  "School Social Worker": { entry: "$50,000", mid: "$70,000", senior: "$95,000+" },
+  "Media Specialist": { entry: "$48,000", mid: "$68,000", senior: "$90,000+" },
+  "Instructional Coach": { entry: "$55,000", mid: "$78,000", senior: "$105,000+" },
+  "Athletic Director": { entry: "$55,000", mid: "$85,000", senior: "$120,000+" },
+  "School Nurse": { entry: "$48,000", mid: "$68,000", senior: "$90,000+" },
+  "Title I Coordinator": { entry: "$50,000", mid: "$72,000", senior: "$95,000+" },
+  "Gifted Education Specialist": { entry: "$48,000", mid: "$68,000", senior: "$90,000+" },
+  "Career and Technical Education Teacher": { entry: "$48,000", mid: "$68,000", senior: "$90,000+" },
+  "Adult Education Instructor": { entry: "$42,000", mid: "$60,000", senior: "$80,000+" },
+  "Corporate Trainer": { entry: "$55,000", mid: "$80,000", senior: "$115,000+" },
+  "Education Consultant": { entry: "$60,000", mid: "$95,000", senior: "$140,000+" },
+  "Test Prep Tutor": { entry: "$35,000", mid: "$55,000", senior: "$85,000+" },
+  "Online Course Creator": { entry: "$40,000", mid: "$70,000", senior: "$120,000+" },
+  "Education Policy Analyst": { entry: "$55,000", mid: "$85,000", senior: "$120,000+" },
+  "STEM Coordinator": { entry: "$55,000", mid: "$80,000", senior: "$110,000+" },
+  "Assessment Specialist": { entry: "$55,000", mid: "$80,000", senior: "$110,000+" },
+  "ELL Specialist": { entry: "$48,000", mid: "$68,000", senior: "$90,000+" },
+  "Title IX Coordinator": { entry: "$60,000", mid: "$90,000", senior: "$125,000+" },
+  "Financial Aid Officer": { entry: "$42,000", mid: "$62,000", senior: "$85,000+" },
+  "Study Abroad Coordinator": { entry: "$42,000", mid: "$62,000", senior: "$85,000+" },
+  "Alumni Relations Officer": { entry: "$48,000", mid: "$72,000", senior: "$100,000+" },
+  "Development Officer": { entry: "$50,000", mid: "$80,000", senior: "$115,000+" },
+  "Institutional Researcher": { entry: "$55,000", mid: "$80,000", senior: "$110,000+" },
+
+  // === TRADES ===
+  "Electrician": { entry: "$45,000", mid: "$70,000", senior: "$100,000+" },
+  "Plumber": { entry: "$42,000", mid: "$65,000", senior: "$95,000+" },
+  "HVAC Technician": { entry: "$40,000", mid: "$60,000", senior: "$90,000+" },
+  "Carpenter": { entry: "$40,000", mid: "$60,000", senior: "$90,000+" },
+  "Welder": { entry: "$40,000", mid: "$60,000", senior: "$90,000+" },
+  "Auto Mechanic": { entry: "$38,000", mid: "$60,000", senior: "$85,000+" },
+  "Construction Manager": { entry: "$65,000", mid: "$100,000", senior: "$145,000+" },
+  "Solar Panel Installer": { entry: "$40,000", mid: "$60,000", senior: "$85,000+" },
+  "Wind Turbine Technician": { entry: "$50,000", mid: "$70,000", senior: "$95,000+" },
+  "Locksmith": { entry: "$38,000", mid: "$55,000", senior: "$80,000+" },
+  "Roofer": { entry: "$38,000", mid: "$58,000", senior: "$85,000+" },
+  "Mason": { entry: "$40,000", mid: "$62,000", senior: "$90,000+" },
+  "Painter": { entry: "$35,000", mid: "$52,000", senior: "$75,000+" },
+  "Glazier": { entry: "$38,000", mid: "$58,000", senior: "$85,000+" },
+  "Ironworker": { entry: "$45,000", mid: "$70,000", senior: "$100,000+" },
+  "Sheet Metal Worker": { entry: "$40,000", mid: "$62,000", senior: "$90,000+" },
+  "Pipefitter": { entry: "$45,000", mid: "$70,000", senior: "$100,000+" },
+  "Elevator Installer": { entry: "$55,000", mid: "$90,000", senior: "$130,000+" },
+  "Heavy Equipment Operator": { entry: "$42,000", mid: "$65,000", senior: "$95,000+" },
+  "Crane Operator": { entry: "$50,000", mid: "$80,000", senior: "$120,000+" },
+  "Diesel Mechanic": { entry: "$42,000", mid: "$65,000", senior: "$95,000+" },
+  "Aircraft Mechanic": { entry: "$50,000", mid: "$80,000", senior: "$115,000+" },
+  "Boilermaker": { entry: "$48,000", mid: "$75,000", senior: "$110,000+" },
+  "Telecommunications Technician": { entry: "$42,000", mid: "$65,000", senior: "$90,000+" },
+  "Fire Sprinkler Installer": { entry: "$42,000", mid: "$65,000", senior: "$90,000+" },
+  "Insulation Worker": { entry: "$38,000", mid: "$55,000", senior: "$80,000+" },
+  "Flooring Installer": { entry: "$35,000", mid: "$55,000", senior: "$80,000+" },
+  "Drywall Installer": { entry: "$35,000", mid: "$55,000", senior: "$80,000+" },
+  "Concrete Finisher": { entry: "$38,000", mid: "$58,000", senior: "$85,000+" },
+  "Paving Equipment Operator": { entry: "$38,000", mid: "$58,000", senior: "$85,000+" },
+  "Surveyor": { entry: "$45,000", mid: "$70,000", senior: "$100,000+" },
+  "Building Inspector": { entry: "$50,000", mid: "$75,000", senior: "$105,000+" },
+  "Safety Manager": { entry: "$55,000", mid: "$85,000", senior: "$120,000+" },
+  "Estimator": { entry: "$50,000", mid: "$80,000", senior: "$115,000+" },
+  "Project Superintendent": { entry: "$60,000", mid: "$95,000", senior: "$140,000+" },
+  "Facilities Manager": { entry: "$50,000", mid: "$80,000", senior: "$115,000+" },
+  "Maintenance Technician": { entry: "$38,000", mid: "$55,000", senior: "$80,000+" },
+  "Appliance Repair Technician": { entry: "$38,000", mid: "$58,000", senior: "$85,000+" },
+  "Home Inspector": { entry: "$45,000", mid: "$70,000", senior: "$100,000+" },
+  "Chimney Sweep": { entry: "$35,000", mid: "$52,000", senior: "$75,000+" },
+
+  // === CREATIVE ===
+  "Graphic Designer": { entry: "$42,000", mid: "$65,000", senior: "$95,000+" },
+  "UX Designer": { entry: "$65,000", mid: "$100,000", senior: "$140,000+" },
+  "UI Designer": { entry: "$60,000", mid: "$95,000", senior: "$135,000+" },
+  "Web Designer": { entry: "$45,000", mid: "$70,000", senior: "$100,000+" },
+  "Video Editor": { entry: "$40,000", mid: "$65,000", senior: "$100,000+" },
+  "Photographer": { entry: "$35,000", mid: "$60,000", senior: "$100,000+" },
+  "Animator": { entry: "$50,000", mid: "$80,000", senior: "$120,000+" },
+  "Art Director": { entry: "$60,000", mid: "$100,000", senior: "$150,000+" },
+  "Creative Director": { entry: "$75,000", mid: "$130,000", senior: "$200,000+" },
+  "Interior Designer": { entry: "$42,000", mid: "$65,000", senior: "$100,000+" },
+  "Fashion Designer": { entry: "$40,000", mid: "$70,000", senior: "$120,000+" },
+  "Music Producer": { entry: "$35,000", mid: "$65,000", senior: "$120,000+" },
+  "Sound Designer": { entry: "$45,000", mid: "$75,000", senior: "$115,000+" },
+  "Copywriter": { entry: "$45,000", mid: "$70,000", senior: "$110,000+" },
+  "Content Strategist": { entry: "$55,000", mid: "$90,000", senior: "$130,000+" },
+  "Brand Manager": { entry: "$60,000", mid: "$100,000", senior: "$145,000+" },
+  "Production Artist": { entry: "$38,000", mid: "$58,000", senior: "$80,000+" },
+  "Motion Graphics Designer": { entry: "$50,000", mid: "$80,000", senior: "$120,000+" },
+  "3D Artist": { entry: "$50,000", mid: "$80,000", senior: "$120,000+" },
+  "Illustrator": { entry: "$40,000", mid: "$65,000", senior: "$100,000+" },
+  "Exhibit Designer": { entry: "$42,000", mid: "$68,000", senior: "$100,000+" },
+  "Set Designer": { entry: "$45,000", mid: "$75,000", senior: "$115,000+" },
+  "Lighting Designer": { entry: "$45,000", mid: "$75,000", senior: "$115,000+" },
+  "Makeup Artist": { entry: "$35,000", mid: "$60,000", senior: "$100,000+" },
+  "Floral Designer": { entry: "$30,000", mid: "$42,000", senior: "$60,000+" },
+  "Jewelry Designer": { entry: "$38,000", mid: "$60,000", senior: "$95,000+" },
+  "Tattoo Artist": { entry: "$35,000", mid: "$65,000", senior: "$120,000+" },
+  "Ceramicist": { entry: "$32,000", mid: "$50,000", senior: "$80,000+" },
+  "Printmaker": { entry: "$32,000", mid: "$50,000", senior: "$80,000+" },
+  "Textile Designer": { entry: "$38,000", mid: "$60,000", senior: "$90,000+" },
+  "Packaging Designer": { entry: "$45,000", mid: "$72,000", senior: "$105,000+" },
+  "Environmental Designer": { entry: "$50,000", mid: "$80,000", senior: "$120,000+" },
+  "Sign Maker": { entry: "$32,000", mid: "$48,000", senior: "$70,000+" },
+  "Display Designer": { entry: "$40,000", mid: "$65,000", senior: "$95,000+" },
+  "Art Therapist": { entry: "$45,000", mid: "$65,000", senior: "$90,000+" },
+  "Creative Writer": { entry: "$40,000", mid: "$65,000", senior: "$100,000+" },
+  "Screenwriter": { entry: "$50,000", mid: "$85,000", senior: "$150,000+" },
+  "Game Designer": { entry: "$55,000", mid: "$90,000", senior: "$135,000+" },
+  "Storyboard Artist": { entry: "$50,000", mid: "$80,000", senior: "$120,000+" },
+  "Character Designer": { entry: "$50,000", mid: "$80,000", senior: "$120,000+" },
+  "Background Artist": { entry: "$45,000", mid: "$72,000", senior: "$110,000+" },
+
+  // === SERVICE ===
+  "Chef": { entry: "$35,000", mid: "$55,000", senior: "$85,000+" },
+  "Restaurant Manager": { entry: "$42,000", mid: "$60,000", senior: "$85,000+" },
+  "Hotel Manager": { entry: "$45,000", mid: "$70,000", senior: "$105,000+" },
+  "Bartender": { entry: "$28,000", mid: "$45,000", senior: "$70,000+" },
+  "Barista": { entry: "$28,000", mid: "$35,000", senior: "$45,000+" },
+  "Flight Attendant": { entry: "$40,000", mid: "$65,000", senior: "$90,000+" },
+  "Event Planner": { entry: "$40,000", mid: "$65,000", senior: "$100,000+" },
+  "Catering Manager": { entry: "$40,000", mid: "$62,000", senior: "$90,000+" },
+  "Concierge": { entry: "$32,000", mid: "$45,000", senior: "$65,000+" },
+  "Housekeeper": { entry: "$28,000", mid: "$35,000", senior: "$48,000+" },
+  "Food Service Manager": { entry: "$42,000", mid: "$62,000", senior: "$90,000+" },
+  "Sommelier": { entry: "$40,000", mid: "$65,000", senior: "$100,000+" },
+  "Tour Guide": { entry: "$30,000", mid: "$42,000", senior: "$60,000+" },
+  "Travel Agent": { entry: "$35,000", mid: "$50,000", senior: "$75,000+" },
+  "Casino Manager": { entry: "$55,000", mid: "$85,000", senior: "$120,000+" },
+  "Spa Manager": { entry: "$38,000", mid: "$58,000", senior: "$85,000+" },
+  "Fitness Trainer": { entry: "$35,000", mid: "$55,000", senior: "$85,000+" },
+  "Personal Chef": { entry: "$40,000", mid: "$65,000", senior: "$100,000+" },
+  "Food Critic": { entry: "$40,000", mid: "$65,000", senior: "$100,000+" },
+  "Pastry Chef": { entry: "$32,000", mid: "$50,000", senior: "$80,000+" },
+  "Line Cook": { entry: "$28,000", mid: "$38,000", senior: "$55,000+" },
+  "Server": { entry: "$25,000", mid: "$38,000", senior: "$55,000+" },
+  "Host/Hostess": { entry: "$25,000", mid: "$32,000", senior: "$42,000+" },
+  "Dishwasher": { entry: "$25,000", mid: "$30,000", senior: "$38,000+" },
+  "Banquet Manager": { entry: "$42,000", mid: "$65,000", senior: "$95,000+" },
+  "Night Auditor": { entry: "$30,000", mid: "$40,000", senior: "$55,000+" },
+  "Front Desk Clerk": { entry: "$28,000", mid: "$36,000", senior: "$48,000+" },
+  "Bellhop": { entry: "$25,000", mid: "$35,000", senior: "$48,000+" },
+  "Valet": { entry: "$25,000", mid: "$35,000", senior: "$48,000+" },
+  "Lifeguard": { entry: "$25,000", mid: "$32,000", senior: "$42,000+" },
+  "Ski Instructor": { entry: "$30,000", mid: "$45,000", senior: "$65,000+" },
+  "Golf Course Manager": { entry: "$45,000", mid: "$70,000", senior: "$100,000+" },
+  "Country Club Manager": { entry: "$55,000", mid: "$85,000", senior: "$120,000+" },
+  "Resort Manager": { entry: "$50,000", mid: "$80,000", senior: "$120,000+" },
+  "Cruise Director": { entry: "$50,000", mid: "$80,000", senior: "$120,000+" },
+  "Theme Park Manager": { entry: "$45,000", mid: "$75,000", senior: "$110,000+" },
+  "Zookeeper": { entry: "$30,000", mid: "$45,000", senior: "$65,000+" },
+  "Museum Curator": { entry: "$45,000", mid: "$70,000", senior: "$100,000+" },
+  "Park Ranger": { entry: "$38,000", mid: "$58,000", senior: "$80,000+" },
+  "Camp Director": { entry: "$35,000", mid: "$55,000", senior: "$80,000+" },
+  "Dog Walker": { entry: "$25,000", mid: "$38,000", senior: "$55,000+" },
+  "Pet Groomer": { entry: "$28,000", mid: "$40,000", senior: "$60,000+" },
+  "Funeral Director": { entry: "$45,000", mid: "$70,000", senior: "$100,000+" },
+  "Embalmer": { entry: "$38,000", mid: "$55,000", senior: "$75,000+" },
+  "Floral Designer": { entry: "$30,000", mid: "$42,000", senior: "$60,000+" },
+
+  // === LEGAL ===
+  "Paralegal": { entry: "$42,000", mid: "$60,000", senior: "$85,000+" },
+  "Legal Secretary": { entry: "$38,000", mid: "$55,000", senior: "$75,000+" },
+  "Attorney": { entry: "$70,000", mid: "$120,000", senior: "$200,000+" },
+  "Judge": { entry: "$120,000", mid: "$170,000", senior: "$220,000+" },
+  "Legal Assistant": { entry: "$35,000", mid: "$50,000", senior: "$70,000+" },
+  "Court Reporter": { entry: "$50,000", mid: "$75,000", senior: "$105,000+" },
+  "Compliance Specialist": { entry: "$55,000", mid: "$85,000", senior: "$120,000+" },
+  "Contract Manager": { entry: "$60,000", mid: "$95,000", senior: "$135,000+" },
+  "Mediator": { entry: "$55,000", mid: "$85,000", senior: "$130,000+" },
+  "Arbitrator": { entry: "$60,000", mid: "$95,000", senior: "$140,000+" },
+  "Title Examiner": { entry: "$40,000", mid: "$60,000", senior: "$85,000+" },
+  "Law Clerk": { entry: "$45,000", mid: "$65,000", senior: "$90,000+" },
+  "Immigration Consultant": { entry: "$45,000", mid: "$70,000", senior: "$100,000+" },
+  "Patent Agent": { entry: "$80,000", mid: "$120,000", senior: "$170,000+" },
+  "Legal Nurse Consultant": { entry: "$60,000", mid: "$90,000", senior: "$125,000+" },
+  "Litigation Support Specialist": { entry: "$50,000", mid: "$80,000", senior: "$115,000+" },
+  "Real Estate Paralegal": { entry: "$42,000", mid: "$62,000", senior: "$85,000+" },
+  "Corporate Paralegal": { entry: "$48,000", mid: "$72,000", senior: "$100,000+" },
+  "Bankruptcy Paralegal": { entry: "$40,000", mid: "$60,000", senior: "$85,000+" },
+  "Immigration Paralegal": { entry: "$42,000", mid: "$62,000", senior: "$85,000+" },
+  "Personal Injury Paralegal": { entry: "$40,000", mid: "$60,000", senior: "$85,000+" },
+  "Family Law Paralegal": { entry: "$38,000", mid: "$58,000", senior: "$80,000+" },
+  "Intellectual Property Paralegal": { entry: "$48,000", mid: "$72,000", senior: "$100,000+" },
+  "Environmental Law Paralegal": { entry: "$42,000", mid: "$62,000", senior: "$85,000+" },
+  "Tax Law Paralegal": { entry: "$45,000", mid: "$68,000", senior: "$95,000+" },
+  "Criminal Law Paralegal": { entry: "$38,000", mid: "$58,000", senior: "$80,000+" },
+  "Employment Law Paralegal": { entry: "$42,000", mid: "$62,000", senior: "$85,000+" },
+  "Healthcare Paralegal": { entry: "$45,000", mid: "$68,000", senior: "$95,000+" },
+  "Entertainment Lawyer": { entry: "$80,000", mid: "$140,000", senior: "$250,000+" },
+  "Sports Lawyer": { entry: "$75,000", mid: "$130,000", senior: "$250,000+" },
+  "Civil Rights Lawyer": { entry: "$60,000", mid: "$100,000", senior: "$160,000+" },
+  "Constitutional Lawyer": { entry: "$70,000", mid: "$120,000", senior: "$200,000+" },
+  "International Lawyer": { entry: "$80,000", mid: "$140,000", senior: "$250,000+" },
+  "Tax Attorney": { entry: "$80,000", mid: "$140,000", senior: "$250,000+" },
+  "Real Estate Attorney": { entry: "$70,000", mid: "$120,000", senior: "$200,000+" },
+  "Corporate Lawyer": { entry: "$90,000", mid: "$160,000", senior: "$300,000+" },
+  "Trial Lawyer": { entry: "$75,000", mid: "$130,000", senior: "$250,000+" },
+  "Criminal Defense Lawyer": { entry: "$60,000", mid: "$110,000", senior: "$200,000+" },
+  "Prosecutor": { entry: "$55,000", mid: "$90,000", senior: "$150,000+" },
+  "Public Interest Lawyer": { entry: "$50,000", mid: "$80,000", senior: "$130,000+" },
+  "Legal Aid Attorney": { entry: "$48,000", mid: "$75,000", senior: "$120,000+" },
+  "Public Defender": { entry: "$50,000", mid: "$80,000", senior: "$130,000+" },
+  "District Attorney": { entry: "$60,000", mid: "$100,000", senior: "$170,000+" },
+  "Environmental Lawyer": { entry: "$65,000", mid: "$110,000", senior: "$180,000+" },
+  "Immigration Attorney": { entry: "$60,000", mid: "$100,000", senior: "$170,000+" }
 };
 
 const COURSES = {
@@ -7852,6 +8276,9 @@ async function subscribe() {
 const APP_VERSION = '1.1.0';
 
 const UPDATES = [
+  { date: "Aug 10, 2026", title: "Homepage Testimonials", desc: "Added social proof section to the homepage with 3 testimonials from real job seekers. Builds trust and shows the value of RoleCall practice.", icon: "⭐" },
+  { date: "Aug 10, 2026", title: "Salary Ranges for Every Role", desc: "Each role page now shows entry, mid-level, and senior salary ranges based on U.S. national averages. Helps users understand earning potential as they explore careers.", icon: "💰" },
+  { date: "Aug 10, 2026", title: "3 New Blog Articles", desc: "New interview guides: How to Answer 'Where Do You See Yourself in 5 Years?', How to Handle Interview Anxiety (10 strategies), and Remote Interview Tips for virtual interviews.", icon: "📝" },
   { date: "Jul 7, 2026", title: "Institutional Analytics Pipeline", desc: "Schools can now track aggregate student usage — active students, practice sessions, top career paths, industry breakdown, and weekly engagement trends. Admin dashboard at /admin.html.", icon: "📊" },
   { date: "Jul 7, 2026", title: "School Setup & Multi-Admin Support", desc: "New setup tool for creating school promo codes and admin accounts. Supports multiple career services staff per school. Each admin only sees their own school's data.", icon: "🏫" },
   { date: "Jul 7, 2026", title: "FERPA Compliance & Security Page", desc: "New /security.html page with full FERPA compliance details, data handling overview, encryption info, and Data Processing Agreement availability. Built for IT department review.", icon: "🔒" },
@@ -8575,6 +9002,41 @@ function openRole(roleName, questions) {
   } else {
     reqCard.style.display = 'none';
     reqCard.innerHTML = '';
+  }
+
+  // Render salary card
+  const salaryCard = document.getElementById('salaryCard');
+  const salaryData = typeof SALARIES !== 'undefined' ? SALARIES[roleName] : null;
+  if (salaryData) {
+    salaryCard.innerHTML = `
+      <div class="req-card">
+        <div class="req-card-header" onclick="toggleReqCard(this)">
+          <span class="req-icon">\u{1F4B0}</span>
+          <span class="req-label">Salary Range</span>
+          <span class="req-arrow">\u25BC</span>
+        </div>
+        <div class="req-card-body">
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <div style="flex:1;min-width:100px;background:var(--bg);border-radius:12px;padding:14px;text-align:center">
+              <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Entry</div>
+              <div style="font-size:18px;font-weight:800;color:var(--accent)">${salaryData.entry}</div>
+            </div>
+            <div style="flex:1;min-width:100px;background:var(--bg);border-radius:12px;padding:14px;text-align:center">
+              <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Mid-Level</div>
+              <div style="font-size:18px;font-weight:800;color:var(--accent)">${salaryData.mid}</div>
+            </div>
+            <div style="flex:1;min-width:100px;background:var(--bg);border-radius:12px;padding:14px;text-align:center">
+              <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Senior</div>
+              <div style="font-size:18px;font-weight:800;color:var(--accent)">${salaryData.senior}</div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--text-secondary);margin-top:10px;text-align:center">Based on U.S. national averages. Actual salaries vary by location and employer.</div>
+        </div>
+      </div>`;
+    salaryCard.style.display = '';
+  } else {
+    salaryCard.style.display = 'none';
+    salaryCard.innerHTML = '';
   }
 
   const list = document.getElementById('questionList');
