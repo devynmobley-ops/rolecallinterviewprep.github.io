@@ -526,6 +526,30 @@ body.show-scrollbars .screen::-webkit-scrollbar-track{background:transparent}
 .job-load-more{text-align:center;padding:16px 20px 40px}
 .job-load-more button{padding:12px 32px;border:1.5px solid var(--accent);border-radius:var(--radius);background:transparent;color:var(--accent-text);font-size:14px;font-weight:700;cursor:pointer;transition:all var(--transition)}
 .job-load-more button:active{transform:scale(0.97);background:rgba(108,92,231,0.1)}
+/* Job Interview Prep Panel */
+.job-prep-btn{padding:14px 18px;border:1.5px solid var(--accent);border-radius:var(--radius);background:transparent;color:var(--accent-text);font-size:13px;font-weight:700;cursor:pointer;transition:all var(--transition);white-space:nowrap}
+.job-prep-btn:active{transform:scale(0.97);background:rgba(108,92,231,0.1)}
+.job-prep-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:250;overflow-y:auto;-webkit-overflow-scrolling:touch;transform:translateX(100%);transition:transform var(--transition)}
+.job-prep-overlay.open{transform:translateX(0)}
+.job-prep-header{position:sticky;top:0;background:var(--bg);padding:calc(12px + var(--safe-top)) 20px 12px;display:flex;align-items:center;gap:12px;z-index:10;backdrop-filter:blur(12px);border-bottom:1px solid var(--card-hover)}
+.job-prep-header button{background:none;border:none;color:var(--accent-text);font-size:22px;cursor:pointer;padding:4px 8px;border-radius:8px;min-width:40px;min-height:40px;display:flex;align-items:center;justify-content:center}
+.job-prep-header button:active{background:var(--card)}
+.job-prep-header h2{font-size:16px;font-weight:700;flex:1}
+.job-prep-content{padding:20px}
+.job-prep-match{background:linear-gradient(135deg,rgba(108,92,231,0.15),rgba(162,155,254,0.1));border-radius:var(--radius);padding:16px;margin-bottom:20px;text-align:center}
+.job-prep-match h3{font-size:18px;font-weight:800;margin-bottom:4px}
+.job-prep-match p{font-size:13px;color:var(--text-secondary)}
+.job-prep-question{background:var(--card);border-radius:var(--radius);margin-bottom:10px;overflow:hidden}
+.job-prep-q-header{padding:14px 16px;cursor:pointer;display:flex;gap:12px;align-items:flex-start}
+.job-prep-q-num{font-size:12px;font-weight:700;color:var(--accent-text);min-width:24px;height:24px;display:flex;align-items:center;justify-content:center;background:rgba(108,92,231,0.15);border-radius:8px;flex-shrink:0}
+.job-prep-q-text{font-size:14px;font-weight:500;flex:1;line-height:1.4}
+.job-prep-q-arrow{color:var(--text-secondary);font-size:14px;transition:transform var(--transition);flex-shrink:0;margin-top:3px}
+.job-prep-question.open .job-prep-q-arrow{transform:rotate(180deg)}
+.job-prep-q-tip{padding:0 16px 14px;display:none;font-size:13px;color:var(--text-secondary);line-height:1.6;border-top:1px solid var(--card-hover);margin:0 12px;padding-top:12px}
+.job-prep-question.open .job-prep-q-tip{display:block}
+.job-prep-cta{margin-top:20px;text-align:center;padding:16px;background:var(--card);border-radius:var(--radius)}
+.job-prep-cta p{font-size:13px;color:var(--text-secondary);margin-bottom:12px}
+.job-prep-cta button{padding:12px 24px;border:none;border-radius:var(--radius);background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:14px;font-weight:700;cursor:pointer}
 </style>
 <!-- Firebase + Stripe loaded dynamically -->
 <script>
@@ -11436,6 +11460,198 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+// ============================================================
+// JOB INTERVIEW PREP — Role Matching
+// ============================================================
+
+// Build a lookup of all RoleCall roles for matching
+var ROLECALL_ROLES = [];
+(function buildRoleLookup() {
+  if (typeof DATA === 'undefined') return;
+  var categories = Object.keys(DATA);
+  categories.forEach(function(catName) {
+    var cat = DATA[catName];
+    if (!cat || !cat.roles) return;
+    var roleNames = Object.keys(cat.roles);
+    roleNames.forEach(function(roleName) {
+      ROLECALL_ROLES.push({
+        name: roleName,
+        category: catName,
+        questions: cat.roles[roleName],
+      });
+    });
+  });
+})();
+
+/**
+ * Match a job listing to the closest RoleCall role.
+ * Returns { role, score, matchType } or null.
+ */
+function matchJobToRole(job) {
+  if (!job || ROLECALL_ROLES.length === 0) return null;
+
+  var title = (job.title || '').toLowerCase();
+  var desc = (job.description || '').toLowerCase();
+  var company = (job.company || '').toLowerCase();
+  var category = (job.category || '').toLowerCase();
+  var skills = (job.skills || []).map(function(s) { return s.toLowerCase(); });
+  var searchText = title + ' ' + desc + ' ' + skills.join(' ');
+
+  var bestMatch = null;
+  var bestScore = 0;
+
+  ROLECALL_ROLES.forEach(function(role) {
+    var roleName = role.name.toLowerCase();
+    var score = 0;
+
+    // Exact title match (highest priority)
+    if (title === roleName) {
+      score = 100;
+    }
+    // Title contains role name
+    else if (title.includes(roleName)) {
+      score = 80;
+    }
+    // Role name contains title words
+    else if (roleName.includes(title.split(' ')[0]) && title.split(' ').length <= 3) {
+      score = 60;
+    }
+    // Keyword matching
+    else {
+      var roleWords = roleName.split(/[\s\/\-]+/).filter(function(w) { return w.length > 2; });
+      var titleWords = title.split(/[\s\/\-]+/).filter(function(w) { return w.length > 2; });
+      
+      var matchedWords = 0;
+      titleWords.forEach(function(tw) {
+        if (roleWords.some(function(rw) { return rw.includes(tw) || tw.includes(rw); })) {
+          matchedWords++;
+        }
+      });
+      
+      if (matchedWords > 0 && titleWords.length > 0) {
+        score = Math.round((matchedWords / titleWords.length) * 50);
+      }
+    }
+
+    // Boost score for skills match
+    if (score > 0 && score < 80) {
+      var roleSkillWords = roleName.split(/[\s\/\-]+/);
+      skills.forEach(function(skill) {
+        if (roleSkillWords.some(function(w) { return w.includes(skill) || skill.includes(w); })) {
+          score += 5;
+        }
+      });
+    }
+
+    // Boost for category match
+    if (score > 0 && score < 80) {
+      var catLower = role.category.toLowerCase();
+      if (category.includes(catLower) || catLower.includes(category.split(' ')[0])) {
+        score += 10;
+      }
+    }
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestMatch = role;
+    }
+  });
+
+  // Only return matches above threshold
+  if (bestScore >= 20 && bestMatch) {
+    return {
+      role: bestMatch,
+      score: bestScore,
+      matchType: bestScore >= 80 ? 'exact' : bestScore >= 50 ? 'strong' : 'related',
+    };
+  }
+
+  return null;
+}
+
+/**
+ * Get general behavioral questions as fallback.
+ */
+function getBehavioralQuestions() {
+  return [
+    {q: "Tell me about yourself.", tip: "Use the Present-Past-Future formula: what you do now, what you did before, and what you're looking for. Keep it under 60 seconds."},
+    {q: "Why do you want to work here?", tip: "Research the company. Mention specific things — their mission, recent projects, culture. Show you didn't just Google them."},
+    {q: "What's your greatest strength?", tip: "Pick one strength and prove it with a 15-second story. Don't just claim it — show receipts."},
+    {q: "What's your biggest weakness?", tip: "Pick something real, not a humble brag. Show self-awareness and what you're doing to improve."},
+    {q: "Tell me about a time you faced a challenge at work.", tip: "Use STAR: Situation, Task, Action, Result. Focus on what you did and what you learned."},
+    {q: "Where do you see yourself in 5 years?", tip: "Show ambition without threatening the interviewer. Focus on skills and growth, not job titles."},
+    {q: "Why should we hire you?", tip: "Connect your skills directly to the job posting. Be specific about what you bring that others don't."},
+    {q: "Do you have any questions for me?", tip: "Always say yes. Ask about team challenges, success metrics, or growth opportunities. Never say 'no, I'm good.'"},
+  ];
+}
+
+/**
+ * Open the interview prep panel for the current job.
+ */
+function openJobPrep() {
+  playClick('tap');
+  var job = jobSearchState.currentJob;
+  if (!job) return;
+
+  trackJobEvent('interview_prep_clicked', { jobId: job.id });
+
+  var overlay = document.getElementById('jobPrepOverlay');
+  var content = document.getElementById('jobPrepContent');
+  var titleEl = document.getElementById('jobPrepTitle');
+
+  var match = matchJobToRole(job);
+  var questions, matchTitle, matchDesc;
+
+  if (match) {
+    questions = match.role.questions;
+    matchTitle = match.role.name;
+    matchDesc = 'Matched to ' + match.role.category + ' — ' + match.matchType + ' match';
+  } else {
+    questions = getBehavioralQuestions();
+    matchTitle = 'General Interview';
+    matchDesc = 'No specific role match found — showing general behavioral questions';
+  }
+
+  titleEl.textContent = 'Prepare: ' + (job.title || 'Interview');
+
+  var html = '';
+  
+  // Match header
+  html += '<div class="job-prep-match">';
+  html += '<h3>' + escapeHtml(matchTitle) + '</h3>';
+  html += '<p>' + escapeHtml(matchDesc) + '</p>';
+  html += '</div>';
+
+  // Questions
+  questions.forEach(function(q, i) {
+    html += '<div class="job-prep-question" onclick="this.classList.toggle(\'open\')">';
+    html += '<div class="job-prep-q-header">';
+    html += '<span class="job-prep-q-num">' + (i + 1) + '</span>';
+    html += '<span class="job-prep-q-text">' + escapeHtml(q.q) + '</span>';
+    html += '<span class="job-prep-q-arrow">&#9660;</span>';
+    html += '</div>';
+    html += '<div class="job-prep-q-tip">' + escapeHtml(q.tip) + '</div>';
+    html += '</div>';
+  });
+
+  // CTA
+  if (match) {
+    html += '<div class="job-prep-cta">';
+    html += '<p>Want to practice these questions with AI feedback?</p>';
+    html += '<button onclick="closeJobPrep(); closeJobDetail(); switchTab(\'mock-tab\')">Start Mock Interview</button>';
+    html += '</div>';
+  }
+
+  content.innerHTML = html;
+  overlay.classList.add('open');
+}
+
+function closeJobPrep() {
+  playClick('tap');
+  var overlay = document.getElementById('jobPrepOverlay');
+  overlay.classList.remove('open');
+}
+
 init();</script>
 
 <!-- JOB SEARCH SCREEN -->
@@ -11494,8 +11710,18 @@ init();</script>
   <div class="job-detail-content" id="jobDetailContent"></div>
   <div class="job-detail-actions">
     <button class="job-apply-btn" id="jobApplyBtn" onclick="applyToJob()">Apply Now</button>
+    <button class="job-prep-btn" id="jobPrepBtn" onclick="openJobPrep()">🎯 Prepare</button>
     <button class="job-detail-save-btn" id="jobDetailSaveBtn" onclick="toggleJobSaveFromDetail()" aria-label="Save job">&#9734;</button>
   </div>
+</div>
+
+<!-- JOB INTERVIEW PREP OVERLAY -->
+<div class="job-prep-overlay" id="jobPrepOverlay">
+  <div class="job-prep-header">
+    <button onclick="closeJobPrep()" aria-label="Close prep">&#8592;</button>
+    <h2 id="jobPrepTitle">Interview Prep</h2>
+  </div>
+  <div class="job-prep-content" id="jobPrepContent"></div>
 </div>
 
 <!-- BOTTOM TAB BAR -->
