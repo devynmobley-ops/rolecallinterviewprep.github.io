@@ -2406,4 +2406,24 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  <!-- Job Search Pages -->
+  <url><loc>https://rollcallinterviewprep.com/jobs/</loc><lastmod>2026-08-17</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://rollcallinterviewprep.com/jobs/training-specialist.html</loc><lastmod>2026-08-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://rollcallinterviewprep.com/jobs/project-manager.html</loc><lastmod>2026-08-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://rollcallinterviewprep.com/jobs/nurse.html</loc><lastmod>2026-08-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://rollcallinterviewprep.com/jobs/software-engineer.html</loc><lastmod>2026-08-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://rollcallinterviewprep.com/jobs/data-analyst.html</loc><lastmod>2026-08-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://rollcallinterviewprep.com/jobs/marketing-manager.html</loc><lastmod>2026-08-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://rollcallinterviewprep.com/jobs/accountant.html</loc><lastmod>2026-08-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://rollcallinterviewprep.com/jobs/teacher.html</loc><lastmod>2026-08-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://rollcallinterviewprep.com/jobs/electrician.html</loc><lastmod>2026-08-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://rollcallinterviewprep.com/jobs/sales-representative.html</loc><lastmod>2026-08-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://rollcallinterviewprep.com/jobs/registered-nurse.html</loc><lastmod>2026-08-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://rollcallinterviewprep.com/jobs/financial-analyst.html</loc><lastmod>2026-08-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://rollcallinterviewprep.com/jobs/operations-manager.html</loc><lastmod>2026-08-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://rollcallinterviewprep.com/jobs/human-resources.html</loc><lastmod>2026-08-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://rollcallinterviewprep.com/jobs/customer-service.html</loc><lastmod>2026-08-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://rollcallinterviewprep.com/jobs/welder.html</loc><lastmod>2026-08-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://rollcallinterviewprep.com/jobs/remote.html</loc><lastmod>2026-08-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://rollcallinterviewprep.com/jobs/entry-level.html</loc><lastmod>2026-08-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
 </urlset>
