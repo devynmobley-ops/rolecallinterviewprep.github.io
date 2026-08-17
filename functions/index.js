@@ -980,36 +980,30 @@ exports.searchJobs = functions.https.onCall(async (data, context) => {
   const limit = Math.min(pageSize, 50);
 
   try {
-    // Build Firestore query with filters
-    let queryRef = db.collection('jobs').where('active', '==', true);
+    // Build Firestore query — use simple orderBy to avoid composite index requirements
+    // All filtering happens in memory after fetch
+    let queryRef = db.collection('jobs').orderBy('postedAt', 'desc');
 
-    // Apply filters that work well with Firestore indexes
-    if (remote === true) {
-      queryRef = queryRef.where('remote', '==', true);
-    }
-    if (employmentType) {
-      queryRef = queryRef.where('employmentType', '==', employmentType);
-    }
-    if (seniority) {
-      queryRef = queryRef.where('seniority', '==', seniority);
-    }
-
-    // Sort
-    if (sortBy === 'date') {
-      queryRef = queryRef.orderBy('postedAt', 'desc');
-    } else if (sortBy === 'salary') {
-      queryRef = queryRef.orderBy('salaryMax', 'desc');
-    } else {
-      // Default: order by postedAt for now (relevance ranking applied post-fetch)
-      queryRef = queryRef.orderBy('postedAt', 'desc');
-    }
-
-    // Pagination — fetch enough to rank and slice
-    const fetchLimit = Math.min(limit * 3, 150); // Fetch extra for ranking
+    // Fetch enough to filter and rank
+    const fetchLimit = Math.min(limit * 5, 250);
     queryRef = queryRef.limit(fetchLimit);
 
     const snap = await queryRef.get();
     let jobs = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    // Filter active jobs in memory
+    jobs = jobs.filter(job => job.active === true);
+
+    // Apply filters in memory (avoids composite index requirements)
+    if (remote === true) {
+      jobs = jobs.filter(job => job.remote === true);
+    }
+    if (employmentType) {
+      jobs = jobs.filter(job => job.employmentType === employmentType);
+    }
+    if (seniority) {
+      jobs = jobs.filter(job => job.seniority === seniority);
+    }
 
     // Post-fetch filtering (things Firestore can't do well)
     if (query) {

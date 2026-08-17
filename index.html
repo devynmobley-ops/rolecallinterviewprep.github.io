@@ -11196,7 +11196,6 @@ function toggleJobSeniority(level) {
 
 function renderJobResults() {
   var container = document.getElementById('jobListContainer');
-  var emptyState = document.getElementById('jobEmptyState');
   var loadingState = document.getElementById('jobLoadingState');
   var resultsHeader = document.getElementById('jobResultsHeader');
   var resultsCount = document.getElementById('jobResultsCount');
@@ -11204,7 +11203,6 @@ function renderJobResults() {
 
   if (jobSearchState.loading && jobSearchState.page === 1) {
     container.innerHTML = '';
-    emptyState.style.display = 'none';
     loadingState.style.display = '';
     resultsHeader.style.display = 'none';
     loadMore.style.display = 'none';
@@ -11214,15 +11212,12 @@ function renderJobResults() {
   loadingState.style.display = 'none';
 
   if (jobSearchState.jobs.length === 0 && !jobSearchState.loading) {
-    container.innerHTML = '';
-    emptyState.style.display = '';
-    emptyState.innerHTML = '<div class="job-empty-icon">&#128533;</div><h3>No jobs found</h3><p>Try different keywords or broaden your search.</p>';
+    container.innerHTML = '<div class="job-empty"><div class="job-empty-icon">&#128533;</div><h3>No jobs found</h3><p>Try different keywords or broaden your search.</p></div>';
     resultsHeader.style.display = 'none';
     loadMore.style.display = 'none';
     return;
   }
 
-  emptyState.style.display = 'none';
   resultsHeader.style.display = '';
   resultsCount.textContent = jobSearchState.totalResults + ' jobs found';
 
