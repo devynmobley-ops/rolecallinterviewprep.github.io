@@ -2,6 +2,9 @@ const functions = require('firebase-functions/v1');
 const admin = require('firebase-admin');
 const Stripe = require('stripe');
 const { AdzunaSource } = require('./jobs/sources/AdzunaSource');
+const { TheMuseSource } = require('./jobs/sources/TheMuseSource');
+const { RemotiveSource } = require('./jobs/sources/RemotiveSource');
+const { JobicySource } = require('./jobs/sources/JobicySource');
 const { normalizeJob, toFirestoreJob } = require('./jobs/normalizer');
 const { findDuplicate, mergeJobs, processJobs } = require('./jobs/deduplicator');
 
@@ -874,6 +877,9 @@ exports.aggregateInstitutionStats = functions.pubsub
 
 // Shared job source instances
 const adzunaSource = new AdzunaSource();
+const theMuseSource = new TheMuseSource();
+const remotiveSource = new RemotiveSource();
+const jobicySource = new JobicySource();
 
 /**
  * ingestJobs — Pulls jobs from configured providers and stores in Firestore.
@@ -1115,24 +1121,40 @@ exports.syncJobs = functions.pubsub.schedule('0 3 * * *').timeZone('UTC').onRun(
 
   let totalIngested = 0;
 
-  // Ingest fresh jobs for popular queries
-  if (adzunaSource.isConfigured()) {
-    for (const query of popularQueries) {
-      try {
-        const result = await adzunaSource.fetchJobs(query, '', { page: 1, resultsPerPage: 25 });
-        
-        if (result.jobs.length > 0) {
-          const normalized = result.jobs.map(j => normalizeJob(j, adzunaSource));
-          const stats = await processJobs(normalized, db);
-          totalIngested += stats.created + stats.updated;
-        }
-        
-        // Rate limit
-        await new Promise(r => setTimeout(r, 1000));
-      } catch (err) {
-        console.error(`[Sync] Error fetching "${query}":`, err.message);
+  // Helper: fetch and ingest from a source
+  async function ingestFromSource(source, query) {
+    try {
+      const result = await source.fetchJobs(query, '', { page: 1, resultsPerPage: 25 });
+      if (result.jobs.length > 0) {
+        const normalized = result.jobs.map(j => normalizeJob(j, source));
+        const stats = await processJobs(normalized, db);
+        totalIngested += stats.created + stats.updated;
+        console.log(`[Sync] ${source.getSourceName()} "${query}": ${stats.created} created, ${stats.updated} updated`);
       }
+    } catch (err) {
+      console.error(`[Sync] ${source.getSourceName()} "${query}": ${err.message}`);
     }
+  }
+
+  // Ingest from all sources for popular queries
+  for (const query of popularQueries) {
+    // Adzuna
+    if (adzunaSource.isConfigured()) {
+      await ingestFromSource(adzunaSource, query);
+      await new Promise(r => setTimeout(r, 500));
+    }
+
+    // The Muse (fetch first page, filter by query)
+    await ingestFromSource(theMuseSource, query);
+    await new Promise(r => setTimeout(r, 500));
+
+    // Remotive (has built-in search)
+    await ingestFromSource(remotiveSource, query);
+    await new Promise(r => setTimeout(r, 500));
+
+    // Jobicy (has built-in search)
+    await ingestFromSource(jobicySource, query);
+    await new Promise(r => setTimeout(r, 500));
   }
 
   // Mark expired jobs as inactive
@@ -1411,11 +1433,12 @@ exports.seedJobs = functions.https.onRequest(async (req, res) => {
   }
 
   const db = admin.firestore();
-  const source = new AdzunaSource();
-
-  if (!source.isConfigured()) {
-    return res.status(500).json({ error: 'Adzuna not configured' });
-  }
+  const sources = [
+    adzunaSource.isConfigured() ? adzunaSource : null,
+    theMuseSource,
+    remotiveSource,
+    jobicySource,
+  ].filter(Boolean);
 
   const queries = [
     'training specialist',
@@ -1440,27 +1463,29 @@ exports.seedJobs = functions.https.onRequest(async (req, res) => {
   let totalUpdated = 0;
   let errors = 0;
 
-  for (const query of queries) {
-    try {
-      const result = await source.fetchJobs(query, '', { page: 1, resultsPerPage: 25 });
-      
-      if (result.jobs.length === 0) continue;
-      
-      const normalized = result.jobs.map(j => normalizeJob(j, source));
-      const stats = await processJobs(normalized, db);
-      
-      totalFetched += result.jobs.length;
-      totalCreated += stats.created;
-      totalUpdated += stats.updated;
-      errors += stats.errors;
-      
-      console.log(`[Seed] "${query}": ${result.jobs.length} fetched, ${stats.created} created, ${stats.updated} updated`);
-      
-      // Rate limit
-      await new Promise(r => setTimeout(r, 1000));
-    } catch (err) {
-      console.error(`[Seed] Error for "${query}":`, err.message);
-      errors++;
+  for (const source of sources) {
+    for (const query of queries) {
+      try {
+        const result = await source.fetchJobs(query, '', { page: 1, resultsPerPage: 25 });
+        
+        if (result.jobs.length === 0) continue;
+        
+        const normalized = result.jobs.map(j => normalizeJob(j, source));
+        const stats = await processJobs(normalized, db);
+        
+        totalFetched += result.jobs.length;
+        totalCreated += stats.created;
+        totalUpdated += stats.updated;
+        errors += stats.errors;
+        
+        console.log(`[Seed] ${source.getSourceName()} "${query}": ${result.jobs.length} fetched, ${stats.created} created`);
+        
+        // Rate limit
+        await new Promise(r => setTimeout(r, 500));
+      } catch (err) {
+        console.error(`[Seed] ${source.getSourceName()} "${query}": ${err.message}`);
+        errors++;
+      }
     }
   }
 
