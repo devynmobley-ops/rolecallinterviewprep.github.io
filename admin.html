@@ -343,6 +343,7 @@ var cachedStats = null;
 auth.onAuthStateChanged(function(user) {
   if (user) {
     checkAdminAccess(user);
+    loadJobStats();
   }
 });
 
@@ -706,15 +707,6 @@ function loadJobStats() {
   } catch (err) {
     console.error('Error in loadJobStats:', err);
   }
-}
-
-// Load job stats on page load
-if (typeof firebase !== 'undefined') {
-  firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-      loadJobStats();
-    }
-  });
 }
 
 function exportCSV() {
