@@ -550,6 +550,38 @@ body.show-scrollbars .screen::-webkit-scrollbar-track{background:transparent}
 .job-prep-cta{margin-top:20px;text-align:center;padding:16px;background:var(--card);border-radius:var(--radius)}
 .job-prep-cta p{font-size:13px;color:var(--text-secondary);margin-bottom:12px}
 .job-prep-cta button{padding:12px 24px;border:none;border-radius:var(--radius);background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+/* My Jobs Dashboard */
+.my-jobs-toggle{display:flex;gap:0;margin:8px 20px 12px;background:var(--card);border-radius:var(--radius);overflow:hidden}
+.my-jobs-toggle button{flex:1;padding:10px;border:none;background:transparent;color:var(--text-secondary);font-size:13px;font-weight:600;cursor:pointer;transition:all var(--transition)}
+.my-jobs-toggle button.active{background:var(--accent);color:#fff}
+.my-jobs-empty{text-align:center;padding:40px 20px}
+.my-jobs-empty-icon{font-size:40px;margin-bottom:8px}
+.my-jobs-empty h3{font-size:16px;font-weight:700;margin-bottom:4px}
+.my-jobs-empty p{font-size:13px;color:var(--text-secondary)}
+.my-jobs-signin{text-align:center;padding:40px 20px}
+.my-jobs-signin button{padding:12px 24px;border:none;border-radius:var(--radius);background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:14px;font-weight:700;cursor:pointer;margin-top:12px}
+.my-job-card{background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:10px;border:1px solid transparent;transition:all var(--transition)}
+.my-job-card:active{border-color:var(--accent)}
+.my-job-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
+.my-job-info{flex:1;min-width:0}
+.my-job-title{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.my-job-company{font-size:12px;color:var(--accent-text);font-weight:600}
+.my-job-status{font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;flex-shrink:0}
+.my-job-status.saved{background:rgba(108,92,231,0.15);color:var(--accent-text)}
+.my-job-status.applied{background:rgba(52,152,219,0.15);color:#3498db}
+.my-job-status.interviewing{background:rgba(243,156,18,0.15);color:#f39c12}
+.my-job-status.offer{background:rgba(46,204,113,0.15);color:#2ecc71}
+.my-job-status.rejected{background:rgba(231,76,60,0.15);color:#e74c3c}
+.my-job-status.archived{background:rgba(149,165,166,0.15);color:#95a5a6}
+.my-job-actions{display:flex;gap:6px;margin-top:8px}
+.my-job-actions button{flex:1;padding:6px 8px;border:1px solid var(--card-hover);border-radius:8px;background:var(--card-hover);color:var(--text-secondary);font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)}
+.my-job-actions button:active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.my-job-notes{margin-top:8px;display:none}
+.my-job-notes.open{display:block}
+.my-job-notes textarea{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--card-hover);background:var(--bg);color:var(--text);font-size:12px;resize:vertical;min-height:50px;outline:none;font-family:inherit}
+.my-job-notes textarea:focus{border-color:var(--accent)}
+.my-job-notes button{margin-top:6px;padding:6px 14px;border:none;border-radius:8px;background:var(--accent);color:#fff;font-size:11px;font-weight:600;cursor:pointer}
+.my-job-meta{font-size:11px;color:var(--text-secondary);margin-top:4px}
 </style>
 <!-- Firebase + Stripe loaded dynamically -->
 <script>
@@ -11652,6 +11684,161 @@ function closeJobPrep() {
   overlay.classList.remove('open');
 }
 
+// ============================================================
+// MY JOBS DASHBOARD
+// ============================================================
+
+var myJobsView = 'search';
+
+function switchJobsView(view) {
+  playClick('tap');
+  myJobsView = view;
+
+  // Update toggle buttons
+  var buttons = document.querySelectorAll('.my-jobs-toggle button');
+  buttons.forEach(function(b, i) {
+    b.classList.toggle('active', (i === 0 && view === 'search') || (i === 1 && view === 'saved'));
+  });
+
+  // Show/hide views
+  document.getElementById('jobsSearchView').style.display = view === 'search' ? '' : 'none';
+  document.getElementById('jobsSavedView').style.display = view === 'saved' ? '' : 'none';
+
+  // Load saved jobs when switching to My Jobs
+  if (view === 'saved') {
+    loadMyJobs();
+  }
+}
+
+function loadMyJobs() {
+  var container = document.getElementById('myJobsContainer');
+
+  if (!firebaseReady || !currentUser) {
+    container.innerHTML = '<div class="my-jobs-signin"><div class="my-jobs-empty-icon">&#128274;</div><h3>Sign in to save jobs</h3><p>Create an account to save jobs, track your applications, and add notes.</p><button onclick="handleAccountClick()">Sign In</button></div>';
+    return;
+  }
+
+  container.innerHTML = '<div class="job-loading"><div class="job-loading-spinner"></div><p>Loading your jobs...</p></div>';
+
+  firebaseFunctions.httpsCallable('getSavedJobs')({}).then(function(result) {
+    var jobs = result.data.jobs || [];
+    renderMyJobs(jobs);
+  }).catch(function(err) {
+    console.error('[MyJobs] Error:', err);
+    container.innerHTML = '<div class="my-jobs-empty"><div class="my-jobs-empty-icon">&#128533;</div><h3>Could not load jobs</h3><p>Please try again later.</p></div>';
+  });
+}
+
+function renderMyJobs(jobs) {
+  var container = document.getElementById('myJobsContainer');
+
+  if (jobs.length === 0) {
+    container.innerHTML = '<div class="my-jobs-empty"><div class="my-jobs-empty-icon">&#128188;</div><h3>No saved jobs yet</h3><p>Search for jobs and tap the star icon to save them here.</p></div>';
+    return;
+  }
+
+  // Group by status
+  var statusOrder = ['interviewing', 'applied', 'offer', 'saved', 'rejected', 'archived'];
+  var grouped = {};
+  jobs.forEach(function(job) {
+    var status = job.savedStatus || 'saved';
+    if (!grouped[status]) grouped[status] = [];
+    grouped[status].push(job);
+  });
+
+  var html = '';
+  statusOrder.forEach(function(status) {
+    var group = grouped[status];
+    if (!group || group.length === 0) return;
+
+    group.forEach(function(job) {
+      var postedText = job.postedAt ? timeAgo(new Date(job.postedAt)) : '';
+      var salaryText = '';
+      if (job.salaryMin && job.salaryMax) {
+        salaryText = '$' + formatSalary(job.salaryMin) + ' – $' + formatSalary(job.salaryMax);
+      }
+
+      html += '<div class="my-job-card" data-job-id="' + escapeHtml(job.id) + '">';
+      html += '<div class="my-job-top">';
+      html += '<div class="my-job-info">';
+      html += '<div class="my-job-title">' + escapeHtml(job.title) + '</div>';
+      html += '<div class="my-job-company">' + escapeHtml(job.company) + '</div>';
+      html += '</div>';
+      html += '<span class="my-job-status ' + escapeHtml(status) + '">' + escapeHtml(status) + '</span>';
+      html += '</div>';
+
+      if (salaryText || job.location || postedText) {
+        html += '<div class="my-job-meta">';
+        var meta = [];
+        if (job.location) meta.push(job.location);
+        if (salaryText) meta.push(salaryText);
+        if (postedText) meta.push(postedText);
+        html += meta.join(' · ');
+        html += '</div>';
+      }
+
+      // Action buttons
+      html += '<div class="my-job-actions">';
+      if (status !== 'applied') html += '<button onclick="updateMyJobStatus(\'' + escapeHtml(job.id) + '\',\'applied\')">Mark Applied</button>';
+      if (status !== 'interviewing') html += '<button onclick="updateMyJobStatus(\'' + escapeHtml(job.id) + '\',\'interviewing\')">Interviewing</button>';
+      if (status !== 'offer') html += '<button onclick="updateMyJobStatus(\'' + escapeHtml(job.id) + '\',\'offer\')">Got Offer</button>';
+      html += '<button onclick="toggleMyJobNotes(\'' + escapeHtml(job.id) + '\')">Notes</button>';
+      html += '<button onclick="updateMyJobStatus(\'' + escapeHtml(job.id) + '\',\'archived\')">Archive</button>';
+      html += '</div>';
+
+      // Notes section
+      html += '<div class="my-job-notes" id="notes-' + escapeHtml(job.id) + '">';
+      html += '<textarea placeholder="Add notes..." id="noteText-' + escapeHtml(job.id) + '">' + escapeHtml(job.savedNotes || '') + '</textarea>';
+      html += '<button onclick="saveMyJobNotes(\'' + escapeHtml(job.id) + '\')">Save Notes</button>';
+      html += '</div>';
+
+      html += '</div>';
+    });
+  });
+
+  container.innerHTML = html;
+}
+
+function updateMyJobStatus(jobId, status) {
+  playClick('tap');
+  if (!firebaseReady || !currentUser) return;
+
+  firebaseFunctions.httpsCallable('updateSavedJobStatus')({
+    jobId: jobId,
+    status: status,
+  }).then(function() {
+    showToast('Status updated to ' + status);
+    loadMyJobs();
+  }).catch(function(err) {
+    console.error('[MyJobs] Update error:', err);
+    showToast('Could not update status');
+  });
+}
+
+function toggleMyJobNotes(jobId) {
+  playClick('tap');
+  var notesDiv = document.getElementById('notes-' + jobId);
+  if (notesDiv) notesDiv.classList.toggle('open');
+}
+
+function saveMyJobNotes(jobId) {
+  playClick('tap');
+  if (!firebaseReady || !currentUser) return;
+
+  var textarea = document.getElementById('noteText-' + jobId);
+  var notes = textarea ? textarea.value : '';
+
+  firebaseFunctions.httpsCallable('updateSavedJobStatus')({
+    jobId: jobId,
+    notes: notes,
+  }).then(function() {
+    showToast('Notes saved');
+  }).catch(function(err) {
+    console.error('[MyJobs] Notes error:', err);
+    showToast('Could not save notes');
+  });
+}
+
 init();</script>
 
 <!-- JOB SEARCH SCREEN -->
@@ -11660,6 +11847,11 @@ init();</script>
     <h2>Find Your Next Role</h2>
     <p>Search real job openings and prepare for the interview</p>
   </div>
+  <div class="my-jobs-toggle">
+    <button class="active" onclick="switchJobsView('search')">Search Jobs</button>
+    <button onclick="switchJobsView('saved')">My Jobs</button>
+  </div>
+  <div id="jobsSearchView">
   <div class="job-search-box">
     <input type="text" id="jobSearchInput" placeholder="Job title, skill, or keyword" autocomplete="off" aria-label="Search jobs">
     <button id="jobSearchBtn" onclick="executeJobSearch()" aria-label="Search">Search</button>
@@ -11697,6 +11889,10 @@ init();</script>
   </div>
   <div id="jobLoadMore" class="job-load-more" style="display:none">
     <button onclick="loadMoreJobs()">Load More Jobs</button>
+  </div>
+  </div>
+  <div id="jobsSavedView" style="display:none">
+    <div id="myJobsContainer"></div>
   </div>
 </div>
 
