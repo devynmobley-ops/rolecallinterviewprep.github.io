@@ -1100,23 +1100,105 @@ exports.searchJobs = functions.https.onCall(async (data, context) => {
 exports.syncJobs = functions.pubsub.schedule('0 3 * * *').timeZone('UTC').onRun(async (context) => {
   const db = admin.firestore();
 
-  // Popular queries to keep fresh
+  // Popular queries to keep fresh — broad coverage to compete with Indeed/Glassdoor
   const popularQueries = [
-    'training specialist',
-    'project manager',
-    'software engineer',
-    'nurse',
-    'data analyst',
-    'marketing manager',
-    'financial analyst',
-    'teacher',
-    'sales representative',
-    'human resources',
-    'accountant',
-    'customer service manager',
-    'operations manager',
-    'welder',
-    'electrician',
+    // === HEALTHCARE ===
+    'nurse', 'registered nurse', 'nurse practitioner', 'physical therapist',
+    'occupational therapist', 'medical assistant', 'pharmacy technician',
+    'dental hygienist', 'respiratory therapist', 'radiologic technologist',
+    'speech language pathologist', 'clinical social worker', 'physician assistant',
+    'surgical technologist', 'paramedic', 'home health aide', 'medical coder',
+    'health information technician', 'dietitian', 'phlebotomist',
+
+    // === TECHNOLOGY ===
+    'software engineer', 'data analyst', 'data scientist', 'web developer',
+    'frontend developer', 'backend developer', 'full stack developer',
+    'devops engineer', 'cybersecurity analyst', 'cloud engineer',
+    'machine learning engineer', 'product manager', 'ux designer',
+    'ui designer', 'database administrator', 'network engineer',
+    'systems administrator', 'IT support', 'QA engineer', 'scrum master',
+    'mobile developer', 'blockchain developer', 'AI engineer',
+
+    // === BUSINESS & FINANCE ===
+    'accountant', 'financial analyst', 'business analyst', 'auditor',
+    'controller', 'bookkeeper', 'actuary', 'financial advisor',
+    'investment analyst', 'compliance officer', 'risk manager',
+    'operations manager', 'management consultant', 'business development',
+    'revenue analyst', 'treasury analyst', 'forensic accountant',
+
+    // === EDUCATION ===
+    'teacher', 'professor', 'school counselor', 'principal',
+    'instructional designer', 'curriculum developer', 'special education teacher',
+    'librarian', 'academic advisor', 'ESL teacher', 'tutor',
+    'training specialist', 'corporate trainer', 'education consultant',
+
+    // === TRADES & CONSTRUCTION ===
+    'electrician', 'plumber', 'HVAC technician', 'welder',
+    'carpenter', 'machinist', 'automotive technician', 'diesel mechanic',
+    'pipefitter', 'ironworker', 'sheet metal worker', 'lineman',
+    'elevator technician', 'insulation technician', 'glazier',
+    'heavy equipment operator', 'crane operator', 'construction manager',
+    'solar panel installer', 'wind turbine technician',
+
+    // === SALES & MARKETING ===
+    'sales representative', 'account executive', 'sales manager',
+    'marketing manager', 'digital marketing', 'social media manager',
+    'content writer', 'copywriter', 'SEO specialist', 'brand manager',
+    'public relations', 'event planner', 'media buyer', 'marketing analyst',
+    'business development manager', 'inside sales', 'territory manager',
+
+    // === HUMAN RESOURCES ===
+    'human resources', 'HR manager', 'recruiter', 'talent acquisition',
+    'HR specialist', 'compensation analyst', 'benefits administrator',
+    'training manager', 'organizational development', 'HR generalist',
+
+    // === LEGAL ===
+    'paralegal', 'legal assistant', 'attorney', 'lawyer',
+    'compliance analyst', 'contract administrator', 'legal secretary',
+    'corporate counsel', 'litigation support', 'legal operations',
+
+    // === CREATIVE & DESIGN ===
+    'graphic designer', 'video editor', 'photographer', 'animator',
+    'art director', 'creative director', 'illustrator', 'motion graphics',
+    'interior designer', 'fashion designer', '3D artist',
+
+    // === CUSTOMER SERVICE ===
+    'customer service', 'customer service manager', 'call center',
+    'client relations', 'account manager', 'technical support',
+    'help desk', 'concierge',
+
+    // === LOGISTICS & SUPPLY CHAIN ===
+    'logistics coordinator', 'supply chain manager', 'warehouse manager',
+    'procurement specialist', 'inventory manager', 'transportation manager',
+    'distribution manager', 'fleet manager',
+
+    // === HOSPITALITY & FOOD SERVICE ===
+    'restaurant manager', 'hotel manager', 'chef', 'sous chef',
+    'bartender', 'catering manager', 'event coordinator',
+    'food service manager', 'housekeeping supervisor',
+
+    // === GOVERNMENT & NONPROFIT ===
+    'social worker', 'case manager', 'program coordinator',
+    'grant writer', 'policy analyst', 'government affairs',
+    'nonprofit director', 'community outreach',
+
+    // === MANUFACTURING ===
+    'production manager', 'quality control', 'manufacturing engineer',
+    'industrial engineer', 'maintenance technician', 'plant manager',
+    'safety manager', 'process engineer',
+
+    // === ENTRY LEVEL / GENERAL ===
+    'entry level', 'administrative assistant', 'receptionist',
+    'office manager', 'executive assistant', 'data entry',
+    'intern', 'coordinator', 'associate',
+
+    // === REMOTE / FLEXIBLE ===
+    'remote', 'work from home', 'virtual assistant', 'remote nurse',
+    'remote developer', 'remote customer service', 'freelance',
+
+    // === MANAGEMENT / LEADERSHIP ===
+    'director', 'vice president', 'general manager', 'branch manager',
+    'department head', 'team lead', 'supervisor', 'regional manager',
   ];
 
   let totalIngested = 0;
@@ -1441,21 +1523,33 @@ exports.seedJobs = functions.https.onRequest(async (req, res) => {
   ].filter(Boolean);
 
   const queries = [
-    'training specialist',
-    'project manager',
-    'nurse',
-    'software engineer',
-    'data analyst',
-    'marketing manager',
-    'accountant',
-    'sales representative',
-    'teacher',
-    'electrician',
-    'human resources manager',
-    'operations manager',
-    'financial analyst',
-    'customer service manager',
-    'welder',
+    'nurse', 'registered nurse', 'nurse practitioner', 'physical therapist',
+    'medical assistant', 'pharmacy technician', 'dental hygienist',
+    'software engineer', 'data analyst', 'data scientist', 'web developer',
+    'full stack developer', 'devops engineer', 'cybersecurity analyst',
+    'product manager', 'ux designer', 'IT support', 'QA engineer',
+    'accountant', 'financial analyst', 'business analyst', 'auditor',
+    'controller', 'financial advisor', 'operations manager',
+    'teacher', 'professor', 'school counselor', 'instructional designer',
+    'special education teacher', 'corporate trainer',
+    'electrician', 'plumber', 'HVAC technician', 'welder',
+    'carpenter', 'automotive technician', 'diesel mechanic',
+    'heavy equipment operator', 'construction manager', 'solar panel installer',
+    'sales representative', 'account executive', 'sales manager',
+    'marketing manager', 'digital marketing', 'social media manager',
+    'content writer', 'copywriter', 'business development manager',
+    'human resources', 'HR manager', 'recruiter', 'talent acquisition',
+    'paralegal', 'attorney', 'lawyer', 'compliance officer',
+    'graphic designer', 'video editor', 'photographer', 'creative director',
+    'customer service', 'customer service manager', 'technical support',
+    'logistics coordinator', 'supply chain manager', 'warehouse manager',
+    'restaurant manager', 'hotel manager', 'chef', 'event coordinator',
+    'social worker', 'case manager', 'program coordinator',
+    'production manager', 'quality control', 'manufacturing engineer',
+    'maintenance technician', 'safety manager',
+    'entry level', 'administrative assistant', 'executive assistant',
+    'remote', 'virtual assistant', 'freelance',
+    'director', 'general manager', 'supervisor', 'project manager',
   ];
 
   let totalFetched = 0;
