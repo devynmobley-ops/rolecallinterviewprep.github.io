@@ -1,6 +1,9 @@
 const functions = require('firebase-functions/v1');
 const admin = require('firebase-admin');
 const Stripe = require('stripe');
+const { AdzunaSource } = require('./jobs/sources/AdzunaSource');
+const { normalizeJob, toFirestoreJob } = require('./jobs/normalizer');
+const { findDuplicate, mergeJobs, processJobs } = require('./jobs/deduplicator');
 
 admin.initializeApp();
 
@@ -864,3 +867,670 @@ exports.aggregateInstitutionStats = functions.pubsub
 
     return null;
   });
+
+// ============================================================
+// JOB SEARCH ENGINE — CLOUD FUNCTIONS
+// ============================================================
+
+// Shared job source instances
+const adzunaSource = new AdzunaSource();
+
+/**
+ * ingestJobs — Pulls jobs from configured providers and stores in Firestore.
+ * Callable function for manual triggering. Also called by syncJobs.
+ * 
+ * @param {string} query - Search query
+ * @param {string} location - Location filter
+ * @param {number} maxPages - Max pages to fetch per provider (default 3)
+ * @returns {{ stats: { created, updated, skipped, errors }, totalFetched }}
+ */
+exports.ingestJobs = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  // Only super admins can trigger ingestion
+  const superAdminDoc = await admin.firestore()
+    .collection('super_admins').doc(context.auth.uid).get();
+  if (!superAdminDoc.exists) {
+    throw new functions.https.HttpsError('permission-denied', 'Admin access required');
+  }
+
+  const { query, location, maxPages = 3 } = data;
+  if (!query) {
+    throw new functions.https.HttpsError('invalid-argument', 'query is required');
+  }
+
+  const db = admin.firestore();
+  let totalFetched = 0;
+  const allStats = { created: 0, updated: 0, skipped: 0, errors: 0 };
+
+  // Fetch from Adzuna
+  if (adzunaSource.isConfigured()) {
+    try {
+      for (let page = 1; page <= maxPages; page++) {
+        const result = await adzunaSource.fetchJobs(query, location, { page });
+        
+        if (result.jobs.length === 0) break;
+        
+        totalFetched += result.jobs.length;
+        
+        // Normalize and set dedup keys
+        const normalized = result.jobs.map(j => {
+          const n = normalizeJob(j, adzunaSource);
+          return n;
+        });
+        
+        // Process with deduplication
+        const stats = await processJobs(normalized, db);
+        allStats.created += stats.created;
+        allStats.updated += stats.updated;
+        allStats.skipped += stats.skipped;
+        allStats.errors += stats.errors;
+        
+        console.log(`[Ingest] Adzuna page ${page}: ${result.jobs.length} jobs, ${stats.created} created, ${stats.updated} updated`);
+        
+        // Rate limit: wait 500ms between pages
+        if (page < maxPages) {
+          await new Promise(r => setTimeout(r, 500));
+        }
+      }
+    } catch (err) {
+      console.error('[Ingest] Adzuna error:', err.message);
+      allStats.errors++;
+    }
+  } else {
+    console.log('[Ingest] Adzuna not configured — skipping');
+  }
+
+  console.log(`[Ingest] Complete: ${totalFetched} fetched, ${allStats.created} created, ${allStats.updated} updated`);
+  return { stats: allStats, totalFetched };
+});
+
+/**
+ * searchJobs — Search jobs in Firestore with filters and pagination.
+ * Callable function. Public (no auth required — jobs are public data).
+ * 
+ * @param {string} query - Search query (matched against title, company, description)
+ * @param {Object} filters - Optional filters
+ * @param {string} filters.location - Location filter
+ * @param {boolean} filters.remote - Remote only
+ * @param {string} filters.employmentType - Employment type filter
+ * @param {number} filters.salaryMin - Minimum salary
+ * @param {string} filters.seniority - Seniority level
+ * @param {string} filters.sortBy - "relevance" | "date" | "salary"
+ * @param {number} filters.page - Page number (1-indexed)
+ * @param {number} filters.pageSize - Results per page (default 20)
+ * @returns {{ jobs: Array, totalResults: number, page: number, hasMore: boolean }}
+ */
+exports.searchJobs = functions.https.onCall(async (data, context) => {
+  const { query = '', filters = {} } = data;
+  const {
+    location = '',
+    remote = null,
+    employmentType = null,
+    salaryMin = null,
+    seniority = null,
+    sortBy = 'relevance',
+    page = 1,
+    pageSize = 20,
+  } = filters;
+
+  const db = admin.firestore();
+  const limit = Math.min(pageSize, 50);
+
+  try {
+    // Build Firestore query with filters
+    let queryRef = db.collection('jobs').where('active', '==', true);
+
+    // Apply filters that work well with Firestore indexes
+    if (remote === true) {
+      queryRef = queryRef.where('remote', '==', true);
+    }
+    if (employmentType) {
+      queryRef = queryRef.where('employmentType', '==', employmentType);
+    }
+    if (seniority) {
+      queryRef = queryRef.where('seniority', '==', seniority);
+    }
+
+    // Sort
+    if (sortBy === 'date') {
+      queryRef = queryRef.orderBy('postedAt', 'desc');
+    } else if (sortBy === 'salary') {
+      queryRef = queryRef.orderBy('salaryMax', 'desc');
+    } else {
+      // Default: order by postedAt for now (relevance ranking applied post-fetch)
+      queryRef = queryRef.orderBy('postedAt', 'desc');
+    }
+
+    // Pagination — fetch enough to rank and slice
+    const fetchLimit = Math.min(limit * 3, 150); // Fetch extra for ranking
+    queryRef = queryRef.limit(fetchLimit);
+
+    const snap = await queryRef.get();
+    let jobs = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    // Post-fetch filtering (things Firestore can't do well)
+    if (query) {
+      const queryLower = query.toLowerCase();
+      const queryTerms = queryLower.split(/\s+/).filter(Boolean);
+      
+      jobs = jobs.map(job => {
+        const searchText = [
+          job.title || '',
+          job.company || '',
+          job.description || '',
+          ...(job.skills || []),
+          job.category || '',
+          job.location || '',
+        ].join(' ').toLowerCase();
+
+        // Score based on term matches
+        let score = 0;
+        for (const term of queryTerms) {
+          if ((job.title || '').toLowerCase().includes(term)) score += 10;
+          if ((job.company || '').toLowerCase().includes(term)) score += 5;
+          if ((job.skills || []).some(s => s.toLowerCase().includes(term))) score += 3;
+          if ((job.description || '').toLowerCase().includes(term)) score += 1;
+        }
+
+        return { ...job, _relevanceScore: score };
+      }).filter(job => job._relevanceScore > 0);
+    }
+
+    // Location filter (post-fetch — fuzzy matching)
+    if (location && location.toLowerCase() !== 'remote') {
+      const locLower = location.toLowerCase();
+      jobs = jobs.filter(job => {
+        const jobLoc = (job.location || '').toLowerCase();
+        return jobLoc.includes(locLower) || 
+               jobLoc.split(',').some(part => part.trim().startsWith(locLower.substring(0, 3)));
+      });
+    }
+
+    // Salary filter (post-fetch)
+    if (salaryMin) {
+      jobs = jobs.filter(job => {
+        if (!job.salaryMax && !job.salaryMin) return true; // Include jobs without salary data
+        return (job.salaryMax || job.salaryMin || 0) >= salaryMin;
+      });
+    }
+
+    // Sort by relevance if query provided
+    if (query && sortBy === 'relevance') {
+      jobs.sort((a, b) => (b._relevanceScore || 0) - (a._relevanceScore || 0));
+    }
+
+    // Get total before pagination
+    const totalResults = jobs.length;
+
+    // Paginate
+    const offset = (page - 1) * limit;
+    const paginatedJobs = jobs.slice(offset, offset + limit);
+
+    // Clean up internal scoring fields before returning
+    const cleanJobs = paginatedJobs.map(({ _relevanceScore, ...job }) => ({
+      ...job,
+      // Convert Firestore timestamps to ISO strings for frontend
+      postedAt: job.postedAt?.toDate?.()?.toISOString() || job.postedAt || null,
+      expiresAt: job.expiresAt?.toDate?.()?.toISOString() || job.expiresAt || null,
+      importedAt: job.importedAt?.toDate?.()?.toISOString() || job.importedAt || null,
+    }));
+
+    return {
+      jobs: cleanJobs,
+      totalResults,
+      page,
+      hasMore: offset + limit < totalResults,
+    };
+  } catch (err) {
+    console.error('[SearchJobs] Error:', err.message);
+    throw new functions.https.HttpsError('internal', 'Search failed. Please try again.');
+  }
+});
+
+/**
+ * syncJobs — Scheduled function that updates jobs daily.
+ * Runs at 3 AM UTC every day.
+ * - Fetches fresh jobs for popular queries
+ * - Marks expired jobs as inactive
+ * - Updates lastSyncedAt timestamps
+ */
+exports.syncJobs = functions.pubsub.schedule('0 3 * * *').timeZone('UTC').onRun(async (context) => {
+  const db = admin.firestore();
+
+  // Popular queries to keep fresh
+  const popularQueries = [
+    'training specialist',
+    'project manager',
+    'software engineer',
+    'nurse',
+    'data analyst',
+    'marketing manager',
+    'financial analyst',
+    'teacher',
+    'sales representative',
+    'human resources',
+    'accountant',
+    'customer service manager',
+    'operations manager',
+    'welder',
+    'electrician',
+  ];
+
+  let totalIngested = 0;
+
+  // Ingest fresh jobs for popular queries
+  if (adzunaSource.isConfigured()) {
+    for (const query of popularQueries) {
+      try {
+        const result = await adzunaSource.fetchJobs(query, '', { page: 1, resultsPerPage: 25 });
+        
+        if (result.jobs.length > 0) {
+          const normalized = result.jobs.map(j => normalizeJob(j, adzunaSource));
+          const stats = await processJobs(normalized, db);
+          totalIngested += stats.created + stats.updated;
+        }
+        
+        // Rate limit
+        await new Promise(r => setTimeout(r, 1000));
+      } catch (err) {
+        console.error(`[Sync] Error fetching "${query}":`, err.message);
+      }
+    }
+  }
+
+  // Mark expired jobs as inactive
+  const now = admin.firestore.Timestamp.now();
+  const expiredSnap = await db.collection('jobs')
+    .where('active', '==', true)
+    .where('expiresAt', '<', now)
+    .limit(500)
+    .get();
+
+  if (!expiredSnap.empty) {
+    const batch = db.batch();
+    expiredSnap.docs.forEach(doc => {
+      batch.update(doc.ref, { active: false, lastSyncedAt: now });
+    });
+    await batch.commit();
+    console.log(`[Sync] Deactivated ${expiredSnap.size} expired jobs`);
+  }
+
+  // Mark jobs older than 60 days as inactive (even without expiresAt)
+  const sixtyDaysAgo = admin.firestore.Timestamp.fromDate(
+    new Date(Date.now() - 60 * 24 * 60 * 60 * 1000)
+  );
+  const staleSnap = await db.collection('jobs')
+    .where('active', '==', true)
+    .where('postedAt', '<', sixtyDaysAgo)
+    .limit(500)
+    .get();
+
+  if (!staleSnap.empty) {
+    const batch = db.batch();
+    staleSnap.docs.forEach(doc => {
+      batch.update(doc.ref, { active: false, lastSyncedAt: now });
+    });
+    await batch.commit();
+    console.log(`[Sync] Deactivated ${staleSnap.size} stale jobs (>60 days old)`);
+  }
+
+  console.log(`[Sync] Complete: ${totalIngested} jobs refreshed, expired/stale deactivated`);
+  return null;
+});
+
+/**
+ * trackJobEvent — Records job-related analytics events.
+ * Callable function. Authenticated (optional — can track anonymous events).
+ */
+exports.trackJobEvent = functions.https.onCall(async (data, context) => {
+  const { event, query, filters, jobId } = data;
+  
+  if (!event) {
+    throw new functions.https.HttpsError('invalid-argument', 'event is required');
+  }
+
+  const validEvents = ['job_search', 'job_view', 'job_save', 'job_apply_click', 'job_filter_used', 'interview_prep_clicked'];
+  if (!validEvents.includes(event)) {
+    throw new functions.https.HttpsError('invalid-argument', `Invalid event type: ${event}`);
+  }
+
+  await admin.firestore().collection('jobAnalytics').add({
+    event,
+    query: query || null,
+    filters: filters || null,
+    jobId: jobId || null,
+    uid: context.auth?.uid || null,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  return { success: true };
+});
+
+/**
+ * saveJob — Save a job for the authenticated user.
+ * Creates a reference in savedJobs/{uid}/jobs/{jobId}.
+ */
+exports.saveJob = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const { jobId, status = 'saved', notes = '' } = data;
+  if (!jobId) {
+    throw new functions.https.HttpsError('invalid-argument', 'jobId is required');
+  }
+
+  // Verify the job exists
+  const jobDoc = await admin.firestore().collection('jobs').doc(jobId).get();
+  if (!jobDoc.exists) {
+    throw new functions.https.HttpsError('not-found', 'Job not found');
+  }
+
+  const uid = context.auth.uid;
+  const saveRef = admin.firestore()
+    .collection('savedJobs').doc(uid)
+    .collection('jobs').doc(jobId);
+
+  await saveRef.set({
+    jobId,
+    status,
+    notes,
+    savedAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+  }, { merge: true });
+
+  return { success: true };
+});
+
+/**
+ * unsaveJob — Remove a saved job for the authenticated user.
+ */
+exports.unsaveJob = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const { jobId } = data;
+  if (!jobId) {
+    throw new functions.https.HttpsError('invalid-argument', 'jobId is required');
+  }
+
+  const uid = context.auth.uid;
+  await admin.firestore()
+    .collection('savedJobs').doc(uid)
+    .collection('jobs').doc(jobId)
+    .delete();
+
+  return { success: true };
+});
+
+/**
+ * getSavedJobs — Get all saved jobs for the authenticated user.
+ * Returns saved job metadata joined with job details.
+ */
+exports.getSavedJobs = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const uid = context.auth.uid;
+  const savedSnap = await admin.firestore()
+    .collection('savedJobs').doc(uid)
+    .collection('jobs')
+    .orderBy('savedAt', 'desc')
+    .limit(100)
+    .get();
+
+  if (savedSnap.empty) {
+    return { jobs: [] };
+  }
+
+  // Fetch job details for each saved job
+  const jobs = [];
+  for (const savedDoc of savedSnap.docs) {
+    const savedData = savedDoc.data();
+    const jobDoc = await admin.firestore().collection('jobs').doc(savedData.jobId).get();
+    
+    if (jobDoc.exists) {
+      const jobData = jobDoc.data();
+      jobs.push({
+        ...jobData,
+        id: jobDoc.id,
+        savedStatus: savedData.status,
+        savedNotes: savedData.notes,
+        savedAt: savedData.savedAt?.toDate?.()?.toISOString() || null,
+        postedAt: jobData.postedAt?.toDate?.()?.toISOString() || null,
+      });
+    }
+  }
+
+  return { jobs };
+});
+
+/**
+ * updateSavedJobStatus — Update the status/notes of a saved job.
+ */
+exports.updateSavedJobStatus = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const { jobId, status, notes } = data;
+  if (!jobId) {
+    throw new functions.https.HttpsError('invalid-argument', 'jobId is required');
+  }
+
+  const validStatuses = ['saved', 'applied', 'interviewing', 'offer', 'rejected', 'archived'];
+  if (status && !validStatuses.includes(status)) {
+    throw new functions.https.HttpsError('invalid-argument', `Invalid status: ${status}`);
+  }
+
+  const uid = context.auth.uid;
+  const updateData = { updatedAt: admin.firestore.FieldValue.serverTimestamp() };
+  if (status) updateData.status = status;
+  if (notes !== undefined) updateData.notes = notes;
+
+  await admin.firestore()
+    .collection('savedJobs').doc(uid)
+    .collection('jobs').doc(jobId)
+    .update(updateData);
+
+  return { success: true };
+});
+
+/**
+ * getJobStats — Admin function to get job search analytics.
+ * Returns aggregate stats about job data and search behavior.
+ */
+exports.getJobStats = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  // Check super admin access
+  const superAdminDoc = await admin.firestore()
+    .collection('super_admins').doc(context.auth.uid).get();
+  if (!superAdminDoc.exists) {
+    throw new functions.https.HttpsError('permission-denied', 'Admin access required');
+  }
+
+  const db = admin.firestore();
+
+  // Count active jobs
+  const activeSnap = await db.collection('jobs')
+    .where('active', '==', true)
+    .count().get();
+  const activeJobs = activeSnap.data().count;
+
+  // Count total jobs
+  const totalSnap = await db.collection('jobs').count().get();
+  const totalJobs = totalSnap.data().count;
+
+  // Jobs by source
+  const sources = {};
+  const sourcesSnap = await db.collection('jobs')
+    .where('active', '==', true)
+    .select('sourceId')
+    .limit(1000)
+    .get();
+  sourcesSnap.docs.forEach(doc => {
+    const src = doc.data().sourceId || 'unknown';
+    sources[src] = (sources[src] || 0) + 1;
+  });
+
+  // Recent analytics (last 7 days)
+  const sevenDaysAgo = admin.firestore.Timestamp.fromDate(
+    new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+  );
+  const analyticsSnap = await db.collection('jobAnalytics')
+    .where('createdAt', '>', sevenDaysAgo)
+    .select('event')
+    .limit(5000)
+    .get();
+
+  const events = {};
+  analyticsSnap.docs.forEach(doc => {
+    const evt = doc.data().event || 'unknown';
+    events[evt] = (events[evt] || 0) + 1;
+  });
+
+  return {
+    activeJobs,
+    totalJobs,
+    jobsBySource: sources,
+    analyticsLast7Days: events,
+  };
+});
+
+/**
+ * seedJobs — One-time HTTP endpoint to seed jobs into Firestore.
+ * Protected by a simple secret key.
+ * Call: GET https://<project>.cloudfunctions.net/seedJobs?key=rolecall-seed-2026
+ */
+exports.seedJobs = functions.https.onRequest(async (req, res) => {
+  const key = req.query.key;
+  if (key !== 'rolecall-seed-2026') {
+    return res.status(403).json({ error: 'Invalid key' });
+  }
+
+  const db = admin.firestore();
+  const source = new AdzunaSource();
+
+  if (!source.isConfigured()) {
+    return res.status(500).json({ error: 'Adzuna not configured' });
+  }
+
+  const queries = [
+    'training specialist',
+    'project manager',
+    'nurse',
+    'software engineer',
+    'data analyst',
+    'marketing manager',
+    'accountant',
+    'sales representative',
+    'teacher',
+    'electrician',
+    'human resources manager',
+    'operations manager',
+    'financial analyst',
+    'customer service manager',
+    'welder',
+  ];
+
+  let totalFetched = 0;
+  let totalCreated = 0;
+  let totalUpdated = 0;
+  let errors = 0;
+
+  for (const query of queries) {
+    try {
+      const result = await source.fetchJobs(query, '', { page: 1, resultsPerPage: 25 });
+      
+      if (result.jobs.length === 0) continue;
+      
+      const normalized = result.jobs.map(j => normalizeJob(j, source));
+      const stats = await processJobs(normalized, db);
+      
+      totalFetched += result.jobs.length;
+      totalCreated += stats.created;
+      totalUpdated += stats.updated;
+      errors += stats.errors;
+      
+      console.log(`[Seed] "${query}": ${result.jobs.length} fetched, ${stats.created} created, ${stats.updated} updated`);
+      
+      // Rate limit
+      await new Promise(r => setTimeout(r, 1000));
+    } catch (err) {
+      console.error(`[Seed] Error for "${query}":`, err.message);
+      errors++;
+    }
+  }
+
+  res.json({
+    success: true,
+    totalFetched,
+    totalCreated,
+    totalUpdated,
+    errors,
+    queries: queries.length,
+  });
+});
+
+/**
+ * loadJobs — HTTP endpoint to bulk load normalized jobs into Firestore.
+ * Accepts POST with JSON array of jobs.
+ * Protected by the same secret key as seedJobs.
+ */
+exports.loadJobs = functions.https.onRequest(async (req, res) => {
+  const key = req.query.key;
+  if (key !== 'rolecall-seed-2026') {
+    return res.status(403).json({ error: 'Invalid key' });
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'POST required' });
+  }
+
+  const db = admin.firestore();
+  const jobs = req.body;
+
+  if (!Array.isArray(jobs)) {
+    return res.status(400).json({ error: 'Body must be a JSON array' });
+  }
+
+  let created = 0;
+  let errors = 0;
+  const batch = db.batch();
+  let batchCount = 0;
+
+  for (const job of jobs) {
+    try {
+      const newRef = db.collection('jobs').doc();
+      batch.set(newRef, {
+        ...job,
+        active: true,
+        importedAt: admin.firestore.FieldValue.serverTimestamp(),
+        lastSyncedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+      batchCount++;
+      created++;
+
+      if (batchCount >= 450) {
+        await batch.commit();
+        batchCount = 0;
+      }
+    } catch (err) {
+      errors++;
+    }
+  }
+
+  if (batchCount > 0) {
+    await batch.commit();
+  }
+
+  res.json({ success: true, created, errors, total: jobs.length });
+});

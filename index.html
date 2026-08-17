@@ -447,6 +447,85 @@ body.show-scrollbars .screen{scrollbar-width:thin;scrollbar-color:var(--text-sec
 body.show-scrollbars .screen::-webkit-scrollbar{width:6px}
 body.show-scrollbars .screen::-webkit-scrollbar-thumb{background:var(--text-secondary);border-radius:3px}
 body.show-scrollbars .screen::-webkit-scrollbar-track{background:transparent}
+/* === JOB SEARCH ENGINE === */
+.job-search-hero{padding:20px;text-align:center}
+.job-search-hero h2{font-size:24px;font-weight:800;margin-bottom:4px}
+.job-search-hero p{font-size:13px;color:var(--text-secondary)}
+.job-search-box{padding:8px 20px 4px;display:flex;gap:8px}
+.job-search-box input{flex:1;padding:12px 16px;border-radius:var(--radius);border:1px solid transparent;background:var(--card);color:var(--text);font-size:15px;outline:none;transition:border var(--transition)}
+.job-search-box input:focus{border-color:var(--accent)}
+.job-search-box input::placeholder{color:var(--text-secondary)}
+.job-search-box button{padding:12px 20px;border:none;border-radius:var(--radius);background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:15px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all var(--transition)}
+.job-search-box button:active{transform:scale(0.97)}
+.job-search-box button:disabled{opacity:0.4;cursor:not-allowed}
+.job-location-box{padding:4px 20px 8px}
+.job-location-box input{width:100%;padding:10px 16px 10px 36px;border-radius:var(--radius);border:1px solid transparent;background:var(--card);color:var(--text);font-size:14px;outline:none;transition:border var(--transition)}
+.job-location-box input:focus{border-color:var(--accent)}
+.job-location-box input::placeholder{color:var(--text-secondary)}
+.job-location-wrap{position:relative}
+.job-location-wrap .search-icon{position:absolute;left:34px;top:50%;transform:translateY(-50%);color:var(--text-secondary);font-size:14px;pointer-events:none}
+.job-filters-row{display:flex;gap:8px;padding:4px 20px 12px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.job-filters-row::-webkit-scrollbar{display:none}
+.job-filter-pill{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;border:1.5px solid var(--card);background:var(--card);color:var(--text-secondary);transition:all var(--transition);flex-shrink:0}
+.job-filter-pill.active{border-color:var(--accent);color:var(--accent-text);background:rgba(108,92,231,0.1)}
+.job-filter-pill:active{transform:scale(0.95)}
+.job-results-header{display:flex;justify-content:space-between;align-items:center;padding:8px 20px}
+.job-results-count{font-size:13px;color:var(--text-secondary);font-weight:600}
+.job-sort-btn{font-size:12px;color:var(--accent-text);background:none;border:none;cursor:pointer;font-weight:600;padding:4px 8px;border-radius:8px}
+.job-sort-btn:active{background:var(--card)}
+.job-list{padding:4px 16px 100px}
+.job-card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:10px;cursor:pointer;transition:all var(--transition);border:1px solid transparent;position:relative}
+.job-card:active{transform:scale(0.98);background:var(--card-hover);border-color:var(--accent)}
+.job-card-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}
+.job-company-logo{width:44px;height:44px;border-radius:10px;background:var(--card-hover);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:var(--accent-text);flex-shrink:0;overflow:hidden}
+.job-company-logo img{width:100%;height:100%;object-fit:cover;border-radius:10px}
+.job-card-info{flex:1;min-width:0}
+.job-card-title{font-size:15px;font-weight:700;line-height:1.3;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.job-card-company{font-size:13px;color:var(--accent-text);font-weight:600;margin-bottom:2px}
+.job-card-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.job-meta-tag{font-size:11px;padding:3px 8px;border-radius:8px;background:var(--card-hover);color:var(--text-secondary);font-weight:600;white-space:nowrap}
+.job-meta-tag.remote{background:rgba(46,204,113,0.15);color:#2ecc71}
+.job-meta-tag.salary{background:rgba(108,92,231,0.15);color:var(--accent-text)}
+.job-card-desc{font-size:13px;color:var(--text-secondary);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:10px}
+.job-card-footer{display:flex;justify-content:space-between;align-items:center}
+.job-posted-date{font-size:11px;color:var(--text-secondary)}
+.job-save-btn{background:none;border:none;cursor:pointer;font-size:18px;padding:4px;border-radius:8px;transition:all var(--transition)}
+.job-save-btn:active{transform:scale(1.2)}
+.job-save-btn.saved{color:var(--accent-text)}
+/* Job Detail Overlay */
+.job-detail-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;overflow-y:auto;-webkit-overflow-scrolling:touch;transform:translateX(100%);transition:transform var(--transition)}
+.job-detail-overlay.open{transform:translateX(0)}
+.job-detail-header{position:sticky;top:0;background:var(--bg);padding:calc(12px + var(--safe-top)) 20px 12px;display:flex;align-items:center;gap:12px;z-index:10;backdrop-filter:blur(12px);border-bottom:1px solid var(--card-hover)}
+.job-detail-header button{background:none;border:none;color:var(--accent-text);font-size:22px;cursor:pointer;padding:4px 8px;border-radius:8px;min-width:40px;min-height:40px;display:flex;align-items:center;justify-content:center}
+.job-detail-header button:active{background:var(--card)}
+.job-detail-header h2{font-size:16px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.job-detail-content{padding:20px}
+.job-detail-title{font-size:22px;font-weight:800;margin-bottom:4px}
+.job-detail-company{font-size:15px;color:var(--accent-text);font-weight:600;margin-bottom:12px}
+.job-detail-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.job-detail-section{margin-bottom:20px}
+.job-detail-section h3{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-secondary);margin-bottom:8px}
+.job-detail-section p{font-size:14px;line-height:1.7;color:var(--text)}
+.job-detail-skills{display:flex;flex-wrap:wrap;gap:6px}
+.job-detail-skill{font-size:12px;padding:5px 12px;border-radius:20px;background:rgba(108,92,231,0.12);color:var(--accent-text);font-weight:600}
+.job-detail-actions{padding:16px 20px;padding-bottom:calc(16px + var(--safe-bottom));display:flex;gap:10px;position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--card-hover)}
+.job-apply-btn{flex:1;padding:14px;border:none;border-radius:var(--radius);background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:all var(--transition)}
+.job-apply-btn:active{transform:scale(0.97)}
+.job-detail-save-btn{padding:14px 18px;border:1.5px solid var(--card-hover);border-radius:var(--radius);background:var(--card);color:var(--text);font-size:20px;cursor:pointer;transition:all var(--transition)}
+.job-detail-save-btn:active{transform:scale(0.97)}
+.job-detail-save-btn.saved{border-color:var(--accent);color:var(--accent-text)}
+/* Empty/Loading states */
+.job-empty{text-align:center;padding:60px 20px}
+.job-empty-icon{font-size:48px;margin-bottom:12px}
+.job-empty h3{font-size:18px;font-weight:700;margin-bottom:4px}
+.job-empty p{font-size:13px;color:var(--text-secondary);line-height:1.5}
+.job-loading{text-align:center;padding:40px 20px}
+.job-loading-spinner{width:32px;height:32px;border:3px solid var(--card-hover);border-top-color:var(--accent);border-radius:50%;animation:job-spin 0.8s linear infinite;margin:0 auto 12px}
+@keyframes job-spin{to{transform:rotate(360deg)}}
+.job-loading p{font-size:13px;color:var(--text-secondary)}
+.job-load-more{text-align:center;padding:16px 20px 40px}
+.job-load-more button{padding:12px 32px;border:1.5px solid var(--accent);border-radius:var(--radius);background:transparent;color:var(--accent-text);font-size:14px;font-weight:700;cursor:pointer;transition:all var(--transition)}
+.job-load-more button:active{transform:scale(0.97);background:rgba(108,92,231,0.1)}
 </style>
 <!-- Firebase + Stripe loaded dynamically -->
 <script>
@@ -9097,7 +9176,7 @@ let navTimeout = null;
 let previousScreen = 'home';
 let currentTab = 'home';
 
-const TAB_SCREENS = ['home', 'roles-tab', 'mock-tab', 'updates-tab', 'resume-tab', 'more'];
+const TAB_SCREENS = ['home', 'roles-tab', 'mock-tab', 'jobs-tab', 'updates-tab', 'resume-tab', 'more'];
 
 function switchTab(tab) {
   playClick('tap');
@@ -10934,7 +11013,495 @@ function renderRequestedRoles() {
   }
 }
 
+// ============================================================
+// JOB SEARCH ENGINE — FRONTEND
+// ============================================================
+
+// Job search state
+var jobSearchState = {
+  query: '',
+  location: '',
+  sortBy: 'relevance',
+  remote: null,
+  employmentType: null,
+  seniority: null,
+  page: 1,
+  hasMore: false,
+  totalResults: 0,
+  jobs: [],
+  loading: false,
+  currentJob: null,
+  savedJobIds: new Set(),
+};
+
+// Enter key triggers search
+document.addEventListener('DOMContentLoaded', function() {
+  var jobInput = document.getElementById('jobSearchInput');
+  var locInput = document.getElementById('jobLocationInput');
+  if (jobInput) {
+    jobInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') executeJobSearch();
+    });
+  }
+  if (locInput) {
+    locInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') executeJobSearch();
+    });
+  }
+});
+
+function executeJobSearch(resetPage) {
+  playClick('tap');
+  var query = (document.getElementById('jobSearchInput').value || '').trim();
+  var location = (document.getElementById('jobLocationInput').value || '').trim();
+
+  if (!query) {
+    showToast('Enter a job title or keyword');
+    return;
+  }
+
+  if (resetPage !== false) {
+    jobSearchState.page = 1;
+    jobSearchState.jobs = [];
+  }
+
+  jobSearchState.query = query;
+  jobSearchState.location = location;
+  jobSearchState.loading = true;
+
+  renderJobResults();
+  trackJobEvent('job_search', { query: query, location: location });
+
+  if (!firebaseReady) {
+    showToast('Still loading, please wait...');
+    jobSearchState.loading = false;
+    renderJobResults();
+    return;
+  }
+
+  var searchFn = firebaseFunctions.httpsCallable('searchJobs');
+  searchFn({
+    query: query,
+    filters: {
+      location: location,
+      remote: jobSearchState.remote,
+      employmentType: jobSearchState.employmentType,
+      seniority: jobSearchState.seniority,
+      sortBy: jobSearchState.sortBy,
+      page: jobSearchState.page,
+      pageSize: 20,
+    }
+  }).then(function(result) {
+    var data = result.data;
+    if (jobSearchState.page === 1) {
+      jobSearchState.jobs = data.jobs || [];
+    } else {
+      jobSearchState.jobs = jobSearchState.jobs.concat(data.jobs || []);
+    }
+    jobSearchState.totalResults = data.totalResults || 0;
+    jobSearchState.hasMore = data.hasMore || false;
+    jobSearchState.loading = false;
+    renderJobResults();
+  }).catch(function(err) {
+    console.error('[JobSearch] Error:', err);
+    jobSearchState.loading = false;
+    jobSearchState.jobs = [];
+    jobSearchState.totalResults = 0;
+    renderJobResults();
+    showToast('Search failed. Please try again.');
+  });
+}
+
+function loadMoreJobs() {
+  if (jobSearchState.loading || !jobSearchState.hasMore) return;
+  jobSearchState.page++;
+  executeJobSearch(false);
+}
+
+function setJobSort(sort) {
+  playClick('tap');
+  jobSearchState.sortBy = sort;
+  // Update filter pill UI
+  document.querySelectorAll('.job-filter-pill[data-filter="relevance"], .job-filter-pill[data-filter="date"]').forEach(function(p) {
+    p.classList.toggle('active', p.dataset.filter === sort);
+  });
+  var sortLabel = document.getElementById('jobSortLabel');
+  if (sortLabel) sortLabel.textContent = 'Sort: ' + (sort === 'date' ? 'Newest' : 'Relevance');
+  if (jobSearchState.query) {
+    jobSearchState.page = 1;
+    jobSearchState.jobs = [];
+    executeJobSearch();
+  }
+}
+
+function cycleJobSort() {
+  setJobSort(jobSearchState.sortBy === 'relevance' ? 'date' : 'relevance');
+}
+
+function toggleJobFilter(filter) {
+  playClick('tap');
+  var pill = document.querySelector('.job-filter-pill[data-filter="' + filter + '"]');
+  if (filter === 'remote') {
+    jobSearchState.remote = jobSearchState.remote ? null : true;
+    if (pill) pill.classList.toggle('active', !!jobSearchState.remote);
+  }
+  if (jobSearchState.query) {
+    jobSearchState.page = 1;
+    jobSearchState.jobs = [];
+    executeJobSearch();
+  }
+}
+
+function toggleJobType(type) {
+  playClick('tap');
+  var types = ['full-time', 'part-time', 'contract'];
+  types.forEach(function(t) {
+    var p = document.querySelector('.job-filter-pill[data-filter="' + t + '"]');
+    if (p) p.classList.remove('active');
+  });
+  if (jobSearchState.employmentType === type) {
+    jobSearchState.employmentType = null;
+  } else {
+    jobSearchState.employmentType = type;
+    var pill = document.querySelector('.job-filter-pill[data-filter="' + type + '"]');
+    if (pill) pill.classList.add('active');
+  }
+  if (jobSearchState.query) {
+    jobSearchState.page = 1;
+    jobSearchState.jobs = [];
+    executeJobSearch();
+  }
+}
+
+function toggleJobSeniority(level) {
+  playClick('tap');
+  var levels = ['entry', 'senior'];
+  levels.forEach(function(l) {
+    var p = document.querySelector('.job-filter-pill[data-filter="' + l + '"]');
+    if (p) p.classList.remove('active');
+  });
+  if (jobSearchState.seniority === level) {
+    jobSearchState.seniority = null;
+  } else {
+    jobSearchState.seniority = level;
+    var pill = document.querySelector('.job-filter-pill[data-filter="' + level + '"]');
+    if (pill) pill.classList.add('active');
+  }
+  if (jobSearchState.query) {
+    jobSearchState.page = 1;
+    jobSearchState.jobs = [];
+    executeJobSearch();
+  }
+}
+
+function renderJobResults() {
+  var container = document.getElementById('jobListContainer');
+  var emptyState = document.getElementById('jobEmptyState');
+  var loadingState = document.getElementById('jobLoadingState');
+  var resultsHeader = document.getElementById('jobResultsHeader');
+  var resultsCount = document.getElementById('jobResultsCount');
+  var loadMore = document.getElementById('jobLoadMore');
+
+  if (jobSearchState.loading && jobSearchState.page === 1) {
+    container.innerHTML = '';
+    emptyState.style.display = 'none';
+    loadingState.style.display = '';
+    resultsHeader.style.display = 'none';
+    loadMore.style.display = 'none';
+    return;
+  }
+
+  loadingState.style.display = 'none';
+
+  if (jobSearchState.jobs.length === 0 && !jobSearchState.loading) {
+    container.innerHTML = '';
+    emptyState.style.display = '';
+    emptyState.innerHTML = '<div class="job-empty-icon">&#128533;</div><h3>No jobs found</h3><p>Try different keywords or broaden your search.</p>';
+    resultsHeader.style.display = 'none';
+    loadMore.style.display = 'none';
+    return;
+  }
+
+  emptyState.style.display = 'none';
+  resultsHeader.style.display = '';
+  resultsCount.textContent = jobSearchState.totalResults + ' jobs found';
+
+  var html = '';
+  jobSearchState.jobs.forEach(function(job) {
+    html += renderJobCard(job);
+  });
+  container.innerHTML = html;
+
+  loadMore.style.display = jobSearchState.hasMore ? '' : 'none';
+}
+
+function renderJobCard(job) {
+  var logoHtml = '';
+  if (job.companyLogo) {
+    logoHtml = '<div class="job-company-logo"><img src="' + escapeHtml(job.companyLogo) + '" alt="' + escapeHtml(job.company) + '" onerror="this.parentElement.textContent=\'' + escapeHtml((job.company || '?')[0].toUpperCase()) + '\'"></div>';
+  } else {
+    logoHtml = '<div class="job-company-logo">' + escapeHtml((job.company || '?')[0].toUpperCase()) + '</div>';
+  }
+
+  var metaTags = '';
+  if (job.remote) metaTags += '<span class="job-meta-tag remote">Remote</span>';
+  else if (job.hybrid) metaTags += '<span class="job-meta-tag remote">Hybrid</span>';
+  if (job.location) metaTags += '<span class="job-meta-tag">' + escapeHtml(job.location) + '</span>';
+  if (job.employmentType) metaTags += '<span class="job-meta-tag">' + escapeHtml(job.employmentType) + '</span>';
+  if (job.salaryMin || job.salaryMax) {
+    var salaryText = '';
+    if (job.salaryMin && job.salaryMax) salaryText = '$' + formatSalary(job.salaryMin) + ' – $' + formatSalary(job.salaryMax);
+    else if (job.salaryMin) salaryText = 'From $' + formatSalary(job.salaryMin);
+    else salaryText = 'Up to $' + formatSalary(job.salaryMax);
+    metaTags += '<span class="job-meta-tag salary">' + salaryText + '</span>';
+  }
+
+  var postedText = job.postedAt ? timeAgo(new Date(job.postedAt)) : '';
+  var isSaved = jobSearchState.savedJobIds.has(job.id);
+
+  return '<div class="job-card" onclick="openJobDetail(\'' + escapeHtml(job.id) + '\')">' +
+    '<div class="job-card-header">' + logoHtml +
+    '<div class="job-card-info">' +
+    '<div class="job-card-title">' + escapeHtml(job.title) + '</div>' +
+    '<div class="job-card-company">' + escapeHtml(job.company) + '</div>' +
+    '</div></div>' +
+    '<div class="job-card-meta">' + metaTags + '</div>' +
+    (job.description ? '<div class="job-card-desc">' + escapeHtml(job.description.substring(0, 180)) + '</div>' : '') +
+    '<div class="job-card-footer">' +
+    '<span class="job-posted-date">' + escapeHtml(postedText) + '</span>' +
+    '<button class="job-save-btn' + (isSaved ? ' saved' : '') + '" onclick="event.stopPropagation();toggleJobSave(\'' + escapeHtml(job.id) + '\')" aria-label="Save job">' + (isSaved ? '&#9733;' : '&#9734;') + '</button>' +
+    '</div></div>';
+}
+
+function openJobDetail(jobId) {
+  playClick('tap');
+  var job = jobSearchState.jobs.find(function(j) { return j.id === jobId; });
+  if (!job) return;
+
+  jobSearchState.currentJob = job;
+  trackJobEvent('job_view', { jobId: jobId });
+
+  var overlay = document.getElementById('jobDetailOverlay');
+  var content = document.getElementById('jobDetailContent');
+  var headerTitle = document.getElementById('jobDetailHeaderTitle');
+  var applyBtn = document.getElementById('jobApplyBtn');
+  var saveBtn = document.getElementById('jobDetailSaveBtn');
+  var headerSave = document.getElementById('jobDetailHeaderSave');
+
+  headerTitle.textContent = job.title;
+
+  var isSaved = jobSearchState.savedJobIds.has(job.id);
+  saveBtn.innerHTML = isSaved ? '&#9733;' : '&#9734;';
+  saveBtn.classList.toggle('saved', isSaved);
+  headerSave.innerHTML = isSaved ? '&#9733;' : '&#9734;';
+
+  var metaHtml = '';
+  if (job.remote) metaHtml += '<span class="job-meta-tag remote">Remote</span>';
+  else if (job.hybrid) metaHtml += '<span class="job-meta-tag remote">Hybrid</span>';
+  if (job.location) metaHtml += '<span class="job-meta-tag">' + escapeHtml(job.location) + '</span>';
+  if (job.employmentType) metaHtml += '<span class="job-meta-tag">' + escapeHtml(job.employmentType) + '</span>';
+  if (job.seniority) metaHtml += '<span class="job-meta-tag">' + escapeHtml(job.seniority) + '</span>';
+  if (job.salaryMin || job.salaryMax) {
+    var salaryText = '';
+    if (job.salaryMin && job.salaryMax) salaryText = '$' + formatSalary(job.salaryMin) + ' – $' + formatSalary(job.salaryMax);
+    else if (job.salaryMin) salaryText = 'From $' + formatSalary(job.salaryMin);
+    else salaryText = 'Up to $' + formatSalary(job.salaryMax);
+    metaHtml += '<span class="job-meta-tag salary">' + salaryText + '</span>';
+  }
+
+  var skillsHtml = '';
+  if (job.skills && job.skills.length > 0) {
+    skillsHtml = '<div class="job-detail-section"><h3>Skills</h3><div class="job-detail-skills">';
+    job.skills.forEach(function(s) {
+      skillsHtml += '<span class="job-detail-skill">' + escapeHtml(s) + '</span>';
+    });
+    skillsHtml += '</div></div>';
+  }
+
+  var reqHtml = '';
+  if (job.requirements && job.requirements.length > 0) {
+    reqHtml = '<div class="job-detail-section"><h3>Requirements</h3>';
+    job.requirements.forEach(function(r) {
+      reqHtml += '<p style="margin-bottom:6px">&#8226; ' + escapeHtml(r) + '</p>';
+    });
+    reqHtml += '</div>';
+  }
+
+  var postedText = job.postedAt ? 'Posted ' + timeAgo(new Date(job.postedAt)) : '';
+
+  content.innerHTML =
+    '<div class="job-detail-title">' + escapeHtml(job.title) + '</div>' +
+    '<div class="job-detail-company">' + escapeHtml(job.company) + '</div>' +
+    '<div class="job-detail-meta">' + metaHtml + '</div>' +
+    (postedText ? '<p style="font-size:12px;color:var(--text-secondary);margin-bottom:16px">' + escapeHtml(postedText) + '</p>' : '') +
+    skillsHtml +
+    reqHtml +
+    (job.description ? '<div class="job-detail-section"><h3>Description</h3><p>' + formatJobDescription(job.description) + '</p></div>' : '');
+
+  applyBtn.disabled = !job.applicationUrl;
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeJobDetail() {
+  playClick('tap');
+  var overlay = document.getElementById('jobDetailOverlay');
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+  jobSearchState.currentJob = null;
+}
+
+function applyToJob() {
+  if (!jobSearchState.currentJob || !jobSearchState.currentJob.applicationUrl) return;
+  trackJobEvent('job_apply_click', { jobId: jobSearchState.currentJob.id });
+  window.open(jobSearchState.currentJob.applicationUrl, '_blank');
+}
+
+function toggleJobSave(jobId) {
+  playClick('tap');
+  if (!firebaseReady || !currentUser) {
+    showToast('Sign in to save jobs');
+    return;
+  }
+
+  var isSaved = jobSearchState.savedJobIds.has(jobId);
+  var fn = isSaved ? 'unsaveJob' : 'saveJob';
+
+  firebaseFunctions.httpsCallable(fn)({ jobId: jobId }).then(function() {
+    if (isSaved) {
+      jobSearchState.savedJobIds.delete(jobId);
+      showToast('Job removed');
+    } else {
+      jobSearchState.savedJobIds.add(jobId);
+      showToast('Job saved');
+    }
+    renderJobResults();
+  }).catch(function(err) {
+    console.error('[JobSave] Error:', err);
+    showToast('Could not save job');
+  });
+}
+
+function toggleJobSaveFromDetail() {
+  if (!jobSearchState.currentJob) return;
+  toggleJobSave(jobSearchState.currentJob.id);
+  // Update detail buttons
+  var isSaved = jobSearchState.savedJobIds.has(jobSearchState.currentJob.id);
+  var saveBtn = document.getElementById('jobDetailSaveBtn');
+  var headerSave = document.getElementById('jobDetailHeaderSave');
+  if (saveBtn) { saveBtn.innerHTML = isSaved ? '&#9733;' : '&#9734;'; saveBtn.classList.toggle('saved', isSaved); }
+  if (headerSave) headerSave.innerHTML = isSaved ? '&#9733;' : '&#9734;';
+}
+
+function trackJobEvent(event, data) {
+  if (!firebaseReady) return;
+  try {
+    firebaseFunctions.httpsCallable('trackJobEvent')({
+      event: event,
+      query: data.query || null,
+      filters: data.filters || null,
+      jobId: data.jobId || null,
+    }).catch(function() {}); // Silent fail
+  } catch (e) {}
+}
+
+// Utility functions for job display
+function formatSalary(num) {
+  if (!num) return '0';
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function timeAgo(date) {
+  if (!date) return '';
+  var now = new Date();
+  var diff = now - date;
+  var seconds = Math.floor(diff / 1000);
+  var minutes = Math.floor(seconds / 60);
+  var hours = Math.floor(minutes / 60);
+  var days = Math.floor(hours / 24);
+
+  if (days > 30) return Math.floor(days / 30) + 'mo ago';
+  if (days > 0) return days + 'd ago';
+  if (hours > 0) return hours + 'h ago';
+  if (minutes > 0) return minutes + 'm ago';
+  return 'Just now';
+}
+
+function formatJobDescription(desc) {
+  if (!desc) return '';
+  // Convert newlines to <br> and escape HTML
+  return escapeHtml(desc).replace(/\n/g, '<br>');
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  var div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 init();</script>
+
+<!-- JOB SEARCH SCREEN -->
+<div id="screen-jobs-tab" class="screen hidden tab-screen" role="tabpanel" aria-label="Job Search">
+  <div class="job-search-hero">
+    <h2>Find Your Next Role</h2>
+    <p>Search real job openings and prepare for the interview</p>
+  </div>
+  <div class="job-search-box">
+    <input type="text" id="jobSearchInput" placeholder="Job title, skill, or keyword" autocomplete="off" aria-label="Search jobs">
+    <button id="jobSearchBtn" onclick="executeJobSearch()" aria-label="Search">Search</button>
+  </div>
+  <div class="job-location-box">
+    <div class="job-location-wrap">
+      <span class="search-icon" aria-hidden="true">&#128205;</span>
+      <input type="text" id="jobLocationInput" placeholder="City, state, or 'Remote'" autocomplete="off" aria-label="Location">
+    </div>
+  </div>
+  <div class="job-filters-row" id="jobFiltersRow">
+    <button class="job-filter-pill active" data-filter="relevance" onclick="setJobSort('relevance')">Relevance</button>
+    <button class="job-filter-pill" data-filter="date" onclick="setJobSort('date')">Newest</button>
+    <button class="job-filter-pill" data-filter="remote" onclick="toggleJobFilter('remote')">Remote</button>
+    <button class="job-filter-pill" data-filter="full-time" onclick="toggleJobType('full-time')">Full-time</button>
+    <button class="job-filter-pill" data-filter="part-time" onclick="toggleJobType('part-time')">Part-time</button>
+    <button class="job-filter-pill" data-filter="contract" onclick="toggleJobType('contract')">Contract</button>
+    <button class="job-filter-pill" data-filter="entry" onclick="toggleJobSeniority('entry')">Entry Level</button>
+    <button class="job-filter-pill" data-filter="senior" onclick="toggleJobSeniority('senior')">Senior</button>
+  </div>
+  <div id="jobResultsHeader" class="job-results-header" style="display:none">
+    <span class="job-results-count" id="jobResultsCount"></span>
+    <button class="job-sort-btn" id="jobSortLabel" onclick="cycleJobSort()">Sort: Relevance</button>
+  </div>
+  <div id="jobListContainer">
+    <div class="job-empty" id="jobEmptyState">
+      <div class="job-empty-icon">&#128269;</div>
+      <h3>Search for jobs</h3>
+      <p>Enter a job title and location to find real openings from top employers.</p>
+    </div>
+  </div>
+  <div id="jobLoadingState" class="job-loading" style="display:none">
+    <div class="job-loading-spinner"></div>
+    <p>Searching jobs...</p>
+  </div>
+  <div id="jobLoadMore" class="job-load-more" style="display:none">
+    <button onclick="loadMoreJobs()">Load More Jobs</button>
+  </div>
+</div>
+
+<!-- JOB DETAIL OVERLAY -->
+<div class="job-detail-overlay" id="jobDetailOverlay">
+  <div class="job-detail-header">
+    <button onclick="closeJobDetail()" aria-label="Close job details">&#8592;</button>
+    <h2 id="jobDetailHeaderTitle">Job Details</h2>
+    <button id="jobDetailHeaderSave" onclick="toggleJobSaveFromDetail()" aria-label="Save job">&#9734;</button>
+  </div>
+  <div class="job-detail-content" id="jobDetailContent"></div>
+  <div class="job-detail-actions">
+    <button class="job-apply-btn" id="jobApplyBtn" onclick="applyToJob()">Apply Now</button>
+    <button class="job-detail-save-btn" id="jobDetailSaveBtn" onclick="toggleJobSaveFromDetail()" aria-label="Save job">&#9734;</button>
+  </div>
+</div>
 
 <!-- BOTTOM TAB BAR -->
 <div class="tab-bar" id="tabBar" role="tablist" aria-label="Main navigation">
@@ -10949,6 +11516,10 @@ init();</script>
   <button class="tab-btn" data-tab="mock-tab" onclick="switchTab('mock-tab')" role="tab" aria-selected="false" aria-controls="screen-mock-tab">
     <span class="tab-icon" aria-hidden="true">&#9889;</span>
     <span class="tab-label">Mock</span>
+  </button>
+  <button class="tab-btn" data-tab="jobs-tab" onclick="switchTab('jobs-tab')" role="tab" aria-selected="false" aria-controls="screen-jobs-tab">
+    <span class="tab-icon" aria-hidden="true">&#128188;</span>
+    <span class="tab-label">Jobs</span>
   </button>
   <button class="tab-btn" data-tab="updates-tab" onclick="switchTab('updates-tab')" role="tab" aria-selected="false" aria-controls="screen-updates-tab">
     <span class="tab-icon" aria-hidden="true">&#128227;</span>
