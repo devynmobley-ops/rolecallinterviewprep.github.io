@@ -5,6 +5,7 @@ const { AdzunaSource } = require('./jobs/sources/AdzunaSource');
 const { TheMuseSource } = require('./jobs/sources/TheMuseSource');
 const { RemotiveSource } = require('./jobs/sources/RemotiveSource');
 const { JobicySource } = require('./jobs/sources/JobicySource');
+const { USAJobsSource } = require('./jobs/sources/USAJobsSource');
 const { normalizeJob, toFirestoreJob } = require('./jobs/normalizer');
 const { findDuplicate, mergeJobs, processJobs } = require('./jobs/deduplicator');
 
@@ -880,6 +881,7 @@ const adzunaSource = new AdzunaSource();
 const theMuseSource = new TheMuseSource();
 const remotiveSource = new RemotiveSource();
 const jobicySource = new JobicySource();
+const usajobsSource = new USAJobsSource();
 
 /**
  * ingestJobs — Pulls jobs from configured providers and stores in Firestore.
@@ -1203,15 +1205,26 @@ exports.syncJobs = functions.pubsub.schedule('0 3 * * *').timeZone('UTC').onRun(
 
   let totalIngested = 0;
 
-  // Helper: fetch and ingest from a source
-  async function ingestFromSource(source, query) {
+  // Helper: fetch and ingest from a source with pagination
+  async function ingestFromSource(source, query, maxPages = 3) {
     try {
-      const result = await source.fetchJobs(query, '', { page: 1, resultsPerPage: 25 });
-      if (result.jobs.length > 0) {
+      for (let page = 1; page <= maxPages; page++) {
+        const result = await source.fetchJobs(query, '', { page, resultsPerPage: 50 });
+        if (result.jobs.length === 0) break;
+        
         const normalized = result.jobs.map(j => normalizeJob(j, source));
         const stats = await processJobs(normalized, db);
         totalIngested += stats.created + stats.updated;
-        console.log(`[Sync] ${source.getSourceName()} "${query}": ${stats.created} created, ${stats.updated} updated`);
+        
+        if (page === 1) {
+          console.log(`[Sync] ${source.getSourceName()} "${query}": ${result.jobs.length} jobs (page ${page})`);
+        }
+        
+        // If fewer results than requested, no more pages
+        if (result.jobs.length < 20) break;
+        
+        // Rate limit between pages
+        await new Promise(r => setTimeout(r, 300));
       }
     } catch (err) {
       console.error(`[Sync] ${source.getSourceName()} "${query}": ${err.message}`);
@@ -1220,23 +1233,30 @@ exports.syncJobs = functions.pubsub.schedule('0 3 * * *').timeZone('UTC').onRun(
 
   // Ingest from all sources for popular queries
   for (const query of popularQueries) {
-    // Adzuna
+    // Adzuna — up to 3 pages (150 jobs per query)
     if (adzunaSource.isConfigured()) {
-      await ingestFromSource(adzunaSource, query);
-      await new Promise(r => setTimeout(r, 500));
+      await ingestFromSource(adzunaSource, query, 3);
+      await new Promise(r => setTimeout(r, 300));
     }
 
-    // The Muse (fetch first page, filter by query)
-    await ingestFromSource(theMuseSource, query);
-    await new Promise(r => setTimeout(r, 500));
+    // The Muse — up to 3 pages (60 jobs per query)
+    await ingestFromSource(theMuseSource, query, 3);
+    await new Promise(r => setTimeout(r, 300));
 
-    // Remotive (has built-in search)
-    await ingestFromSource(remotiveSource, query);
+    // Remotive — 1 page (returns all matching results)
+    await ingestFromSource(remotiveSource, query, 1);
+    await new Promise(r => setTimeout(r, 300));
     await new Promise(r => setTimeout(r, 500));
 
     // Jobicy (has built-in search)
-    await ingestFromSource(jobicySource, query);
-    await new Promise(r => setTimeout(r, 500));
+    await ingestFromSource(jobicySource, query, 1);
+    await new Promise(r => setTimeout(r, 300));
+
+    // USAJobs — government jobs (free API, requires key)
+    if (usajobsSource.isConfigured()) {
+      await ingestFromSource(usajobsSource, query, 2);
+      await new Promise(r => setTimeout(r, 300));
+    }
   }
 
   // Mark expired jobs as inactive
@@ -1520,6 +1540,7 @@ exports.seedJobs = functions.https.onRequest(async (req, res) => {
     theMuseSource,
     remotiveSource,
     jobicySource,
+    usajobsSource.isConfigured() ? usajobsSource : null,
   ].filter(Boolean);
 
   const queries = [
