@@ -727,6 +727,10 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
   <div id="reqCard"></div>
   <div id="salaryCard"></div>
   <div class="question-list" id="questionList"></div>
+  <div id="relatedGuides" style="padding:0 16px 16px;display:none">
+    <h2 style="font-size:18px;font-weight:700;margin:24px 0 12px;color:var(--text)">Related Guides</h2>
+    <div id="relatedGuidesList" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+  </div>
   <div class="fab-mock" onclick="startMockFromQuestions()" role="button" tabindex="0" aria-label="Start mock interview">&#9889; Mock Interview</div>
 </div>
 
@@ -9594,6 +9598,37 @@ function openRole(roleName, questions) {
   });
   showScreen('questions');
   document.querySelector('.fab-mock').style.display = '';
+
+  // Related Guides
+  const BLOG_LINKS = {
+    'Tech': [
+      { url: '/blog/tech-interview-questions-2026.html', title: 'Tech Interview Questions 2026' },
+    ],
+    'Healthcare': [
+      { url: '/blog/how-to-prepare-for-healthcare-interview.html', title: 'Healthcare Interview Prep' },
+    ],
+  };
+  const UNIVERSAL_BLOGS = [
+    { url: '/blog/how-to-answer-tell-me-about-yourself.html', title: 'How to Answer "Tell Me About Yourself"' },
+    { url: '/blog/star-method-interview.html', title: 'The STAR Method' },
+    { url: '/blog/common-interview-questions.html', title: '50 Common Interview Questions' },
+    { url: '/blog/how-to-negotiate-salary.html', title: 'Salary Negotiation Guide' },
+    { url: '/blog/questions-to-ask-interviewer.html', title: 'Questions to Ask Your Interviewer' },
+  ];
+  const guidesDiv = document.getElementById('relatedGuides');
+  const guidesList = document.getElementById('relatedGuidesList');
+  guidesList.innerHTML = '';
+  const blogs = [...UNIVERSAL_BLOGS];
+  if (BLOG_LINKS[catName]) blogs.push(...BLOG_LINKS[catName]);
+  blogs.forEach(b => {
+    const a = document.createElement('a');
+    a.href = b.url;
+    a.className = 'related-role';
+    a.textContent = b.title;
+    a.style.cssText = 'display:inline-block;background:var(--card);color:var(--text);padding:8px 16px;border-radius:20px;font-size:13px;text-decoration:none;transition:background 0.2s';
+    guidesList.appendChild(a);
+  });
+  guidesDiv.style.display = '';
 }
 
 function hideFab() {
