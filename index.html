@@ -9276,6 +9276,10 @@ function switchTab(tab) {
   // Show tab bar
   var tb = document.getElementById('tabBar');
   if (tb) tb.classList.remove('hidden');
+  // Load featured jobs when Jobs tab is opened
+  if (tab === 'jobs-tab') {
+    loadFeaturedJobs();
+  }
 }
 
 function showScreen(id) {
@@ -11157,6 +11161,10 @@ function executeJobSearch(resetPage) {
     return;
   }
 
+  // Hide featured jobs when searching
+  var featuredSection = document.getElementById('featuredJobsSection');
+  if (featuredSection) featuredSection.style.display = 'none';
+
   if (resetPage !== false) {
     jobSearchState.page = 1;
     jobSearchState.jobs = [];
@@ -11213,6 +11221,49 @@ function loadMoreJobs() {
   if (jobSearchState.loading || !jobSearchState.hasMore) return;
   jobSearchState.page++;
   executeJobSearch(false);
+}
+
+var featuredJobsLoaded = false;
+function loadFeaturedJobs() {
+  if (featuredJobsLoaded || !firebaseReady) return;
+  featuredJobsLoaded = true;
+
+  var featuredSection = document.getElementById('featuredJobsSection');
+  var featuredList = document.getElementById('featuredJobsList');
+  var emptyState = document.getElementById('jobEmptyState');
+
+  if (!featuredSection || !featuredList) return;
+
+  // Show loading
+  featuredSection.style.display = '';
+  emptyState.style.display = 'none';
+  featuredList.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-secondary)"><div class="job-loading-spinner" style="margin:0 auto 8px"></div>Loading featured jobs...</div>';
+
+  var searchFn = firebaseFunctions.httpsCallable('searchJobs');
+  var queries = ['software engineer', 'nurse', 'project manager', 'data analyst', 'marketing'];
+  var randomQuery = queries[Math.floor(Math.random() * queries.length)];
+
+  searchFn({
+    query: randomQuery,
+    filters: { sortBy: 'date', pageSize: 6 }
+  }).then(function(result) {
+    var data = result.data;
+    var jobs = data.jobs || [];
+    if (jobs.length === 0) {
+      featuredSection.style.display = 'none';
+      emptyState.style.display = '';
+      return;
+    }
+    var html = '';
+    jobs.forEach(function(job) {
+      html += renderJobCard(job);
+    });
+    featuredList.innerHTML = html;
+  }).catch(function(err) {
+    console.error('[FeaturedJobs] Error:', err);
+    featuredSection.style.display = 'none';
+    emptyState.style.display = '';
+  });
 }
 
 function setJobSort(sort) {
@@ -11922,6 +11973,10 @@ init();</script>
       <div class="job-empty-icon">&#128269;</div>
       <h3>Search for jobs</h3>
       <p>Enter a job title and location to find real openings from top employers.</p>
+    </div>
+    <div id="featuredJobsSection" style="display:none">
+      <h3 style="font-size:16px;font-weight:700;margin:0 0 12px;color:var(--text)">Featured Openings</h3>
+      <div id="featuredJobsList"></div>
     </div>
   </div>
   <div id="jobLoadingState" class="job-loading" style="display:none">
