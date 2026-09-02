@@ -11245,7 +11245,7 @@ function loadFeaturedJobs() {
 
   searchFn({
     query: randomQuery,
-    filters: { sortBy: 'date', pageSize: 6 }
+    filters: { sortBy: 'date', pageSize: 10 }
   }).then(function(result) {
     var data = result.data;
     var jobs = data.jobs || [];
