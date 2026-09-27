@@ -320,6 +320,9 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .onboarding-steps{text-align:left;display:flex;flex-direction:column;gap:14px}
 .onboarding-step{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--text-secondary)}
 .onboarding-num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.account-type-btn{background:var(--card);border:2px solid var(--card-hover);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .2s;text-align:left;width:100%}
+.account-type-btn:hover,.account-type-btn:focus{border-color:var(--accent);background:rgba(99,102,241,0.05);outline:none}
+.account-type-btn:active{transform:scale(0.98)}
 .theme-dropdown-wrap{padding:12px 20px;position:relative}
 .theme-dropdown-btn{width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:var(--radius);border:1px solid var(--card);background:var(--card);color:var(--text);font-size:14px;cursor:pointer;transition:all var(--transition)}
 .theme-dropdown-btn:active{background:var(--card-hover)}
@@ -1147,6 +1150,11 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
         <span class="more-label" id="authMoreLabel">Sign In</span>
         <span class="more-arrow" aria-hidden="true">&#8594;</span>
       </div>
+      <div id="accountTypeMoreItem" class="more-item" style="display:none" role="button" tabindex="0">
+        <span class="more-icon" id="accountTypeMoreIcon" aria-hidden="true">&#128188;</span>
+        <span class="more-label" id="accountTypeMoreLabel">Account Type</span>
+        <span class="more-arrow" id="accountTypeMoreDetail" style="font-size:12px;color:var(--text-secondary)" aria-hidden="true"></span>
+      </div>
       <div id="subscriptionMoreItem" class="more-item" onclick="showPaywall()" role="button" tabindex="0">
         <span class="more-icon" aria-hidden="true">&#11088;</span>
         <span class="more-label" id="subMoreLabel">Subscription</span>
@@ -1247,6 +1255,50 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
       <div class="onboarding-step"><span class="onboarding-num">4</span><span><strong>Star</strong> your favorite roles to save them</span></div>
     </div>
     <button class="suggest-submit" onclick="dismissOnboarding()" style="margin-top:20px">Get Started</button>
+  </div>
+</div>
+
+<!-- ACCOUNT TYPE SELECTION OVERLAY -->
+<div class="onboarding-overlay hidden" id="accountTypeOverlay" role="dialog" aria-modal="true" aria-label="Choose your account type">
+  <div class="onboarding-content" style="max-width:400px">
+    <div class="onboarding-icon">&#128188;</div>
+    <h2>How will you be using RoleCall?</h2>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:20px;line-height:1.5">Choose the option that best describes you. This helps us personalize your experience.</p>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:8px">
+      <button onclick="selectAccountType('STUDENT')" class="account-type-btn" id="accountTypeStudentBtn">
+        <div style="display:flex;align-items:center;gap:14px;text-align:left">
+          <span style="font-size:32px">&#127891;</span>
+          <div>
+            <div style="font-weight:700;font-size:15px;margin-bottom:2px">Student Account</div>
+            <div style="font-size:12px;color:var(--text-secondary);line-height:1.4">For students using RoleCall through their school or independently.</div>
+          </div>
+        </div>
+      </button>
+      <button onclick="selectAccountType('PERSONAL')" class="account-type-btn" id="accountTypePersonalBtn">
+        <div style="display:flex;align-items:center;gap:14px;text-align:left">
+          <span style="font-size:32px">&#128188;</span>
+          <div>
+            <div style="font-weight:700;font-size:15px;margin-bottom:2px">Personal Account</div>
+            <div style="font-size:12px;color:var(--text-secondary);line-height:1.4">For individual job seekers using RoleCall on their own.</div>
+          </div>
+        </div>
+      </button>
+    </div>
+    <div id="accountTypeError" style="font-size:13px;color:#e74c3c;margin-top:8px;display:none" role="alert"></div>
+  </div>
+</div>
+
+<!-- STUDENT DISCOUNT CODE OVERLAY (shown after Student account type selected) -->
+<div class="onboarding-overlay hidden" id="studentDiscountOverlay" role="dialog" aria-modal="true" aria-label="School discount code">
+  <div class="onboarding-content">
+    <div class="onboarding-icon">&#127915;</div>
+    <h2>Do you have a school discount code?</h2>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;line-height:1.5">If your school or university provided a discount code, enter it below to unlock your benefits.</p>
+    <input type="text" id="studentDiscountInput" placeholder="Enter code..." autocomplete="off" autocapitalize="characters" spellcheck="false" style="width:100%;padding:12px 16px;border-radius:var(--radius);border:1px solid var(--card-hover);background:var(--bg);color:var(--text);font-size:16px;text-align:center;letter-spacing:2px;text-transform:uppercase;outline:none;margin-bottom:12px" aria-label="School discount code">
+    <div id="studentDiscountError" style="font-size:13px;color:#e74c3c;margin-bottom:8px;display:none" role="alert"></div>
+    <div id="studentDiscountSuccess" style="font-size:13px;color:#2ecc71;margin-bottom:8px;display:none"></div>
+    <button class="suggest-submit" onclick="applyStudentDiscountCode()" id="studentDiscountSubmitBtn" style="width:100%">Apply Code</button>
+    <button onclick="skipStudentDiscount()" style="background:none;border:none;color:var(--text-secondary);font-size:13px;margin-top:12px;cursor:pointer">Skip for now</button>
   </div>
 </div>
 
@@ -1394,8 +1446,14 @@ auth.onAuthStateChanged(async (user) => {
     if (localStorage.getItem('rolecall-subscribed') === 'true' && !userSubscription) {
       await migrateLocalSubscription(user.uid);
     }
+    // Check account type — shows selection overlay if not yet chosen
+    await checkAccountType(user.uid);
   } else {
     userSubscription = null;
+    userAccountType = null;
+    userOrganizationId = null;
+    userOrganizationName = null;
+    userFeaturePolicies = null;
   }
   checkSubscription();
 });
@@ -1502,6 +1560,10 @@ async function signOutUser() {
   await auth.signOut();
   isSubscribed = false;
   userSubscription = null;
+  userAccountType = null;
+  userOrganizationId = null;
+  userOrganizationName = null;
+  userFeaturePolicies = null;
   showToast('Signed out.');
   updateAuthUI();
   checkSubscription();
@@ -1718,6 +1780,221 @@ async function redeemPromoCode() {
   }
 }
 
+// === ACCOUNT TYPE SYSTEM ===
+var userAccountType = null; // 'PERSONAL' | 'STUDENT' | null
+var userOrganizationId = null;
+var userOrganizationName = null;
+var userFeaturePolicies = null;
+
+// Check account type after auth — called from onAuthStateChanged
+async function checkAccountType(uid) {
+  try {
+    var getFn = firebaseFunctions.httpsCallable('getAccountType');
+    var result = await getFn({});
+    var data = result.data;
+
+    userAccountType = data.accountType;
+    userOrganizationId = data.organizationId;
+    userOrganizationName = data.organizationName;
+    userFeaturePolicies = data.featurePolicies;
+
+    // If no account type set, show selection overlay
+    if (!userAccountType) {
+      showAccountTypeOverlay();
+      return false; // account type not yet set
+    }
+
+    return true; // account type is set
+  } catch (err) {
+    console.error('Error checking account type:', err);
+    return true; // don't block on error
+  }
+}
+
+function showAccountTypeOverlay() {
+  var overlay = document.getElementById('accountTypeOverlay');
+  overlay.classList.remove('hidden');
+  trapFocus(overlay);
+}
+
+function hideAccountTypeOverlay() {
+  var overlay = document.getElementById('accountTypeOverlay');
+  releaseFocus(overlay);
+  overlay.classList.add('hidden');
+}
+
+async function selectAccountType(type) {
+  if (!currentUser) {
+    showToast('Please sign in first.');
+    return;
+  }
+
+  var btn = type === 'STUDENT'
+    ? document.getElementById('accountTypeStudentBtn')
+    : document.getElementById('accountTypePersonalBtn');
+  var errorEl = document.getElementById('accountTypeError');
+
+  errorEl.style.display = 'none';
+  btn.style.opacity = '0.6';
+  btn.style.pointerEvents = 'none';
+
+  try {
+    var setFn = firebaseFunctions.httpsCallable('setAccountType');
+    var result = await setFn({ accountType: type });
+    var data = result.data;
+
+    userAccountType = data.accountType;
+    userOrganizationId = data.organizationId;
+
+    hideAccountTypeOverlay();
+
+    if (type === 'STUDENT') {
+      // Show student discount code overlay
+      showStudentDiscountOverlay();
+    } else {
+      // Personal — proceed to app
+      showToast('Welcome to RoleCall!');
+    }
+  } catch (err) {
+    console.error('Set account type error:', err);
+    errorEl.textContent = 'Something went wrong. Please try again.';
+    errorEl.style.display = 'block';
+    btn.style.opacity = '1';
+    btn.style.pointerEvents = '';
+  }
+}
+
+function showStudentDiscountOverlay() {
+  var overlay = document.getElementById('studentDiscountOverlay');
+  overlay.classList.remove('hidden');
+  trapFocus(overlay);
+}
+
+function hideStudentDiscountOverlay() {
+  var overlay = document.getElementById('studentDiscountOverlay');
+  releaseFocus(overlay);
+  overlay.classList.add('hidden');
+}
+
+async function applyStudentDiscountCode() {
+  var input = document.getElementById('studentDiscountInput');
+  var errorEl = document.getElementById('studentDiscountError');
+  var successEl = document.getElementById('studentDiscountSuccess');
+  var btn = document.getElementById('studentDiscountSubmitBtn');
+  var code = input.value.trim().toUpperCase();
+
+  errorEl.style.display = 'none';
+  successEl.style.display = 'none';
+
+  if (!code) {
+    errorEl.textContent = 'Please enter a discount code.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  btn.textContent = 'Applying...';
+  btn.disabled = true;
+
+  try {
+    // Reuse existing redeemPromoCode function — it already handles institutionId tagging
+    var redeemFn = firebaseFunctions.httpsCallable('redeemPromoCode');
+    var result = await redeemFn({ code: code });
+    var resData = result.data;
+
+    // Update local state
+    userSubscription = { status: 'active', promoCode: true };
+    userOrganizationId = resData.institutionId || null;
+    userOrganizationName = resData.institutionName || null;
+    checkSubscription();
+
+    var msg = 'Code applied! Your school benefits are now active.';
+    if (resData.institutionName) {
+      msg = 'Connected to ' + resData.institutionName + '! Your benefits are now active.';
+    }
+    successEl.textContent = msg;
+    successEl.style.display = 'block';
+    btn.textContent = 'Applied!';
+    input.disabled = true;
+
+    setTimeout(function() {
+      hideStudentDiscountOverlay();
+      btn.textContent = 'Apply Code';
+      btn.disabled = false;
+      input.disabled = false;
+    }, 2000);
+
+  } catch (err) {
+    console.error('Student discount code error:', err);
+    var errMsg = 'Something went wrong. Please try again.';
+    if (err.code === 'not-found') {
+      errMsg = 'Invalid code. Please check and try again.';
+    } else if (err.code === 'failed-precondition') {
+      errMsg = 'This code has expired.';
+    } else if (err.code === 'resource-exhausted') {
+      errMsg = 'This code has reached its usage limit.';
+    }
+    errorEl.textContent = errMsg;
+    errorEl.style.display = 'block';
+    btn.textContent = 'Apply Code';
+    btn.disabled = false;
+  }
+}
+
+function skipStudentDiscount() {
+  hideStudentDiscountOverlay();
+  showToast('You can redeem a code anytime from the More tab.');
+}
+
+// Centralized feature permission system
+// Returns true if the user should SEE a feature in the UI
+function canUserSeeFeature(feature) {
+  // Account type not yet determined — show by default
+  if (!userAccountType) return true;
+
+  // Personal accounts see all features
+  if (userAccountType === 'PERSONAL') return true;
+
+  // Student accounts: check organization policy
+  if (userAccountType === 'STUDENT') {
+    // If no feature policies loaded, check defaults
+    if (!userFeaturePolicies) {
+      // Default student visibility — hide AUTO_APPLY
+      if (feature === 'AUTO_APPLY') return false;
+      return true;
+    }
+    // Check the specific feature policy
+    if (userFeaturePolicies.hasOwnProperty(feature)) {
+      return userFeaturePolicies[feature] === true;
+    }
+    // Default: visible
+    return true;
+  }
+
+  return true;
+}
+
+// Returns true if the user can USE a feature (visibility + auth + subscription)
+function canUserUseFeature(feature) {
+  // Must be able to see it first
+  if (!canUserSeeFeature(feature)) return false;
+
+  // Feature-specific authorization checks
+  switch (feature) {
+    case 'AUTO_APPLY':
+      // Must be subscribed (personal) or org-sponsored (student)
+      return isSubscribed || (userAccountType === 'STUDENT' && userOrganizationId);
+    case 'AI_RESUME':
+    case 'AI_COVER_LETTER':
+    case 'INTERVIEW_PREP':
+    case 'APPLICATION_TRACKER':
+      return isSubscribed || (userAccountType === 'STUDENT' && userOrganizationId);
+    case 'JOB_SEARCH':
+      return true; // always available
+    default:
+      return true;
+  }
+}
+
 async function openCustomerPortal() {
   if (!currentUser) return;
   try {
@@ -1737,11 +2014,35 @@ function updateAuthUI() {
   const manageItem = document.getElementById('manageSubMoreItem');
   const paywallBtn = document.getElementById('paywallBtn');
   const homeSignIn = document.getElementById('homeSignInBtn');
+  const accountTypeItem = document.getElementById('accountTypeMoreItem');
+  const accountTypeLabel = document.getElementById('accountTypeMoreLabel');
+  const accountTypeDetail = document.getElementById('accountTypeMoreDetail');
+  const accountTypeIcon = document.getElementById('accountTypeMoreIcon');
 
   if (currentUser) {
     if (authLabel) authLabel.textContent = currentUser.displayName || currentUser.email || 'Account';
     if (authIcon) authIcon.textContent = '\u{1F464}';
     if (homeSignIn) homeSignIn.style.display = 'none';
+
+    // Show account type info
+    if (accountTypeItem) {
+      if (userAccountType) {
+        accountTypeItem.style.display = '';
+        if (userAccountType === 'STUDENT') {
+          if (accountTypeLabel) accountTypeLabel.textContent = 'Student Account';
+          if (accountTypeIcon) accountTypeIcon.textContent = '\u{1F393}';
+          if (accountTypeDetail) {
+            accountTypeDetail.textContent = userOrganizationName || '';
+          }
+        } else {
+          if (accountTypeLabel) accountTypeLabel.textContent = 'Personal Account';
+          if (accountTypeIcon) accountTypeIcon.textContent = '\u{1F4BC}';
+          if (accountTypeDetail) accountTypeDetail.textContent = '';
+        }
+      } else {
+        accountTypeItem.style.display = 'none';
+      }
+    }
 
     if (isSubscribed) {
       if (subLabel) subLabel.textContent = 'Pro (Active)';
@@ -1762,6 +2063,7 @@ function updateAuthUI() {
     if (manageItem) manageItem.style.display = 'none';
     if (paywallBtn) paywallBtn.textContent = 'Sign In to Subscribe';
     if (homeSignIn) homeSignIn.style.display = '';
+    if (accountTypeItem) accountTypeItem.style.display = 'none';
   }
 }
 

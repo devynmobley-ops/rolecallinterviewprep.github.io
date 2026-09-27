@@ -708,6 +708,113 @@ exports.redeemPromoCode = functions.https.onCall(async (data, context) => {
   };
 });
 
+// ============================================================
+// ACCOUNT TYPE SYSTEM
+// ============================================================
+
+// Set account type — called once during signup flow
+// Account type is the user's explicit choice, not inferred from email
+exports.setAccountType = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const { accountType } = data;
+  if (!accountType || !['PERSONAL', 'STUDENT'].includes(accountType)) {
+    throw new functions.https.HttpsError('invalid-argument', 'accountType must be PERSONAL or STUDENT');
+  }
+
+  const uid = context.auth.uid;
+  const db = admin.firestore();
+  const customerRef = db.collection('customers').doc(uid);
+  const customerDoc = await customerRef.get();
+
+  // If account type already set, don't overwrite — require admin override
+  if (customerDoc.exists && customerDoc.data().accountType) {
+    return {
+      success: true,
+      accountType: customerDoc.data().accountType,
+      alreadySet: true,
+      organizationId: customerDoc.data().organizationId || null,
+    };
+  }
+
+  // Set account type
+  const updateData = {
+    accountType: accountType,
+    accountTypeSelectedAt: admin.firestore.FieldValue.serverTimestamp(),
+  };
+
+  await customerRef.set(updateData, { merge: true });
+
+  // Log the event
+  await db.collection('auditLog').add({
+    uid: uid,
+    action: 'ACCOUNT_TYPE_SELECTED',
+    target: uid,
+    details: { accountType },
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  return {
+    success: true,
+    accountType: accountType,
+    alreadySet: false,
+    organizationId: null,
+  };
+});
+
+// Get account type and organization info for the current user
+exports.getAccountType = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const uid = context.auth.uid;
+  const db = admin.firestore();
+  const customerDoc = await db.collection('customers').doc(uid).get();
+
+  if (!customerDoc.exists) {
+    return { accountType: null, organizationId: null, organizationName: null };
+  }
+
+  const custData = customerDoc.data();
+  const accountType = custData.accountType || null;
+  const organizationId = custData.organizationId || null;
+
+  // If user has an organization, fetch its feature policies
+  let organizationName = null;
+  let featurePolicies = null;
+
+  if (organizationId) {
+    try {
+      const orgDoc = await db.collection('organizations').doc(organizationId).get();
+      if (orgDoc.exists) {
+        organizationName = orgDoc.data().name || null;
+      }
+
+      const policySnap = await db.collection('organizations')
+        .doc(organizationId)
+        .collection('featurePolicies')
+        .limit(1)
+        .get();
+
+      if (!policySnap.empty) {
+        featurePolicies = policySnap.docs[0].data().features || null;
+      }
+    } catch (err) {
+      console.error('Error fetching org data:', err.message);
+    }
+  }
+
+  return {
+    accountType,
+    organizationId,
+    organizationName,
+    featurePolicies,
+  };
+});
+
 // Scheduled function: aggregate student sessions into institution stats
 // Runs daily at midnight UTC via Google Cloud Scheduler
 exports.aggregateInstitutionStats = functions.pubsub

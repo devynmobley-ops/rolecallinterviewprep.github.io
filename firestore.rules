@@ -57,6 +57,45 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Audit log — server-only write, super admin read
+    match /auditLog/{logId} {
+      allow read: if request.auth != null
+        && exists(/databases/$(database)/documents/super_admins/$(request.auth.uid));
+      allow write: if false; // Only Cloud Functions write
+    }
+
+    // Organizations — authenticated read, server-only write
+    match /organizations/{orgId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Only Cloud Functions write
+
+      // Feature policies sub-collection
+      match /featurePolicies/{policyId} {
+        allow read: if request.auth != null;
+        allow write: if false;
+      }
+
+      // Discount codes sub-collection
+      match /discountCodes/{codeId} {
+        allow read: if request.auth != null;
+        allow write: if false;
+      }
+    }
+
+    // Applications — owner read/write
+    match /applications/{appId} {
+      allow read, update: if request.auth != null && request.auth.uid == resource.data.uid;
+      allow create: if request.auth != null;
+      allow delete: if false;
+    }
+
+    // Application events — owner read, authenticated create
+    match /applicationEvents/{eventId} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.uid;
+      allow create: if request.auth != null;
+      allow update, delete: if false;
+    }
+
     // Problem reports — authenticated write, server-only read
     match /reports/{reportId} {
       allow read: if false;
