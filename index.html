@@ -11803,6 +11803,260 @@ function applyToJob() {
   window.open(jobSearchState.currentJob.applicationUrl, '_blank');
 }
 
+// === AUTO-APPLY FLOW ===
+var autoApplyState = {
+  currentJob: null,
+  modes: null,
+  selectedMode: null,
+  preparedApp: null,
+  loading: false,
+};
+
+// Start the application flow — shows mode selection
+function startApplication() {
+  var job = jobSearchState.currentJob;
+  if (!job) return;
+
+  trackJobEvent('job_apply_click', { jobId: job.id });
+
+  // Save the job first if not saved
+  if (!jobSearchState.savedJobIds.has(job.id)) {
+    toggleJobSave(job.id);
+  }
+
+  // If not signed in, just open the URL
+  if (!firebaseReady || !currentUser) {
+    if (job.applicationUrl) window.open(job.applicationUrl, '_blank');
+    return;
+  }
+
+  // Check available modes
+  autoApplyState.currentJob = job;
+  autoApplyState.loading = true;
+
+  firebaseFunctions.httpsCallable('getApplicationModes')({ jobId: job.id })
+    .then(function(result) {
+      autoApplyState.modes = result.data.modes;
+      autoApplyState.loading = false;
+      showApplicationModeOverlay();
+    })
+    .catch(function(err) {
+      console.error('[AutoApply] Mode check error:', err);
+      autoApplyState.loading = false;
+      // Fallback to manual
+      if (job.applicationUrl) window.open(job.applicationUrl, '_blank');
+    });
+}
+
+function showApplicationModeOverlay() {
+  var job = autoApplyState.currentJob;
+  var modes = autoApplyState.modes;
+  if (!job || !modes) return;
+
+  var html = '<div style="padding:20px">';
+  html += '<div style="margin-bottom:20px">';
+  html += '<div style="font-size:18px;font-weight:800;margin-bottom:4px">Apply to ' + escapeHtml(job.title) + '</div>';
+  if (job.company) html += '<div style="color:var(--text-secondary);font-size:14px">' + escapeHtml(job.company) + '</div>';
+  html += '</div>';
+
+  html += '<div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--accent)">Choose how to apply:</div>';
+
+  modes.forEach(function(mode) {
+    var borderColor = mode.available ? 'var(--card-hover)' : 'var(--card-hover)';
+    var opacity = mode.available ? '1' : '0.5';
+    var cursor = mode.available ? 'pointer' : 'not-allowed';
+
+    html += '<div onclick="' + (mode.available ? "selectApplicationMode('" + mode.mode + "')" : '') + '" style="background:var(--card);border:1.5px solid ' + borderColor + ';border-radius:var(--radius);padding:14px;margin-bottom:10px;cursor:' + opacity + ';opacity:' + opacity + ';transition:all .2s">';
+
+    html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">';
+    html += '<span style="font-size:20px">' + mode.icon + '</span>';
+    html += '<span style="font-weight:700;font-size:14px">' + escapeHtml(mode.label) + '</span>';
+    if (mode.comingSoon) html += '<span style="font-size:10px;padding:2px 6px;border-radius:4px;background:var(--accent)22;color:var(--accent-text);font-weight:600">Coming Soon</span>';
+    if (mode.requiresUpgrade) html += '<span style="font-size:10px;padding:2px 6px;border-radius:4px;background:#f39c1222;color:#f39c12;font-weight:600">Pro</span>';
+    html += '</div>';
+
+    html += '<div style="font-size:12px;color:var(--text-secondary);line-height:1.4;padding-left:30px">' + escapeHtml(mode.description) + '</div>';
+    html += '</div>';
+  });
+
+  html += '<button onclick="closeJobDetail()" style="width:100%;padding:12px;border:none;background:var(--card);border-radius:var(--radius);color:var(--text-secondary);font-size:13px;cursor:pointer;margin-top:8px">Cancel</button>';
+  html += '</div>';
+
+  var overlay = document.getElementById('jobDetailOverlay');
+  document.getElementById('jobDetailHeaderTitle').textContent = 'Apply';
+  document.getElementById('jobDetailContent').innerHTML = html;
+  document.getElementById('jobDetailActions').style.display = 'none';
+  overlay.classList.add('open');
+}
+
+function selectApplicationMode(mode) {
+  playClick('tap');
+  autoApplyState.selectedMode = mode;
+
+  if (mode === 'manual') {
+    // Manual: open the application URL directly
+    var job = autoApplyState.currentJob;
+    if (job && job.applicationUrl) {
+      // Create application record in background
+      createApplicationRecord(job, 'manual', 'applied');
+      window.open(job.applicationUrl, '_blank');
+      closeJobDetail();
+    }
+    return;
+  }
+
+  if (mode === 'assisted') {
+    // Assisted: prepare application materials
+    showAssistedPreparation();
+    return;
+  }
+
+  if (mode === 'automated') {
+    showToast('Auto-Apply is coming soon!');
+    return;
+  }
+}
+
+function showAssistedPreparation() {
+  var job = autoApplyState.currentJob;
+  if (!job) return;
+
+  var html = '<div style="padding:20px">';
+  html += '<div style="text-align:center;margin-bottom:20px">';
+  html += '<div style="font-size:32px;margin-bottom:8px">🤝</div>';
+  html += '<div style="font-size:16px;font-weight:700">Preparing Your Application</div>';
+  html += '<div style="color:var(--text-secondary);font-size:13px;margin-top:4px">AI is analyzing the job and tailoring your materials...</div>';
+  html += '</div>';
+  html += '<div style="text-align:center;padding:20px"><div class="job-loading-spinner" style="margin:0 auto"></div></div>';
+  html += '</div>';
+
+  var overlay = document.getElementById('jobDetailOverlay');
+  document.getElementById('jobDetailHeaderTitle').textContent = 'Assisted Apply';
+  document.getElementById('jobDetailContent').innerHTML = html;
+  document.getElementById('jobDetailActions').style.display = 'none';
+
+  // Call prepareApplication
+  firebaseFunctions.httpsCallable('prepareApplication')({
+    jobId: job.id,
+    mode: 'assisted',
+    generateCoverLetter: true,
+  }).then(function(result) {
+    autoApplyState.preparedApp = result.data.prepared;
+    showAssistedReview(result.data.prepared);
+  }).catch(function(err) {
+    console.error('[AutoApply] Preparation error:', err);
+    html = '<div style="padding:20px;text-align:center">';
+    html += '<div style="font-size:32px;margin-bottom:8px">⚠️</div>';
+    html += '<div style="font-size:16px;font-weight:700;margin-bottom:8px">Preparation Failed</div>';
+    html += '<div style="color:var(--text-secondary);font-size:13px;margin-bottom:16px">' + escapeHtml(err.message || 'Could not prepare application materials.') + '</div>';
+    html += '<button onclick="selectApplicationMode(\'manual\')" style="width:100%;padding:12px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;border-radius:var(--radius);font-weight:700;cursor:pointer">Apply Manually Instead</button>';
+    html += '</div>';
+    document.getElementById('jobDetailContent').innerHTML = html;
+  });
+}
+
+function showAssistedReview(prepared) {
+  var html = '<div style="padding:20px">';
+
+  // Header
+  html += '<div style="margin-bottom:16px">';
+  html += '<div style="font-size:16px;font-weight:700;margin-bottom:4px">Review Your Application</div>';
+  html += '<div style="color:var(--text-secondary);font-size:12px">AI-prepared materials ready for your review. Edit anything before submitting.</div>';
+  html += '</div>';
+
+  // Warnings
+  if (prepared.warnings && prepared.warnings.length > 0) {
+    prepared.warnings.forEach(function(w) {
+      html += '<div style="padding:8px 12px;background:#f39c1222;border:1px solid #f39c1244;border-radius:8px;font-size:12px;color:#f39c12;margin-bottom:8px">⚠️ ' + escapeHtml(w) + '</div>';
+    });
+  }
+
+  // Missing fields
+  if (prepared.missingFields && prepared.missingFields.length > 0) {
+    html += '<div style="padding:8px 12px;background:#e74c3c22;border:1px solid #e74c3c44;border-radius:8px;font-size:12px;color:#e74c3c;margin-bottom:8px">Missing: ' + escapeHtml(prepared.missingFields.join(', ')) + '. Upload your resume in the Resume tab for better results.</div>';
+  }
+
+  // Resume section
+  if (prepared.resume) {
+    html += '<div style="background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:10px;border:1px solid var(--card-hover)">';
+    html += '<div style="font-size:13px;font-weight:700;margin-bottom:8px;color:var(--accent)">📄 Tailored Resume</div>';
+    html += '<div style="font-size:12px;color:var(--text-secondary);line-height:1.5;max-height:120px;overflow-y:auto">' + escapeHtml(typeof prepared.resume === 'string' ? prepared.resume.substring(0, 500) : 'Resume prepared') + '...</div>';
+    html += '</div>';
+  }
+
+  // Cover letter section
+  if (prepared.coverLetter) {
+    html += '<div style="background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:10px;border:1px solid var(--card-hover)">';
+    html += '<div style="font-size:13px;font-weight:700;margin-bottom:8px;color:var(--accent)">✉️ Cover Letter</div>';
+    html += '<div style="font-size:12px;color:var(--text-secondary);line-height:1.5;max-height:120px;overflow-y:auto">' + escapeHtml(prepared.coverLetter.text || 'Cover letter prepared') + '</div>';
+    html += '</div>';
+  }
+
+  // Answers section
+  if (prepared.answers && Object.keys(prepared.answers).length > 0) {
+    html += '<div style="background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:10px;border:1px solid var(--card-hover)">';
+    html += '<div style="font-size:13px;font-weight:700;margin-bottom:8px;color:var(--accent)">💬 Application Answers</div>';
+    Object.keys(prepared.answers).forEach(function(field) {
+      var answer = prepared.answers[field];
+      html += '<div style="margin-bottom:8px">';
+      html += '<div style="font-size:11px;color:var(--text-secondary);margin-bottom:2px">' + escapeHtml(field) + '</div>';
+      html += '<div style="font-size:12px;color:var(--text)">' + escapeHtml(answer.value || '') + '</div>';
+      if (answer.confidence < 0.8) {
+        html += '<div style="font-size:10px;color:#f39c12">⚠️ Low confidence — please review</div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Cost estimate
+  if (prepared.costEstimate) {
+    html += '<div style="font-size:11px;color:var(--text-secondary);text-align:center;margin-bottom:12px">Estimated cost: $' + (prepared.costEstimate.ai || 0).toFixed(2) + ' AI + $' + (prepared.costEstimate.provider || 0).toFixed(2) + ' provider</div>';
+  }
+
+  // Action buttons
+  html += '<button onclick="submitAssistedApplication()" style="width:100%;padding:14px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;border-radius:var(--radius);font-weight:700;font-size:14px;cursor:pointer;margin-bottom:8px">✅ Looks Good — Create Application</button>';
+  html += '<button onclick="selectApplicationMode(\'manual\')" style="width:100%;padding:12px;border:1px solid var(--card-hover);background:var(--card);color:var(--text-secondary);border-radius:var(--radius);font-size:13px;cursor:pointer">Apply Manually Instead</button>';
+
+  html += '</div>';
+
+  var overlay = document.getElementById('jobDetailOverlay');
+  document.getElementById('jobDetailHeaderTitle').textContent = 'Review Application';
+  document.getElementById('jobDetailContent').innerHTML = html;
+  document.getElementById('jobDetailActions').style.display = 'none';
+}
+
+function submitAssistedApplication() {
+  playClick('tap');
+  var job = autoApplyState.currentJob;
+  if (!job) return;
+
+  // Create application record
+  createApplicationRecord(job, 'assisted', 'ready_to_apply');
+  closeJobDetail();
+  showToast('Application created! Find it in the Applications tab.');
+}
+
+function createApplicationRecord(job, mode, status) {
+  if (!firebaseReady || !currentUser) return;
+
+  firebaseFunctions.httpsCallable('createApplication')({
+    jobId: job.id,
+    jobTitle: job.title,
+    company: job.company || null,
+    jobUrl: job.applicationUrl || job.sourceUrl || null,
+    source: job.sourceId || null,
+    status: status || 'saved',
+    mode: mode || 'manual',
+  }).then(function(result) {
+    if (result.data.duplicate) {
+      showToast('You already have an application for this job');
+    }
+  }).catch(function(err) {
+    console.error('[AutoApply] Create application error:', err);
+  });
+}
+
 function toggleJobSave(jobId) {
   playClick('tap');
   if (!firebaseReady || !currentUser) {
@@ -12571,8 +12825,8 @@ init();</script>
     <button id="jobDetailHeaderSave" onclick="toggleJobSaveFromDetail()" aria-label="Save job">&#9734;</button>
   </div>
   <div class="job-detail-content" id="jobDetailContent"></div>
-  <div class="job-detail-actions">
-    <button class="job-apply-btn" id="jobApplyBtn" onclick="applyToJob()">Apply Now</button>
+  <div class="job-detail-actions" id="jobDetailActions">
+    <button class="job-apply-btn" id="jobApplyBtn" onclick="startApplication()">Apply Now</button>
     <button class="job-prep-btn" id="jobPrepBtn" onclick="openJobPrep()">🎯 Prepare</button>
     <button class="job-detail-save-btn" id="jobDetailSaveBtn" onclick="toggleJobSaveFromDetail()" aria-label="Save job">&#9734;</button>
   </div>
