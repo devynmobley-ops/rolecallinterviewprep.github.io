@@ -1335,6 +1335,416 @@ exports.migratePromoCodesToOrganizations = functions.https.onCall(async (data, c
   return { migrated, skipped, customersUpdated, orgMap };
 });
 
+// ============================================================
+// APPLICATION TRACKER
+// ============================================================
+
+// Valid application statuses
+const APPLICATION_STATUSES = [
+  'saved', 'preparing', 'ready_to_apply', 'applied',
+  'recruiter_contacted', 'phone_screen', 'interview',
+  'final_interview', 'offer', 'accepted', 'rejected',
+  'withdrawn', 'closed'
+];
+
+// Valid application modes
+const APPLICATION_MODES = ['manual', 'assisted', 'automated'];
+
+// Valid submission statuses
+const SUBMISSION_STATUSES = ['pending', 'submitted', 'failed', 'blocked', 'needs_action'];
+
+// Create a new application record
+exports.createApplication = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const uid = context.auth.uid;
+  const {
+    jobId, jobTitle, company, jobUrl, source,
+    status = 'saved', mode = 'manual',
+    resumeId = null, coverLetterId = null,
+    notes = '',
+  } = data;
+
+  if (!jobTitle) {
+    throw new functions.https.HttpsError('invalid-argument', 'jobTitle required');
+  }
+
+  if (status && !APPLICATION_STATUSES.includes(status)) {
+    throw new functions.https.HttpsError('invalid-argument', 'Invalid status: ' + status);
+  }
+
+  if (mode && !APPLICATION_MODES.includes(mode)) {
+    throw new functions.https.HttpsError('invalid-argument', 'Invalid mode: ' + mode);
+  }
+
+  const db = admin.firestore();
+
+  // Duplicate check: look for existing application with same jobUrl or jobId
+  if (jobUrl || jobId) {
+    let dupQuery = db.collection('applications').where('uid', '==', uid);
+    if (jobUrl) {
+      const urlDups = await dupQuery.where('jobUrl', '==', jobUrl).limit(1).get();
+      if (!urlDups.empty) {
+        const existing = urlDups.docs[0];
+        return {
+          success: true,
+          applicationId: existing.id,
+          duplicate: true,
+          existingStatus: existing.data().status,
+        };
+      }
+    }
+    if (jobId) {
+      const idDups = await dupQuery.where('jobId', '==', jobId).limit(1).get();
+      if (!idDups.empty) {
+        const existing = idDups.docs[0];
+        return {
+          success: true,
+          applicationId: existing.id,
+          duplicate: true,
+          existingStatus: existing.data().status,
+        };
+      }
+    }
+  }
+
+  const now = admin.firestore.FieldValue.serverTimestamp();
+  const appRef = db.collection('applications').doc();
+
+  const appData = {
+    uid: uid,
+    jobId: jobId || null,
+    jobTitle: jobTitle,
+    company: company || null,
+    jobUrl: jobUrl || null,
+    source: source || null,
+    status: status,
+    mode: mode,
+    resumeId: resumeId,
+    coverLetterId: coverLetterId,
+    answers: null,
+    recruiterInfo: null,
+    interviewDates: [],
+    followUpDates: [],
+    notes: notes,
+    provider: null,
+    providerJobId: null,
+    submissionStatus: null,
+    failureReason: null,
+    costProvider: null,
+    costAI: null,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  await appRef.set(appData);
+
+  // Create initial event
+  await db.collection('applicationEvents').add({
+    applicationId: appRef.id,
+    uid: uid,
+    type: 'created',
+    data: { status: status, mode: mode },
+    createdAt: now,
+  });
+
+  // If linked to a savedJob, sync the status
+  if (jobId) {
+    try {
+      const savedRef = db.collection('savedJobs').doc(uid).collection('jobs').doc(jobId);
+      const savedDoc = await savedRef.get();
+      if (savedDoc.exists) {
+        await savedRef.update({
+          applicationId: appRef.id,
+          updatedAt: now,
+        });
+      }
+    } catch (err) {
+      console.error('Error syncing savedJob:', err.message);
+    }
+  }
+
+  return { success: true, applicationId: appRef.id, duplicate: false };
+});
+
+// Update an existing application
+exports.updateApplication = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const uid = context.auth.uid;
+  const {
+    applicationId, status, mode, resumeId, coverLetterId,
+    answers, recruiterInfo, notes, provider, providerJobId,
+    submissionStatus, failureReason, costProvider, costAI,
+    interviewDate, followUpDate,
+  } = data;
+
+  if (!applicationId) {
+    throw new functions.https.HttpsError('invalid-argument', 'applicationId required');
+  }
+
+  const db = admin.firestore();
+  const appRef = db.collection('applications').doc(applicationId);
+  const appDoc = await appRef.get();
+
+  if (!appDoc.exists || appDoc.data().uid !== uid) {
+    throw new functions.https.HttpsError('not-found', 'Application not found');
+  }
+
+  const updateData = { updatedAt: admin.firestore.FieldValue.serverTimestamp() };
+  const changes = {};
+
+  if (status !== undefined) {
+    if (!APPLICATION_STATUSES.includes(status)) {
+      throw new functions.https.HttpsError('invalid-argument', 'Invalid status: ' + status);
+    }
+    updateData.status = status;
+    changes.status = status;
+  }
+  if (mode !== undefined) {
+    if (!APPLICATION_MODES.includes(mode)) {
+      throw new functions.https.HttpsError('invalid-argument', 'Invalid mode: ' + mode);
+    }
+    updateData.mode = mode;
+    changes.mode = mode;
+  }
+  if (resumeId !== undefined) { updateData.resumeId = resumeId; changes.resumeId = resumeId; }
+  if (coverLetterId !== undefined) { updateData.coverLetterId = coverLetterId; changes.coverLetterId = coverLetterId; }
+  if (answers !== undefined) { updateData.answers = answers; changes.answers = 'updated'; }
+  if (recruiterInfo !== undefined) { updateData.recruiterInfo = recruiterInfo; changes.recruiterInfo = 'updated'; }
+  if (notes !== undefined) { updateData.notes = notes; }
+  if (provider !== undefined) { updateData.provider = provider; changes.provider = provider; }
+  if (providerJobId !== undefined) { updateData.providerJobId = providerJobId; }
+  if (submissionStatus !== undefined) {
+    if (!SUBMISSION_STATUSES.includes(submissionStatus)) {
+      throw new functions.https.HttpsError('invalid-argument', 'Invalid submissionStatus: ' + submissionStatus);
+    }
+    updateData.submissionStatus = submissionStatus;
+    changes.submissionStatus = submissionStatus;
+  }
+  if (failureReason !== undefined) { updateData.failureReason = failureReason; changes.failureReason = failureReason; }
+  if (costProvider !== undefined) { updateData.costProvider = costProvider; }
+  if (costAI !== undefined) { updateData.costAI = costAI; }
+
+  // Handle interview dates (append)
+  if (interviewDate) {
+    const currentDates = appDoc.data().interviewDates || [];
+    currentDates.push(interviewDate);
+    updateData.interviewDates = currentDates;
+    changes.interviewDate = interviewDate;
+  }
+
+  // Handle follow-up dates (append)
+  if (followUpDate) {
+    const currentFollowUps = appDoc.data().followUpDates || [];
+    currentFollowUps.push(followUpDate);
+    updateData.followUpDates = currentFollowUps;
+    changes.followUpDate = followUpDate;
+  }
+
+  await appRef.update(updateData);
+
+  // Create event for the change
+  if (Object.keys(changes).length > 0) {
+    await db.collection('applicationEvents').add({
+      applicationId: applicationId,
+      uid: uid,
+      type: status ? 'status_changed' : 'updated',
+      data: changes,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+  }
+
+  // Sync status to savedJob if linked
+  const jobId = appDoc.data().jobId;
+  if (jobId && status) {
+    try {
+      const savedStatusMap = {
+        'saved': 'saved', 'preparing': 'saved', 'ready_to_apply': 'saved',
+        'applied': 'applied', 'recruiter_contacted': 'applied',
+        'phone_screen': 'interviewing', 'interview': 'interviewing',
+        'final_interview': 'interviewing', 'offer': 'offer',
+        'accepted': 'offer', 'rejected': 'rejected',
+        'withdrawn': 'archived', 'closed': 'archived',
+      };
+      const savedStatus = savedStatusMap[status] || 'saved';
+      await db.collection('savedJobs').doc(uid).collection('jobs').doc(jobId).update({
+        status: savedStatus,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    } catch (err) {
+      console.error('Error syncing savedJob status:', err.message);
+    }
+  }
+
+  return { success: true };
+});
+
+// Get all applications for the current user
+exports.getApplications = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const uid = context.auth.uid;
+  const { status, sortBy = 'updatedAt', limit: reqLimit = 100 } = data || {};
+
+  const db = admin.firestore();
+  let query = db.collection('applications')
+    .where('uid', '==', uid)
+    .orderBy(sortBy, 'desc')
+    .limit(Math.min(reqLimit, 200));
+
+  const snap = await query.get();
+  let apps = snap.docs.map(doc => {
+    const d = doc.data();
+    return {
+      id: doc.id,
+      ...d,
+      createdAt: d.createdAt?.toDate?.()?.toISOString() || null,
+      updatedAt: d.updatedAt?.toDate?.()?.toISOString() || null,
+    };
+  });
+
+  // Filter by status in memory (avoids composite index)
+  if (status) {
+    apps = apps.filter(a => a.status === status);
+  }
+
+  return { applications: apps };
+});
+
+// Get a single application with its event timeline
+exports.getApplicationDetails = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const uid = context.auth.uid;
+  const { applicationId } = data;
+
+  if (!applicationId) {
+    throw new functions.https.HttpsError('invalid-argument', 'applicationId required');
+  }
+
+  const db = admin.firestore();
+  const appDoc = await db.collection('applications').doc(applicationId).get();
+
+  if (!appDoc.exists || appDoc.data().uid !== uid) {
+    throw new functions.https.HttpsError('not-found', 'Application not found');
+  }
+
+  // Get event timeline
+  const eventsSnap = await db.collection('applicationEvents')
+    .where('applicationId', '==', applicationId)
+    .orderBy('createdAt', 'asc')
+    .get();
+
+  const events = eventsSnap.docs.map(doc => {
+    const d = doc.data();
+    return {
+      id: doc.id,
+      ...d,
+      createdAt: d.createdAt?.toDate?.()?.toISOString() || null,
+    };
+  });
+
+  const appData = appDoc.data();
+  return {
+    application: {
+      id: appDoc.id,
+      ...appData,
+      createdAt: appData.createdAt?.toDate?.()?.toISOString() || null,
+      updatedAt: appData.updatedAt?.toDate?.()?.toISOString() || null,
+    },
+    events: events,
+  };
+});
+
+// Delete an application (soft delete — mark as withdrawn)
+exports.deleteApplication = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const uid = context.auth.uid;
+  const { applicationId } = data;
+
+  if (!applicationId) {
+    throw new functions.https.HttpsError('invalid-argument', 'applicationId required');
+  }
+
+  const db = admin.firestore();
+  const appRef = db.collection('applications').doc(applicationId);
+  const appDoc = await appRef.get();
+
+  if (!appDoc.exists || appDoc.data().uid !== uid) {
+    throw new functions.https.HttpsError('not-found', 'Application not found');
+  }
+
+  // Soft delete — mark as withdrawn
+  await appRef.update({
+    status: 'withdrawn',
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  await db.collection('applicationEvents').add({
+    applicationId: applicationId,
+    uid: uid,
+    type: 'deleted',
+    data: { previousStatus: appDoc.data().status },
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  return { success: true };
+});
+
+// Get application stats for the current user
+exports.getApplicationStats = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const uid = context.auth.uid;
+  const db = admin.firestore();
+
+  const snap = await db.collection('applications')
+    .where('uid', '==', uid)
+    .limit(500)
+    .get();
+
+  const apps = snap.docs.map(d => d.data());
+
+  const stats = {
+    total: apps.length,
+    byStatus: {},
+    byMode: { manual: 0, assisted: 0, automated: 0 },
+    submitted: 0,
+    interviews: 0,
+    offers: 0,
+  };
+
+  apps.forEach(app => {
+    stats.byStatus[app.status] = (stats.byStatus[app.status] || 0) + 1;
+    if (app.mode) stats.byMode[app.mode] = (stats.byMode[app.mode] || 0) + 1;
+    if (['applied', 'recruiter_contacted', 'phone_screen', 'interview', 'final_interview', 'offer', 'accepted'].includes(app.status)) {
+      stats.submitted++;
+    }
+    if (['phone_screen', 'interview', 'final_interview'].includes(app.status)) {
+      stats.interviews++;
+    }
+    if (['offer', 'accepted'].includes(app.status)) {
+      stats.offers++;
+    }
+  });
+
+  return { stats };
+});
+
 // Scheduled function: aggregate student sessions into institution stats
 // Runs daily at midnight UTC via Google Cloud Scheduler
 exports.aggregateInstitutionStats = functions.pubsub

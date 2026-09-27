@@ -12091,16 +12091,21 @@ function switchJobsView(view) {
   // Update toggle buttons
   var buttons = document.querySelectorAll('.my-jobs-toggle button');
   buttons.forEach(function(b, i) {
-    b.classList.toggle('active', (i === 0 && view === 'search') || (i === 1 && view === 'saved'));
+    b.classList.toggle('active', (i === 0 && view === 'search') || (i === 1 && view === 'saved') || (i === 2 && view === 'applications'));
   });
 
   // Show/hide views
   document.getElementById('jobsSearchView').style.display = view === 'search' ? '' : 'none';
   document.getElementById('jobsSavedView').style.display = view === 'saved' ? '' : 'none';
+  document.getElementById('jobsApplicationsView').style.display = view === 'applications' ? '' : 'none';
 
   // Load saved jobs when switching to My Jobs
   if (view === 'saved') {
     loadMyJobs();
+  }
+  // Load applications when switching to Applications
+  if (view === 'applications') {
+    loadApplications();
   }
 }
 
@@ -12233,6 +12238,266 @@ function saveMyJobNotes(jobId) {
   });
 }
 
+// === APPLICATION TRACKER ===
+var applicationStatuses = {
+  'saved': { label: 'Saved', color: '#8e8ea0', icon: '💾' },
+  'preparing': { label: 'Preparing', color: '#f39c12', icon: '📝' },
+  'ready_to_apply': { label: 'Ready to Apply', color: '#3498db', icon: '✅' },
+  'applied': { label: 'Applied', color: '#6c5ce7', icon: '📨' },
+  'recruiter_contacted': { label: 'Recruiter Contacted', color: '#00b894', icon: '📞' },
+  'phone_screen': { label: 'Phone Screen', color: '#00cec9', icon: '📱' },
+  'interview': { label: 'Interview', color: '#0984e3', icon: '🎤' },
+  'final_interview': { label: 'Final Interview', color: '#6c5ce7', icon: '🏁' },
+  'offer': { label: 'Offer', color: '#00b894', icon: '🎉' },
+  'accepted': { label: 'Accepted', color: '#2ecc71', icon: '✅' },
+  'rejected': { label: 'Rejected', color: '#e74c3c', icon: '❌' },
+  'withdrawn': { label: 'Withdrawn', color: '#95a5a6', icon: '↩️' },
+  'closed': { label: 'Closed', color: '#636e72', icon: '🔒' },
+};
+
+function loadApplications() {
+  var container = document.getElementById('applicationsContainer');
+
+  if (!firebaseReady || !currentUser) {
+    container.innerHTML = '<div class="my-jobs-signin"><div class="my-jobs-empty-icon">&#128274;</div><h3>Sign in to track applications</h3><p>Create an account to track your job applications and interview progress.</p><button onclick="handleAccountClick()">Sign In</button></div>';
+    return;
+  }
+
+  container.innerHTML = '<div class="job-loading"><div class="job-loading-spinner"></div><p>Loading applications...</p></div>';
+
+  Promise.all([
+    firebaseFunctions.httpsCallable('getApplicationStats')({}),
+    firebaseFunctions.httpsCallable('getApplications')({ sortBy: 'updatedAt', limit: 100 }),
+  ]).then(function(results) {
+    var stats = results[0].data.stats;
+    var apps = results[1].data.applications;
+    renderApplications(stats, apps);
+  }).catch(function(err) {
+    console.error('[Applications] Error:', err);
+    container.innerHTML = '<div class="my-jobs-empty"><div class="my-jobs-empty-icon">&#128533;</div><h3>Could not load applications</h3><p>Please try again later.</p></div>';
+  });
+}
+
+function renderApplications(stats, apps) {
+  var container = document.getElementById('applicationsContainer');
+
+  var html = '';
+
+  // Stats summary
+  html += '<div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">';
+  html += '<div style="flex:1;min-width:80px;background:var(--card);border-radius:var(--radius);padding:12px;text-align:center;border:1px solid var(--card-hover)">';
+  html += '<div style="font-size:24px;font-weight:800;color:var(--accent)">' + (stats.total || 0) + '</div>';
+  html += '<div style="font-size:11px;color:var(--text-secondary)">Total</div></div>';
+  html += '<div style="flex:1;min-width:80px;background:var(--card);border-radius:var(--radius);padding:12px;text-align:center;border:1px solid var(--card-hover)">';
+  html += '<div style="font-size:24px;font-weight:800;color:#6c5ce7">' + (stats.submitted || 0) + '</div>';
+  html += '<div style="font-size:11px;color:var(--text-secondary)">Applied</div></div>';
+  html += '<div style="flex:1;min-width:80px;background:var(--card);border-radius:var(--radius);padding:12px;text-align:center;border:1px solid var(--card-hover)">';
+  html += '<div style="font-size:24px;font-weight:800;color:#00b894">' + (stats.interviews || 0) + '</div>';
+  html += '<div style="font-size:11px;color:var(--text-secondary)">Interviews</div></div>';
+  html += '<div style="flex:1;min-width:80px;background:var(--card);border-radius:var(--radius);padding:12px;text-align:center;border:1px solid var(--card-hover)">';
+  html += '<div style="font-size:24px;font-weight:800;color:#2ecc71">' + (stats.offers || 0) + '</div>';
+  html += '<div style="font-size:11px;color:var(--text-secondary)">Offers</div></div>';
+  html += '</div>';
+
+  if (apps.length === 0) {
+    html += '<div class="my-jobs-empty"><div class="my-jobs-empty-icon">&#128188;</div><h3>No applications yet</h3><p>Save a job and track your application progress here.</p></div>';
+    container.innerHTML = html;
+    return;
+  }
+
+  // Filter pills
+  html += '<div style="display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px">';
+  html += '<button class="job-filter-pill active" onclick="filterApplications(\'all\', this)" data-filter="all">All (' + apps.length + ')</button>';
+  var statusCounts = {};
+  apps.forEach(function(app) { statusCounts[app.status] = (statusCounts[app.status] || 0) + 1; });
+  Object.keys(statusCounts).forEach(function(status) {
+    var info = applicationStatuses[status] || { label: status, color: '#8e8ea0' };
+    html += '<button class="job-filter-pill" onclick="filterApplications(\'' + status + '\', this)" data-filter="' + status + '">' + info.label + ' (' + statusCounts[status] + ')</button>';
+  });
+  html += '</div>';
+
+  // Application cards
+  html += '<div id="applicationsList">';
+  apps.forEach(function(app) {
+    html += renderApplicationCard(app);
+  });
+  html += '</div>';
+
+  container.innerHTML = html;
+}
+
+function renderApplicationCard(app) {
+  var info = applicationStatuses[app.status] || { label: app.status, color: '#8e8ea0', icon: '📋' };
+  var dateText = app.updatedAt ? timeAgo(new Date(app.updatedAt)) : '';
+  var modeIcon = app.mode === 'automated' ? '🤖' : app.mode === 'assisted' ? '🤝' : '👤';
+
+  var html = '<div class="my-job-card" data-app-id="' + escapeHtml(app.id) + '" data-status="' + escapeHtml(app.status) + '">';
+  html += '<div class="my-job-top">';
+  html += '<div class="my-job-info">';
+  html += '<div class="my-job-title">' + info.icon + ' ' + escapeHtml(app.jobTitle) + '</div>';
+  if (app.company) html += '<div class="my-job-company">' + escapeHtml(app.company) + '</div>';
+  html += '</div>';
+  html += '<span class="my-job-status" style="background:' + info.color + '22;color:' + info.color + ';border:1px solid ' + info.color + '44">' + info.label + '</span>';
+  html += '</div>';
+
+  html += '<div class="my-job-meta">';
+  var meta = [];
+  if (dateText) meta.push('Updated ' + dateText);
+  meta.push(modeIcon + ' ' + (app.mode || 'manual'));
+  if (app.submissionStatus) meta.push('📤 ' + app.submissionStatus);
+  html += meta.join(' · ');
+  html += '</div>';
+
+  // Quick actions
+  html += '<div class="my-job-actions">';
+  var nextStatuses = getNextStatuses(app.status);
+  nextStatuses.forEach(function(s) {
+    var sInfo = applicationStatuses[s];
+    html += '<button onclick="updateApplicationStatus(\'' + escapeHtml(app.id) + '\',\'' + s + '\')" style="font-size:11px">' + sInfo.icon + ' ' + sInfo.label + '</button>';
+  });
+  html += '<button onclick="viewApplicationDetails(\'' + escapeHtml(app.id) + '\')" style="font-size:11px">📋 Details</button>';
+  html += '</div>';
+
+  html += '</div>';
+  return html;
+}
+
+function getNextStatuses(currentStatus) {
+  var flow = {
+    'saved': ['preparing', 'ready_to_apply', 'applied'],
+    'preparing': ['ready_to_apply', 'applied'],
+    'ready_to_apply': ['applied'],
+    'applied': ['recruiter_contacted', 'phone_screen', 'interview', 'rejected', 'closed'],
+    'recruiter_contacted': ['phone_screen', 'interview', 'rejected'],
+    'phone_screen': ['interview', 'final_interview', 'rejected'],
+    'interview': ['final_interview', 'offer', 'rejected'],
+    'final_interview': ['offer', 'rejected'],
+    'offer': ['accepted', 'withdrawn'],
+    'accepted': [],
+    'rejected': [],
+    'withdrawn': [],
+    'closed': [],
+  };
+  return (flow[currentStatus] || []).slice(0, 3);
+}
+
+function filterApplications(status, btn) {
+  playClick('tap');
+  // Update active pill
+  document.querySelectorAll('[data-filter]').forEach(function(b) { b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+
+  // Filter cards
+  var cards = document.querySelectorAll('#applicationsList .my-job-card');
+  cards.forEach(function(card) {
+    if (status === 'all' || card.dataset.status === status) {
+      card.style.display = '';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+function updateApplicationStatus(appId, status) {
+  playClick('tap');
+  if (!firebaseReady || !currentUser) return;
+
+  firebaseFunctions.httpsCallable('updateApplication')({
+    applicationId: appId,
+    status: status,
+  }).then(function() {
+    showToast('Status updated to ' + (applicationStatuses[status] || { label: status }).label);
+    loadApplications();
+  }).catch(function(err) {
+    console.error('[Applications] Update error:', err);
+    showToast('Could not update status');
+  });
+}
+
+function viewApplicationDetails(appId) {
+  playClick('tap');
+  if (!firebaseReady || !currentUser) return;
+
+  firebaseFunctions.httpsCallable('getApplicationDetails')({
+    applicationId: appId,
+  }).then(function(result) {
+    var app = result.data.application;
+    var events = result.data.events;
+    showApplicationDetailOverlay(app, events);
+  }).catch(function(err) {
+    console.error('[Applications] Detail error:', err);
+    showToast('Could not load application details');
+  });
+}
+
+function showApplicationDetailOverlay(app, events) {
+  var info = applicationStatuses[app.status] || { label: app.status, color: '#8e8ea0', icon: '📋' };
+
+  var html = '<div style="padding:20px">';
+  // Header
+  html += '<div style="margin-bottom:20px">';
+  html += '<div style="font-size:20px;font-weight:800;margin-bottom:4px">' + info.icon + ' ' + escapeHtml(app.jobTitle) + '</div>';
+  if (app.company) html += '<div style="color:var(--text-secondary);font-size:14px">' + escapeHtml(app.company) + '</div>';
+  html += '<span style="display:inline-block;margin-top:8px;padding:4px 12px;border-radius:8px;font-size:12px;font-weight:600;background:' + info.color + '22;color:' + info.color + ';border:1px solid ' + info.color + '44">' + info.label + '</span>';
+  html += '</div>';
+
+  // Details
+  html += '<div style="background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:16px;border:1px solid var(--card-hover)">';
+  html += '<div style="font-size:13px;font-weight:700;margin-bottom:8px;color:var(--accent)">Details</div>';
+  var details = [];
+  if (app.mode) details.push(['Mode', (app.mode === 'automated' ? '🤖 Automated' : app.mode === 'assisted' ? '🤝 Assisted' : '👤 Manual')]);
+  if (app.source) details.push(['Source', app.source]);
+  if (app.submissionStatus) details.push(['Submission', app.submissionStatus]);
+  if (app.failureReason) details.push(['Failure Reason', app.failureReason]);
+  if (app.createdAt) details.push(['Created', new Date(app.createdAt).toLocaleDateString()]);
+  if (app.updatedAt) details.push(['Updated', new Date(app.updatedAt).toLocaleDateString()]);
+  details.forEach(function(d) {
+    html += '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px"><span style="color:var(--text-secondary)">' + d[0] + '</span><span>' + escapeHtml(d[1]) + '</span></div>';
+  });
+  html += '</div>';
+
+  // Notes
+  if (app.notes) {
+    html += '<div style="background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:16px;border:1px solid var(--card-hover)">';
+    html += '<div style="font-size:13px;font-weight:700;margin-bottom:8px;color:var(--accent)">Notes</div>';
+    html += '<div style="font-size:13px;color:var(--text-secondary);line-height:1.5">' + escapeHtml(app.notes) + '</div>';
+    html += '</div>';
+  }
+
+  // Timeline
+  if (events && events.length > 0) {
+    html += '<div style="background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:16px;border:1px solid var(--card-hover)">';
+    html += '<div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--accent)">Timeline</div>';
+    events.forEach(function(evt) {
+      var evtDate = evt.createdAt ? new Date(evt.createdAt).toLocaleString() : '';
+      var evtIcon = evt.type === 'created' ? '🆕' : evt.type === 'status_changed' ? '🔄' : evt.type === 'deleted' ? '🗑️' : '📝';
+      var evtLabel = evt.type === 'status_changed' && evt.data.status
+        ? 'Changed to ' + (applicationStatuses[evt.data.status] || { label: evt.data.status }).label
+        : evt.type.replace(/_/g, ' ');
+      html += '<div style="display:flex;gap:10px;padding:6px 0;font-size:12px;border-bottom:1px solid var(--card-hover)">';
+      html += '<span>' + evtIcon + '</span>';
+      html += '<span style="flex:1;color:var(--text-secondary)">' + evtLabel + '</span>';
+      html += '<span style="color:var(--text-secondary);font-size:11px">' + evtDate + '</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Job link
+  if (app.jobUrl) {
+    html += '<a href="' + escapeHtml(app.jobUrl) + '" target="_blank" rel="noopener" style="display:block;text-align:center;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;border-radius:var(--radius);text-decoration:none;font-weight:700;font-size:14px;margin-bottom:12px">View Job Posting</a>';
+  }
+
+  html += '</div>';
+
+  // Use job detail overlay
+  var overlay = document.getElementById('jobDetailOverlay');
+  document.getElementById('jobDetailHeaderTitle').textContent = 'Application Details';
+  document.getElementById('jobDetailContent').innerHTML = html;
+  document.getElementById('jobDetailActions').style.display = 'none';
+  overlay.classList.add('open');
+}
+
 init();</script>
 
 <!-- JOB SEARCH SCREEN -->
@@ -12244,6 +12509,7 @@ init();</script>
   <div class="my-jobs-toggle">
     <button class="active" onclick="switchJobsView('search')">Search Jobs</button>
     <button onclick="switchJobsView('saved')">My Jobs</button>
+    <button onclick="switchJobsView('applications')">Applications</button>
   </div>
   <div id="jobsSearchView">
   <div class="job-search-box">
@@ -12291,6 +12557,9 @@ init();</script>
   </div>
   <div id="jobsSavedView" style="display:none">
     <div id="myJobsContainer"></div>
+  </div>
+  <div id="jobsApplicationsView" style="display:none">
+    <div id="applicationsContainer"></div>
   </div>
 </div>
 
