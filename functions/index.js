@@ -651,7 +651,7 @@ exports.recordSession = functions.https.onCall(async (data, context) => {
   return { recorded: true, institutionId: institutionId };
 });
 
-// Redeem a promo code — tags the customer with institutionId
+// Redeem a promo code — tags the customer with institutionId and organizationId
 exports.redeemPromoCode = functions.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
@@ -673,6 +673,11 @@ exports.redeemPromoCode = functions.https.onCall(async (data, context) => {
 
   const promo = promoDoc.data();
 
+  // Check if code is disabled
+  if (promo.active === false) {
+    throw new functions.https.HttpsError('failed-precondition', 'This code has been deactivated');
+  }
+
   // Check if expired
   if (promo.expiresAt && promo.expiresAt.toDate() < new Date()) {
     throw new functions.https.HttpsError('failed-precondition', 'Promo code has expired');
@@ -689,9 +694,21 @@ exports.redeemPromoCode = functions.https.onCall(async (data, context) => {
     promoExpiresAt: promo.expiresAt || null,
   };
 
-  // Tag with institutionId if the promo code has one
+  // Tag with institutionId (legacy) and organizationId (new)
   if (promo.institutionId) {
     updateData.institutionId = promo.institutionId;
+  }
+  if (promo.organizationId) {
+    updateData.organizationId = promo.organizationId;
+  }
+
+  // If promo code has account type preference, set it if user doesn't have one
+  if (promo.accountType && promo.accountType === 'STUDENT') {
+    const custDoc = await admin.firestore().collection('customers').doc(uid).get();
+    if (!custDoc.exists || !custDoc.data().accountType) {
+      updateData.accountType = 'STUDENT';
+      updateData.accountTypeSelectedAt = admin.firestore.FieldValue.serverTimestamp();
+    }
   }
 
   await admin.firestore().collection('customers').doc(uid).set(updateData, { merge: true });
@@ -701,10 +718,43 @@ exports.redeemPromoCode = functions.https.onCall(async (data, context) => {
     currentUses: admin.firestore.FieldValue.increment(1),
   });
 
+  // Also increment in organization's discountCodes if it exists
+  if (promo.organizationId) {
+    try {
+      const discountSnap = await admin.firestore()
+        .collection('organizations')
+        .doc(promo.organizationId)
+        .collection('discountCodes')
+        .where('code', '==', normalizedCode)
+        .limit(1)
+        .get();
+      if (!discountSnap.empty) {
+        await discountSnap.docs[0].ref.update({
+          currentUses: admin.firestore.FieldValue.increment(1),
+        });
+      }
+    } catch (err) {
+      console.error('Error syncing discount code usage:', err.message);
+    }
+  }
+
+  // Log
+  await admin.firestore().collection('auditLog').add({
+    uid: uid,
+    action: 'DISCOUNT_CODE_REDEEMED',
+    target: uid,
+    details: {
+      code: normalizedCode,
+      organizationId: promo.organizationId || promo.institutionId || null,
+    },
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
   return {
     success: true,
     institutionId: promo.institutionId || null,
     institutionName: promo.institutionName || null,
+    organizationId: promo.organizationId || promo.institutionId || null,
   };
 });
 
@@ -813,6 +863,476 @@ exports.getAccountType = functions.https.onCall(async (data, context) => {
     organizationName,
     featurePolicies,
   };
+});
+
+// ============================================================
+// ORGANIZATION MANAGEMENT
+// ============================================================
+
+// Create an organization — super admin only
+exports.createOrganization = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  // Check super admin
+  const superAdminDoc = await admin.firestore()
+    .collection('super_admins').doc(context.auth.uid).get();
+  if (!superAdminDoc.exists) {
+    throw new functions.https.HttpsError('permission-denied', 'Super admin access required');
+  }
+
+  const { name, slug, type = 'school', defaultFeatures } = data;
+  if (!name || !slug) {
+    throw new functions.https.HttpsError('invalid-argument', 'name and slug required');
+  }
+
+  const db = admin.firestore();
+  const normalizedSlug = slug.toLowerCase().trim().replace(/[^a-z0-9-]/g, '-');
+
+  // Check slug uniqueness
+  const existingSnap = await db.collection('organizations')
+    .where('slug', '==', normalizedSlug)
+    .limit(1)
+    .get();
+  if (!existingSnap.empty) {
+    throw new functions.https.HttpsError('already-exists', 'An organization with this slug already exists');
+  }
+
+  // Default features — all enabled except AUTO_APPLY for schools
+  const features = defaultFeatures || {
+    AI_RESUME: true,
+    AI_COVER_LETTER: true,
+    INTERVIEW_PREP: true,
+    JOB_SEARCH: true,
+    APPLICATION_TRACKER: true,
+    AUTO_APPLY: type === 'school' ? false : true,
+    ADVANCED_ANALYTICS: false,
+  };
+
+  const orgRef = db.collection('organizations').doc();
+  await orgRef.set({
+    name: name.trim(),
+    slug: normalizedSlug,
+    type: type,
+    active: true,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    createdBy: context.auth.uid,
+  });
+
+  // Create default feature policy
+  await orgRef.collection('featurePolicies').doc('default').set({
+    features: features,
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedBy: context.auth.uid,
+  });
+
+  // Log
+  await db.collection('auditLog').add({
+    uid: context.auth.uid,
+    action: 'ORGANIZATION_CREATED',
+    target: orgRef.id,
+    details: { name, slug: normalizedSlug, type },
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  return { success: true, organizationId: orgRef.id, slug: normalizedSlug };
+});
+
+// Update organization — super admin only
+exports.updateOrganization = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const superAdminDoc = await admin.firestore()
+    .collection('super_admins').doc(context.auth.uid).get();
+  if (!superAdminDoc.exists) {
+    throw new functions.https.HttpsError('permission-denied', 'Super admin access required');
+  }
+
+  const { organizationId, name, type, active } = data;
+  if (!organizationId) {
+    throw new functions.https.HttpsError('invalid-argument', 'organizationId required');
+  }
+
+  const updateData = {};
+  if (name !== undefined) updateData.name = name.trim();
+  if (type !== undefined) updateData.type = type;
+  if (active !== undefined) updateData.active = active;
+  updateData.updatedAt = admin.firestore.FieldValue.serverTimestamp();
+  updateData.updatedBy = context.auth.uid;
+
+  await admin.firestore().collection('organizations').doc(organizationId).update(updateData);
+
+  // Log
+  await admin.firestore().collection('auditLog').add({
+    uid: context.auth.uid,
+    action: 'ORGANIZATION_UPDATED',
+    target: organizationId,
+    details: updateData,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  return { success: true };
+});
+
+// Set feature policies for an organization — super admin only
+exports.setFeaturePolicies = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const superAdminDoc = await admin.firestore()
+    .collection('super_admins').doc(context.auth.uid).get();
+  if (!superAdminDoc.exists) {
+    throw new functions.https.HttpsError('permission-denied', 'Super admin access required');
+  }
+
+  const { organizationId, features } = data;
+  if (!organizationId || !features) {
+    throw new functions.https.HttpsError('invalid-argument', 'organizationId and features required');
+  }
+
+  const db = admin.firestore();
+  const policyRef = db.collection('organizations')
+    .doc(organizationId)
+    .collection('featurePolicies')
+    .doc('default');
+
+  await policyRef.set({
+    features: features,
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedBy: context.auth.uid,
+  }, { merge: true });
+
+  // Log
+  await db.collection('auditLog').add({
+    uid: context.auth.uid,
+    action: 'FEATURE_POLICIES_UPDATED',
+    target: organizationId,
+    details: { features },
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  return { success: true };
+});
+
+// Create a discount code for an organization — super admin only
+exports.createDiscountCode = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const superAdminDoc = await admin.firestore()
+    .collection('super_admins').doc(context.auth.uid).get();
+  if (!superAdminDoc.exists) {
+    throw new functions.https.HttpsError('permission-denied', 'Super admin access required');
+  }
+
+  const {
+    organizationId,
+    code,
+    discountType = 'free',      // 'percentage' | 'fixed' | 'free'
+    discountValue = 100,         // percentage or dollar amount
+    accountType = 'STUDENT',
+    expiresAt = null,            // ISO date string or null
+    maxUses = null,              // number or null (unlimited)
+  } = data;
+
+  if (!organizationId || !code) {
+    throw new functions.https.HttpsError('invalid-argument', 'organizationId and code required');
+  }
+
+  const db = admin.firestore();
+  const normalizedCode = code.toUpperCase().trim().replace(/[^A-Z0-9-]/g, '');
+
+  // Verify org exists
+  const orgDoc = await db.collection('organizations').doc(organizationId).get();
+  if (!orgDoc.exists) {
+    throw new functions.https.HttpsError('not-found', 'Organization not found');
+  }
+
+  // Check code uniqueness in BOTH collections (discountCodes and promoCodes)
+  const existingDiscount = await db.collection('organizations')
+    .doc(organizationId)
+    .collection('discountCodes')
+    .where('code', '==', normalizedCode)
+    .limit(1)
+    .get();
+
+  const existingPromo = await db.collection('promoCodes').doc(normalizedCode).get();
+
+  if (!existingDiscount.empty || existingPromo.exists) {
+    throw new functions.https.HttpsError('already-exists', 'This code already exists');
+  }
+
+  // Create in organization's discountCodes sub-collection
+  const codeRef = db.collection('organizations')
+    .doc(organizationId)
+    .collection('discountCodes')
+    .doc();
+
+  await codeRef.set({
+    code: normalizedCode,
+    discountType: discountType,
+    discountValue: discountValue,
+    accountType: accountType,
+    expiresAt: expiresAt ? admin.firestore.Timestamp.fromDate(new Date(expiresAt)) : null,
+    maxUses: maxUses,
+    currentUses: 0,
+    active: true,
+    organizationId: organizationId,
+    organizationName: orgDoc.data().name,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    createdBy: context.auth.uid,
+  });
+
+  // Also create in the legacy promoCodes collection for backward compat
+  await db.collection('promoCodes').doc(normalizedCode).set({
+    institutionId: organizationId,
+    institutionName: orgDoc.data().name,
+    isPro: true,
+    expiresAt: expiresAt ? admin.firestore.Timestamp.fromDate(new Date(expiresAt)) : null,
+    maxUses: maxUses,
+    currentUses: 0,
+    discountType: discountType,
+    discountValue: discountValue,
+    accountType: accountType,
+    active: true,
+    organizationId: organizationId,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    createdBy: context.auth.uid,
+  });
+
+  // Log
+  await db.collection('auditLog').add({
+    uid: context.auth.uid,
+    action: 'DISCOUNT_CODE_CREATED',
+    target: organizationId,
+    details: { code: normalizedCode, discountType, discountValue },
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  return { success: true, codeId: codeRef.id, code: normalizedCode };
+});
+
+// List all organizations — super admin only
+exports.listOrganizations = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const superAdminDoc = await admin.firestore()
+    .collection('super_admins').doc(context.auth.uid).get();
+  if (!superAdminDoc.exists) {
+    throw new functions.https.HttpsError('permission-denied', 'Super admin access required');
+  }
+
+  const db = admin.firestore();
+  const orgSnap = await db.collection('organizations').orderBy('createdAt', 'desc').get();
+
+  const orgs = [];
+  for (const doc of orgSnap.docs) {
+    const orgData = doc.data();
+
+    // Get feature policies
+    const policySnap = await db.collection('organizations')
+      .doc(doc.id)
+      .collection('featurePolicies')
+      .doc('default')
+      .get();
+
+    // Get discount codes
+    const codesSnap = await db.collection('organizations')
+      .doc(doc.id)
+      .collection('discountCodes')
+      .get();
+
+    // Get member count (customers with this organizationId)
+    const membersSnap = await db.collection('customers')
+      .where('organizationId', '==', doc.id)
+      .count()
+      .get();
+
+    orgs.push({
+      id: doc.id,
+      ...orgData,
+      createdAt: orgData.createdAt?.toDate?.()?.toISOString() || null,
+      featurePolicies: policySnap.exists ? policySnap.data().features : null,
+      discountCodes: codesSnap.docs.map(c => ({
+        id: c.id,
+        ...c.data(),
+        expiresAt: c.data().expiresAt?.toDate?.()?.toISOString() || null,
+        createdAt: c.data().createdAt?.toDate?.()?.toISOString() || null,
+      })),
+      memberCount: membersSnap.data().count,
+    });
+  }
+
+  return { organizations: orgs };
+});
+
+// Get organization details — institution admin or super admin
+exports.getOrganizationDetails = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const { organizationId } = data;
+  if (!organizationId) {
+    throw new functions.https.HttpsError('invalid-argument', 'organizationId required');
+  }
+
+  const db = admin.firestore();
+  const uid = context.auth.uid;
+
+  // Check access: super admin OR institution admin for this org
+  const superAdminDoc = await db.collection('super_admins').doc(uid).get();
+  const instAdminDoc = await db.collection('institution_admins').doc(uid).get();
+
+  const isSuperAdmin = superAdminDoc.exists;
+  const isInstAdmin = instAdminDoc.exists && instAdminDoc.data().institutionId === organizationId;
+
+  if (!isSuperAdmin && !isInstAdmin) {
+    throw new functions.https.HttpsError('permission-denied', 'Admin access required');
+  }
+
+  // Get org
+  const orgDoc = await db.collection('organizations').doc(organizationId).get();
+  if (!orgDoc.exists) {
+    throw new functions.https.HttpsError('not-found', 'Organization not found');
+  }
+
+  // Get feature policies
+  const policySnap = await db.collection('organizations')
+    .doc(organizationId)
+    .collection('featurePolicies')
+    .doc('default')
+    .get();
+
+  // Get discount codes
+  const codesSnap = await db.collection('organizations')
+    .doc(organizationId)
+    .collection('discountCodes')
+    .get();
+
+  // Get member count
+  const membersSnap = await db.collection('customers')
+    .where('organizationId', '==', organizationId)
+    .count()
+    .get();
+
+  return {
+    organization: {
+      id: orgDoc.id,
+      ...orgDoc.data(),
+      createdAt: orgDoc.data().createdAt?.toDate?.()?.toISOString() || null,
+    },
+    featurePolicies: policySnap.exists ? policySnap.data().features : null,
+    discountCodes: codesSnap.docs.map(c => ({
+      id: c.id,
+      ...c.data(),
+      expiresAt: c.data().expiresAt?.toDate?.()?.toISOString() || null,
+      createdAt: c.data().createdAt?.toDate?.()?.toISOString() || null,
+    })),
+    memberCount: membersSnap.data().count,
+  };
+});
+
+// Migrate existing promo code data to organizations
+// One-time function: creates organization docs from existing promoCodes that have institutionId
+exports.migratePromoCodesToOrganizations = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const superAdminDoc = await admin.firestore()
+    .collection('super_admins').doc(context.auth.uid).get();
+  if (!superAdminDoc.exists) {
+    throw new functions.https.HttpsError('permission-denied', 'Super admin access required');
+  }
+
+  const db = admin.firestore();
+  const promoSnap = await db.collection('promoCodes').get();
+
+  let migrated = 0;
+  let skipped = 0;
+  const orgMap = {}; // institutionId -> organizationDocId
+
+  for (const promoDoc of promoSnap.docs) {
+    const promo = promoDoc.data();
+    const instId = promo.institutionId;
+    if (!instId) { skipped++; continue; }
+
+    // Check if organization already exists for this institutionId
+    if (orgMap[instId]) { skipped++; continue; }
+
+    const existingOrg = await db.collection('organizations')
+      .where('slug', '==', instId)
+      .limit(1)
+      .get();
+
+    if (!existingOrg.empty) {
+      orgMap[instId] = existingOrg.docs[0].id;
+      skipped++;
+      continue;
+    }
+
+    // Create organization
+    const orgRef = db.collection('organizations').doc();
+    await orgRef.set({
+      name: promo.institutionName || instId,
+      slug: instId,
+      type: 'school',
+      active: true,
+      migratedFrom: instId,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      createdBy: context.auth.uid,
+    });
+
+    // Create default feature policy (all enabled except AUTO_APPLY)
+    await orgRef.collection('featurePolicies').doc('default').set({
+      features: {
+        AI_RESUME: true,
+        AI_COVER_LETTER: true,
+        INTERVIEW_PREP: true,
+        JOB_SEARCH: true,
+        APPLICATION_TRACKER: true,
+        AUTO_APPLY: false,
+        ADVANCED_ANALYTICS: false,
+      },
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedBy: context.auth.uid,
+    });
+
+    orgMap[instId] = orgRef.id;
+    migrated++;
+
+    // Update promo code with organizationId reference
+    await db.collection('promoCodes').doc(promoDoc.id).update({
+      organizationId: orgRef.id,
+    });
+  }
+
+  // Update customer docs to use organizationId
+  const customerSnap = await db.collection('customers')
+    .where('institutionId', '!=', null)
+    .get();
+
+  let customersUpdated = 0;
+  for (const custDoc of customerSnap.docs) {
+    const custData = custDoc.data();
+    const instId = custData.institutionId;
+    if (instId && orgMap[instId]) {
+      await db.collection('customers').doc(custDoc.id).update({
+        organizationId: orgMap[instId],
+      });
+      customersUpdated++;
+    }
+  }
+
+  return { migrated, skipped, customersUpdated, orgMap };
 });
 
 // Scheduled function: aggregate student sessions into institution stats
