@@ -9,6 +9,9 @@ const { USAJobsSource } = require('./jobs/sources/USAJobsSource');
 const { normalizeJob, toFirestoreJob } = require('./jobs/normalizer');
 const { findDuplicate, mergeJobs, processJobs } = require('./jobs/deduplicator');
 
+// Auto-Apply system
+const autoapply = require('./autoapply');
+
 admin.initializeApp();
 
 // Helper: check if user has active subscription (Stripe or promo code)
@@ -2705,3 +2708,11 @@ exports.loadJobs = functions.https.onRequest(async (req, res) => {
 
   res.json({ success: true, created, errors, total: jobs.length });
 });
+
+// ============================================================
+// AUTO-APPLY SYSTEM — Re-exports from autoapply.js
+// ============================================================
+exports.analyzeJobForApply = autoapply.analyzeJobForApply;
+exports.prepareApplication = autoapply.prepareApplication;
+exports.getApplicationModes = autoapply.getApplicationModes;
+exports.getProviderStatus = autoapply.getProviderStatus;

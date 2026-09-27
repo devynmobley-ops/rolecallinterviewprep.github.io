@@ -96,6 +96,13 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // Application cost tracking — server-only
+    match /applicationCosts/{costId} {
+      allow create: if request.auth != null;
+      allow read: if false; // Only server reads for analytics
+      allow update, delete: if false;
+    }
+
     // Problem reports — authenticated write, server-only read
     match /reports/{reportId} {
       allow read: if false;
