@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>School Setup — RoleCall Admin</title>
+<title>Organization Setup — RoleCall Admin</title>
 <meta name="robots" content="noindex, nofollow">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -70,7 +70,7 @@ html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI
 
   <div class="logo">
     <h1>RoleCall School Setup</h1>
-    <p>Create promo codes and admin accounts for institutional pilots</p>
+    <p>Create organizations, promo codes, and admin accounts for institutional pilots</p>
   </div>
 
   <!-- Login -->
@@ -360,28 +360,74 @@ async function createSchool() {
     // Calculate expiry
     var expiresAt = null;
     if (expiryDays) {
-      expiresAt = new Date(Date.now() + parseInt(expiryDays) * 24 * 60 * 60 * 1000);
+      expiresAt = new Date(Date.now() + parseInt(expiryDays) * 24 * 60 * 60 * 1000).toISOString();
     }
 
-    // Create promo code document
-    await db.collection('promoCodes').doc(code).set({
-      active: true,
-      isPro: true,
-      institutionId: slug,
-      institutionName: name,
-      expiresAt: expiresAt ? firebase.firestore.Timestamp.fromDate(expiresAt) : null,
-      maxUses: maxUses ? parseInt(maxUses) : null,
-      currentUses: 0,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      createdBy: auth.currentUser.uid,
-    });
+    // Create organization via Cloud Function
+    var orgId = null;
+    try {
+      var createOrgFn = firebaseFunctions.httpsCallable('createOrganization');
+      var orgResult = await createOrgFn({ name: name, slug: slug, type: 'school' });
+      orgId = orgResult.data.organizationId;
+      console.log('Organization created:', orgId);
+    } catch (orgErr) {
+      console.warn('Organization creation failed (may already exist):', orgErr.message);
+    }
+
+    // Create discount code via Cloud Function (if org was created)
+    if (orgId) {
+      try {
+        var createCodeFn = firebaseFunctions.httpsCallable('createDiscountCode');
+        await createCodeFn({
+          organizationId: orgId,
+          code: code,
+          discountType: 'free',
+          discountValue: 100,
+          accountType: 'STUDENT',
+          expiresAt: expiresAt,
+          maxUses: maxUses ? parseInt(maxUses) : null,
+        });
+        console.log('Discount code created via Cloud Function');
+      } catch (codeErr) {
+        console.warn('Cloud Function code creation failed, falling back to direct write:', codeErr.message);
+        // Fallback: create promo code directly
+        await db.collection('promoCodes').doc(code).set({
+          active: true,
+          isPro: true,
+          institutionId: slug,
+          institutionName: name,
+          organizationId: orgId,
+          expiresAt: expiresAt ? firebase.firestore.Timestamp.fromDate(new Date(expiresAt)) : null,
+          maxUses: maxUses ? parseInt(maxUses) : null,
+          currentUses: 0,
+          discountType: 'free',
+          discountValue: 100,
+          accountType: 'STUDENT',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          createdBy: auth.currentUser.uid,
+        });
+      }
+    } else {
+      // No org created — create promo code directly (legacy path)
+      await db.collection('promoCodes').doc(code).set({
+        active: true,
+        isPro: true,
+        institutionId: slug,
+        institutionName: name,
+        expiresAt: expiresAt ? firebase.firestore.Timestamp.fromDate(new Date(expiresAt)) : null,
+        maxUses: maxUses ? parseInt(maxUses) : null,
+        currentUses: 0,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        createdBy: auth.currentUser.uid,
+      });
+    }
 
     // Create a pending admin doc for each email
     var createdAdmins = [];
     for (var i = 0; i < validEmails.length; i++) {
       var adminId = 'admin_' + slug + '_' + (i + 1);
       await db.collection('institution_admins').doc(adminId).set({
-        institutionId: slug,
+        institutionId: orgId || slug,
         institutionName: name,
         email: validEmails[i],
         pendingActivation: true,
@@ -393,7 +439,7 @@ async function createSchool() {
     // Show result
     document.getElementById('resultCode').textContent = code;
     document.getElementById('resultName').textContent = name;
-    document.getElementById('resultSlug').textContent = slug;
+    document.getElementById('resultSlug').textContent = orgId || slug;
     document.getElementById('resultAdmin').textContent = createdAdmins.join(', ');
     document.getElementById('resultExpiry').textContent = expiryDays ? expiryDays + ' days' : 'No expiration';
 
@@ -406,8 +452,9 @@ async function createSchool() {
       + 'How to use:\n'
       + '1. Visit rollcallinterviewprep.com\n'
       + '2. Click "Sign In" (top right) and create a free account\n'
-      + '3. Go to the More tab and enter code: ' + code + '\n'
-      + '4. You now have full Pro access!' + expiryText + '\n\n'
+      + '3. Select "Student Account" when prompted\n'
+      + '4. Enter code: ' + code + ' when asked for a school discount code\n'
+      + '5. You now have full Pro access!' + expiryText + '\n\n'
       + 'What\'s included:\n'
       + '- 374+ career-specific mock interview questions\n'
       + '- AI Resume Tailor (upload your resume + job description)\n'
@@ -466,6 +513,57 @@ function resetForm() {
 
 async function loadExistingSchools() {
   var list = document.getElementById('schoolsList');
+  try {
+    // Try to load from organizations Cloud Function first
+    var listFn = firebaseFunctions.httpsCallable('listOrganizations');
+    var result = await listFn({});
+    var orgs = result.data.organizations;
+
+    if (orgs.length === 0) {
+      // Fallback: load from promoCodes collection directly
+      await loadLegacySchools(list);
+      return;
+    }
+
+    var html = '';
+    orgs.forEach(function(org) {
+      var policies = org.featurePolicies || {};
+      var codes = org.discountCodes || [];
+      var codeList = codes.map(function(c) {
+        return '<span style="font-family:monospace;color:var(--accent-text)">' + c.code + '</span>'
+          + ' <span style="font-size:11px;color:var(--text-secondary)">(' + (c.currentUses || 0) + ' uses)</span>';
+      }).join(', ') || '<span style="color:var(--text-secondary)">No codes</span>';
+
+      var featureToggles = '';
+      var featureNames = ['AI_RESUME', 'AI_COVER_LETTER', 'INTERVIEW_PREP', 'JOB_SEARCH', 'APPLICATION_TRACKER', 'AUTO_APPLY'];
+      featureNames.forEach(function(f) {
+        var enabled = policies[f] !== false; // default true
+        var color = enabled ? 'var(--success)' : 'var(--error)';
+        var label = f.replace(/_/g, ' ');
+        featureToggles += '<span style="display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;background:' + color + '22;color:' + color + ';margin:2px">' + label + '</span> ';
+      });
+
+      html += '<div class="school-row" style="flex-direction:column;align-items:flex-start;gap:8px">'
+        + '<div style="display:flex;align-items:center;gap:12px;width:100%">'
+        + '<div class="school-info">'
+        + '<div class="school-name">' + (org.name || org.slug) + '</div>'
+        + '<div class="school-code">' + org.slug + ' &bull; ' + (org.memberCount || 0) + ' members</div>'
+        + '</div>'
+        + '<div style="font-size:11px;color:var(--text-secondary)">' + (org.active !== false ? '✅ Active' : '❌ Disabled') + '</div>'
+        + '</div>'
+        + '<div style="font-size:12px;color:var(--text-secondary)">Codes: ' + codeList + '</div>'
+        + '<div style="margin-top:4px">Features: ' + featureToggles + '</div>'
+        + '</div>';
+    });
+    list.innerHTML = html;
+
+  } catch (err) {
+    console.warn('listOrganizations failed, falling back to legacy:', err.message);
+    await loadLegacySchools(list);
+  }
+}
+
+async function loadLegacySchools(list) {
   try {
     var snap = await db.collection('promoCodes').orderBy('createdAt', 'desc').limit(50).get();
     if (snap.empty) {
