@@ -654,6 +654,15 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
     <div class="roles-explored" id="rolesExplored"></div>
   </div>
   </div>
+  <!-- AUTO-APPLY PROMO (visible for eligible personal accounts) -->
+  <div id="autoApplyPromo" class="jok-promo" onclick="switchTab('jobs-tab')" role="button" tabindex="0" aria-label="Auto-Apply" style="display:none;border-color:var(--accent)44">
+    <div class="jok-promo-icon" style="background:linear-gradient(135deg,var(--accent),var(--accent-light))">🤖</div>
+    <div class="jok-promo-content">
+      <div class="jok-promo-title">Auto-Apply</div>
+      <div class="jok-promo-desc">Search jobs, get AI-prepared applications, and track everything in one place.</div>
+    </div>
+    <div class="jok-promo-price" style="color:var(--accent-text)">Try it →</div>
+  </div>
   <!-- JOB OFFER KIT PROMO -->
   <div class="jok-promo" onclick="showScreen('jobofferkit')" role="button" tabindex="0" aria-label="View The Job Offer Kit">
     <div class="jok-promo-icon">&#128142;</div>
@@ -1448,6 +1457,8 @@ auth.onAuthStateChanged(async (user) => {
     }
     // Check account type — shows selection overlay if not yet chosen
     await checkAccountType(user.uid);
+    // Refresh UI now that account type is loaded
+    updateAuthUI();
   } else {
     userSubscription = null;
     userAccountType = null;
@@ -2064,6 +2075,26 @@ function updateAuthUI() {
     if (paywallBtn) paywallBtn.textContent = 'Sign In to Subscribe';
     if (homeSignIn) homeSignIn.style.display = '';
     if (accountTypeItem) accountTypeItem.style.display = 'none';
+  }
+
+  // Auto-Apply promo visibility (home screen)
+  var autoApplyPromo = document.getElementById('autoApplyPromo');
+  if (autoApplyPromo) {
+    var showAutoApply = false;
+    if (currentUser && userAccountType === 'PERSONAL') {
+      showAutoApply = true;
+    }
+    autoApplyPromo.style.display = showAutoApply ? '' : 'none';
+  }
+
+  // Auto-Apply banner visibility (Jobs tab)
+  var autoApplyBanner = document.getElementById('autoApplyBanner');
+  if (autoApplyBanner) {
+    var showBanner = false;
+    if (currentUser && userAccountType === 'PERSONAL') {
+      showBanner = true;
+    }
+    autoApplyBanner.style.display = showBanner ? '' : 'none';
   }
 }
 
@@ -12759,6 +12790,16 @@ init();</script>
   <div class="job-search-hero">
     <h2>Find Your Next Role</h2>
     <p>Search real job openings and prepare for the interview</p>
+  </div>
+  <!-- Auto-Apply banner for personal accounts -->
+  <div id="autoApplyBanner" style="display:none;margin:0 20px 12px;padding:12px 16px;background:linear-gradient(135deg,rgba(108,92,231,0.15),rgba(162,155,254,0.1));border:1px solid rgba(108,92,231,0.3);border-radius:var(--radius);cursor:pointer" onclick="document.getElementById('jobSearchInput').focus()">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">🤖</span>
+      <div>
+        <div style="font-weight:700;font-size:13px;color:var(--accent-text)">Auto-Apply Available</div>
+        <div style="font-size:11px;color:var(--text-secondary)">Search for a job and click "Apply Now" to see AI-assisted application options</div>
+      </div>
+    </div>
   </div>
   <div class="my-jobs-toggle">
     <button class="active" onclick="switchJobsView('search')">Search Jobs</button>
