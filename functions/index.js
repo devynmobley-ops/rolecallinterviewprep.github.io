@@ -6,6 +6,7 @@ const { TheMuseSource } = require('./jobs/sources/TheMuseSource');
 const { RemotiveSource } = require('./jobs/sources/RemotiveSource');
 const { JobicySource } = require('./jobs/sources/JobicySource');
 const { USAJobsSource } = require('./jobs/sources/USAJobsSource');
+const { CareerjetSource } = require('./jobs/sources/CareerjetSource');
 const { normalizeJob, toFirestoreJob } = require('./jobs/normalizer');
 const { findDuplicate, mergeJobs, processJobs } = require('./jobs/deduplicator');
 
@@ -1922,6 +1923,7 @@ const theMuseSource = new TheMuseSource();
 const remotiveSource = new RemotiveSource();
 const jobicySource = new JobicySource();
 const usajobsSource = new USAJobsSource();
+const careerjetSource = new CareerjetSource();
 
 /**
  * ingestJobs — Pulls jobs from configured providers and stores in Firestore.
@@ -1989,6 +1991,41 @@ exports.ingestJobs = functions.https.onCall(async (data, context) => {
     }
   } else {
     console.log('[Ingest] Adzuna not configured — skipping');
+  }
+
+  // Fetch from Careerjet
+  if (careerjetSource.isConfigured()) {
+    try {
+      for (let page = 1; page <= maxPages; page++) {
+        const result = await careerjetSource.fetchJobs(query, location, { page });
+        
+        if (result.jobs.length === 0) break;
+        
+        totalFetched += result.jobs.length;
+        
+        const normalized = result.jobs.map(j => {
+          const n = normalizeJob(j, careerjetSource);
+          return n;
+        });
+        
+        const stats = await processJobs(normalized, db);
+        allStats.created += stats.created;
+        allStats.updated += stats.updated;
+        allStats.skipped += stats.skipped;
+        allStats.errors += stats.errors;
+        
+        console.log(`[Ingest] Careerjet page ${page}: ${result.jobs.length} jobs, ${stats.created} created, ${stats.updated} updated`);
+        
+        if (page < maxPages) {
+          await new Promise(r => setTimeout(r, 500));
+        }
+      }
+    } catch (err) {
+      console.error('[Ingest] Careerjet error:', err.message);
+      allStats.errors++;
+    }
+  } else {
+    console.log('[Ingest] Careerjet not configured — skipping');
   }
 
   console.log(`[Ingest] Complete: ${totalFetched} fetched, ${allStats.created} created, ${allStats.updated} updated`);
@@ -2297,6 +2334,12 @@ exports.syncJobs = functions.pubsub.schedule('0 3 * * *').timeZone('UTC').onRun(
       await ingestFromSource(usajobsSource, query, 2);
       await new Promise(r => setTimeout(r, 300));
     }
+
+    // Careerjet — job aggregator (free API, requires key)
+    if (careerjetSource.isConfigured()) {
+      await ingestFromSource(careerjetSource, query, 2);
+      await new Promise(r => setTimeout(r, 300));
+    }
   }
 
   // Mark expired jobs as inactive
@@ -2581,6 +2624,7 @@ exports.seedJobs = functions.https.onRequest(async (req, res) => {
     remotiveSource,
     jobicySource,
     usajobsSource.isConfigured() ? usajobsSource : null,
+    careerjetSource.isConfigured() ? careerjetSource : null,
   ].filter(Boolean);
 
   const queries = [
