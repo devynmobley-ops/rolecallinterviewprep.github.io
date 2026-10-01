@@ -9,7 +9,9 @@
       "debug_data.cjs",
       "find_bad_lines.cjs",
       "fix_*.cjs",
-      "remove_extra_brace.cjs"
+      "remove_extra_brace.cjs",
+      "www/**",
+      "outreach/**"
     ]
   },
   "storage": {
