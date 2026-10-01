@@ -9,6 +9,7 @@
 
 const https = require('https');
 const { JobSource } = require('./JobSource');
+const { extractSkills, extractRequirements } = require('../skillExtractor');
 
 const USAJOBS_BASE_URL = 'https://data.usajobs.gov/api/Search';
 
@@ -167,33 +168,11 @@ class USAJobsSource extends JobSource {
   }
 
   extractSkills(title, desc) {
-    const text = (title + ' ' + desc).toLowerCase();
-    const skills = new Set();
-    const patterns = [
-      'security clearance', 'top secret', 'ts/sci',
-      'project management', 'agile', 'scrum', 'data analysis',
-      'excel', 'sql', 'python', 'java', 'javascript',
-      'communication', 'leadership', 'training', 'compliance',
-      'audit', 'budget', 'procurement', 'contracting',
-    ];
-    for (const p of patterns) {
-      if (text.includes(p)) skills.add(p);
-    }
-    return Array.from(skills).slice(0, 10);
+    return extractSkills(title, desc);
   }
 
   extractRequirements(desc) {
-    const reqs = [];
-    const lines = desc.split(/[.;\n]/);
-    for (const line of lines) {
-      const lower = line.toLowerCase();
-      if (lower.includes('degree') || lower.includes('experience') || lower.includes('certification') ||
-          lower.includes('clearance') || lower.includes('qualification')) {
-        const cleaned = line.trim();
-        if (cleaned.length > 10 && cleaned.length < 200) reqs.push(cleaned);
-      }
-    }
-    return reqs.slice(0, 8);
+    return extractRequirements(desc);
   }
 }
 

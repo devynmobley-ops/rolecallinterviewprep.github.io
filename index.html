@@ -525,6 +525,7 @@ body.show-scrollbars .screen::-webkit-scrollbar-track{background:transparent}
 .job-loading{text-align:center;padding:40px 20px}
 .job-loading-spinner{width:32px;height:32px;border:3px solid var(--card-hover);border-top-color:var(--accent);border-radius:50%;animation:job-spin 0.8s linear infinite;margin:0 auto 12px}
 @keyframes job-spin{to{transform:rotate(360deg)}}
+@keyframes spin{to{transform:rotate(360deg)}}
 .job-loading p{font-size:13px;color:var(--text-secondary)}
 .job-load-more{text-align:center;padding:16px 20px 40px}
 .job-load-more button{padding:12px 32px;border:1.5px solid var(--accent);border-radius:var(--radius);background:transparent;color:var(--accent-text);font-size:14px;font-weight:700;cursor:pointer;transition:all var(--transition)}
@@ -1459,6 +1460,8 @@ auth.onAuthStateChanged(async (user) => {
     await checkAccountType(user.uid);
     // Refresh UI now that account type is loaded
     updateAuthUI();
+    // Load base resume status for AI-assisted applications
+    checkBaseResume();
   } else {
     userSubscription = null;
     userAccountType = null;
@@ -2095,6 +2098,16 @@ function updateAuthUI() {
       showBanner = true;
     }
     autoApplyBanner.style.display = showBanner ? '' : 'none';
+  }
+
+  // Resume upload banner visibility (Jobs tab) — show for signed-in users
+  var resumeUploadBanner = document.getElementById('resumeUploadBanner');
+  if (resumeUploadBanner && currentUser) {
+    if (!baseResumeState.loaded) {
+      checkBaseResume();
+    }
+  } else if (resumeUploadBanner) {
+    resumeUploadBanner.style.display = 'none';
   }
 }
 
@@ -11591,6 +11604,8 @@ function loadFeaturedJobs() {
     jobs.forEach(function(job) {
       html += renderJobCard(job);
     });
+    // Store featured jobs so openJobDetail can find them
+    jobSearchState.jobs = jobs;
     featuredList.innerHTML = html;
   }).catch(function(err) {
     console.error('[FeaturedJobs] Error:', err);
@@ -11843,6 +11858,132 @@ var autoApplyState = {
   loading: false,
 };
 
+// === BASE RESUME MANAGEMENT ===
+var baseResumeState = {
+  loaded: false,
+  hasResume: false,
+  resumeName: '',
+  resumeDate: '',
+  resumeSkills: [],
+};
+
+function checkBaseResume() {
+  if (!firebaseReady || !currentUser) return;
+  firebaseFunctions.httpsCallable('getBaseResume')({}).then(function(result) {
+    var r = result.data;
+    if (r && r.exists) {
+      baseResumeState.hasResume = true;
+      baseResumeState.resumeName = r.fileName || 'Resume';
+      baseResumeState.resumeDate = r.uploadedAt ? new Date(r.uploadedAt).toLocaleDateString() : '';
+      baseResumeState.resumeSkills = (r.structured && r.structured.skills) ? r.structured.skills.slice(0, 5) : [];
+      showResumeStatus(true);
+    } else {
+      baseResumeState.hasResume = false;
+      showResumeStatus(false);
+    }
+    baseResumeState.loaded = true;
+  }).catch(function() {
+    baseResumeState.loaded = true;
+    showResumeStatus(false);
+  });
+}
+
+function showResumeStatus(hasResume) {
+  var banner = document.getElementById('resumeUploadBanner');
+  if (!banner) return;
+  banner.style.display = 'block';
+  if (hasResume) {
+    document.getElementById('resumeBannerTitle').textContent = baseResumeState.resumeName;
+    document.getElementById('resumeBannerSubtitle').textContent = 'Uploaded ' + baseResumeState.resumeDate + ' — ready for AI applications';
+    document.getElementById('resumeNoResume').style.display = 'none';
+    document.getElementById('resumeHasResume').style.display = 'block';
+    document.getElementById('resumeFileName').textContent = baseResumeState.resumeName;
+    document.getElementById('resumeUploadDate').textContent = 'Uploaded ' + baseResumeState.resumeDate;
+  } else {
+    document.getElementById('resumeBannerTitle').textContent = 'Upload Your Resume';
+    document.getElementById('resumeBannerSubtitle').textContent = 'Upload once — AI will use it to prepare applications for any job';
+    document.getElementById('resumeNoResume').style.display = 'block';
+    document.getElementById('resumeHasResume').style.display = 'none';
+  }
+}
+
+function toggleResumeUploadSection() {
+  var section = document.getElementById('resumeUploadSection');
+  var arrow = document.getElementById('resumeBannerArrow');
+  if (section.style.display === 'none') {
+    section.style.display = 'block';
+    arrow.style.transform = 'rotate(180deg)';
+  } else {
+    section.style.display = 'none';
+    arrow.style.transform = 'rotate(0deg)';
+  }
+}
+
+function handleResumeFileSelect(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var base64 = e.target.result.split(',')[1];
+    uploadBaseResumeToServer(file.name, base64);
+  };
+  reader.readAsDataURL(file);
+}
+
+function uploadBaseResumeToServer(fileName, base64) {
+  document.getElementById('resumeUploadProgress').style.display = 'block';
+  document.getElementById('resumeUploadStatus').textContent = 'Uploading and analyzing your resume...';
+  firebaseFunctions.httpsCallable('uploadBaseResume')({
+    resumeBase64: base64,
+    fileName: fileName,
+  }).then(function(result) {
+    baseResumeState.hasResume = true;
+    baseResumeState.resumeName = fileName;
+    baseResumeState.resumeDate = new Date().toLocaleDateString();
+    showResumeStatus(true);
+    showToast('Resume uploaded successfully!');
+  }).catch(function(err) {
+    console.error('[Resume] Upload error:', err);
+    document.getElementById('resumeUploadStatus').textContent = 'Upload failed: ' + (err.message || 'Please try again');
+  });
+}
+
+function deleteBaseResume() {
+  if (!confirm('Delete your base resume? AI-assisted applications will use less information.')) return;
+  firebaseFunctions.httpsCallable('deleteBaseResume')({}).then(function() {
+    baseResumeState.hasResume = false;
+    showResumeStatus(false);
+    showToast('Resume deleted');
+  }).catch(function(err) {
+    console.error('[Resume] Delete error:', err);
+    showToast('Could not delete resume');
+  });
+}
+
+// Drag and drop for resume
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(function() {
+    var dz = document.getElementById('resumeDropZone');
+    if (dz) {
+      dz.addEventListener('dragover', function(e) { e.preventDefault(); dz.style.borderColor = 'var(--accent)'; });
+      dz.addEventListener('dragleave', function() { dz.style.borderColor = 'var(--card-hover)'; });
+      dz.addEventListener('drop', function(e) {
+        e.preventDefault();
+        dz.style.borderColor = 'var(--card-hover)';
+        var file = e.dataTransfer.files[0];
+        if (file) {
+          var reader = new FileReader();
+          reader.onload = function(ev) {
+            var base64 = ev.target.result.split(',')[1];
+            uploadBaseResumeToServer(file.name, base64);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+  }, 2000);
+});
+
 // Start the application flow — shows mode selection
 function startApplication() {
   var job = jobSearchState.currentJob;
@@ -11949,6 +12090,48 @@ function selectApplicationMode(mode) {
 }
 
 function showAssistedPreparation() {
+  var job = autoApplyState.currentJob;
+  if (!job) return;
+
+  // If base resume not checked yet, check first
+  if (!baseResumeState.loaded) {
+    firebaseFunctions.httpsCallable('getBaseResume')({}).then(function(result) {
+      baseResumeState.loaded = true;
+      if (result.data && result.data.resume) {
+        baseResumeState.hasResume = true;
+      }
+      showAssistedPreparation();
+    }).catch(function() {
+      baseResumeState.loaded = true;
+      showAssistedPreparation();
+    });
+    return;
+  }
+
+  // Warn if no base resume uploaded
+  if (!baseResumeState.hasResume) {
+    var html = '<div style="padding:20px">';
+    html += '<div style="text-align:center;margin-bottom:20px">';
+    html += '<div style="font-size:32px;margin-bottom:8px">📄</div>';
+    html += '<div style="font-size:16px;font-weight:700;margin-bottom:4px">No Resume Uploaded</div>';
+    html += '<div style="color:var(--text-secondary);font-size:13px;margin-bottom:16px">Upload your resume for better AI-tailored applications. You can still continue without one.</div>';
+    html += '</div>';
+    html += '<button onclick="toggleResumeUploadSection();closeJobDetail()" style="width:100%;padding:14px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;border-radius:var(--radius);font-weight:700;font-size:14px;cursor:pointer;margin-bottom:10px">📄 Upload Resume First</button>';
+    html += '<button onclick="proceedWithAssistedPreparation()" style="width:100%;padding:12px;border:1px solid var(--card-hover);background:var(--card);color:var(--text);border-radius:var(--radius);font-size:13px;cursor:pointer;margin-bottom:8px">Continue Without Resume</button>';
+    html += '<button onclick="closeJobDetail()" style="width:100%;padding:12px;border:none;background:transparent;color:var(--text-secondary);font-size:13px;cursor:pointer">Cancel</button>';
+    html += '</div>';
+    var overlay = document.getElementById('jobDetailOverlay');
+    document.getElementById('jobDetailHeaderTitle').textContent = 'Resume Needed';
+    document.getElementById('jobDetailContent').innerHTML = html;
+    document.getElementById('jobDetailActions').style.display = 'none';
+    overlay.classList.add('open');
+    return;
+  }
+
+  proceedWithAssistedPreparation();
+}
+
+function proceedWithAssistedPreparation() {
   var job = autoApplyState.currentJob;
   if (!job) return;
 
@@ -12798,6 +12981,45 @@ init();</script>
       <div>
         <div style="font-weight:700;font-size:13px;color:var(--accent-text)">Auto-Apply Available</div>
         <div style="font-size:11px;color:var(--text-secondary)">Search for a job and click "Apply Now" to see AI-assisted application options</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Base Resume Upload Banner -->
+  <div id="resumeUploadBanner" style="display:none;margin:0 20px 12px;padding:14px 16px;background:var(--card);border:1px solid var(--card-hover);border-radius:var(--radius);">
+    <div style="display:flex;align-items:center;gap:12px;cursor:pointer" onclick="toggleResumeUploadSection()">
+      <span style="font-size:24px">📄</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13px;color:var(--text)" id="resumeBannerTitle">Upload Your Resume</div>
+        <div style="font-size:11px;color:var(--text-secondary)" id="resumeBannerSubtitle">Upload once — AI will use it to prepare applications for any job</div>
+      </div>
+      <span style="color:var(--text-secondary);font-size:14px;transition:transform .2s" id="resumeBannerArrow">▼</span>
+    </div>
+    <div id="resumeUploadSection" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--card-hover)">
+      <div id="resumeNoResume">
+        <div style="border:2px dashed var(--card-hover);border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:border-color .2s" id="resumeDropZone" onclick="document.getElementById('resumeFileInput').click()">
+          <div style="font-size:28px;margin-bottom:8px">📎</div>
+          <div style="font-weight:600;font-size:13px;color:var(--text);margin-bottom:4px">Drop your resume here or tap to upload</div>
+          <div style="font-size:11px;color:var(--text-secondary)">PDF or text — your resume stays private and secure</div>
+        </div>
+        <input type="file" id="resumeFileInput" accept=".pdf,.txt,.doc,.docx" style="display:none" onchange="handleResumeFileSelect(event)">
+        <div id="resumeUploadProgress" style="display:none;margin-top:12px;text-align:center">
+          <div style="display:inline-block;width:20px;height:20px;border:2px solid var(--card-hover);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite"></div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:6px" id="resumeUploadStatus">Uploading and analyzing your resume...</div>
+        </div>
+      </div>
+      <div id="resumeHasResume" style="display:none">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(46,213,115,0.08);border:1px solid rgba(46,213,115,0.2);border-radius:10px;margin-bottom:8px">
+          <span style="font-size:18px">✅</span>
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:13px;color:var(--text)" id="resumeFileName">Resume uploaded</div>
+            <div style="font-size:11px;color:var(--text-secondary)" id="resumeUploadDate">Ready for AI-assisted applications</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button onclick="document.getElementById('resumeFileInput').click()" style="flex:1;padding:10px;border:1px solid var(--card-hover);background:var(--card);color:var(--text);border-radius:10px;font-size:12px;font-weight:600;cursor:pointer">Replace</button>
+          <button onclick="deleteBaseResume()" style="flex:1;padding:10px;border:1px solid rgba(231,76,60,0.3);background:rgba(231,76,60,0.08);color:#e74c3c;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer">Delete</button>
+        </div>
       </div>
     </div>
   </div>

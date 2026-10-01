@@ -13,6 +13,7 @@
 
 const https = require('https');
 const { JobSource } = require('./JobSource');
+const { extractSkills, extractRequirements } = require('../skillExtractor');
 
 const ADZUNA_BASE_URL = 'https://api.adzuna.com/v1/api/jobs';
 
@@ -58,9 +59,8 @@ class AdzunaSource extends JobSource {
       app_id: this.appId,
       app_key: this.apiKey,
       results_per_page: Math.min(resultsPerPage, 50).toString(),
-      page: (page || 1).toString(),
       what: query || '',
-      max_days_old: '30', // Only jobs from last 30 days
+      max_days_old: '90',
     });
 
     // Location filter
@@ -269,64 +269,14 @@ class AdzunaSource extends JobSource {
    * Extract skills/keywords from title and description.
    */
   extractSkills(title, description) {
-    const text = (title + ' ' + description).toLowerCase();
-    const skills = new Set();
-    
-    // Common skill patterns
-    const skillPatterns = [
-      // Technical
-      'javascript', 'python', 'java', 'sql', 'react', 'node.js', 'aws', 'azure',
-      'excel', 'power bi', 'tableau', 'salesforce', 'jira', 'confluence',
-      'sharepoint', 'teams', 'slack', 'figma', 'photoshop',
-      // Healthcare
-      'emr', 'epic', 'cerner', 'ehr', 'hipaa', 'patient care', 'clinical',
-      'nursing', 'patient safety', 'medical terminology',
-      // Business
-      'project management', 'agile', 'scrum', 'lean', 'six sigma',
-      'data analysis', 'reporting', 'compliance', 'audit',
-      // Soft skills
-      'communication', 'leadership', 'teamwork', 'problem solving',
-      'training', 'mentoring', 'coaching', 'presentation',
-      // Education
-      'curriculum', 'instructional design', 'lms', 'e-learning',
-      'teaching', 'facilitation', 'adult learning',
-    ];
-    
-    for (const skill of skillPatterns) {
-      if (text.includes(skill)) {
-        skills.add(skill);
-      }
-    }
-    
-    return Array.from(skills).slice(0, 10); // Cap at 10 skills
+    return extractSkills(title, description);
   }
 
   /**
    * Extract key requirements from description.
    */
   extractRequirements(description) {
-    const requirements = [];
-    const lines = description.split('\n');
-    
-    for (const line of lines) {
-      const trimmed = line.trim();
-      // Look for requirement-like lines (bullets with "required", "must have", "minimum", etc.)
-      if (/^[\•\-\*\✓\✔]/.test(trimmed) || /^\d+\./.test(trimmed)) {
-        const lower = trimmed.toLowerCase();
-        if (lower.includes('required') || lower.includes('must have') || 
-            lower.includes('minimum') || lower.includes('bachelor') || 
-            lower.includes('master') || lower.includes('degree') ||
-            lower.includes('years of experience') || lower.includes('certification')) {
-          // Clean up the bullet point
-          const cleaned = trimmed.replace(/^[\•\-\*\✓\✔\d\.]+\s*/, '').trim();
-          if (cleaned.length > 10 && cleaned.length < 200) {
-            requirements.push(cleaned);
-          }
-        }
-      }
-    }
-    
-    return requirements.slice(0, 8); // Cap at 8 requirements
+    return extractRequirements(description);
   }
 
   /**

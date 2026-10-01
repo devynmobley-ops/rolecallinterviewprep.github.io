@@ -9,6 +9,7 @@
 
 const https = require('https');
 const { JobSource } = require('./JobSource');
+const { extractSkills, extractRequirements } = require('../skillExtractor');
 
 const REMOTIVE_BASE_URL = 'https://remotive.com/api/remote-jobs';
 
@@ -141,37 +142,11 @@ class RemotiveSource extends JobSource {
   }
 
   extractSkills(title, desc) {
-    const text = (title + ' ' + desc).toLowerCase();
-    const skills = new Set();
-    const patterns = [
-      'javascript', 'python', 'java', 'sql', 'react', 'node.js', 'aws', 'azure',
-      'typescript', 'go', 'rust', 'ruby', 'php', 'swift', 'kotlin',
-      'docker', 'kubernetes', 'terraform', 'figma', 'sketch',
-      'project management', 'agile', 'scrum', 'data analysis',
-      'communication', 'leadership', 'training',
-    ];
-    for (const p of patterns) {
-      if (text.includes(p)) skills.add(p);
-    }
-    return Array.from(skills).slice(0, 10);
+    return extractSkills(title, desc);
   }
 
   extractRequirements(desc) {
-    const reqs = [];
-    const lines = desc.split('\n');
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (/^[\•\-\*\✓\✔]/.test(trimmed) || /^\d+\./.test(trimmed)) {
-        const lower = trimmed.toLowerCase();
-        if (lower.includes('required') || lower.includes('must have') || lower.includes('minimum') ||
-            lower.includes('bachelor') || lower.includes('master') || lower.includes('degree') ||
-            lower.includes('years of experience')) {
-          const cleaned = trimmed.replace(/^[\•\-\*\✓\✔\d\.]+\s*/, '').trim();
-          if (cleaned.length > 10 && cleaned.length < 200) reqs.push(cleaned);
-        }
-      }
-    }
-    return reqs.slice(0, 8);
+    return extractRequirements(desc);
   }
 }
 

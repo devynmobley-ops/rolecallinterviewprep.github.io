@@ -479,6 +479,198 @@ exports.getResumeHistory = functions.https.onCall(async (data, context) => {
   }));
 });
 
+// Upload base resume — stores the user's primary resume for AI-assisted applications
+exports.uploadBaseResume = functions.runWith({ secrets: ['ANTHROPIC_API_KEY'] }).https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const uid = context.auth.uid;
+  const { resumeBase64, resumeText, fileName } = data;
+
+  if (!resumeBase64 && !resumeText) {
+    throw new functions.https.HttpsError('invalid-argument', 'resumeBase64 or resumeText required');
+  }
+
+  let parsedText = resumeText;
+
+  // Parse PDF if base64 provided
+  if (resumeBase64 && !parsedText) {
+    const pdfParse = require('pdf-parse');
+    const pdfBuffer = Buffer.from(resumeBase64, 'base64');
+    try {
+      const pdfData = await pdfParse(pdfBuffer);
+      parsedText = pdfData.text;
+    } catch (err) {
+      console.error('PDF parse error:', err.message);
+      throw new functions.https.HttpsError('invalid-argument', 'Could not parse PDF. Please upload a valid resume.');
+    }
+  }
+
+  if (!parsedText || parsedText.trim().length < 50) {
+    throw new functions.https.HttpsError('invalid-argument', 'Resume text is too short or empty.');
+  }
+
+  // Use AI to extract structured resume data
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  let structuredResume = null;
+
+  if (apiKey) {
+    try {
+      const prompt = `Parse this resume into structured JSON. Extract all factual information — do not fabricate anything.
+
+RESUME:
+${parsedText.substring(0, 8000)}
+
+Return this exact JSON format (no markdown, just raw JSON):
+{
+  "name": "Full name",
+  "email": "Email address",
+  "phone": "Phone number",
+  "location": "City, State",
+  "linkedin": "LinkedIn URL if present",
+  "title": "Professional title or headline",
+  "summary": "2-3 sentence professional summary",
+  "experience": [
+    {
+      "company": "Company name",
+      "title": "Job title",
+      "dates": "Date range",
+      "bullets": ["Achievement 1", "Achievement 2"]
+    }
+  ],
+  "education": [
+    {
+      "school": "School name",
+      "degree": "Degree and major",
+      "dates": "Date range"
+    }
+  ],
+  "skills": ["Skill 1", "Skill 2"],
+  "certifications": ["Certification 1"],
+  "yearsOfExperience": 5
+}
+
+Rules:
+- Extract ONLY information present in the resume
+- Do NOT invent experience, skills, or credentials
+- If a field is missing from the resume, use null or empty array
+- Keep dates exactly as they appear
+- Return ONLY valid JSON`;
+
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 4096,
+          messages: [{ role: 'user', content: prompt }],
+        }),
+      });
+
+      if (resp.ok) {
+        const result = await resp.json();
+        const responseText = result.content[0].text.trim();
+        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          structuredResume = JSON.parse(jsonMatch[0]);
+        }
+      }
+    } catch (err) {
+      console.error('[uploadBaseResume] AI parsing error:', err.message);
+      // Continue without structured data — we still have the raw text
+    }
+  }
+
+  // Save to Firestore
+  const db = admin.firestore();
+  const timestamp = admin.firestore.FieldValue.serverTimestamp();
+
+  const resumeData = {
+    rawText: parsedText,
+    structured: structuredResume,
+    fileName: fileName || 'resume.pdf',
+    uploadedAt: timestamp,
+    updatedAt: timestamp,
+  };
+
+  // Store as a single document (overwrite on each upload)
+  await db.collection('customers').doc(uid)
+    .collection('profile').doc('baseResume')
+    .set(resumeData);
+
+  // Also update the customer doc with key info for quick access
+  const updateData = {
+    hasBaseResume: true,
+    resumeUpdatedAt: timestamp,
+  };
+  if (structuredResume) {
+    updateData.resumeName = structuredResume.name || null;
+    updateData.resumeTitle = structuredResume.title || null;
+    updateData.resumeSkills = (structuredResume.skills || []).slice(0, 20);
+  }
+  await db.collection('customers').doc(uid).update(updateData);
+
+  return {
+    success: true,
+    hasStructuredData: !!structuredResume,
+    name: structuredResume?.name || null,
+    title: structuredResume?.title || null,
+    skillsCount: (structuredResume?.skills || []).length,
+  };
+});
+
+// Get base resume
+exports.getBaseResume = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const uid = context.auth.uid;
+  const db = admin.firestore();
+
+  const resumeDoc = await db.collection('customers').doc(uid)
+    .collection('profile').doc('baseResume').get();
+
+  if (!resumeDoc.exists) {
+    return { exists: false };
+  }
+
+  const resumeData = resumeDoc.data();
+  return {
+    exists: true,
+    structured: resumeData.structured || null,
+    fileName: resumeData.fileName || 'resume.pdf',
+    uploadedAt: resumeData.uploadedAt?.toDate?.()?.toISOString() || null,
+    // Don't send raw text to frontend — it's large
+    hasRawText: !!resumeData.rawText,
+  };
+});
+
+// Delete base resume
+exports.deleteBaseResume = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const uid = context.auth.uid;
+  const db = admin.firestore();
+
+  await db.collection('customers').doc(uid)
+    .collection('profile').doc('baseResume').delete();
+
+  await db.collection('customers').doc(uid).update({
+    hasBaseResume: false,
+    resumeUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  return { success: true };
+});
+
 // Deep Dive — AI-powered detailed question breakdown for Pro users
 exports.deepDive = functions.runWith({ secrets: ['ANTHROPIC_API_KEY'] }).https.onCall(async (data, context) => {
   if (!context.auth) {
@@ -1954,6 +2146,13 @@ exports.ingestJobs = functions.https.onCall(async (data, context) => {
   const db = admin.firestore();
   let totalFetched = 0;
   const allStats = { created: 0, updated: 0, skipped: 0, errors: 0 };
+  const debug = {
+    careerjetConfigured: careerjetSource.isConfigured(),
+    careerjetKeyExists: !!process.env.CAREERJET_API_KEY,
+    careerjetKeyLength: (process.env.CAREERJET_API_KEY || '').length,
+    adzunaConfigured: adzunaSource.isConfigured(),
+    errors: [],
+  };
 
   // Fetch from Adzuna
   if (adzunaSource.isConfigured()) {
@@ -1965,13 +2164,11 @@ exports.ingestJobs = functions.https.onCall(async (data, context) => {
         
         totalFetched += result.jobs.length;
         
-        // Normalize and set dedup keys
         const normalized = result.jobs.map(j => {
           const n = normalizeJob(j, adzunaSource);
           return n;
         });
         
-        // Process with deduplication
         const stats = await processJobs(normalized, db);
         allStats.created += stats.created;
         allStats.updated += stats.updated;
@@ -1980,56 +2177,185 @@ exports.ingestJobs = functions.https.onCall(async (data, context) => {
         
         console.log(`[Ingest] Adzuna page ${page}: ${result.jobs.length} jobs, ${stats.created} created, ${stats.updated} updated`);
         
-        // Rate limit: wait 500ms between pages
         if (page < maxPages) {
           await new Promise(r => setTimeout(r, 500));
         }
       }
     } catch (err) {
       console.error('[Ingest] Adzuna error:', err.message);
+      debug.errors.push(`Adzuna: ${err.message}`);
       allStats.errors++;
     }
   } else {
     console.log('[Ingest] Adzuna not configured — skipping');
   }
 
-  // Fetch from Careerjet
-  if (careerjetSource.isConfigured()) {
+  // Fetch from The Muse
+  try {
+    for (let page = 1; page <= maxPages; page++) {
+      const result = await theMuseSource.fetchJobs(query, location, { page });
+      
+      if (result.jobs.length === 0) break;
+      
+      totalFetched += result.jobs.length;
+      
+      const normalized = result.jobs.map(j => normalizeJob(j, theMuseSource));
+      const stats = await processJobs(normalized, db);
+      allStats.created += stats.created;
+      allStats.updated += stats.updated;
+      allStats.skipped += stats.skipped;
+      allStats.errors += stats.errors;
+      
+      console.log(`[Ingest] TheMuse page ${page}: ${result.jobs.length} jobs, ${stats.created} created`);
+      
+      if (page < maxPages) await new Promise(r => setTimeout(r, 500));
+    }
+  } catch (err) {
+    console.error('[Ingest] TheMuse error:', err.message);
+    debug.errors.push(`TheMuse: ${err.message}`);
+    allStats.errors++;
+  }
+
+  // Fetch from Remotive
+  try {
+    const result = await remotiveSource.fetchJobs(query, location, {});
+    if (result.jobs.length > 0) {
+      totalFetched += result.jobs.length;
+      const normalized = result.jobs.map(j => normalizeJob(j, remotiveSource));
+      const stats = await processJobs(normalized, db);
+      allStats.created += stats.created;
+      allStats.updated += stats.updated;
+      allStats.skipped += stats.skipped;
+      allStats.errors += stats.errors;
+      console.log(`[Ingest] Remotive: ${result.jobs.length} jobs, ${stats.created} created`);
+    }
+  } catch (err) {
+    console.error('[Ingest] Remotive error:', err.message);
+    debug.errors.push(`Remotive: ${err.message}`);
+    allStats.errors++;
+  }
+
+  // Fetch from Jobicy
+  try {
+    const result = await jobicySource.fetchJobs(query, location, {});
+    if (result.jobs.length > 0) {
+      totalFetched += result.jobs.length;
+      const normalized = result.jobs.map(j => normalizeJob(j, jobicySource));
+      const stats = await processJobs(normalized, db);
+      allStats.created += stats.created;
+      allStats.updated += stats.updated;
+      allStats.skipped += stats.skipped;
+      allStats.errors += stats.errors;
+      console.log(`[Ingest] Jobicy: ${result.jobs.length} jobs, ${stats.created} created`);
+    }
+  } catch (err) {
+    console.error('[Ingest] Jobicy error:', err.message);
+    debug.errors.push(`Jobicy: ${err.message}`);
+    allStats.errors++;
+  }
+
+  // Fetch from USAJobs
+  if (usajobsSource.isConfigured()) {
     try {
       for (let page = 1; page <= maxPages; page++) {
-        const result = await careerjetSource.fetchJobs(query, location, { page });
+        const result = await usajobsSource.fetchJobs(query, location, { page });
         
         if (result.jobs.length === 0) break;
         
         totalFetched += result.jobs.length;
         
-        const normalized = result.jobs.map(j => {
-          const n = normalizeJob(j, careerjetSource);
-          return n;
-        });
-        
+        const normalized = result.jobs.map(j => normalizeJob(j, usajobsSource));
         const stats = await processJobs(normalized, db);
         allStats.created += stats.created;
         allStats.updated += stats.updated;
         allStats.skipped += stats.skipped;
         allStats.errors += stats.errors;
         
-        console.log(`[Ingest] Careerjet page ${page}: ${result.jobs.length} jobs, ${stats.created} created, ${stats.updated} updated`);
+        console.log(`[Ingest] USAJobs page ${page}: ${result.jobs.length} jobs, ${stats.created} created`);
         
-        if (page < maxPages) {
-          await new Promise(r => setTimeout(r, 500));
-        }
+        if (page < maxPages) await new Promise(r => setTimeout(r, 500));
       }
     } catch (err) {
-      console.error('[Ingest] Careerjet error:', err.message);
+      console.error('[Ingest] USAJobs error:', err.message);
+      debug.errors.push(`USAJobs: ${err.message}`);
       allStats.errors++;
     }
   } else {
-    console.log('[Ingest] Careerjet not configured — skipping');
+    console.log('[Ingest] USAJobs not configured — skipping');
   }
 
+  // Careerjet — DISABLED: requires IP-based auth, incompatible with Firebase Functions rotating IPs
+  // if (careerjetSource.isConfigured()) { ... }
+
   console.log(`[Ingest] Complete: ${totalFetched} fetched, ${allStats.created} created, ${allStats.updated} updated`);
-  return { stats: allStats, totalFetched };
+  return { stats: allStats, totalFetched, debug };
+});
+
+/**
+ * testCareerjet — Direct test of Careerjet API. Returns raw response.
+ */
+exports.testCareerjet = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const apiKey = process.env.CAREERJET_API_KEY;
+  if (!apiKey) {
+    return { error: 'No CAREERJET_API_KEY configured' };
+  }
+
+  const https = require('https');
+  const credentials = Buffer.from(`${apiKey}:`).toString('base64');
+  
+  const params = new URLSearchParams({
+    locale_code: 'en_US',
+    keywords: data.query || 'software engineer',
+    location: data.location || 'Philadelphia',
+    sort: 'relevance',
+    page: '1',
+    page_size: '5',
+    fragment_size: '300',
+    user_ip: '0.0.0.0',
+    user_agent: 'RoleCall/1.0',
+  });
+
+  const url = `/v4/query?${params.toString()}`;
+
+  return new Promise((resolve, reject) => {
+    const reqOptions = {
+      hostname: 'search.api.careerjet.net',
+      path: url,
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Basic ${credentials}`,
+        'User-Agent': 'RoleCall/1.0',
+        'Referer': 'https://rollcallinterviewprep.com',
+      },
+    };
+
+    const req = https.request(reqOptions, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        resolve({
+          statusCode: res.statusCode,
+          headers: res.headers,
+          body: data.substring(0, 1000),
+          bodyLength: data.length,
+        });
+      });
+    });
+
+    req.on('error', (err) => {
+      resolve({ error: err.message });
+    });
+    req.setTimeout(15000, () => {
+      req.destroy();
+      resolve({ error: 'timeout' });
+    });
+    req.end();
+  });
 });
 
 /**
@@ -2335,11 +2661,12 @@ exports.syncJobs = functions.pubsub.schedule('0 3 * * *').timeZone('UTC').onRun(
       await new Promise(r => setTimeout(r, 300));
     }
 
-    // Careerjet — job aggregator (free API, requires key)
-    if (careerjetSource.isConfigured()) {
-      await ingestFromSource(careerjetSource, query, 2);
-      await new Promise(r => setTimeout(r, 300));
-    }
+    // Careerjet — DISABLED: requires IP-based auth, incompatible with Firebase Functions rotating IPs
+    // To re-enable: set up a proxy server with static IP or get API key-only auth from Careerjet
+    // if (careerjetSource.isConfigured()) {
+    //   await ingestFromSource(careerjetSource, query, 2);
+    //   await new Promise(r => setTimeout(r, 300));
+    // }
   }
 
   // Mark expired jobs as inactive

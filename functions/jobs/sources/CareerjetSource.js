@@ -13,6 +13,7 @@
 
 const https = require('https');
 const { JobSource } = require('./JobSource');
+const { extractSkills, extractRequirements } = require('../skillExtractor');
 
 const CAREERJET_API_HOST = 'search.api.careerjet.net';
 const CAREERJET_API_PATH = '/v4/query';
@@ -43,7 +44,7 @@ class CareerjetSource extends JobSource {
       page: page.toString(),
       page_size: Math.min(pageSize, 100).toString(),
       fragment_size: '300', // Get more description text
-      user_ip: '0.0.0.0', // Required by API — server-side fetch
+      user_ip: '136.124.33.134', // Firebase Functions IP
       user_agent: 'RoleCall/1.0 (job-search)',
     });
 
@@ -74,6 +75,7 @@ class CareerjetSource extends JobSource {
           'Accept': 'application/json',
           'Authorization': `Basic ${credentials}`,
           'User-Agent': 'RoleCall/1.0',
+          'Referer': 'https://rollcallinterviewprep.com',
         },
       };
 
@@ -241,37 +243,11 @@ class CareerjetSource extends JobSource {
   }
 
   extractSkills(title, desc) {
-    const text = (title + ' ' + desc).toLowerCase();
-    const skills = new Set();
-    const patterns = [
-      'javascript', 'python', 'java', 'sql', 'react', 'node.js', 'aws', 'azure',
-      'excel', 'power bi', 'tableau', 'salesforce', 'jira', 'confluence',
-      'emr', 'epic', 'cerner', 'hipaa', 'project management', 'agile', 'scrum',
-      'data analysis', 'reporting', 'compliance', 'communication', 'leadership',
-      'training', 'mentoring', 'coaching', 'presentation',
-    ];
-    for (const p of patterns) {
-      if (text.includes(p)) skills.add(p);
-    }
-    return Array.from(skills).slice(0, 10);
+    return extractSkills(title, desc);
   }
 
   extractRequirements(desc) {
-    const reqs = [];
-    const lines = desc.split('\n');
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (/^[\•\-\*\✓\✔]/.test(trimmed) || /^\d+\./.test(trimmed)) {
-        const lower = trimmed.toLowerCase();
-        if (lower.includes('required') || lower.includes('must have') || lower.includes('minimum') ||
-            lower.includes('bachelor') || lower.includes('master') || lower.includes('degree') ||
-            lower.includes('years of experience')) {
-          const cleaned = trimmed.replace(/^[\•\-\*\✓\✔\d\.]+\s*/, '').trim();
-          if (cleaned.length > 10 && cleaned.length < 200) reqs.push(cleaned);
-        }
-      }
-    }
-    return reqs.slice(0, 8);
+    return extractRequirements(desc);
   }
 }
 

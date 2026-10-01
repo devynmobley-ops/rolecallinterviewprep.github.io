@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EDPB7FVZDV"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-EDPB7FVZDV');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Applications — RoleCall</title>
+<meta name="description" content="Track your job applications and use AI-assisted apply to prepare resumes, cover letters, and application answers.">
+<meta name="robots" content="noindex, nofollow">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+*:focus:not(:focus-visible){outline:none}
+:root{
+  --bg:#0f0f14;--card:#1a1a24;--accent:#6c5ce7;--accent-light:#a29bfe;
+  --accent-text:#8b7cf7;--text:#f0f0f5;--text-secondary:#8e8ea0;--card-hover:#22222f;
+  --safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);
+  --radius:14px;--transition:0.3s cubic-bezier(.4,0,.2,1);
+  --success:#2ecc71;--success-bg:rgba(46,204,113,0.12);
+  --error:#e74c3c;--error-bg:rgba(231,76,60,0.12);
+  --warning:#f39c12;--warning-bg:rgba(243,156,18,0.12);
+  --info:#3498db;--info-bg:rgba(52,152,219,0.12);
+}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+#app{height:100%;overflow:hidden;position:relative}
+.screen{position:absolute;top:0;left:0;width:100%;height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;transition:transform var(--transition),opacity var(--transition);padding-top:calc(var(--safe-top) + 12px);padding-bottom:calc(var(--safe-bottom) + 12px);will-change:transform,opacity;background:var(--bg);z-index:0}
+.screen.hidden{pointer-events:none;opacity:0}
+.screen.slide-left{transform:translateX(100%);opacity:0}
+.screen.slide-right{transform:translateX(-30%);opacity:0}
+.screen.active{transform:translateX(0);opacity:1}
+.header{padding:8px 20px 12px;position:sticky;top:0;background:var(--bg);z-index:10;backdrop-filter:blur(12px)}
+.header-row{display:flex;align-items:center;gap:12px}
+.back-btn{background:none;border:none;color:var(--accent-text);font-size:22px;cursor:pointer;padding:4px 8px;border-radius:8px;display:flex;align-items:center;justify-content:center;min-width:40px;min-height:40px}
+.back-btn:active{background:var(--card)}
+.header h1{font-size:20px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.subtitle{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.container{padding:0 20px 20px}
+
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px}
+.stat-card{background:var(--card);border-radius:var(--radius);padding:14px 12px;text-align:center}
+.stat-num{font-size:24px;font-weight:800;color:var(--accent-text)}
+.stat-label{font-size:11px;color:var(--text-secondary);margin-top:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Filter tabs */
+.filter-row{display:flex;gap:8px;padding:0 0 16px;overflow-x:auto;scrollbar-width:none}
+.filter-row::-webkit-scrollbar{display:none}
+.filter-pill{padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer;border:2px solid var(--card);background:var(--card);color:var(--text-secondary);transition:all var(--transition)}
+.filter-pill.active{border-color:var(--accent);color:var(--accent-text);background:transparent}
+.filter-pill:active{transform:scale(0.95)}
+.filter-count{font-size:11px;opacity:0.7;margin-left:4px}
+
+/* Application cards */
+.app-card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:10px;cursor:pointer;transition:all var(--transition);border:1px solid transparent}
+.app-card:active{transform:scale(0.98);background:var(--card-hover)}
+.app-card:hover{border-color:var(--accent)}
+.app-top{display:flex;align-items:flex-start;gap:12px}
+.app-logo{width:44px;height:44px;border-radius:12px;background:var(--card-hover);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;overflow:hidden}
+.app-logo img{width:100%;height:100%;object-fit:cover}
+.app-info{flex:1;min-width:0}
+.app-title{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-company{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.app-meta{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
+.app-meta-item{font-size:11px;color:var(--text-secondary);display:flex;align-items:center;gap:4px}
+.app-status{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600}
+.status-saved{background:var(--info-bg);color:var(--info)}
+.status-preparing{background:var(--warning-bg);color:var(--warning)}
+.status-ready{background:rgba(108,92,231,0.15);color:var(--accent-text)}
+.status-applied{background:var(--success-bg);color:var(--success)}
+.status-interview{background:rgba(108,92,231,0.2);color:var(--accent-light)}
+.status-offer{background:var(--success-bg);color:var(--success)}
+.status-rejected{background:var(--error-bg);color:var(--error)}
+.status-withdrawn{background:rgba(142,142,160,0.15);color:var(--text-secondary)}
+
+/* Empty state */
+.empty-state{text-align:center;padding:60px 20px}
+.empty-icon{font-size:64px;margin-bottom:16px}
+.empty-title{font-size:18px;font-weight:700;margin-bottom:8px}
+.empty-desc{font-size:14px;color:var(--text-secondary);line-height:1.5}
+.empty-btn{display:inline-block;margin-top:20px;padding:12px 24px;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:14px;font-weight:600;border-radius:var(--radius);text-decoration:none}
+
+/* Detail screen */
+.detail-section{margin-bottom:20px}
+.detail-label{font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
+.detail-value{font-size:15px;line-height:1.5}
+.detail-card{background:var(--card);border-radius:var(--radius);padding:16px}
+
+/* Status chips */
+.status-chips{display:flex;flex-wrap:wrap;gap:8px}
+.status-chip{padding:8px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:2px solid var(--card);background:var(--card);color:var(--text-secondary);transition:all var(--transition)}
+.status-chip.active{border-color:var(--accent);color:var(--accent-text);background:transparent}
+
+/* Timeline */
+.timeline{position:relative;padding-left:24px}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--card-hover)}
+.timeline-item{position:relative;padding-bottom:16px}
+.timeline-dot{position:absolute;left:-20px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
+.timeline-dot.current{background:var(--success)}
+.timeline-date{font-size:11px;color:var(--text-secondary);margin-bottom:4px}
+.timeline-text{font-size:13px;line-height:1.4}
+
+/* AI generation */
+.ai-card{background:linear-gradient(135deg,rgba(108,92,231,0.1),rgba(162,155,254,0.05));border:1px solid rgba(108,92,231,0.2);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.ai-card h3{font-size:14px;font-weight:700;color:var(--accent-text);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.ai-card .ai-label{font-size:10px;background:var(--accent);color:#fff;padding:2px 6px;border-radius:4px;font-weight:700}
+.ai-content{font-size:13px;line-height:1.6;color:var(--text)}
+.ai-content p{margin-bottom:8px}
+.ai-actions{display:flex;gap:8px;margin-top:12px}
+.ai-btn{padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all var(--transition)}
+.ai-btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff}
+.ai-btn.primary:active{transform:scale(0.97)}
+.ai-btn.secondary{background:var(--card);color:var(--text-secondary);border:1px solid var(--card-hover)}
+.ai-btn.secondary:active{background:var(--card-hover)}
+
+/* Loading */
+.loading{display:flex;align-items:center;justify-content:center;padding:40px;gap:12px}
+.spinner{width:24px;height:24px;border:3px solid var(--card-hover);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:14px;color:var(--text-secondary)}
+
+/* Buttons */
+.btn{width:100%;padding:14px;border:none;border-radius:var(--radius);background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:all var(--transition);margin-top:8px}
+.btn:active{transform:scale(0.97)}
+.btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.btn.secondary{background:var(--card);border:1px solid var(--card-hover);margin-top:8px}
+.btn.secondary:active{background:var(--card-hover)}
+
+/* Toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--card);color:var(--text);padding:12px 20px;border-radius:var(--radius);font-size:13px;font-weight:500;z-index:100;opacity:0;transition:opacity 0.3s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+.toast.show{opacity:1}
+.toast.success{border:1px solid var(--success)}
+.toast.error{border:1px solid var(--error)}
+
+/* Login prompt */
+.login-prompt{text-align:center;padding:80px 20px}
+.login-prompt .icon{font-size:64px;margin-bottom:16px}
+.login-prompt h2{font-size:20px;font-weight:700;margin-bottom:8px}
+.login-prompt p{font-size:14px;color:var(--text-secondary);margin-bottom:24px}
+.login-btn{display:inline-block;padding:14px 32px;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:15px;font-weight:700;border-radius:var(--radius);text-decoration:none}
+
+/* Responsive */
+@media(max-width:400px){
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- APPLICATIONS LIST SCREEN -->
+  <div id="screen-list" class="screen active">
+    <div class="header">
+      <div class="header-row">
+        <button class="back-btn" onclick="window.location.href='/'" aria-label="Back">‹</button>
+        <div>
+          <h1>Applications</h1>
+          <div class="subtitle">Track and manage your job applications</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login prompt (shown when not signed in) -->
+    <div id="loginPrompt" class="login-prompt" style="display:none">
+      <div class="icon">📋</div>
+      <h2>Sign in to track applications</h2>
+      <p>Sign in to save jobs, track applications, and use AI-assisted apply.</p>
+      <a href="#" class="login-btn" onclick="doLogin()">Sign In</a>
+    </div>
+
+    <!-- Main content (shown when signed in) -->
+    <div id="mainContent" style="display:none">
+      <!-- Base Resume Section -->
+      <div class="container">
+        <div id="resumeSection" class="detail-card" style="margin-bottom:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <div>
+              <div style="font-size:14px;font-weight:700">📄 Base Resume</div>
+              <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">Used for AI-assisted applications</div>
+            </div>
+            <div id="resumeStatus"></div>
+          </div>
+          <div id="resumeInfo" style="display:none;margin-bottom:12px">
+            <div style="font-size:13px;color:var(--text-secondary)">
+              <span id="resumeName"></span> • <span id="resumeDate"></span>
+            </div>
+            <div id="resumeSkills" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px"></div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <label class="ai-btn primary" style="flex:1;text-align:center;cursor:pointer;margin:0">
+              📤 Upload Resume
+              <input type="file" id="resumeFileInput" accept=".pdf,.txt" style="display:none" onchange="handleResumeUpload(this)">
+            </label>
+            <button id="deleteResumeBtn" class="ai-btn secondary" style="display:none;margin:0" onclick="deleteBaseResume()">🗑️ Remove</button>
+          </div>
+          <div id="resumeUploadProgress" style="display:none;margin-top:12px">
+            <div class="loading">
+              <div class="spinner"></div>
+              <div class="loading-text">Parsing resume...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="container">
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-num" id="statTotal">0</div>
+            <div class="stat-label">Total</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="statApplied">0</div>
+            <div class="stat-label">Applied</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="statInterviews">0</div>
+            <div class="stat-label">Interviews</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="statOffers">0</div>
+            <div class="stat-label">Offers</div>
+          </div>
+        </div>
+
+        <!-- Filter tabs -->
+        <div class="filter-row" id="filterRow">
+          <div class="filter-pill active" data-filter="all" onclick="filterApps('all')">All</div>
+          <div class="filter-pill" data-filter="active" onclick="filterApps('active')">Active</div>
+          <div class="filter-pill" data-filter="interview" onclick="filterApps('interview')">Interviews</div>
+          <div class="filter-pill" data-filter="offer" onclick="filterApps('offer')">Offers</div>
+          <div class="filter-pill" data-filter="rejected" onclick="filterApps('rejected')">Rejected</div>
+        </div>
+      </div>
+
+      <!-- Application list -->
+      <div class="container" id="appList">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Empty state -->
+      <div id="emptyState" class="empty-state" style="display:none">
+        <div class="empty-icon">📝</div>
+        <div class="empty-title">No applications yet</div>
+        <div class="empty-desc">Start tracking your job applications or use AI-assisted apply to prepare materials.</div>
+        <a href="/" class="empty-btn">Browse Jobs</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATION DETAIL SCREEN -->
+  <div id="screen-detail" class="screen slide-left hidden">
+    <div class="header">
+      <div class="header-row">
+        <button class="back-btn" onclick="showList()" aria-label="Back">‹</button>
+        <h1 id="detailTitle">Application</h1>
+      </div>
+    </div>
+    <div class="container" id="detailContent">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- ASSISTED APPLY SCREEN -->
+  <div id="screen-apply" class="screen slide-left hidden">
+    <div class="header">
+      <div class="header-row">
+        <button class="back-btn" onclick="showList()" aria-label="Back">‹</button>
+        <h1>AI-Assisted Apply</h1>
+      </div>
+    </div>
+    <div class="container" id="applyContent">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCvV-cHZxs8vVlUGd-rR9hsuV_emdnSGd0",
+  authDomain: "rolecall-interview-prep-a49a3.firebaseapp.com",
+  projectId: "rolecall-interview-prep-a49a3",
+  storageBucket: "rolecall-interview-prep-a49a3.firebasestorage.app",
+  messagingSenderId: "884506529130",
+  appId: "1:884506529130:web:f25e56c2ee4f7ef6506913"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const functions = firebase.functions();
+const db = firebase.firestore();
+
+// State
+let currentUser = null;
+let applications = [];
+let currentFilter = 'all';
+let currentAppId = null;
+
+// Status display config
+const STATUS_CONFIG = {
+  saved: { label: 'Saved', class: 'status-saved', icon: '💾' },
+  preparing: { label: 'Preparing', class: 'status-preparing', icon: '⏳' },
+  ready_to_apply: { label: 'Ready to Apply', class: 'status-ready', icon: '✅' },
+  applied: { label: 'Applied', class: 'status-applied', icon: '📨' },
+  recruiter_contacted: { label: 'Recruiter Contacted', class: 'status-interview', icon: '📧' },
+  phone_screen: { label: 'Phone Screen', class: 'status-interview', icon: '📞' },
+  interview: { label: 'Interview', class: 'status-interview', icon: '🎤' },
+  final_interview: { label: 'Final Interview', class: 'status-interview', icon: '🏁' },
+  offer: { label: 'Offer', class: 'status-offer', icon: '🎉' },
+  accepted: { label: 'Accepted', class: 'status-offer', icon: '✅' },
+  rejected: { label: 'Rejected', class: 'status-rejected', icon: '❌' },
+  withdrawn: { label: 'Withdrawn', class: 'status-withdrawn', icon: '🚫' },
+  closed: { label: 'Closed', class: 'status-withdrawn', icon: '🔒' }
+};
+
+// Auth state
+auth.onAuthStateChanged(user => {
+  currentUser = user;
+  if (user) {
+    document.getElementById('loginPrompt').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+    loadApplications();
+    loadBaseResume();
+  } else {
+    document.getElementById('loginPrompt').style.display = 'block';
+    document.getElementById('mainContent').style.display = 'none';
+  }
+});
+
+// Login
+function doLogin() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).catch(err => {
+    showToast('Sign in failed: ' + err.message, 'error');
+  });
+}
+
+// Base Resume Management
+async function loadBaseResume() {
+  if (!currentUser) return;
+
+  try {
+    const result = await functions.httpsCallable('getBaseResume')({});
+    const data = result.data;
+
+    if (data.exists) {
+      document.getElementById('resumeStatus').innerHTML = '<span style="color:var(--success);font-size:12px">✅ Uploaded</span>';
+      document.getElementById('resumeInfo').style.display = 'block';
+      document.getElementById('deleteResumeBtn').style.display = 'block';
+
+      if (data.structured) {
+        document.getElementById('resumeName').textContent = data.structured.name || 'Resume';
+        document.getElementById('resumeDate').textContent = data.uploadedAt ? new Date(data.uploadedAt).toLocaleDateString() : '';
+
+        const skills = data.structured.skills || [];
+        if (skills.length > 0) {
+          document.getElementById('resumeSkills').innerHTML = skills.slice(0, 8).map(s =>
+            `<span style="padding:2px 8px;background:var(--card-hover);border-radius:8px;font-size:11px">${escapeHtml(s)}</span>`
+          ).join('');
+        }
+      } else {
+        document.getElementById('resumeName').textContent = data.fileName || 'Resume';
+        document.getElementById('resumeDate').textContent = data.uploadedAt ? new Date(data.uploadedAt).toLocaleDateString() : '';
+      }
+    } else {
+      document.getElementById('resumeStatus').innerHTML = '<span style="color:var(--text-secondary);font-size:12px">Not uploaded</span>';
+      document.getElementById('resumeInfo').style.display = 'none';
+      document.getElementById('deleteResumeBtn').style.display = 'none';
+    }
+  } catch (err) {
+    console.error('Failed to load resume:', err);
+  }
+}
+
+async function handleResumeUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  // Show progress
+  document.getElementById('resumeUploadProgress').style.display = 'block';
+
+  try {
+    let resumeBase64 = null;
+    let resumeText = null;
+
+    if (file.type === 'application/pdf') {
+      // Convert PDF to base64
+      const buffer = await file.arrayBuffer();
+      resumeBase64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+    } else {
+      // Read as text
+      resumeText = await file.text();
+    }
+
+    const result = await functions.httpsCallable('uploadBaseResume')({
+      resumeBase64,
+      resumeText,
+      fileName: file.name,
+    });
+
+    showToast('Resume uploaded successfully!', 'success');
+    await loadBaseResume();
+  } catch (err) {
+    showToast('Upload failed: ' + err.message, 'error');
+  } finally {
+    document.getElementById('resumeUploadProgress').style.display = 'none';
+    input.value = ''; // Reset file input
+  }
+}
+
+async function deleteBaseResume() {
+  if (!confirm('Remove your base resume? You can always upload a new one.')) return;
+
+  try {
+    await functions.httpsCallable('deleteBaseResume')({});
+    showToast('Resume removed', 'success');
+    await loadBaseResume();
+  } catch (err) {
+    showToast('Failed to remove: ' + err.message, 'error');
+  }
+}
+
+// Load applications
+async function loadApplications() {
+  if (!currentUser) return;
+
+  try {
+    const result = await functions.httpsCallable('getApplications')({});
+    applications = result.data.applications || [];
+    updateStats();
+    renderApplications();
+  } catch (err) {
+    console.error('Failed to load applications:', err);
+    showToast('Failed to load applications', 'error');
+  }
+}
+
+// Update stats
+function updateStats() {
+  const total = applications.length;
+  const applied = applications.filter(a => ['applied', 'recruiter_contacted', 'phone_screen', 'interview', 'final_interview'].includes(a.status)).length;
+  const interviews = applications.filter(a => ['interview', 'final_interview'].includes(a.status)).length;
+  const offers = applications.filter(a => ['offer', 'accepted'].includes(a.status)).length;
+
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statApplied').textContent = applied;
+  document.getElementById('statInterviews').textContent = interviews;
+  document.getElementById('statOffers').textContent = offers;
+}
+
+// Filter applications
+function filterApps(filter) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
+  renderApplications();
+}
+
+// Render applications list
+function renderApplications() {
+  const container = document.getElementById('appList');
+  const emptyState = document.getElementById('emptyState');
+
+  let filtered = applications;
+  if (currentFilter === 'active') {
+    filtered = applications.filter(a => !['rejected', 'withdrawn', 'closed', 'accepted'].includes(a.status));
+  } else if (currentFilter === 'interview') {
+    filtered = applications.filter(a => ['phone_screen', 'interview', 'final_interview'].includes(a.status));
+  } else if (currentFilter === 'offer') {
+    filtered = applications.filter(a => ['offer', 'accepted'].includes(a.status));
+  } else if (currentFilter === 'rejected') {
+    filtered = applications.filter(a => ['rejected', 'withdrawn', 'closed'].includes(a.status));
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = '';
+    emptyState.style.display = 'block';
+    return;
+  }
+
+  emptyState.style.display = 'none';
+  container.innerHTML = filtered.map(app => {
+    const status = STATUS_CONFIG[app.status] || STATUS_CONFIG.saved;
+    const date = app.createdAt ? new Date(app.createdAt._seconds * 1000).toLocaleDateString() : '';
+    const logo = app.companyLogo ? `<img src="${app.companyLogo}" alt="">` : (app.company || '?')[0].toUpperCase();
+
+    return `
+      <div class="app-card" onclick="showDetail('${app.id}')">
+        <div class="app-top">
+          <div class="app-logo">${logo}</div>
+          <div class="app-info">
+            <div class="app-title">${escapeHtml(app.jobTitle || 'Untitled')}</div>
+            <div class="app-company">${escapeHtml(app.company || 'Unknown')}</div>
+            <div class="app-meta">
+              <span class="app-status ${status.class}">${status.icon} ${status.label}</span>
+              ${date ? `<span class="app-meta-item">📅 ${date}</span>` : ''}
+              ${app.mode ? `<span class="app-meta-item">🤖 ${app.mode}</span>` : ''}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Show detail
+async function showDetail(appId) {
+  currentAppId = appId;
+  const app = applications.find(a => a.id === appId);
+  if (!app) return;
+
+  document.getElementById('detailTitle').textContent = app.jobTitle || 'Application';
+
+  const status = STATUS_CONFIG[app.status] || STATUS_CONFIG.saved;
+  const date = app.createdAt ? new Date(app.createdAt._seconds * 1000).toLocaleString() : '';
+  const appliedDate = app.appliedAt ? new Date(app.appliedAt._seconds * 1000).toLocaleString() : '';
+
+  let html = `
+    <div class="detail-section">
+      <div class="detail-card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div class="app-logo">${app.companyLogo ? `<img src="${app.companyLogo}" alt="">` : (app.company || '?')[0].toUpperCase()}</div>
+          <div>
+            <div style="font-size:18px;font-weight:700">${escapeHtml(app.jobTitle || 'Untitled')}</div>
+            <div style="font-size:14px;color:var(--text-secondary)">${escapeHtml(app.company || 'Unknown')}</div>
+          </div>
+        </div>
+        <div class="app-meta" style="margin-bottom:12px">
+          <span class="app-status ${status.class}">${status.icon} ${status.label}</span>
+          ${app.mode ? `<span class="app-meta-item">Mode: ${app.mode}</span>` : ''}
+        </div>
+        ${app.location ? `<div class="app-meta-item" style="margin-bottom:4px">📍 ${escapeHtml(app.location)}</div>` : ''}
+        ${app.salary ? `<div class="app-meta-item" style="margin-bottom:4px">💰 ${escapeHtml(app.salary)}</div>` : ''}
+        ${date ? `<div class="app-meta-item" style="margin-bottom:4px">📅 Saved: ${date}</div>` : ''}
+        ${appliedDate ? `<div class="app-meta-item" style="margin-bottom:4px">📨 Applied: ${appliedDate}</div>` : ''}
+      </div>
+    </div>
+  `;
+
+  // Status update
+  html += `
+    <div class="detail-section">
+      <div class="detail-label">Update Status</div>
+      <div class="status-chips">
+        ${Object.entries(STATUS_CONFIG).map(([key, val]) => `
+          <div class="status-chip ${app.status === key ? 'active' : ''}" onclick="updateStatus('${appId}', '${key}')">${val.icon} ${val.label}</div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  // Notes
+  html += `
+    <div class="detail-section">
+      <div class="detail-label">Notes</div>
+      <div class="detail-card">
+        <textarea id="appNotes" style="width:100%;min-height:80px;background:var(--bg);border:1px solid var(--card-hover);border-radius:8px;padding:12px;color:var(--text);font-size:14px;resize:vertical" placeholder="Add notes...">${escapeHtml(app.notes || '')}</textarea>
+        <button class="ai-btn secondary" style="margin-top:8px" onclick="saveNotes('${appId}')">Save Notes</button>
+      </div>
+    </div>
+  `;
+
+  // Actions
+  html += `
+    <div class="detail-section">
+      <div class="detail-label">Actions</div>
+      <div style="display:flex;gap:8px">
+        ${app.applicationUrl ? `<a href="${escapeHtml(app.applicationUrl)}" target="_blank" class="ai-btn primary" style="flex:1;text-align:center;text-decoration:none">Open Application</a>` : ''}
+        <button class="ai-btn secondary" style="flex:1" onclick="startAssistedApply('${appId}')">🤖 AI-Assisted Apply</button>
+      </div>
+    </div>
+  `;
+
+  // Timeline
+  if (app.events && app.events.length > 0) {
+    html += `
+      <div class="detail-section">
+        <div class="detail-label">Timeline</div>
+        <div class="timeline">
+          ${app.events.map(evt => {
+            const evtDate = evt.createdAt ? new Date(evt.createdAt._seconds * 1000).toLocaleString() : '';
+            return `
+              <div class="timeline-item">
+                <div class="timeline-dot ${evt.type === 'status_change' ? 'current' : ''}"></div>
+                <div class="timeline-date">${evtDate}</div>
+                <div class="timeline-text">${escapeHtml(evt.description || evt.type)}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  document.getElementById('detailContent').innerHTML = html;
+  navigateTo('screen-detail');
+}
+
+// Update status
+async function updateStatus(appId, newStatus) {
+  try {
+    await functions.httpsCallable('updateApplication')({
+      applicationId: appId,
+      status: newStatus
+    });
+    showToast('Status updated', 'success');
+    await loadApplications();
+    showDetail(appId);
+  } catch (err) {
+    showToast('Failed to update: ' + err.message, 'error');
+  }
+}
+
+// Save notes
+async function saveNotes(appId) {
+  const notes = document.getElementById('appNotes').value;
+  try {
+    await functions.httpsCallable('updateApplication')({
+      applicationId: appId,
+      notes: notes
+    });
+    showToast('Notes saved', 'success');
+  } catch (err) {
+    showToast('Failed to save: ' + err.message, 'error');
+  }
+}
+
+// Start assisted apply
+async function startAssistedApply(appId) {
+  const app = applications.find(a => a.id === appId);
+  if (!app) return;
+
+  navigateTo('screen-apply');
+  document.getElementById('applyContent').innerHTML = `
+    <div class="loading">
+      <div class="spinner"></div>
+      <div class="loading-text">Preparing your application materials...</div>
+    </div>
+  `;
+
+  try {
+    const result = await functions.httpsCallable('prepareApplication')({
+      jobId: app.jobId,
+      mode: 'assisted',
+      generateCoverLetter: true
+    });
+
+    const prepared = result.data.prepared;
+    renderPreparedApplication(appId, prepared);
+  } catch (err) {
+    document.getElementById('applyContent').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">⚠️</div>
+        <div class="empty-title">Preparation Failed</div>
+        <div class="empty-desc">${escapeHtml(err.message)}</div>
+        <button class="btn secondary" onclick="showDetail('${appId}')">Go Back</button>
+      </div>
+    `;
+  }
+}
+
+// Render prepared application
+function renderPreparedApplication(appId, prepared) {
+  let html = `
+    <div style="margin-bottom:16px">
+      <div class="subtitle">AI has prepared your application materials. Review and edit before submitting.</div>
+    </div>
+  `;
+
+  // Resume
+  if (prepared.resume) {
+    html += `
+      <div class="ai-card">
+        <h3><span class="ai-label">AI</span> Tailored Resume</h3>
+        <div class="ai-content">
+          <p><strong>Match Score:</strong> ${prepared.resume.match_score || 'N/A'}%</p>
+          <p><strong>Summary:</strong> ${escapeHtml(prepared.resume.tailored_summary || '')}</p>
+          ${prepared.resume.key_changes ? `
+            <p><strong>Key Changes:</strong></p>
+            <ul style="margin-left:20px">
+              ${prepared.resume.key_changes.map(c => `<li>${escapeHtml(c)}</li>`).join('')}
+            </ul>
+          ` : ''}
+          ${prepared.resume.relevant_skills ? `
+            <p><strong>Relevant Skills:</strong> ${prepared.resume.relevant_skills.join(', ')}</p>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  // Cover letter
+  if (prepared.coverLetter) {
+    html += `
+      <div class="ai-card">
+        <h3><span class="ai-label">AI</span> Cover Letter</h3>
+        <div class="ai-content">
+          ${prepared.coverLetter.split('\n').map(p => `<p>${escapeHtml(p)}</p>`).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // Answers
+  if (prepared.answers && Object.keys(prepared.answers).length > 0) {
+    html += `
+      <div class="ai-card">
+        <h3><span class="ai-label">AI</span> Application Answers</h3>
+        ${Object.entries(prepared.answers).map(([q, a]) => `
+          <div style="margin-bottom:12px">
+            <div style="font-size:12px;font-weight:600;color:var(--accent-text);margin-bottom:4px">${escapeHtml(q)}</div>
+            <div class="ai-content">${escapeHtml(a)}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  // Warnings
+  if (prepared.warnings && prepared.warnings.length > 0) {
+    html += `
+      <div class="ai-card" style="border-color:var(--warning)">
+        <h3 style="color:var(--warning)">⚠️ Warnings</h3>
+        <div class="ai-content">
+          ${prepared.warnings.map(w => `<p>${escapeHtml(w)}</p>`).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // Missing fields
+  if (prepared.missingFields && prepared.missingFields.length > 0) {
+    html += `
+      <div class="ai-card" style="border-color:var(--info)">
+        <h3 style="color:var(--info)">ℹ️ Missing Information</h3>
+        <div class="ai-content">
+          <p>The AI couldn't find the following in your resume:</p>
+          <ul style="margin-left:20px">
+            ${prepared.missingFields.map(f => `<li>${escapeHtml(f)}</li>`).join('')}
+          </ul>
+        </div>
+      </div>
+    `;
+  }
+
+  // Cost
+  if (prepared.costEstimate) {
+    html += `
+      <div style="font-size:12px;color:var(--text-secondary);text-align:center;margin:12px 0">
+        AI Cost: $${(prepared.costEstimate.ai || 0).toFixed(3)}
+      </div>
+    `;
+  }
+
+  // Actions
+  html += `
+    <div class="ai-actions" style="margin-top:20px">
+      <button class="ai-btn primary" style="flex:1" onclick="markReady('${appId}')">✅ Mark as Ready</button>
+      <button class="ai-btn secondary" style="flex:1" onclick="showDetail('${appId}')">Cancel</button>
+    </div>
+  `;
+
+  document.getElementById('applyContent').innerHTML = html;
+}
+
+// Mark as ready
+async function markReady(appId) {
+  try {
+    await functions.httpsCallable('updateApplication')({
+      applicationId: appId,
+      status: 'ready_to_apply'
+    });
+    showToast('Application ready!', 'success');
+    await loadApplications();
+    showDetail(appId);
+  } catch (err) {
+    showToast('Failed: ' + err.message, 'error');
+  }
+}
+
+// Navigation
+function navigateTo(screenId) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active', 'slide-left', 'slide-right');
+    s.classList.add('hidden');
+  });
+  const screen = document.getElementById(screenId);
+  screen.classList.remove('hidden');
+  screen.classList.add('active');
+}
+
+function showList() {
+  navigateTo('screen-list');
+  loadApplications();
+}
+
+// Helpers
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function showToast(msg, type = '') {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = 'toast show ' + type;
+  setTimeout(() => toast.className = 'toast', 3000);
+}
+
+// Handle URL params (for linking from job search)
+const urlParams = new URLSearchParams(window.location.search);
+const actionParam = urlParams.get('action');
+const jobIdParam = urlParams.get('jobId');
+
+if (actionParam === 'apply' && jobIdParam) {
+  // Will handle after auth
+}
+
+// Check for job data from localStorage (passed from job search)
+const pendingJob = localStorage.getItem('pendingApplyJob');
+if (pendingJob) {
+  try {
+    const jobData = JSON.parse(pendingJob);
+    localStorage.removeItem('pendingApplyJob');
+    // Create application and start assisted apply
+    if (currentUser) {
+      createAndApply(jobData);
+    }
+  } catch (e) {}
+}
+
+async function createAndApply(jobData) {
+  try {
+    const result = await functions.httpsCallable('createApplication')({
+      jobId: jobData.id,
+      jobTitle: jobData.title,
+      company: jobData.company,
+      applicationUrl: jobData.applicationUrl,
+      location: jobData.location,
+      salary: jobData.salary
+    });
+    await loadApplications();
+    startAssistedApply(result.data.applicationId);
+  } catch (err) {
+    showToast('Failed to create application: ' + err.message, 'error');
+  }
+}
+</script>
+
+</body>
+</html>

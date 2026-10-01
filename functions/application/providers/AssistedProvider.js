@@ -61,10 +61,11 @@ class AssistedProvider extends ApplicationProvider {
       costEstimate: { provider: 0, ai: 0.05 },
     };
 
-    // Check for required user data
-    if (!userProfile || !userProfile.resumeText) {
+    // Check for required user data — prefer base resume over tailored resume history
+    const hasResume = userProfile && (userProfile.resumeText || userProfile.resumeStructured);
+    if (!hasResume) {
       result.missingFields.push('resume');
-      result.warnings.push('Upload your resume to get AI-tailored application materials.');
+      result.warnings.push('Upload your base resume in the Applications page to get AI-tailored application materials.');
       return result;
     }
 
@@ -166,15 +167,134 @@ class AssistedProvider extends ApplicationProvider {
    * Only uses information from the user's profile — never fabricates.
    */
   async _generateApplicationMaterials(job, userProfile, options) {
-    // This would call the Anthropic API similar to tailorResume
-    // For now, return a structured response that the Cloud Function will populate
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      return {
+        resume: null,
+        coverLetter: null,
+        answers: {},
+        missingFields: [],
+        warnings: ['AI service not configured.'],
+        estimatedCost: 0,
+      };
+    }
+
+    const resumeText = userProfile.resumeText || '';
+    const jobTitle = job.title || 'Unknown Position';
+    const company = job.company || 'Unknown Company';
+    const jobDesc = job.description || '';
+    const jobSkills = (job.skills || []).join(', ');
+    const jobRequirements = (job.requirements || []).join('\n');
+
+    // Build user profile summary for context
+    const profileSummary = [
+      userProfile.name ? `Name: ${userProfile.name}` : '',
+      userProfile.email ? `Email: ${userProfile.email}` : '',
+      userProfile.phone ? `Phone: ${userProfile.phone}` : '',
+      userProfile.location ? `Location: ${userProfile.location}` : '',
+      userProfile.linkedin ? `LinkedIn: ${userProfile.linkedin}` : '',
+    ].filter(Boolean).join('\n');
+
+    const prompt = `You are a professional career advisor helping a user apply for a job. Generate application materials using ONLY information from the user's resume and profile. NEVER fabricate experience, degrees, certifications, skills, or accomplishments.
+
+JOB DETAILS:
+Title: ${jobTitle}
+Company: ${company}
+Description: ${jobDesc.substring(0, 3000)}
+Key Skills: ${jobSkills}
+Requirements: ${jobRequirements.substring(0, 2000)}
+
+USER PROFILE:
+${profileSummary}
+
+USER RESUME:
+${resumeText.substring(0, 6000)}
+
+Generate the following in JSON format (no markdown, just raw JSON):
+
+{
+  "resume": {
+    "tailored_summary": "2-3 sentence professional summary rewritten to emphasize relevance to this specific job",
+    "key_changes": ["change 1", "change 2", "change 3"],
+    "match_score": 75,
+    "relevant_skills": ["skill1", "skill2", "skill3"]
+  },
+  "coverLetter": "A professional cover letter (3-4 paragraphs) tailored to this specific job and company. Use the user's actual experience from their resume. Address the hiring manager professionally. Mention specific requirements from the job description and how the user's experience matches. Do NOT fabricate any experience or qualifications.",
+  "answers": {
+    "Why are you interested in this role?": "Based on the user's background and this specific job",
+    "What makes you a good fit?": "Based on actual resume experience",
+    "Describe your relevant experience": "Based on actual work history"
+  },
+  "missing_fields": [],
+  "warnings": []
+}
+
+Rules:
+- Use ONLY information from the user's resume and profile
+- NEVER invent experience, degrees, certifications, employers, or skills
+- If the resume doesn't have enough information for a question, add it to "missing_fields"
+- The cover letter should reference specific requirements from the job description
+- Answers should be based on actual resume content
+- If the user lacks required experience, note it in "warnings"
+- Keep the cover letter professional and concise (3-4 paragraphs)
+- Return ONLY valid JSON, no markdown formatting`;
+
+    let result;
+    try {
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 4096,
+          messages: [{ role: 'user', content: prompt }],
+        }),
+      });
+
+      if (!resp.ok) {
+        const errText = await resp.text();
+        console.error('[AssistedProvider] Anthropic API error:', resp.status, errText);
+        throw new Error('API returned ' + resp.status);
+      }
+
+      const data = await resp.json();
+      const responseText = data.content[0].text.trim();
+
+      // Parse JSON from response
+      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        throw new Error('Could not parse AI response as JSON');
+      }
+
+      result = JSON.parse(jsonMatch[0]);
+    } catch (err) {
+      console.error('[AssistedProvider] AI generation error:', err.message);
+      return {
+        resume: null,
+        coverLetter: null,
+        answers: {},
+        missingFields: [],
+        warnings: ['AI generation failed: ' + err.message],
+        estimatedCost: 0,
+      };
+    }
+
+    // Estimate cost (Sonnet: ~$3/1M input, ~$15/1M output)
+    const inputTokens = Math.ceil(prompt.length / 4);
+    const outputTokens = Math.ceil(JSON.stringify(result).length / 4);
+    const estimatedCost = (inputTokens * 3 + outputTokens * 15) / 1000000;
+
     return {
-      resume: null, // Will be populated by the Cloud Function
-      coverLetter: null,
-      answers: {},
-      missingFields: [],
-      warnings: [],
-      estimatedCost: 0.05,
+      resume: result.resume || null,
+      coverLetter: result.coverLetter || null,
+      answers: result.answers || {},
+      missingFields: result.missing_fields || [],
+      warnings: result.warnings || [],
+      estimatedCost: Math.max(estimatedCost, 0.01),
     };
   }
 }

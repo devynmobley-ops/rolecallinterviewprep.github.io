@@ -163,17 +163,28 @@ exports.prepareApplication = functions.runWith({ secrets: ['ANTHROPIC_API_KEY'] 
   const userDoc = await db.collection('customers').doc(uid).get();
   const userProfile = userDoc.exists ? userDoc.data() : {};
 
-  // Get latest resume from user's resume history
-  const resumeSnap = await db.collection('customers').doc(uid)
-    .collection('resumes')
-    .orderBy('createdAt', 'desc')
-    .limit(1)
-    .get();
+  // Get base resume (primary resume for applications)
+  const baseResumeDoc = await db.collection('customers').doc(uid)
+    .collection('profile').doc('baseResume').get();
 
-  if (!resumeSnap.empty) {
-    const resumeData = resumeSnap.docs[0].data();
-    userProfile.resumeText = resumeData.resume ? JSON.stringify(resumeData.resume) : null;
-    userProfile.resumeScore = resumeData.matchScore;
+  if (baseResumeDoc.exists) {
+    const resumeData = baseResumeDoc.data();
+    userProfile.resumeText = resumeData.rawText || null;
+    userProfile.resumeStructured = resumeData.structured || null;
+    userProfile.hasBaseResume = true;
+  } else {
+    // Fallback: try to get from resume history (tailored resumes)
+    const resumeSnap = await db.collection('customers').doc(uid)
+      .collection('resumes')
+      .orderBy('createdAt', 'desc')
+      .limit(1)
+      .get();
+
+    if (!resumeSnap.empty) {
+      const resumeData = resumeSnap.docs[0].data();
+      userProfile.resumeText = resumeData.resume ? JSON.stringify(resumeData.resume) : null;
+      userProfile.resumeScore = resumeData.matchScore;
+    }
   }
 
   // Select provider and prepare
