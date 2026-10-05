@@ -226,6 +226,18 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
           </div>
         </div>
 
+        <!-- AI Application Packages usage (Personal Pro only) -->
+        <div id="appPackageUsage" class="detail-card" style="display:none;margin-bottom:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div style="font-size:14px;font-weight:700">🤖 AI Application Packages</div>
+            <div id="appPackageCount" style="font-size:13px;color:var(--accent-text);font-weight:600"></div>
+          </div>
+          <div style="background:var(--card-hover);border-radius:6px;height:8px;overflow:hidden">
+            <div id="appPackageBar" style="height:100%;background:var(--accent);border-radius:6px;transition:width 0.4s ease"></div>
+          </div>
+          <div id="appPackageReset" style="font-size:11px;color:var(--text-secondary);margin-top:6px"></div>
+        </div>
+
         <!-- Filter tabs -->
         <div class="filter-row" id="filterRow">
           <div class="filter-pill active" data-filter="all" onclick="filterApps('all')">All</div>
@@ -307,6 +319,8 @@ let currentUser = null;
 let applications = [];
 let currentFilter = 'all';
 let currentAppId = null;
+let userAccountType = null;
+let userOrganizationId = null;
 
 // Status display config
 const STATUS_CONFIG = {
@@ -326,18 +340,93 @@ const STATUS_CONFIG = {
 };
 
 // Auth state
-auth.onAuthStateChanged(user => {
+auth.onAuthStateChanged(async user => {
   currentUser = user;
   if (user) {
     document.getElementById('loginPrompt').style.display = 'none';
     document.getElementById('mainContent').style.display = 'block';
     loadApplications();
     loadBaseResume();
+    await loadAccountType();
+    await loadAppPackageUsage();
   } else {
     document.getElementById('loginPrompt').style.display = 'block';
     document.getElementById('mainContent').style.display = 'none';
+    userAccountType = null;
+    userOrganizationId = null;
+    hideAppPackageUsage();
   }
 });
+
+// Load account type and organization
+async function loadAccountType() {
+  if (!currentUser) return;
+  try {
+    const result = await functions.httpsCallable('getAccountType')({});
+    const data = result.data;
+    userAccountType = data.accountType || null;
+    userOrganizationId = data.organizationId || null;
+    updateStudentVisibility();
+  } catch (err) {
+    console.error('Failed to load account type:', err);
+  }
+}
+
+// Hide Application Assistant features for Student accounts
+function updateStudentVisibility() {
+  const resumeSection = document.getElementById('resumeSection');
+  const assistedButtons = document.querySelectorAll('.assisted-apply-btn');
+
+  if (userAccountType === 'STUDENT') {
+    // Hide the resume section (used for AI-assisted applications)
+    if (resumeSection) resumeSection.style.display = 'none';
+    // Hide all assisted apply buttons
+    assistedButtons.forEach(btn => btn.style.display = 'none');
+  } else {
+    if (resumeSection) resumeSection.style.display = '';
+    assistedButtons.forEach(btn => btn.style.display = '');
+  }
+}
+
+// Load Application Package usage
+async function loadAppPackageUsage() {
+  if (!currentUser || userAccountType !== 'PERSONAL') {
+    hideAppPackageUsage();
+    return;
+  }
+
+  try {
+    const result = await functions.httpsCallable('getAppPackageUsage')({});
+    const data = result.data;
+
+    if (data.limit === 0) {
+      // Not a Pro user or not applicable
+      hideAppPackageUsage();
+      return;
+    }
+
+    const usageEl = document.getElementById('appPackageUsage');
+    const countEl = document.getElementById('appPackageCount');
+    const barEl = document.getElementById('appPackageBar');
+    const resetEl = document.getElementById('appPackageReset');
+
+    if (usageEl) usageEl.style.display = '';
+    if (countEl) countEl.textContent = data.used + ' / ' + data.limit;
+    if (barEl) barEl.style.width = Math.round((data.used / data.limit) * 100) + '%';
+    if (resetEl) {
+      const resetsAt = new Date(data.resetsAt);
+      resetEl.textContent = data.remaining + ' remaining · Resets ' + resetsAt.toLocaleDateString();
+    }
+  } catch (err) {
+    console.error('Failed to load app package usage:', err);
+    hideAppPackageUsage();
+  }
+}
+
+function hideAppPackageUsage() {
+  const usageEl = document.getElementById('appPackageUsage');
+  if (usageEl) usageEl.style.display = 'none';
+}
 
 // Login
 function doLogin() {
@@ -642,6 +731,12 @@ async function startAssistedApply(appId) {
   const app = applications.find(a => a.id === appId);
   if (!app) return;
 
+  // Block Student accounts
+  if (userAccountType === 'STUDENT') {
+    showToast('AI-Assisted Apply is not available for Student accounts.', 'error');
+    return;
+  }
+
   navigateTo('screen-apply');
   document.getElementById('applyContent').innerHTML = `
     <div class="loading">
@@ -659,13 +754,24 @@ async function startAssistedApply(appId) {
 
     const prepared = result.data.prepared;
     renderPreparedApplication(appId, prepared);
+    // Refresh usage display after successful generation
+    loadAppPackageUsage();
   } catch (err) {
+    let errorTitle = 'Preparation Failed';
+    let errorMsg = err.message;
+
+    // Handle usage limit specifically
+    if (err.code === 'functions/resource-exhausted') {
+      errorTitle = 'Monthly Limit Reached';
+      errorMsg = 'You\'ve used all 30 AI Application Packages for this billing period. Your allowance will reset on your next billing date.';
+    }
+
     document.getElementById('applyContent').innerHTML = `
       <div class="empty-state">
-        <div class="empty-icon">⚠️</div>
-        <div class="empty-title">Preparation Failed</div>
-        <div class="empty-desc">${escapeHtml(err.message)}</div>
-        <button class="btn secondary" onclick="showDetail('${appId}')">Go Back</button>
+        <div class="empty-icon">${err.code === 'functions/resource-exhausted' ? '📊' : '⚠️'}</div>
+        <div class="empty-title">${errorTitle}</div>
+        <div class="empty-desc">${escapeHtml(errorMsg)}</div>
+        <button class="btn secondary" onclick="showList()">Go Back</button>
       </div>
     `;
   }

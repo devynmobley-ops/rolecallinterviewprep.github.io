@@ -3081,6 +3081,187 @@ exports.loadJobs = functions.https.onRequest(async (req, res) => {
 });
 
 // ============================================================
+// APPLICATION PACKAGE USAGE TRACKING
+// ============================================================
+
+const APP_PACKAGE_LIMIT = 30; // Pro users get 30 per billing month
+
+/**
+ * Get the user's current billing period from their Stripe subscription.
+ * Returns { start: Date, end: Date } or null if no subscription.
+ * Falls back to calendar month if no subscription found.
+ */
+async function getBillingPeriod(uid) {
+  const db = admin.firestore();
+  const subSnap = await db.collection('customers').doc(uid)
+    .collection('subscriptions')
+    .where('status', 'in', ['active', 'trialing'])
+    .limit(1)
+    .get();
+
+  if (!subSnap.empty) {
+    const subData = subSnap.docs[0].data();
+    if (subData.currentPeriodStart && subData.currentPeriodEnd) {
+      return {
+        start: subData.currentPeriodStart.toDate(),
+        end: subData.currentPeriodEnd.toDate(),
+      };
+    }
+  }
+
+  // Fallback: calendar month
+  const now = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth(), 1);
+  const end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  return { start, end };
+}
+
+/**
+ * Check if user can use an Application Package and atomically consume a credit.
+ * Returns { allowed: boolean, used: number, limit: number, resetsAt: string }
+ */
+async function consumeApplicationPackage(uid) {
+  const db = admin.firestore();
+  const period = await getBillingPeriod(uid);
+
+  // Usage doc path: customers/{uid}/usage/appPackages
+  const usageRef = db.collection('customers').doc(uid)
+    .collection('usage').doc('appPackages');
+
+  // Use a transaction to prevent race conditions
+  const result = await db.runTransaction(async (tx) => {
+    const usageDoc = await tx.get(usageRef);
+
+    let used = 0;
+    let periodStart = period.start;
+
+    if (usageDoc.exists) {
+      const data = usageDoc.data();
+
+      // Check if we're still in the same billing period
+      const savedStart = data.periodStart ? data.periodStart.toDate() : null;
+      if (savedStart && savedStart.getTime() === period.start.getTime()) {
+        used = data.used || 0;
+      } else {
+        // New billing period — reset counter
+        used = 0;
+      }
+    }
+
+    if (used >= APP_PACKAGE_LIMIT) {
+      return {
+        allowed: false,
+        used,
+        limit: APP_PACKAGE_LIMIT,
+        resetsAt: period.end.toISOString(),
+      };
+    }
+
+    // Atomically increment
+    tx.set(usageRef, {
+      used: used + 1,
+      limit: APP_PACKAGE_LIMIT,
+      periodStart: admin.firestore.Timestamp.fromDate(period.start),
+      periodEnd: admin.firestore.Timestamp.fromDate(period.end),
+      lastUsedAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+
+    return {
+      allowed: true,
+      used: used + 1,
+      limit: APP_PACKAGE_LIMIT,
+      resetsAt: period.end.toISOString(),
+    };
+  });
+
+  return result;
+}
+
+/**
+ * Get current Application Package usage without consuming a credit.
+ */
+async function getApplicationPackageUsage(uid) {
+  const db = admin.firestore();
+  const period = await getBillingPeriod(uid);
+
+  const usageDoc = await db.collection('customers').doc(uid)
+    .collection('usage').doc('appPackages').get();
+
+  let used = 0;
+  if (usageDoc.exists) {
+    const data = usageDoc.data();
+    const savedStart = data.periodStart ? data.periodStart.toDate() : null;
+    if (savedStart && savedStart.getTime() === period.start.getTime()) {
+      used = data.used || 0;
+    }
+    // If different period, used stays 0 (reset)
+  }
+
+  return {
+    used,
+    limit: APP_PACKAGE_LIMIT,
+    remaining: Math.max(0, APP_PACKAGE_LIMIT - used),
+    resetsAt: period.end.toISOString(),
+    periodStart: period.start.toISOString(),
+    periodEnd: period.end.toISOString(),
+  };
+}
+
+// Get Application Package usage for current user
+exports.getAppPackageUsage = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const uid = context.auth.uid;
+
+  // Check if user is Personal account (students don't get app packages)
+  const customerDoc = await admin.firestore().collection('customers').doc(uid).get();
+  if (!customerDoc.exists) {
+    return { used: 0, limit: APP_PACKAGE_LIMIT, remaining: APP_PACKAGE_LIMIT, accountType: null };
+  }
+
+  const accountType = customerDoc.data().accountType;
+  if (accountType !== 'PERSONAL') {
+    return { used: 0, limit: 0, remaining: 0, accountType, note: 'Application Packages are for Personal accounts only' };
+  }
+
+  // Check subscription
+  const hasSub = await checkUserSubscription(uid);
+  if (!hasSub) {
+    return { used: 0, limit: APP_PACKAGE_LIMIT, remaining: 0, accountType, note: 'Pro subscription required' };
+  }
+
+  const usage = await getApplicationPackageUsage(uid);
+  return { ...usage, accountType };
+});
+
+// Admin: Get usage for any user
+exports.adminGetAppPackageUsage = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in');
+  }
+
+  const superAdminDoc = await admin.firestore()
+    .collection('super_admins').doc(context.auth.uid).get();
+  if (!superAdminDoc.exists) {
+    throw new functions.https.HttpsError('permission-denied', 'Super admin access required');
+  }
+
+  const { targetUid } = data;
+  if (!targetUid) {
+    throw new functions.https.HttpsError('invalid-argument', 'targetUid required');
+  }
+
+  const usage = await getApplicationPackageUsage(targetUid);
+  const customerDoc = await admin.firestore().collection('customers').doc(targetUid).get();
+  const accountType = customerDoc.exists ? customerDoc.data().accountType : null;
+
+  return { ...usage, accountType };
+});
+
+// ============================================================
 // AUTO-APPLY SYSTEM — Re-exports from autoapply.js
 // ============================================================
 exports.analyzeJobForApply = autoapply.analyzeJobForApply;

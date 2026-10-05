@@ -1083,26 +1083,27 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
   </div>
   <div class="paywall-body">
     <div class="paywall-icon" aria-hidden="true">&#11088;</div>
-    <h2 class="paywall-title">Unlock All Interview Prep</h2>
-    <p class="paywall-subtitle">Get access to all questions and full mock interviews</p>
+    <h2 class="paywall-title">Unlock RoleCall Pro</h2>
+    <p class="paywall-subtitle">AI-powered applications, unlimited mock interviews, and more</p>
     <div class="paywall-features">
-      <div class="paywall-feature">&#10003; All questions for every role</div>
-      <div class="paywall-feature">&#10003; Mock interviews up to 10 questions</div>
-      <div class="paywall-feature">&#10003; Choose 3, 5, or 10 questions per session</div>
-      <div class="paywall-feature">&#10003; Expert tips shown automatically</div>
-      <div class="paywall-feature">&#10003; Education paths, coursework & certifications</div>
-      <div class="paywall-feature">&#10003; Full practice history</div>
-      <div class="paywall-feature">&#10003; Unlimited bookmarks</div>
+      <div class="paywall-feature">✓ 30 AI Application Packages every month</div>
+      <div class="paywall-feature">✓ Unlimited mock interviews</div>
+      <div class="paywall-feature">✓ AI Deep Dive interview coaching</div>
+      <div class="paywall-feature">✓ AI resume tailoring for any job</div>
+      <div class="paywall-feature">✓ Personalized cover letters</div>
+      <div class="paywall-feature">✓ All questions for every role</div>
+      <div class="paywall-feature">✓ Choose 3, 5, or 10 questions per session</div>
+      <div class="paywall-feature">✓ Full practice history & analytics</div>
     </div>
     <div class="paywall-pricing">
       <div class="paywall-price-option" onclick="selectPlan('monthly', this)">
         <div class="price-label">Monthly</div>
-        <div class="price-amount">$4.99/mo</div>
+        <div class="price-amount" id="monthlyPrice">$12.99/mo</div>
       </div>
       <div class="paywall-price-option recommended selected" onclick="selectPlan('yearly', this)">
         <div class="price-badge">Best Value</div>
         <div class="price-label">Yearly</div>
-        <div class="price-amount">$29.99/yr</div>
+        <div class="price-amount" id="yearlyPrice">$99/yr</div>
       </div>
     </div>
     <button class="paywall-subscribe-btn" onclick="subscribe()" id="paywallBtn">Start Free Trial</button>
@@ -1422,9 +1423,16 @@ var currentUser = null;
 var userSubscription = null;
 var firebaseReady = false;
 var PRICE_IDS = {
-  monthly: 'price_1TOoceK62TmImoLveGVGkohG',
-  yearly: 'price_1TOoceK62TmImoLvPg7P8Ryx',
+  personal: {
+    monthly: 'price_1UN2PsK62TmImoLvwQPvKd1I',  // $12.99/mo
+    yearly: 'price_1UN2QbK62TmImoLvRSl2rozF'     // $99/yr
+  },
+  student: {
+    monthly: 'price_1UN2W1K62TmImoLveCeXxY2p',   // $7.99/mo
+    yearly: 'price_1UN2WsK62TmImoLvE6r1b9ov'      // $59/yr
+  }
 };
+// userAccountType is set by checkAccountType() after auth
 var db, auth, firebaseFunctions, stripe;
 
 scriptsLoaded.then(function() {
@@ -1812,6 +1820,9 @@ async function checkAccountType(uid) {
     userOrganizationName = data.organizationName;
     userFeaturePolicies = data.featurePolicies;
 
+    // Update pricing display based on account type
+    updatePricingDisplay();
+
     // If no account type set, show selection overlay
     if (!userAccountType) {
       showAccountTypeOverlay();
@@ -1823,6 +1834,18 @@ async function checkAccountType(uid) {
     console.error('Error checking account type:', err);
     return true; // don't block on error
   }
+}
+
+function updatePricingDisplay() {
+  var type = userAccountType || 'personal';
+  var prices = {
+    personal: { monthly: '$12.99/mo', yearly: '$99/yr' },
+    student: { monthly: '$7.99/mo', yearly: '$59/yr' }
+  };
+  var monthlyEl = document.getElementById('monthlyPrice');
+  var yearlyEl = document.getElementById('yearlyPrice');
+  if (monthlyEl) monthlyEl.textContent = prices[type].monthly;
+  if (yearlyEl) yearlyEl.textContent = prices[type].yearly;
 }
 
 function showAccountTypeOverlay() {
@@ -1859,6 +1882,9 @@ async function selectAccountType(type) {
 
     userAccountType = data.accountType;
     userOrganizationId = data.organizationId;
+
+    // Update pricing display for new account type
+    updatePricingDisplay();
 
     hideAccountTypeOverlay();
 
@@ -1972,8 +1998,8 @@ function canUserSeeFeature(feature) {
   if (userAccountType === 'STUDENT') {
     // If no feature policies loaded, check defaults
     if (!userFeaturePolicies) {
-      // Default student visibility — hide AUTO_APPLY
-      if (feature === 'AUTO_APPLY') return false;
+      // Default student visibility — hide AUTO_APPLY and APPLICATION_ASSISTANT
+      if (feature === 'AUTO_APPLY' || feature === 'APPLICATION_ASSISTANT') return false;
       return true;
     }
     // Check the specific feature policy
@@ -1995,6 +2021,7 @@ function canUserUseFeature(feature) {
   // Feature-specific authorization checks
   switch (feature) {
     case 'AUTO_APPLY':
+    case 'APPLICATION_ASSISTANT':
       // Must be subscribed (personal) or org-sponsored (student)
       return isSubscribed || (userAccountType === 'STUDENT' && userOrganizationId);
     case 'AI_RESUME':
@@ -2100,9 +2127,9 @@ function updateAuthUI() {
     autoApplyBanner.style.display = showBanner ? '' : 'none';
   }
 
-  // Resume upload banner visibility (Jobs tab) — show for signed-in users
+  // Resume upload banner visibility (Jobs tab) — show for Personal signed-in users only
   var resumeUploadBanner = document.getElementById('resumeUploadBanner');
-  if (resumeUploadBanner && currentUser) {
+  if (resumeUploadBanner && currentUser && userAccountType === 'PERSONAL') {
     if (!baseResumeState.loaded) {
       checkBaseResume();
     }
@@ -9126,7 +9153,7 @@ async function subscribe() {
     showAuthPrompt('Sign in to start your subscription');
     return;
   }
-  const priceId = PRICE_IDS[selectedPlan];
+  const priceId = PRICE_IDS[userAccountType || 'personal'][selectedPlan];
   if (!priceId) {
     showToast('Error: please select a plan.');
     return;

@@ -129,6 +129,9 @@ exports.analyzeJobForApply = functions.https.onCall(async (data, context) => {
 /**
  * Prepare an application — generate resume, cover letter, answers.
  * Returns prepared materials for user review before submission.
+ *
+ * Enforces 30 Application Package limit per billing period for Personal Pro users.
+ * Credits are only consumed AFTER successful generation — failed AI requests don't count.
  */
 exports.prepareApplication = functions.runWith({ secrets: ['ANTHROPIC_API_KEY'] }).https.onCall(async (data, context) => {
   if (!context.auth) {
@@ -142,16 +145,65 @@ exports.prepareApplication = functions.runWith({ secrets: ['ANTHROPIC_API_KEY'] 
     throw new functions.https.HttpsError('invalid-argument', 'jobId or job required');
   }
 
-  // Check authorization
+  // Check authorization (account type + org policy + subscription)
   const authCheck = await checkAutoApplyAuthorization(uid);
   if (!authCheck.authorized) {
     throw new functions.https.HttpsError('permission-denied', 'Auto-Apply not available: ' + authCheck.reason);
   }
 
+  // === APPLICATION PACKAGE USAGE CHECK ===
+  // Only Personal accounts have a usage limit
+  // Student accounts with org-enabled Auto-Apply don't consume packages
+  const db = admin.firestore();
+  const customerDoc = await db.collection('customers').doc(uid).get();
+  const accountType = customerDoc.exists ? customerDoc.data().accountType : null;
+
+  if (accountType === 'PERSONAL') {
+    // Check usage BEFORE generating (fail fast)
+    const usageRef = db.collection('customers').doc(uid)
+      .collection('usage').doc('appPackages');
+
+    // Get billing period from subscription
+    const subSnap = await db.collection('customers').doc(uid)
+      .collection('subscriptions')
+      .where('status', 'in', ['active', 'trialing'])
+      .limit(1)
+      .get();
+
+    let periodStart, periodEnd;
+    if (!subSnap.empty) {
+      const subData = subSnap.docs[0].data();
+      periodStart = subData.currentPeriodStart ? subData.currentPeriodStart.toDate() : null;
+      periodEnd = subData.currentPeriodEnd ? subData.currentPeriodEnd.toDate() : null;
+    }
+    if (!periodStart || !periodEnd) {
+      const now = new Date();
+      periodStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      periodEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    }
+
+    const usageDoc = await usageRef.get();
+    let currentUsed = 0;
+    if (usageDoc.exists) {
+      const usageData = usageDoc.data();
+      const savedStart = usageData.periodStart ? usageData.periodStart.toDate() : null;
+      if (savedStart && savedStart.getTime() === periodStart.getTime()) {
+        currentUsed = usageData.used || 0;
+      }
+    }
+
+    if (currentUsed >= 30) {
+      throw new functions.https.HttpsError('resource-exhausted',
+        'Monthly Application Package limit reached (30). Resets on ' +
+        periodEnd.toLocaleDateString() + '.');
+    }
+  }
+  // === END USAGE CHECK ===
+
   // Get job data
   let jobData = job;
   if (jobId && !jobData) {
-    const jobDoc = await admin.firestore().collection('jobs').doc(jobId).get();
+    const jobDoc = await db.collection('jobs').doc(jobId).get();
     if (!jobDoc.exists) {
       throw new functions.https.HttpsError('not-found', 'Job not found');
     }
@@ -159,7 +211,6 @@ exports.prepareApplication = functions.runWith({ secrets: ['ANTHROPIC_API_KEY'] 
   }
 
   // Get user profile (including resume data)
-  const db = admin.firestore();
   const userDoc = await db.collection('customers').doc(uid).get();
   const userProfile = userDoc.exists ? userDoc.data() : {};
 
@@ -202,6 +253,27 @@ exports.prepareApplication = functions.runWith({ secrets: ['ANTHROPIC_API_KEY'] 
       customAnswers,
     });
 
+    // === CONSUME APPLICATION PACKAGE CREDIT (only on success) ===
+    if (accountType === 'PERSONAL' && prepared && !prepared.error) {
+      try {
+        // Atomic increment using Firestore increment
+        const usageRef = db.collection('customers').doc(uid)
+          .collection('usage').doc('appPackages');
+        await usageRef.set({
+          used: admin.firestore.FieldValue.increment(1),
+          limit: 30,
+          periodStart: admin.firestore.Timestamp.fromDate(periodStart),
+          periodEnd: admin.firestore.Timestamp.fromDate(periodEnd),
+          lastUsedAt: admin.firestore.FieldValue.serverTimestamp(),
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        }, { merge: true });
+      } catch (usageErr) {
+        // Log but don't fail the request — the user already got their materials
+        console.error('[prepareApplication] Usage tracking error:', usageErr.message);
+      }
+    }
+    // === END CREDIT CONSUMPTION ===
+
     // Track cost
     if (prepared.costEstimate) {
       await db.collection('applicationCosts').add({
@@ -220,6 +292,7 @@ exports.prepareApplication = functions.runWith({ secrets: ['ANTHROPIC_API_KEY'] 
     };
   } catch (err) {
     console.error('[prepareApplication] Error:', err);
+    // Do NOT consume a credit on failure
     const failureAction = await provider.handleFailure(err, { stage: 'prepare', jobId });
     throw new functions.https.HttpsError('internal', failureAction.message || 'Preparation failed');
   }
