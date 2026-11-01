@@ -6,3 +6,6 @@ extract_data.cjs
 functions/node_modules/
 functions/.env
 firebase-debug.log
+temp_users.json
+tiktok-scripts*.md
+social-media-posts*.md

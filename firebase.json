@@ -10,6 +10,15 @@
       "find_bad_lines.cjs",
       "fix_*.cjs",
       "remove_extra_brace.cjs",
+      "remove_another_brace.cjs",
+      "build-pages.cjs",
+      "solve_v17.py",
+      "capacitor.config.ts",
+      "package.json",
+      "package-lock.json",
+      "temp_users.json",
+      "tiktok-scripts*.md",
+      "social-media-posts*.md",
       "www/**",
       "outreach/**"
     ]
