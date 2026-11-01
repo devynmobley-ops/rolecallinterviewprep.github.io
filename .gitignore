@@ -9,3 +9,9 @@ firebase-debug.log
 temp_users.json
 tiktok-scripts*.md
 social-media-posts*.md
+outreach/
+tiktok-scripts*.md
+social-media-posts*.md
+www/newdata.txt
+www/newroles.json
+www/test_roles.json
