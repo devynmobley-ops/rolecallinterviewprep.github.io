@@ -140,6 +140,7 @@ async function processJobs(jobs, db) {
   // Never let date STRINGS reach Firestore — strings sort above Timestamps in
   // orderBy, which silently hid every newly synced job from search. Coerce here.
   const DATE_FIELDS = ['postedAt', 'expiresAt', 'importedAt', 'lastSyncedAt'];
+  const seenKeys = new Set();
   const coerceDates = (j) => {
     const out = { ...j };
     for (const f of DATE_FIELDS) {
@@ -155,6 +156,15 @@ async function processJobs(jobs, db) {
   for (const rawJob of jobs) {
     const job = coerceDates(rawJob);
     try {
+      // Same-batch duplicates: findDuplicate can't see uncommitted batch writes,
+      // so identical jobs ingested in one pass (e.g. two city fetches) doubled up.
+      if (job.deduplicationKey) {
+        if (seenKeys.has(job.deduplicationKey)) {
+          stats.skipped++;
+          continue;
+        }
+        seenKeys.add(job.deduplicationKey);
+      }
       const existing = await findDuplicate(job, db);
       
       if (existing) {

@@ -3054,7 +3054,7 @@ exports.getJobStats = functions.https.onCall(async (data, context) => {
  * Protected by a simple secret key.
  * Call: GET https://<project>.cloudfunctions.net/seedJobs?key=rolecall-seed-2026
  */
-exports.seedJobs = functions.https.onRequest(async (req, res) => {
+exports.seedJobs = functions.runWith({ timeoutSeconds: 540 }).https.onRequest(async (req, res) => {
   const key = req.query.key;
   if (key !== 'rolecall-seed-2026') {
     return res.status(403).json({ error: 'Invalid key' });
@@ -3070,7 +3070,10 @@ exports.seedJobs = functions.https.onRequest(async (req, res) => {
     careerjetSource.isConfigured() ? careerjetSource : null,
   ].filter(Boolean);
 
-  const queries = POPULAR_QUERIES;
+  const only = String(req.query.only || '').split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+  const queries = only.length > 0
+    ? POPULAR_QUERIES.filter(q => only.includes(q.toLowerCase()))
+    : POPULAR_QUERIES;
 
   let totalFetched = 0;
   let totalCreated = 0;
