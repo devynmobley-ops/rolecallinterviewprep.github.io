@@ -49,6 +49,23 @@ function normalizeJob(job, source) {
   
   // Generate deduplication key
   normalized.deduplicationKey = source.generateDedupKey(normalized);
+
+  // Search terms for keyword recall (used by searchJobs array-contains-any queries)
+  const terms = new Set();
+  const addWords = (str, minLen) => {
+    String(str || '').toLowerCase().split(/[^a-z0-9]+/).forEach(w => {
+      if (w.length >= minLen) terms.add(w);
+    });
+  };
+  addWords(normalized.title, 2);
+  addWords(normalized.company, 2);
+  addWords(normalized.category, 2);
+  addWords(normalized.seniority, 2);
+  addWords(normalized.employmentType, 2);
+  addWords(normalized.location, 3);
+  (normalized.skills || []).forEach(sk => addWords(sk, 3));
+  if (normalized.remote) terms.add('remote');
+  normalized.searchTerms = Array.from(terms).slice(0, 80);
   
   // Derive remote from hybrid
   if (normalized.hybrid && !normalized.remote) {

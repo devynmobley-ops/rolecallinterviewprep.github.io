@@ -2391,16 +2391,33 @@ exports.searchJobs = functions.https.onCall(async (data, context) => {
   const limit = Math.min(pageSize, 50);
 
   try {
-    // Build Firestore query — use simple orderBy to avoid composite index requirements
-    // All filtering happens in memory after fetch
-    let queryRef = db.collection('jobs').orderBy('postedAt', 'desc');
+    // Keyword searches hit searchTerms directly (array-contains-any only needs the
+    // automatic single-field index). The old behavior scored the 250 newest jobs in
+    // memory, so common searches like "nurse" returned zero whenever no nurse job
+    // happened to be in the freshest slice.
+    let jobs = [];
+    if (query) {
+      const terms = String(query).toLowerCase().split(/[^a-z0-9]+/)
+        .filter(t => t.length > 1).slice(0, 10);
+      if (terms.length > 0) {
+        try {
+          const termSnap = await db.collection('jobs')
+            .where('searchTerms', 'array-contains-any', terms)
+            .limit(250)
+            .get();
+          jobs = termSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        } catch (e) {
+          console.error('[searchJobs] searchTerms query failed, using recents:', e.message);
+        }
+      }
+    }
 
-    // Fetch enough to filter and rank
-    const fetchLimit = Math.min(limit * 5, 250);
-    queryRef = queryRef.limit(fetchLimit);
-
-    const snap = await queryRef.get();
-    let jobs = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    // Browse / fallback: most recent jobs (simple orderBy avoids composite indexes)
+    if (jobs.length === 0) {
+      const fetchLimit = Math.min(limit * 5, 250);
+      const snap = await db.collection('jobs').orderBy('postedAt', 'desc').limit(fetchLimit).get();
+      jobs = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    }
 
     // Filter active jobs in memory
     jobs = jobs.filter(job => job.active === true);
@@ -2410,10 +2427,18 @@ exports.searchJobs = functions.https.onCall(async (data, context) => {
       jobs = jobs.filter(job => job.remote === true);
     }
     if (employmentType) {
-      jobs = jobs.filter(job => job.employmentType === employmentType);
+      const etNorm = employmentType.toLowerCase().replace(/-/g, ' ').trim();
+      jobs = jobs.filter(job => {
+        if (!job.employmentType) return false;
+        return job.employmentType.toLowerCase().replace(/-/g, ' ').trim() === etNorm;
+      });
     }
     if (seniority) {
-      jobs = jobs.filter(job => job.seniority === seniority);
+      const senNorm = seniority.toLowerCase().replace(/-/g, ' ').trim();
+      jobs = jobs.filter(job => {
+        if (!job.seniority) return false;
+        return job.seniority.toLowerCase().replace(/-/g, ' ').trim() === senNorm;
+      });
     }
 
     // Post-fetch filtering (things Firestore can't do well)
@@ -2462,9 +2487,19 @@ exports.searchJobs = functions.https.onCall(async (data, context) => {
       });
     }
 
-    // Sort by relevance if query provided
+    // Sort
     if (query && sortBy === 'relevance') {
       jobs.sort((a, b) => (b._relevanceScore || 0) - (a._relevanceScore || 0));
+    } else if (sortBy === 'salary') {
+      jobs.sort((a, b) => ((b.salaryMax || b.salaryMin || 0) - (a.salaryMax || a.salaryMin || 0)));
+    } else {
+      // 'date' (or default) — explicit re-sort by postedAt desc to guarantee order
+      // after in-memory filtering may have disrupted document order
+      jobs.sort((a, b) => {
+        const aTime = a.postedAt?.toDate?.()?.getTime?.() || a.postedAt?._seconds * 1000 || new Date(a.postedAt || 0).getTime() || 0;
+        const bTime = b.postedAt?.toDate?.()?.getTime?.() || b.postedAt?._seconds * 1000 || new Date(b.postedAt || 0).getTime() || 0;
+        return bTime - aTime;
+      });
     }
 
     // Get total before pagination
@@ -2502,11 +2537,7 @@ exports.searchJobs = functions.https.onCall(async (data, context) => {
  * - Marks expired jobs as inactive
  * - Updates lastSyncedAt timestamps
  */
-exports.syncJobs = functions.pubsub.schedule('0 3 * * *').timeZone('UTC').onRun(async (context) => {
-  const db = admin.firestore();
-
-  // Popular queries to keep fresh — broad coverage to compete with Indeed/Glassdoor
-  const popularQueries = [
+const POPULAR_QUERIES = [
     // === HEALTHCARE ===
     'nurse', 'registered nurse', 'nurse practitioner', 'physical therapist',
     'occupational therapist', 'medical assistant', 'pharmacy technician',
@@ -2515,6 +2546,7 @@ exports.syncJobs = functions.pubsub.schedule('0 3 * * *').timeZone('UTC').onRun(
     'surgical technologist', 'paramedic', 'home health aide', 'medical coder',
     'health information technician', 'dietitian', 'phlebotomist',
 
+    'certified nursing assistant', 'ultrasound technologist', 'radiation therapist',
     // === TECHNOLOGY ===
     'software engineer', 'data analyst', 'data scientist', 'web developer',
     'frontend developer', 'backend developer', 'full stack developer',
@@ -2524,6 +2556,7 @@ exports.syncJobs = functions.pubsub.schedule('0 3 * * *').timeZone('UTC').onRun(
     'systems administrator', 'IT support', 'QA engineer', 'scrum master',
     'mobile developer', 'blockchain developer', 'AI engineer',
 
+    'data engineer', 'site reliability engineer', 'technical writer',
     // === BUSINESS & FINANCE ===
     'accountant', 'financial analyst', 'business analyst', 'auditor',
     'controller', 'bookkeeper', 'actuary', 'financial advisor',
@@ -2531,12 +2564,14 @@ exports.syncJobs = functions.pubsub.schedule('0 3 * * *').timeZone('UTC').onRun(
     'operations manager', 'management consultant', 'business development',
     'revenue analyst', 'treasury analyst', 'forensic accountant',
 
+    'payroll manager', 'credit analyst', 'tax manager',
     // === EDUCATION ===
     'teacher', 'professor', 'school counselor', 'principal',
     'instructional designer', 'curriculum developer', 'special education teacher',
     'librarian', 'academic advisor', 'ESL teacher', 'tutor',
     'training specialist', 'corporate trainer', 'education consultant',
 
+    'teaching assistant', 'online instructor', 'education administrator',
     // === TRADES & CONSTRUCTION ===
     'electrician', 'plumber', 'HVAC technician', 'welder',
     'carpenter', 'machinist', 'automotive technician', 'diesel mechanic',
@@ -2545,6 +2580,7 @@ exports.syncJobs = functions.pubsub.schedule('0 3 * * *').timeZone('UTC').onRun(
     'heavy equipment operator', 'crane operator', 'construction manager',
     'solar panel installer', 'wind turbine technician',
 
+    'appliance repair technician', 'concrete finisher', 'roofing technician',
     // === SALES & MARKETING ===
     'sales representative', 'account executive', 'sales manager',
     'marketing manager', 'digital marketing', 'social media manager',
@@ -2552,67 +2588,85 @@ exports.syncJobs = functions.pubsub.schedule('0 3 * * *').timeZone('UTC').onRun(
     'public relations', 'event planner', 'media buyer', 'marketing analyst',
     'business development manager', 'inside sales', 'territory manager',
 
+    'sales engineer', 'customer success manager', 'email marketing specialist',
     // === HUMAN RESOURCES ===
     'human resources', 'HR manager', 'recruiter', 'talent acquisition',
     'HR specialist', 'compensation analyst', 'benefits administrator',
     'training manager', 'organizational development', 'HR generalist',
 
+    'HR business partner', 'employee relations specialist', 'onboarding specialist',
     // === LEGAL ===
     'paralegal', 'legal assistant', 'attorney', 'lawyer',
     'compliance analyst', 'contract administrator', 'legal secretary',
     'corporate counsel', 'litigation support', 'legal operations',
 
+    'immigration paralegal', 'family law attorney', 'legal nurse consultant',
     // === CREATIVE & DESIGN ===
     'graphic designer', 'video editor', 'photographer', 'animator',
     'art director', 'creative director', 'illustrator', 'motion graphics',
     'interior designer', 'fashion designer', '3D artist',
 
+    'ux writer', 'video producer', 'brand designer',
     // === CUSTOMER SERVICE ===
     'customer service', 'customer service manager', 'call center',
     'client relations', 'account manager', 'technical support',
     'help desk', 'concierge',
 
+    'customer support specialist', 'patient service representative', 'bilingual customer service',
     // === LOGISTICS & SUPPLY CHAIN ===
     'logistics coordinator', 'supply chain manager', 'warehouse manager',
     'procurement specialist', 'inventory manager', 'transportation manager',
     'distribution manager', 'fleet manager',
 
+    'logistics analyst', 'forklift operator', 'shipping receiving clerk',
     // === HOSPITALITY & FOOD SERVICE ===
     'restaurant manager', 'hotel manager', 'chef', 'sous chef',
     'bartender', 'catering manager', 'event coordinator',
     'food service manager', 'housekeeping supervisor',
 
+    'line cook', 'barista', 'front desk agent',
     // === GOVERNMENT & NONPROFIT ===
     'social worker', 'case manager', 'program coordinator',
     'grant writer', 'policy analyst', 'government affairs',
     'nonprofit director', 'community outreach',
 
+    'grant manager', 'volunteer coordinator', 'urban planner',
     // === MANUFACTURING ===
     'production manager', 'quality control', 'manufacturing engineer',
     'industrial engineer', 'maintenance technician', 'plant manager',
     'safety manager', 'process engineer',
 
+    'materials planner', 'quality inspector', 'production supervisor',
     // === ENTRY LEVEL / GENERAL ===
     'entry level', 'administrative assistant', 'receptionist',
     'office manager', 'executive assistant', 'data entry',
     'intern', 'coordinator', 'associate',
 
+    'office assistant', 'junior analyst', 'general laborer',
     // === REMOTE / FLEXIBLE ===
     'remote', 'work from home', 'virtual assistant', 'remote nurse',
     'remote developer', 'remote customer service', 'freelance',
 
+    'remote data entry', 'remote project manager', 'remote sales',
     // === MANAGEMENT / LEADERSHIP ===
     'director', 'vice president', 'general manager', 'branch manager',
     'department head', 'team lead', 'supervisor', 'regional manager',
-  ];
+    'operations director', 'chief of staff', 'program director',
+];
+
+exports.syncJobs = functions.runWith({ timeoutSeconds: 540 }).pubsub.schedule('0 */6 * * *').timeZone('UTC').onRun(async (context) => {
+  const db = admin.firestore();
+
+  // Popular queries to keep fresh — broad coverage to compete with Indeed/Glassdoor
+  const popularQueries = POPULAR_QUERIES;
 
   let totalIngested = 0;
 
   // Helper: fetch and ingest from a source with pagination
-  async function ingestFromSource(source, query, maxPages = 3) {
+  async function ingestFromSource(source, query, maxPages = 3, location = '', extraOpts = {}) {
     try {
       for (let page = 1; page <= maxPages; page++) {
-        const result = await source.fetchJobs(query, '', { page, resultsPerPage: 50 });
+        const result = await source.fetchJobs(query, location, { page, resultsPerPage: 50, ...extraOpts });
         if (result.jobs.length === 0) break;
         
         const normalized = result.jobs.map(j => normalizeJob(j, source));
@@ -2620,7 +2674,7 @@ exports.syncJobs = functions.pubsub.schedule('0 3 * * *').timeZone('UTC').onRun(
         totalIngested += stats.created + stats.updated;
         
         if (page === 1) {
-          console.log(`[Sync] ${source.getSourceName()} "${query}": ${result.jobs.length} jobs (page ${page})`);
+          console.log(`[Sync] ${source.getSourceName()} "${query}" ${location || '(anywhere)'}: ${result.jobs.length} jobs (page ${page})`);
         }
         
         // If fewer results than requested, no more pages
@@ -2630,44 +2684,106 @@ exports.syncJobs = functions.pubsub.schedule('0 3 * * *').timeZone('UTC').onRun(
         await new Promise(r => setTimeout(r, 300));
       }
     } catch (err) {
-      console.error(`[Sync] ${source.getSourceName()} "${query}": ${err.message}`);
+      console.error(`[Sync] ${source.getSourceName()} "${query}" ${location || '(anywhere)'}: ${err.message}`);
     }
   }
 
-  // Ingest from all sources for popular queries
-  for (const query of popularQueries) {
-    // Adzuna — up to 3 pages (150 jobs per query)
-    if (adzunaSource.isConfigured()) {
-      await ingestFromSource(adzunaSource, query, 3);
-      await new Promise(r => setTimeout(r, 300));
+  // === ROTATING, TIME-BUDGETED INGESTION ===
+  // Firebase caps this function at 9 minutes and Adzuna at ~10K calls/month, so we
+  // rotate through work items via a Firestore cursor instead of running everything
+  // every time. (The old design ran the full list sequentially, timed out around
+  // item 6 of 205, and most categories never got synced at all.)
+  const mainItems = popularQueries.map(query => ({ query, location: '', mode: 'all' }));
+
+  // Top metro areas — sync popular queries per city so location searches work
+  const metroAreas = [
+    'Philadelphia, PA', 'New York, NY', 'Los Angeles, CA', 'Chicago, IL',
+    'Houston, TX', 'Phoenix, AZ', 'Dallas, TX', 'Austin, TX',
+    'San Francisco, CA', 'Seattle, WA', 'Denver, CO', 'Boston, MA',
+    'Atlanta, GA', 'Miami, FL', 'Pittsburgh, PA',
+  ];
+  // High-demand queries per city
+  const locationQueries = [
+    'nurse', 'software engineer', 'teacher', 'accountant',
+    'sales representative', 'customer service', 'project manager', 'electrician',
+  ];
+  const locItems = [];
+  for (const city of metroAreas) {
+    for (const query of locationQueries) {
+      locItems.push({ query, location: city, mode: 'location' });
     }
-
-    // The Muse — up to 3 pages (60 jobs per query)
-    await ingestFromSource(theMuseSource, query, 3);
-    await new Promise(r => setTimeout(r, 300));
-
-    // Remotive — 1 page (returns all matching results)
-    await ingestFromSource(remotiveSource, query, 1);
-    await new Promise(r => setTimeout(r, 300));
-    await new Promise(r => setTimeout(r, 500));
-
-    // Jobicy (has built-in search)
-    await ingestFromSource(jobicySource, query, 1);
-    await new Promise(r => setTimeout(r, 300));
-
-    // USAJobs — government jobs (free API, requires key)
-    if (usajobsSource.isConfigured()) {
-      await ingestFromSource(usajobsSource, query, 2);
-      await new Promise(r => setTimeout(r, 300));
-    }
-
-    // Careerjet — DISABLED: requires IP-based auth, incompatible with Firebase Functions rotating IPs
-    // To re-enable: set up a proxy server with static IP or get API key-only auth from Careerjet
-    // if (careerjetSource.isConfigured()) {
-    //   await ingestFromSource(careerjetSource, query, 2);
-    //   await new Promise(r => setTimeout(r, 300));
-    // }
   }
+
+  const remoteQueries = [
+    'remote', 'software engineer', 'data analyst', 'customer service',
+    'project manager', 'accountant', 'writer', 'nurse',
+  ];
+  const remoteItems = remoteQueries.map(query => ({ query, location: '', mode: 'remote' }));
+
+  const allItems = [...mainItems, ...locItems, ...remoteItems];
+
+  const stateRef = db.collection('syncState').doc('jobSyncCursor');
+  const stateSnap = await stateRef.get();
+  let cursor = stateSnap.exists ? (stateSnap.data().index || 0) : 0;
+  if (cursor < 0 || cursor >= allItems.length) cursor = 0;
+
+  const DEADLINE = Date.now() + 8 * 60 * 1000; // leave a minute to finish up
+  let processed = 0;
+
+  while (Date.now() < DEADLINE && processed < allItems.length) {
+    const item = allItems[cursor];
+    cursor = (cursor + 1) % allItems.length;
+    processed++;
+
+    try {
+      if (item.mode === 'all') {
+        // Adzuna — 1 page (50 jobs per query)
+        if (adzunaSource.isConfigured()) {
+          await ingestFromSource(adzunaSource, item.query, 1);
+          await new Promise(r => setTimeout(r, 300));
+        }
+        // The Muse — up to 3 pages (60 jobs per query)
+        await ingestFromSource(theMuseSource, item.query, 3);
+        await new Promise(r => setTimeout(r, 300));
+        // Remotive — 1 page (returns all matching results)
+        await ingestFromSource(remotiveSource, item.query, 1);
+        await new Promise(r => setTimeout(r, 500));
+        // Jobicy (has built-in search)
+        await ingestFromSource(jobicySource, item.query, 1);
+        await new Promise(r => setTimeout(r, 300));
+        // USAJobs — government jobs (free API, requires key)
+        if (usajobsSource.isConfigured()) {
+          await ingestFromSource(usajobsSource, item.query, 2);
+          await new Promise(r => setTimeout(r, 300));
+        }
+      } else if (item.mode === 'location') {
+        // Adzuna + USAJobs support location filtering natively
+        if (adzunaSource.isConfigured()) {
+          await ingestFromSource(adzunaSource, item.query, 1, item.location);
+          await new Promise(r => setTimeout(r, 200));
+        }
+        if (usajobsSource.isConfigured()) {
+          await ingestFromSource(usajobsSource, item.query, 1, item.location);
+          await new Promise(r => setTimeout(r, 200));
+        }
+      } else if (item.mode === 'remote') {
+        if (adzunaSource.isConfigured()) {
+          await ingestFromSource(adzunaSource, item.query, 1, '', { remote: 'remote' });
+          await new Promise(r => setTimeout(r, 200));
+        }
+      }
+    } catch (err) {
+      console.error(`[Sync] work item "${item.query}" (${item.location || 'anywhere'}): ${err.message}`);
+    }
+  }
+
+  await stateRef.set({
+    index: cursor,
+    processedLastRun: processed,
+    totalItems: allItems.length,
+    updatedAt: admin.firestore.Timestamp.now(),
+  }, { merge: true });
+  console.log(`[Sync] Processed ${processed}/${allItems.length} work items (cursor ${cursor}), ${totalIngested} jobs refreshed`);
 
   // Mark expired jobs as inactive
   const now = admin.firestore.Timestamp.now();
@@ -2954,35 +3070,7 @@ exports.seedJobs = functions.https.onRequest(async (req, res) => {
     careerjetSource.isConfigured() ? careerjetSource : null,
   ].filter(Boolean);
 
-  const queries = [
-    'nurse', 'registered nurse', 'nurse practitioner', 'physical therapist',
-    'medical assistant', 'pharmacy technician', 'dental hygienist',
-    'software engineer', 'data analyst', 'data scientist', 'web developer',
-    'full stack developer', 'devops engineer', 'cybersecurity analyst',
-    'product manager', 'ux designer', 'IT support', 'QA engineer',
-    'accountant', 'financial analyst', 'business analyst', 'auditor',
-    'controller', 'financial advisor', 'operations manager',
-    'teacher', 'professor', 'school counselor', 'instructional designer',
-    'special education teacher', 'corporate trainer',
-    'electrician', 'plumber', 'HVAC technician', 'welder',
-    'carpenter', 'automotive technician', 'diesel mechanic',
-    'heavy equipment operator', 'construction manager', 'solar panel installer',
-    'sales representative', 'account executive', 'sales manager',
-    'marketing manager', 'digital marketing', 'social media manager',
-    'content writer', 'copywriter', 'business development manager',
-    'human resources', 'HR manager', 'recruiter', 'talent acquisition',
-    'paralegal', 'attorney', 'lawyer', 'compliance officer',
-    'graphic designer', 'video editor', 'photographer', 'creative director',
-    'customer service', 'customer service manager', 'technical support',
-    'logistics coordinator', 'supply chain manager', 'warehouse manager',
-    'restaurant manager', 'hotel manager', 'chef', 'event coordinator',
-    'social worker', 'case manager', 'program coordinator',
-    'production manager', 'quality control', 'manufacturing engineer',
-    'maintenance technician', 'safety manager',
-    'entry level', 'administrative assistant', 'executive assistant',
-    'remote', 'virtual assistant', 'freelance',
-    'director', 'general manager', 'supervisor', 'project manager',
-  ];
+  const queries = POPULAR_QUERIES;
 
   let totalFetched = 0;
   let totalCreated = 0;
@@ -3268,3 +3356,85 @@ exports.analyzeJobForApply = autoapply.analyzeJobForApply;
 exports.prepareApplication = autoapply.prepareApplication;
 exports.getApplicationModes = autoapply.getApplicationModes;
 exports.getProviderStatus = autoapply.getProviderStatus;
+
+/**
+ * migrateJobDates — Maintenance: convert string date fields to Firestore Timestamps
+ * and backfill searchTerms. String dates sort ABOVE Timestamps in orderBy, which
+ * permanently hid newly synced jobs from searchJobs' "newest" window.
+ * Call: GET https://<project>.cloudfunctions.net/migrateJobDates?key=rolecall-seed-2026
+ */
+exports.migrateJobDates = functions.runWith({ timeoutSeconds: 540 }).https.onRequest(async (req, res) => {
+  if (req.query.key !== 'rolecall-seed-2026') {
+    return res.status(403).json({ error: 'Invalid key' });
+  }
+  const db = admin.firestore();
+  const pageLimit = Math.min(parseInt(req.query.limit || '400', 10) || 400, 1000);
+  const DATE_FIELDS = ['postedAt', 'expiresAt', 'importedAt', 'lastSyncedAt'];
+  const started = Date.now();
+  const DEADLINE = started + 8 * 60 * 1000;
+
+  let scanned = 0, fixedDates = 0, fixedTerms = 0, commits = 0, exhausted = false;
+  let last = null;
+  let batch = db.batch();
+  let pending = 0;
+
+  const commit = async () => {
+    if (pending > 0) {
+      await batch.commit();
+      commits++;
+      batch = db.batch();
+      pending = 0;
+    }
+  };
+
+  while (Date.now() < DEADLINE) {
+    let q = db.collection('jobs').orderBy('__name__').limit(pageLimit);
+    if (last) q = q.startAfter(last);
+    const snap = await q.get();
+    if (snap.empty) { exhausted = true; break; }
+
+    for (const doc of snap.docs) {
+      last = doc.ref;
+      scanned++;
+      const d = doc.data();
+      const upd = {};
+
+      for (const f of DATE_FIELDS) {
+        const v = d[f];
+        if (v == null) continue;
+        if (typeof v.toMillis === 'function') continue; // already a Timestamp
+        const dt = v instanceof Date ? v : new Date(v);
+        upd[f] = isNaN(dt.getTime()) ? null : admin.firestore.Timestamp.fromDate(dt);
+        fixedDates++;
+      }
+
+      if (!Array.isArray(d.searchTerms) || d.searchTerms.length === 0) {
+        const terms = new Set();
+        const addWords = (str, minLen) => String(str || '').toLowerCase()
+          .split(/[^a-z0-9]+/).forEach(w => { if (w.length >= minLen) terms.add(w); });
+        addWords(d.title, 2);
+        addWords(d.company, 2);
+        addWords(d.category, 2);
+        addWords(d.seniority, 2);
+        addWords(d.employmentType, 2);
+        addWords(d.location, 3);
+        (Array.isArray(d.skills) ? d.skills : []).forEach(sk => addWords(sk, 3));
+        if (d.remote) terms.add('remote');
+        upd.searchTerms = Array.from(terms).slice(0, 80);
+        fixedTerms++;
+      }
+
+      if (Object.keys(upd).length > 0) {
+        batch.update(doc.ref, upd);
+        pending++;
+        if (pending >= 400) await commit();
+      }
+    }
+  }
+  await commit();
+
+  return res.json({
+    scanned, fixedDates, fixedTerms, commits, exhausted,
+    seconds: Math.round((Date.now() - started) / 1000),
+  });
+});

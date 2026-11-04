@@ -136,8 +136,24 @@ async function processJobs(jobs, db) {
   const batch = db.batch();
   let batchCount = 0;
   const BATCH_LIMIT = 450; // Firestore batch limit is 500, leave margin
-  
-  for (const job of jobs) {
+
+  // Never let date STRINGS reach Firestore — strings sort above Timestamps in
+  // orderBy, which silently hid every newly synced job from search. Coerce here.
+  const DATE_FIELDS = ['postedAt', 'expiresAt', 'importedAt', 'lastSyncedAt'];
+  const coerceDates = (j) => {
+    const out = { ...j };
+    for (const f of DATE_FIELDS) {
+      const v = out[f];
+      if (v == null) continue;
+      if (typeof v.toMillis === 'function') continue; // already a Timestamp
+      const d = v instanceof Date ? v : new Date(v);
+      out[f] = isNaN(d.getTime()) ? null : admin.firestore.Timestamp.fromDate(d);
+    }
+    return out;
+  };
+
+  for (const rawJob of jobs) {
+    const job = coerceDates(rawJob);
     try {
       const existing = await findDuplicate(job, db);
       
