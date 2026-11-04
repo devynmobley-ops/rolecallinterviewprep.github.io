@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-EDPB7FVZDV"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-EDPB7FVZDV');</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Technical Program Manager Interview Questions & Tips | RoleCall</title>
+  <meta name="description" content="Practice Technical Program Manager interview questions with expert tips. 12 questions covering key topics for mid-level tech roles.">
+  <meta name="keywords" content="Technical Program Manager interview questions, Technical Program Manager interview tips, Technical Program Manager interview prep, tech jobs">
+  <link rel="canonical" href="https://rollcallinterviewprep.com/interview/technical-program-manager.html">
+  <meta property="og:title" content="Technical Program Manager Interview Questions | RoleCall">
+  <meta property="og:description" content="Practice Technical Program Manager interview questions with expert tips. 12 questions covering key topics for mid-level tech roles.">
+  <meta property="og:url" content="https://rollcallinterviewprep.com/interview/technical-program-manager.html">
+  <meta property="og:type" content="article">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Technical Program Manager Interview Questions | RoleCall">
+  <meta name="twitter:description" content="Practice Technical Program Manager interview questions with expert tips. 12 questions covering key topics for mid-level tech roles.">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Tell me about a complex program you managed from kickoff to launch. What was your role and what was the outcome?","acceptedAnswer":{"@type":"Answer","text":"Use STAR. Define program scope, the cross-team dependencies you coordinated, key milestones, and a measurable outcome. TPMs show orchestration across engineering, product, and ops — not just task tracking."}},{"@type":"Question","name":"How do you plan a program when requirements are ambiguous or still changing?","acceptedAnswer":{"@type":"Answer","text":"Talk about de-risking: an assumptions log, phased milestones, rolling-wave planning, and cutting the work into MVP slices. Emphasize how you communicate trade-offs as things change."}},{"@type":"Question","name":"Tell me about a time a critical dependency slipped. How did you handle it?","acceptedAnswer":{"@type":"Answer","text":"Describe early detection, escalation, re-sequencing work, and proactive stakeholder communication. Never blame the other team — show how you unblocked or re-planned."}},{"@type":"Question","name":"How do you keep multiple engineering teams aligned on a shared timeline?","acceptedAnswer":{"@type":"Answer","text":"Name the mechanisms: a single source of truth (roadmap or tracker), regular cross-team syncs, clear owners and dates, and a risk register. Lean on written communication over meeting load."}}]}</script>
+  <style>
+    :root {
+      --bg: #0f0f14; --card: #1a1a24; --accent: #6c5ce7; --accent-light: #a29bfe;
+      --text: #f0f0f5; --text-secondary: #8e8ea0; --card-hover: #22222f;
+      --radius: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 720px; margin: 0 auto; padding: 20px 16px; }
+    .nav { padding: 12px 0; margin-bottom: 8px; }
+    .nav a { color: var(--accent); text-decoration: none; font-size: 14px; }
+    .nav a:hover { text-decoration: underline; }
+    .hero { text-align: center; padding: 32px 0 24px; }
+    .hero .category-badge {
+      display: inline-block; background: var(--card); color: var(--accent);
+      padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .hero h1 {
+      font-size: 32px; font-weight: 800; margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero .meta {
+      font-size: 14px; color: var(--text-secondary);
+    }
+    .hero .difficulty {
+      display: inline-block; padding: 2px 10px; border-radius: 12px;
+      font-size: 11px; font-weight: 700; margin-left: 8px;
+    }
+    .difficulty-entry { background: #2d6a4f33; color: #52b788; }
+    .difficulty-mid { background: #f9ca2433; color: #f9ca24; }
+    .difficulty-senior { background: #e74c3c33; color: #e74c3c; }
+    .cta-top {
+      text-align: center; margin: 20px 0 28px;
+    }
+    .btn {
+      display: inline-block; padding: 14px 32px; border-radius: var(--radius);
+      font-size: 16px; font-weight: 700; text-decoration: none; cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s; border: none;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      color: #fff;
+    }
+    .btn-outline {
+      background: transparent; color: var(--accent);
+      border: 2px solid var(--accent); margin-left: 12px;
+    }
+    h2 {
+      font-size: 20px; font-weight: 700; margin: 32px 0 16px;
+      padding-bottom: 8px; border-bottom: 1px solid var(--card-hover);
+    }
+    .question-card {
+      background: var(--card); border-radius: var(--radius); padding: 20px;
+      margin-bottom: 12px; border: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+    .question-card:hover { border-color: var(--accent); }
+    .question-card.locked { opacity: 0.55; }
+    .question-card.locked:hover { border-color: transparent; }
+    .q-number {
+      font-size: 11px; font-weight: 700; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+    }
+    .q-text { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+    .q-tip {
+      font-size: 14px; color: var(--text-secondary); line-height: 1.5;
+      padding: 12px; background: var(--card-hover); border-radius: 8px;
+    }
+    .q-tip strong { color: var(--accent-light); }
+    .q-lock {
+      text-align: center; padding: 12px;
+    }
+    .lock-icon { font-size: 20px; }
+    .unlock-link {
+      color: var(--accent); font-size: 13px; margin-left: 6px;
+      text-decoration: none; font-weight: 600;
+    }
+    .unlock-link:hover { text-decoration: underline; }
+    .certs-section { margin-top: 8px; }
+    .certs-grid {
+      display: grid; grid-template-columns: 1fr; gap: 16px;
+    }
+    @media (min-width: 600px) {
+      .certs-grid { grid-template-columns: 1fr 1fr 1fr; }
+    }
+    .cert-block {
+      background: var(--card); border-radius: var(--radius); padding: 16px;
+    }
+    .cert-block h3 {
+      font-size: 13px; font-weight: 700; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;
+    }
+    .cert-block ul {
+      list-style: none; padding: 0;
+    }
+    .cert-block li {
+      font-size: 13px; color: var(--text-secondary); padding: 4px 0;
+      border-bottom: 1px solid var(--card-hover);
+    }
+    .cert-block li:last-child { border-bottom: none; }
+    .certs-grid-coursework {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .certs-grid-coursework { grid-template-columns: 1fr 1fr; }
+    }
+    .cert-block-wide h3 { font-size: 12px; }
+    .cert-block-wide li { font-size: 12px; color: var(--text-secondary); }
+    .cta-bottom {
+      text-align: center; padding: 40px 0 32px;
+    }
+    .related-section { margin-top: 8px; }
+    .related-grid {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .related-role {
+      display: inline-block; background: var(--card); color: var(--text);
+      padding: 8px 16px; border-radius: 20px; font-size: 13px;
+      text-decoration: none; transition: background 0.2s;
+    }
+    .related-role:hover { background: var(--card-hover); color: var(--accent); }
+    footer {
+      text-align: center; padding: 32px 0; border-top: 1px solid var(--card-hover);
+      margin-top: 40px;
+    }
+    footer a { color: var(--text-secondary); text-decoration: none; font-size: 13px; margin: 0 12px; }
+    footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="nav">
+      <a href="https://rollcallinterviewprep.com/">&#8592; Back to RoleCall</a>
+    </nav>
+
+    <div class="hero">
+      <span class="category-badge">💻 Tech</span>
+      <h1>Technical Program Manager Interview Questions</h1>
+      <div class="meta">
+        12 expert-crafted questions
+        <span class="difficulty difficulty-mid">Mid</span>
+      </div>
+    </div>
+
+    <div class="cta-top">
+      <a href="https://rollcallinterviewprep.com/" class="btn btn-primary">Practice Free</a>
+      <a href="https://rollcallinterviewprep.com/" class="btn btn-outline">Unlock All 12 Questions</a>
+    </div>
+
+    <section>
+      <h2>Sample Interview Questions</h2>
+      
+      <div class="question-card">
+        <div class="q-number">Q1</div>
+        <div class="q-text">Tell me about a complex program you managed from kickoff to launch. What was your role and what was the outcome?</div>
+        <div class="q-tip">
+          <strong>Tip:</strong> Use STAR. Define program scope, the cross-team dependencies you coordinated, key milestones, and a measurable outcome. TPMs show orchestration across engineering, product, and ops — not just task tracking.
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number">Q2</div>
+        <div class="q-text">How do you plan a program when requirements are ambiguous or still changing?</div>
+        <div class="q-tip">
+          <strong>Tip:</strong> Talk about de-risking: an assumptions log, phased milestones, rolling-wave planning, and cutting the work into MVP slices. Emphasize how you communicate trade-offs as things change.
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number">Q3</div>
+        <div class="q-text">Tell me about a time a critical dependency slipped. How did you handle it?</div>
+        <div class="q-tip">
+          <strong>Tip:</strong> Describe early detection, escalation, re-sequencing work, and proactive stakeholder communication. Never blame the other team — show how you unblocked or re-planned.
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number">Q4</div>
+        <div class="q-text">How do you keep multiple engineering teams aligned on a shared timeline?</div>
+        <div class="q-tip">
+          <strong>Tip:</strong> Name the mechanisms: a single source of truth (roadmap or tracker), regular cross-team syncs, clear owners and dates, and a risk register. Lean on written communication over meeting load.
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>More Questions (8 locked)</h2>
+      
+      <div class="question-card locked">
+        <div class="q-number">Q5</div>
+        <div class="q-text">How do you identify and manage risk across a program?</div>
+        <div class="q-lock">
+          <span class="lock-icon">&#128274;</span>
+          <a href="https://rollcallinterviewprep.com/" class="unlock-link">Sign up free to unlock</a>
+        </div>
+      </div>
+
+      <div class="question-card locked">
+        <div class="q-number">Q6</div>
+        <div class="q-text">Describe a time you had to push back on a deadline. What did you do?</div>
+        <div class="q-lock">
+          <span class="lock-icon">&#128274;</span>
+          <a href="https://rollcallinterviewprep.com/" class="unlock-link">Sign up free to unlock</a>
+        </div>
+      </div>
+
+      <div class="question-card locked">
+        <div class="q-number">Q7</div>
+        <div class="q-text">How do you run a program retrospective or postmortem?</div>
+        <div class="q-lock">
+          <span class="lock-icon">&#128274;</span>
+          <a href="https://rollcallinterviewprep.com/" class="unlock-link">Sign up free to unlock</a>
+        </div>
+      </div>
+
+      <div class="question-card locked">
+        <div class="q-number">Q8</div>
+        <div class="q-text">What metrics do you use to track program health?</div>
+        <div class="q-lock">
+          <span class="lock-icon">&#128274;</span>
+          <a href="https://rollcallinterviewprep.com/" class="unlock-link">Sign up free to unlock</a>
+        </div>
+      </div>
+
+      <div class="question-card locked">
+        <div class="q-number">Q9</div>
+        <div class="q-text">Tell me about a time you had to influence a team without any authority.</div>
+        <div class="q-lock">
+          <span class="lock-icon">&#128274;</span>
+          <a href="https://rollcallinterviewprep.com/" class="unlock-link">Sign up free to unlock</a>
+        </div>
+      </div>
+
+      <div class="question-card locked">
+        <div class="q-number">Q10</div>
+        <div class="q-text">How do you handle competing priorities from different stakeholders?</div>
+        <div class="q-lock">
+          <span class="lock-icon">&#128274;</span>
+          <a href="https://rollcallinterviewprep.com/" class="unlock-link">Sign up free to unlock</a>
+        </div>
+      </div>
+
+      <div class="question-card locked">
+        <div class="q-number">Q11</div>
+        <div class="q-text">Walk me through how you would ramp up on a new technical domain quickly.</div>
+        <div class="q-lock">
+          <span class="lock-icon">&#128274;</span>
+          <a href="https://rollcallinterviewprep.com/" class="unlock-link">Sign up free to unlock</a>
+        </div>
+      </div>
+
+      <div class="question-card locked">
+        <div class="q-number">Q12</div>
+        <div class="q-text">Tell me about a launch that did not go as planned. What would you do differently?</div>
+        <div class="q-lock">
+          <span class="lock-icon">&#128274;</span>
+          <a href="https://rollcallinterviewprep.com/" class="unlock-link">Sign up free to unlock</a>
+        </div>
+      </div>
+    </section>
+    
+    <section class="certs-section">
+      <h2>Education & Certifications</h2>
+      <div class="certs-grid">
+        <div class="cert-block">
+          <h3>Degrees</h3>
+          <ul><li>BS Computer Science</li><li>MBA + tech background</li><li>BS Project Management</li></ul>
+        </div>
+        <div class="cert-block">
+          <h3>Certifications</h3>
+          <ul><li>Project Management Professional (PMP) - PMI</li><li>PMI Agile Certified Practitioner (PMI-ACP)</li><li>Certified ScrumMaster (CSM) - Scrum Alliance</li></ul>
+        </div>
+        <div class="cert-block">
+          <h3>Career Paths</h3>
+          <ul><li>PMP exam prep via PMI or an approved course after ~36 months leading projects</li><li>Agile path: Scrum Alliance CSM course plus leading sprints in your current role</li><li>Internal transfer from engineering, QA, or project coordination into program management</li></ul>
+        </div>
+      </div>
+      <h2 style="margin-top:32px">Typical Coursework</h2><div class="certs-grid certs-grid-coursework">
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Computer Science</h3>
+          <ul><li>Intro to Programming</li><li>Data Structures &amp; Algorithms</li><li>Discrete Mathematics</li><li>Operating Systems</li><li>Databases</li><li>Computer Networks</li><li>Software Engineering</li><li>Calculus I &amp; II</li><li>Computer Architecture</li><li>Capstone Project</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — MBA + tech background</h3>
+          <ul><li>Financial Accounting</li><li>Managerial Economics</li><li>Marketing Management</li><li>Corporate Finance</li><li>Operations Management</li><li>Business Strategy</li><li>IT Management</li><li>Leadership</li></ul>
+        </div>
+        <div class="cert-block cert-block-wide">
+          <h3>Typical Coursework — BS Project Management</h3>
+          <ul><li>Project Management Fundamentals</li><li>Risk Management</li><li>Scheduling &amp; Budgeting</li><li>Quality Management</li><li>Agile &amp; Scrum</li><li>Procurement</li><li>Leadership</li><li>Capstone</li></ul>
+        </div></div>
+    </section>
+
+    <div class="cta-bottom">
+      <p style="color:var(--text-secondary);margin-bottom:16px;font-size:15px;">Get all 12 questions with expert tips on RoleCall</p>
+      <a href="https://rollcallinterviewprep.com/" class="btn btn-primary">Start Practicing Free</a>
+    </div>
+
+    <section class="related-section">
+      <h2>Related Tech Roles</h2>
+      <div class="related-grid">
+          <a href="/interview/cloud-security-engineer.html" class="related-role">Cloud Security Engineer</a>
+          <a href="/interview/computer-systems-analyst.html" class="related-role">Computer Systems Analyst</a>
+          <a href="/interview/software-engineer.html" class="related-role">Software Engineer</a>
+          <a href="/interview/data-analyst.html" class="related-role">Data Analyst</a>
+          <a href="/interview/it-support.html" class="related-role">IT Support</a>
+          <a href="/interview/devops-engineer.html" class="related-role">DevOps Engineer</a>
+      </div>
+    </section>
+
+    <footer>
+      <a href="https://rollcallinterviewprep.com/">Home</a>
+      <a href="https://rollcallinterviewprep.com/blog/">Blog</a>
+      <a href="https://rollcallinterviewprep.com/interview/software-engineer.html">Popular: Software Engineer</a>
+      <a href="https://rollcallinterviewprep.com/interview/registered-nurse.html">Popular: Nurse</a>
+      <a href="https://rollcallinterviewprep.com/interview/accountant.html">Popular: Accountant</a>
+    </footer>
+  </div>
+</body>
+</html>
