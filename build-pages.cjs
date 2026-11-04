@@ -56,11 +56,19 @@ function escapeHtml(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-function generatePage(roleName, category) {
+// Title overrides for collision-suffixed pages (same role name in two industries).
+// Keeps their <title>/og/twitter distinct so they aren't deduped against the sibling page.
+const TITLE_OVERRIDES = {
+  'compliance-analyst-legal': 'Legal Compliance Analyst',
+  'event-planner-service': 'Event Planner (Service Industry)'
+};
+
+function generatePage(roleName, category, finalSlug) {
   const questions = DATA[category].roles[roleName];
   const certs = CERTS[roleName];
   const difficulty = getDifficulty(roleName);
-  const slug = slugify(roleName);
+  const slug = finalSlug || slugify(roleName);
+  const displayRoleName = TITLE_OVERRIDES[slug] || roleName;
   const url = 'https://rollcallinterviewprep.com/interview/' + slug + '.html';
   const icon = DATA[category].icon;
 
@@ -156,16 +164,16 @@ function generatePage(roleName, category) {
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-EDPB7FVZDV');</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${escapeHtml(roleName)} Interview Questions & Tips | RoleCall</title>
+  <title>${escapeHtml(displayRoleName)} Interview Questions & Tips | RoleCall</title>
   <meta name="description" content="${desc}">
   <meta name="keywords" content="${escapeHtml(roleName)} interview questions, ${escapeHtml(roleName)} interview tips, ${escapeHtml(roleName)} interview prep, ${escapeHtml(category.toLowerCase())} jobs">
   <link rel="canonical" href="${url}">
-  <meta property="og:title" content="${escapeHtml(roleName)} Interview Questions | RoleCall">
+  <meta property="og:title" content="${escapeHtml(displayRoleName)} Interview Questions | RoleCall">
   <meta property="og:description" content="${desc}">
   <meta property="og:url" content="${url}">
   <meta property="og:type" content="article">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="${escapeHtml(roleName)} Interview Questions | RoleCall">
+  <meta name="twitter:title" content="${escapeHtml(displayRoleName)} Interview Questions | RoleCall">
   <meta name="twitter:description" content="${desc}">
   <script type="application/ld+json">${jsonLd}</script>
   <style>
@@ -370,7 +378,10 @@ if (!fs.existsSync(interviewDir)) {
 const urls = [];
 const usedSlugs = {};
 let count = 0;
+let skipped = 0;
 
+// ONLY_MISSING=1 -> generate only pages that don't exist yet (preserves hand-edited pages).
+// Default (no env) -> regenerate every page from DATA so question/role edits propagate.
 for (const [category, catData] of Object.entries(DATA)) {
   for (const roleName of Object.keys(catData.roles)) {
     let slug = slugify(roleName);
@@ -380,14 +391,18 @@ for (const [category, catData] of Object.entries(DATA)) {
     usedSlugs[slug] = true;
     const filename = slug + '.html';
     const filepath = path.join(interviewDir, filename);
-    const pageHtml = generatePage(roleName, category);
+    if (process.env.ONLY_MISSING && fs.existsSync(filepath)) {
+      skipped++;
+      continue;
+    }
+    const pageHtml = generatePage(roleName, category, slug);
     fs.writeFileSync(filepath, pageHtml, 'utf8');
     urls.push('https://rollcallinterviewprep.com/interview/' + filename);
     count++;
   }
 }
 
-console.log('Generated ' + count + ' landing pages in /interview/');
+console.log('Generated ' + count + ' landing pages in /interview/' + (skipped ? ' (skipped ' + skipped + ' existing)' : ''));
 
 // Generate sitemap.xml
 // Collect blog post URLs
@@ -425,5 +440,11 @@ ${blogUrls.map(u => `  <url>
   </url>`).join('\n')}
 </urlset>`;
 
-fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), sitemap, 'utf8');
-console.log('Generated sitemap.xml with ' + (urls.length + blogUrls.length + 2) + ' URLs');
+// Sitemap generation is opt-in (SITEMAP=1): the live sitemap.xml is hand-maintained
+// with <lastmod> plus jobs/ and marketing URLs this script does not know about.
+if (process.env.SITEMAP === '1') {
+  fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), sitemap, 'utf8');
+  console.log('Generated sitemap.xml with ' + (urls.length + blogUrls.length + 2) + ' URLs');
+} else {
+  console.log('Skipped sitemap.xml (set SITEMAP=1 to regenerate). Remember to add new URLs to the live sitemap.');
+}
