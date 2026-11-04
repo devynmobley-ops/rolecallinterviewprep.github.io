@@ -2401,11 +2401,16 @@ exports.searchJobs = functions.https.onCall(async (data, context) => {
         .filter(t => t.length > 1).slice(0, 10);
       if (terms.length > 0) {
         try {
+          // Firestore only has array-contains-any, so fetch broadly then apply AND
+          // semantics in memory ("line cook" must not OR-match every posting with
+          // the word "line"); broaden again only if no doc has every term.
           const termSnap = await db.collection('jobs')
             .where('searchTerms', 'array-contains-any', terms)
             .limit(250)
             .get();
-          jobs = termSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          const matched = termSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          const allTerms = matched.filter(j => terms.every(t => (j.searchTerms || []).includes(t)));
+          jobs = allTerms.length > 0 ? allTerms : matched;
         } catch (e) {
           console.error('[searchJobs] searchTerms query failed, using recents:', e.message);
         }
