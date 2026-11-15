@@ -624,6 +624,10 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
     <span class="search-icon" aria-hidden="true">&#128269;</span>
     <input type="text" class="search-box" id="searchInput" placeholder="Search roles or questions..." autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" aria-label="Search roles or questions">
   </div>
+  <div id="searchResults" style="display:none" aria-live="polite" aria-label="Search results">
+    <h2 class="section-title">Search Results</h2>
+    <div class="role-list" id="searchResultsList"></div>
+  </div>
   <div id="homeContent">
   <div class="daily-card" id="dailyCard"></div>
   <div class="quick-practice-wrap"><button class="quick-practice-btn" onclick="quickPractice()">&#9889; Quick Practice</button></div>
@@ -656,6 +660,8 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
     <div class="roles-explored" id="rolesExplored"></div>
   </div>
   </div>
+  <!-- HOME MARKETING STACK (hidden while searching) -->
+  <div id="homeMarketing">
   <!-- AUTO-APPLY PROMO (visible for eligible personal accounts) -->
   <div id="autoApplyPromo" class="jok-promo" onclick="switchTab('jobs-tab')" role="button" tabindex="0" aria-label="Auto-Apply" style="display:none;border-color:var(--accent)44">
     <div class="jok-promo-icon" style="background:linear-gradient(135deg,var(--accent),var(--accent-light))">🤖</div>
@@ -701,11 +707,8 @@ var scriptsLoaded = loadScript('https://cdn.jsdelivr.net/npm/firebase@10.12.0/fi
     </div>
     <div class="newsletter-msg" id="newsletterMsg"></div>
   </div>
-
-  <div id="searchResults" style="display:none" aria-live="polite" aria-label="Search results">
-    <h2 class="section-title">Search Results</h2>
-    <div class="role-list" id="searchResultsList"></div>
   </div>
+
 </div>
 
 <!-- ROLES TAB SCREEN -->
@@ -10489,10 +10492,12 @@ function performSearch(query) {
   const resultsDiv = document.getElementById('searchResults');
   const resultsList = document.getElementById('searchResultsList');
   const homeContent = document.getElementById('homeContent');
+  const homeMarketing = document.getElementById('homeMarketing');
 
   if (!query) {
     resultsDiv.style.display = 'none';
     if (homeContent) homeContent.style.display = '';
+    if (homeMarketing) homeMarketing.style.display = '';
     return;
   }
 
@@ -10513,6 +10518,7 @@ function performSearch(query) {
 
   resultsDiv.style.display = '';
   if (homeContent) homeContent.style.display = 'none';
+  if (homeMarketing) homeMarketing.style.display = 'none';
   resultsList.innerHTML = '';
 
   if (matches.length === 0) {
